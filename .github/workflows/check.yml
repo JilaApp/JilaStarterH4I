@@ -93,4 +93,7 @@ jobs:
 
       - name: Run build
         working-directory: ./backend
+        env:
+          JILA_BACKEND_PRISMA_DATABASE_URL: ${{ secrets.JILA_BACKEND_PRISMA_DATABASE_URL }}
+          JILA_BACKEND_POSTGRES_URL: ${{ secrets.JILA_BACKEND_POSTGRES_URL }}
         run: npm run build
