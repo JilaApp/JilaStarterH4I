@@ -76,6 +76,7 @@ jobs:
   backend-build:
     runs-on: ubuntu-latest
     name: Backend Build
+    environment: Production
     steps:
       - name: Check out repository
         uses: actions/checkout@v2
