@@ -1,0 +1,99 @@
+name: Check
+
+on:
+  push:
+    branches:
+      - '**'
+
+jobs:
+  frontend-format:
+    runs-on: ubuntu-latest
+    name: Frontend Format
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+      
+      - name: Go to frontend
+        run: cd frontend
+
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm i
+
+      - name: Check formatting
+        run: npx expo lint
+
+  frontend-build:
+    runs-on: ubuntu-latest
+    name: Frontend Build
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+      
+      - name: Go to frontend
+        run: cd frontend
+
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm i
+
+      - name: Run start
+        run: npm start
+
+  backend-format:
+    runs-on: ubuntu-latest
+    name: Backend Format
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+      
+      - name: Go to backend
+        run: cd backend
+
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install dependencies
+        run: npm i
+
+      - name: Check formatting
+        run: npm run format:check
+
+  backend-build:
+    runs-on: ubuntu-latest
+    name: Backend Build
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+      
+      - name: Go to backend
+        run: cd backend
+
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install dependencies
+        run: npm i
+
+      - name: Run dev
+        run: npm run dev
