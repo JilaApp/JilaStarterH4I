@@ -1,22 +1,9 @@
-import { View, Text, StyleSheet, StatusBar } from "react-native";
+import { Text, View } from "react-native";
 
-export default function HomeScreen() {
+export default function App() {
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Hello Jila!</Text>
+    <View className="flex-1 justify-center items-center bg-white">
+      <Text className="text-3xl font-bold">Hello Jila!</Text>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#fff', // A default background color
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-  },
-});
