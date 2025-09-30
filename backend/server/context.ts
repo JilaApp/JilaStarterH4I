@@ -1,13 +1,9 @@
 import { inferAsyncReturnType } from "@trpc/server";
-import { CreateNextContextOptions } from "@trpc/server/adapters/next";
 import prisma from "@/lib/prisma";
-import { auth } from "@clerk/nextjs/server";
 
-export const createContext = async (opts: CreateNextContextOptions) => {
+export const createContext = async () => {
   return {
     prisma,
-    auth: auth(),
-    req: opts.req,
   };
 };
 
