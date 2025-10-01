@@ -97,4 +97,5 @@ jobs:
         env:
           JILA_BACKEND_PRISMA_DATABASE_URL: ${{ secrets.JILA_BACKEND_PRISMA_DATABASE_URL }}
           JILA_BACKEND_POSTGRES_URL: ${{ secrets.JILA_BACKEND_POSTGRES_URL }}
+          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
         run: npm run build
