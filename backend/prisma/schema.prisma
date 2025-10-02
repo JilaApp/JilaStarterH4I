@@ -21,13 +21,13 @@ model users {
 
 //id, title, category, source (youtube, instagram, google drive, etc), length, link to video, upload_date, description, likes/dislikes, language
 
-model video {
+model videos {
   id          Int      @id @default(autoincrement())
   title       String
   category    String
   source      String
   length      Int //seconds
-  link        String   @unique
+  url         String   @unique
   uploadDate  DateTime
   description String
   likes       Int
