@@ -22,7 +22,7 @@ async function main() {
           "https://images.ctfassets.net/e5382hct74si/4BtM41PDNrx4z1ml643tdc/7aa88bdde8b5b7809174ea5b764c80fa/adWRdqQ6_400x400.jpg",
       },
     }),
-    await prisma.users.upsert({
+    prisma.users.upsert({
       where: { email: "stey@vercel.com" },
       update: {},
       create: {
@@ -32,6 +32,38 @@ async function main() {
           "https://images.ctfassets.net/e5382hct74si/4QEuVLNyZUg5X6X4cW4pVH/eb7cd219e21b29ae976277871cd5ca4b/profile.jpg",
       },
     }),
+    prisma.videos.upsert({
+      where: { url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ"},
+      update: {},
+      create: {
+        title: "A great video",
+        category: "Culture",
+        source: "YouTube",
+        length: 6767,
+        url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        uploadDate: new Date("2025-06-07T12:00:00Z"),
+        description: "An introduction to the intricacies of american culture. a delightful viewing for the entire family.",
+        likes: 100000,
+        dislikes: 0,
+        language: "English",
+      }
+    }),
+    prisma.videos.upsert({
+      where: {url: "https://www.youtube.com/watch?v=VLeEX489tXE"},
+      update: {},
+      create: {
+        title: "some jila intro or something",
+        category: "Transportation",
+        source: "Evan Lin", 
+        length: 101,
+        url: "https://www.youtube.com/watch?v=VLeEX489tXE", 
+        uploadDate: new Date("2025-06-07T12:00:00Z"),
+        description: "a demonstration of the app thats really cool",
+        likes: 5,
+        dislikes: 0,
+        language: "Qanjobal",
+      }
+    })
   ]);
   console.log(response);
 }

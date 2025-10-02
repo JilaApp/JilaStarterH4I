@@ -18,3 +18,19 @@ model users {
   image     String
   createdAt DateTime @default(now())
 }
+
+//id, title, category, source (youtube, instagram, google drive, etc), length, link to video, upload_date, description, likes/dislikes, language
+
+model video {
+  id          Int      @id @default(autoincrement())
+  title       String
+  category    String
+  source      String
+  length      Int //seconds
+  link        String   @unique
+  uploadDate  DateTime
+  description String
+  likes       Int
+  dislikes    Int
+  language    String
+}
