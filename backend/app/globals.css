@@ -1,29 +1,29 @@
-@import url('https://fonts.googleapis.com/css2?family=Fustat:wght@200..800&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Fustat:wght@200..800&display=swap");
 @import "tailwindcss";
 
 @theme {
   --font-source: "Fustat", serif;
 
-  --color-jila-400:     rgba(126, 6, 1);
-  --color-jila-300:     rgba(212, 146, 143);
-  --color-orange-400:   rgba(232, 150, 91);
-  --color-orange-300:   rgba(243, 202, 173);
-  --color-yellow-400:   rgba(239, 191, 106);
-  --color-cream-300:    rgba(255, 251, 243);
+  --color-jila-400: rgba(126, 6, 1);
+  --color-jila-300: rgba(212, 146, 143);
+  --color-orange-400: rgba(232, 150, 91);
+  --color-orange-300: rgba(243, 202, 173);
+  --color-yellow-400: rgba(239, 191, 106);
+  --color-cream-300: rgba(255, 251, 243);
 
-  --color-green-400:    rgba(144, 190, 109);
-  --color-green-300:    rgba(205, 230, 185);
-  --color-teal-400:     rgba(87, 117, 144);
-  --color-teal-300:     rgba(189, 208, 226);
-  --color-error-400:    rgba(227, 31, 31);
-  --color-error-300:    rgba(255, 148, 148);
-  --color-error-200:    rgba(251, 207, 207); 
+  --color-green-400: rgba(144, 190, 109);
+  --color-green-300: rgba(205, 230, 185);
+  --color-teal-400: rgba(87, 117, 144);
+  --color-teal-300: rgba(189, 208, 226);
+  --color-error-400: rgba(227, 31, 31);
+  --color-error-300: rgba(255, 148, 148);
+  --color-error-200: rgba(251, 207, 207);
 
-  --color-type-400:     rgba(54, 24, 24); 
-  --color-white-400:    rgba(255, 255, 255);
-  --color-gray-400:     rgba(156, 156, 156);
-  --color-gray-300:     rgba(205, 205, 205);
-  --color-gray-200:     rgba(232, 232, 232); 
+  --color-type-400: rgba(54, 24, 24);
+  --color-white-400: rgba(255, 255, 255);
+  --color-gray-400: rgba(156, 156, 156);
+  --color-gray-300: rgba(205, 205, 205);
+  --color-gray-200: rgba(232, 232, 232);
 }
 
 /*

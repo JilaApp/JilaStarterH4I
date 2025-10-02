@@ -1,18 +1,19 @@
 "use client";
 
 export default function DevPage() {
-  return <div className="bg-cream-300">
-    <div className="page-title-text">Welcome devs!</div>
-      <div className="bg-jila-400"> 
-         <div className="components-text">Hello!</div>
+  return (
+    <div className="bg-cream-300">
+      <div className="page-title-text">Welcome devs!</div>
+      <div className="bg-jila-400">
+        <div className="components-text">Hello!</div>
       </div>
       <div className="bg-jila-300">
         <div className="link-text">Why am I doing this</div>
       </div>
-      <div className="bg-orange-400"> 
+      <div className="bg-orange-400">
         <div className="page-title-text">Xin ciao</div>
       </div>
-      <div className="bg-orange-300"> 
+      <div className="bg-orange-300">
         <div className="body1-desktop-bold-text">Hello</div>
       </div>
       <div className="bg-yellow-400">
@@ -48,5 +49,6 @@ export default function DevPage() {
       <div className="bg-gray-200">
         <div className="body1-desktop-bold-text">Hello</div>
       </div>
-  </div>;
+    </div>
+  );
 }
