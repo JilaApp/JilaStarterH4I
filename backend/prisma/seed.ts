@@ -62,7 +62,7 @@ async function main() {
         description: "a demonstration of the app thats really cool",
         likes: 5,
         dislikes: 0,
-        language: "Qanjobal",
+        language: "Qʼanjobʼal",
       },
     }),
   ]);

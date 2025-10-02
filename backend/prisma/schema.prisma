@@ -19,18 +19,31 @@ model users {
   createdAt DateTime @default(now())
 }
 
-//id, title, category, source (youtube, instagram, google drive, etc), length, link to video, upload_date, description, likes/dislikes, language
-
 model videos {
-  id          Int      @id @default(autoincrement())
+  id          Int           @id @default(autoincrement())
   title       String
-  category    String
-  source      String
-  length      Int //seconds
-  url         String   @unique
+  category    VideoCategory
+  source      VideoSource
+  length      Int // Seconds
+  url         String        @unique
   uploadDate  DateTime
   description String
   likes       Int
   dislikes    Int
   language    String
+}
+
+enum VideoSource {
+  YOUTUBE
+  GOOGLE_DRIVE
+  INSTAGRAM
+  TIK_TOK
+}
+
+enum VideoCategory {
+  PROFESSIONAL_DEVELOPMENT
+  MEDICAL
+  TRANSPORTATION
+  LEGAL
+  OTHER
 }
