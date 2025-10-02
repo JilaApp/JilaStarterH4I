@@ -8,12 +8,6 @@ export const metadata = {
   description: "Jila x Hack4Impact Fall 2025",
 };
 
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-  display: "swap",
-});
-
 export default function RootLayout({
   children,
 }: {
