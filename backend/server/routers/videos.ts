@@ -1,17 +1,12 @@
 import { router, publicProcedure } from "../trpc";
 import { z } from "zod";
+import { VideoCategory, VideoSource } from "@prisma/client";
 import prisma from "../../lib/prisma";
 
 const addVideoInput = z.object({
   title: z.string(),
-  category: z.enum([
-    "PROFESSIONAL_DEVELOPMENT",
-    "MEDICAL",
-    "TRANSPORTATION",
-    "LEGAL",
-    "OTHER",
-  ]),
-  source: z.enum(["YOUTUBE", "GOOGLE_DRIVE", "INSTAGRAM", "TIK_TOK"]),
+  category: z.enum(VideoCategory),
+  source: z.enum(VideoSource),
   length: z.number().int(),
   url: z.string(),
   description: z.string(),
