@@ -37,8 +37,8 @@ async function main() {
       update: {},
       create: {
         title: "A great video",
-        category: "Culture",
-        source: "YouTube",
+        category: "PROFESSIONAL_DEVELOPMENT",
+        source: "YOUTUBE",
         length: 6767,
         url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         uploadDate: new Date("2025-06-07T12:00:00Z"),
@@ -54,8 +54,8 @@ async function main() {
       update: {},
       create: {
         title: "some jila intro or something",
-        category: "Transportation",
-        source: "Evan Lin",
+        category: "TRANSPORTATION",
+        source: "YOUTUBE",
         length: 101,
         url: "https://www.youtube.com/watch?v=VLeEX489tXE",
         uploadDate: new Date("2025-06-07T12:00:00Z"),
