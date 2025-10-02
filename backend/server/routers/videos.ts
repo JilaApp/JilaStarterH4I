@@ -15,8 +15,8 @@ const addVideoInput = z.object({
 
 type AddVideoInput = z.infer<typeof addVideoInput>;
 
-function addVideo(input: AddVideoInput) {
-  prisma.videos.upsert({
+async function addVideo(input: AddVideoInput) {
+  const video = await prisma.videos.upsert({
     where: { url: input.url },
     update: {},
     create: {
@@ -32,6 +32,8 @@ function addVideo(input: AddVideoInput) {
       language: input.language,
     },
   });
+
+  return video;
 }
 
 async function getAllVideos() {
