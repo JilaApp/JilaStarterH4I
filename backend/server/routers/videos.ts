@@ -2,6 +2,7 @@ import { router, publicProcedure } from "../trpc";
 import { z } from "zod";
 import { VideoCategory, VideoSource } from "@prisma/client";
 import prisma from "../../lib/prisma";
+import { TRPCError } from "@trpc/server";
 
 const addVideoInput = z.object({
   title: z.string(),
@@ -16,10 +17,20 @@ const addVideoInput = z.object({
 type AddVideoInput = z.infer<typeof addVideoInput>;
 
 async function addVideo(input: AddVideoInput) {
-  const video = await prisma.videos.upsert({
+  const existing = await prisma.videos.findUnique({
     where: { url: input.url },
-    update: {},
-    create: {
+    select: { id: true },
+  });
+
+  if (existing) {
+    throw new TRPCError({
+      code: "CONFLICT",
+      message: `Video with url ${input.url} already exists`,
+    });
+  }
+
+  await prisma.videos.create({
+    data: {
       title: input.title,
       category: input.category,
       source: input.source,
@@ -32,8 +43,6 @@ async function addVideo(input: AddVideoInput) {
       language: input.language,
     },
   });
-
-  return video;
 }
 
 async function getAllVideos() {
