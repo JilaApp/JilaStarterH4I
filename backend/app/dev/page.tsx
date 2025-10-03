@@ -2,53 +2,36 @@
 
 export default function DevPage() {
   return (
-    <div className="bg-cream-300">
-      <div className="page-title-text">Welcome devs!</div>
-      <div className="bg-jila-400">
-        <div className="components-text">Hello!</div>
-      </div>
-      <div className="bg-jila-300">
-        <div className="link-text">Why am I doing this</div>
-      </div>
-      <div className="bg-orange-400">
-        <div className="page-title-text">Xin ciao</div>
-      </div>
-      <div className="bg-orange-300">
-        <div className="body1-desktop-bold-text">Hello</div>
-      </div>
-      <div className="bg-yellow-400">
-        <div className="components-text">Hello</div>
-      </div>
-      <div className="bg-cream-300">
-        <div className="link-text">Hello</div>
-      </div>
-      <div className="bg-green-400">
-        <div className="body1-desktop-semi-text">Hello</div>
-      </div>
-      <div className="bg-teal-400">
-        <div className="body1-desktop-bold-text">Hello</div>
-      </div>
-      <div className="bg-error-300">
-        <div className="components-text">Bonjour</div>
-      </div>
-      <div className="bg-error-200">
-        <div className="body1-desktop-semi-text">Ni hao</div>
-      </div>
-      <div className="bg-type-400">
-        <div className="page-title-text">Hello</div>
-      </div>
-      <div className="bg-white-400">
-        <div className="link-text">IM dead</div>
-      </div>
-      <div className="bg-gray-400">
-        <div className="body1-desktop-semi-text">Hello</div>
-      </div>
-      <div className="bg-gray-300">
-        <div className="components-text">Hello</div>
-      </div>
-      <div className="bg-gray-200">
-        <div className="body1-desktop-bold-text">Hello</div>
-      </div>
+  <div>
+    <div className="page-title-text">page-title-text</div>
+    <div className="components-text">components-text</div>
+    <div className="link-text">link-text</div>
+    <div className="body1-desktop-semi-text">body1-desktop-semi-text</div>
+    <div className="body1-desktop-bold-text">body1-desktop-bold-text</div>
+
+
+    <div className="bg-cream-300">bg-cream-300</div>
+    <div className="bg-jila-400"> 
+      <div className="text-white">bg-jila-400</div>
     </div>
+    <div className="bg-jila-300">bg-jila-300</div>
+    <div className="bg-orange-400">bg-orange-400</div>
+    <div className="bg-orange-300">bg-orange-300</div>
+    <div className="bg-yellow-400">bg-yellow-400</div>
+    <div className="bg-cream-300">bg-cream-300</div>
+    <div className="bg-green-400">bg-green-400</div>
+    <div className="bg-teal-400">bg-teal-400</div>
+    <div className="bg-teal-300">bg-teal-300</div>
+    <div className="bg-error-400">bg-error-400</div>
+    <div className="bg-error-300">bg-error-300</div>
+    <div className="bg-error-200">bg-error-200</div>
+    <div className="bg-type-400">
+      <div className="text-white">bg-type-400</div>
+    </div>
+    <div className="bg-white-400">bg-white-400</div>
+    <div className="bg-gray-400">bg-gray-400</div>
+    <div className="bg-gray-300">bg-gray-300</div>
+    <div className="bg-gray-200">bg-gray-200</div>
+  </div>
   );
 }
