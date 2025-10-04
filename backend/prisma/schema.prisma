@@ -18,3 +18,32 @@ model users {
   image     String
   createdAt DateTime @default(now())
 }
+
+model videos {
+  id          Int           @id @default(autoincrement())
+  title       String
+  category    VideoCategory
+  source      VideoSource
+  length      Int // Seconds
+  url         String        @unique
+  uploadDate  DateTime
+  description String
+  likes       Int
+  dislikes    Int
+  language    String
+}
+
+enum VideoSource {
+  YOUTUBE
+  GOOGLE_DRIVE
+  INSTAGRAM
+  TIK_TOK
+}
+
+enum VideoCategory {
+  PROFESSIONAL_DEVELOPMENT
+  MEDICAL
+  TRANSPORTATION
+  LEGAL
+  OTHER
+}
