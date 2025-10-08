@@ -1,8 +1,10 @@
 "use client";
+import Input from "@/components/Input";
 
 export default function DevPage() {
   return (
     <div>
+      <Input/>
       <div className="page-title-text">page-title-text</div>
       <div className="components-text">components-text</div>
       <div className="link-text">link-text</div>
