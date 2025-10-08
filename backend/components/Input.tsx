@@ -1,69 +1,125 @@
 import { useState } from "react";
 import mailIcon from "../assets/mail.svg";
-import lockIcon from "../assets/lock-keyhole.svg"
-import eyeIcon from "../assets/eye.svg"
-import eyeOffIcon from "../assets/eye-off.svg"
-import mailDarkIcon from "../assets/mail-dark.svg"
+import lockIcon from "../assets/lock-keyhole.svg";
+import eyeIcon from "../assets/eye.svg";
+import eyeOffIcon from "../assets/eye-off.svg";
+import mailDarkIcon from "../assets/mail-dark.svg";
+import lockDarkIcon from "../assets/lock-dark.svg"
+import eyeDarkIcon from "../assets/eye-dark.svg"
+import eyeOffDarkIcon from "../assets/eye-off-dark.svg"
 
-
-export default function Input() {
-
-    const [input, setInput] = useState("");
-
-    // function handleSubmit(e) {
-    //     e.preventDefault();
-
-    //     const form = e.target;
-    //     const formData = new FormData(form);
-
-    //     setInput(formData);
-    // }
-
-    return (
-        <form method="post">
-            <label className="flex flex-col w-[490px] h-[420px] gap-y-[20px] pl-[20px] pr-[20px] pt-[20px] pb-[20px]">
-                <label className="flex items-center border-[1px] border-gray-300 rounded-[10px] bg-white text-gray-300 pl-[18px] w-[450px] h-[60px]"> {/*onSubmit={handleSubmit} */}
-                    <img className="pr-[8px]" src={mailIcon.src}></img>
-
-                    <input className="link-text text-gray-300 w-[95px]" name="userinput" defaultValue="Enter Email"></input>
-                    {/* we will use the button component right here */}
-                </label>
-
-                <label className="flex items-center border-[1px] border-gray-300 rounded-[10px] bg-gray-200 text-gray-300 pl-[18px] w-[450px] h-[60px]"> {/*onSubmit={handleSubmit} */}
-                    <img className="pr-[8px]" src={mailIcon.src}></img>
-
-                    <input className="link-text text-gray-300 w-[95px]" name="userinput" defaultValue="Enter Email"></input>
-                    {/* we will use the button component right here */}
-                </label>
-
-                <label className="flex items-center border-[1px] border-gray-300 rounded-[10px] bg-white text-gray-300 pl-[18px] w-[450px] h-[60px]"> {/*onSubmit={handleSubmit} */}
-                    <img className="pr-[8px]" src={lockIcon.src}></img>
-
-                    <input className="link-text text-gray-300 w-[346px]" name="userinput" defaultValue="Enter Password"></input>
-
-                    <img className="pl-[12px]" src={eyeOffIcon.src}></img>
-                    {/* we will use the button component right here */}
-                </label>
-
-                <label className="flex items-center border-[1px] border-gray-300 rounded-[10px] bg-white text-gray-300 pl-[18px] w-[450px] h-[60px]"> {/*onSubmit={handleSubmit} */}
-                    <img className="pr-[8px]" src={lockIcon.src}></img>
-
-                    <input className="link-text text-gray-300 w-[346px]" name="userinput" defaultValue="Enter Password"></input>
-
-                    <img className="pl-[12px]" src={eyeIcon.src}></img>
-                    {/* we will use the button component right here */}
-                </label>
-
-                <label className="flex items-center border-[1px] border-jila-400 rounded-[10px] bg-white text-gray-300 pl-[18px] w-[450px] h-[60px]"> {/*onSubmit={handleSubmit} */}
-                    <img className="pr-[8px]" src={mailDarkIcon.src}></img>
-
-                    <input className="link-text text-type-400 w-[178px]" name="userinput" defaultValue="skim660@illinois.edu"></input>
-                    {/* we will use the button component right here */}
-                </label>
-
-
-            </label>
-        </form>
-    );
+interface InputProps {
+  type?: "email" | "password";
+  disabled?: boolean;
+  value?: string;
+  onChange?: (value: string) => void;
+  icon?: "mail" | "lock";
+  showPasswordToggle?: boolean;
 }
 
+export default function Input({
+  type = "email",
+  disabled = false,
+  value = "Enter Email",
+  onChange, 
+  icon = "mail", 
+  showPasswordToggle = true
+} : InputProps) {
+  const [input, setInput] = useState(value);
+  const [isFocused, setIsFocused] = useState(false);
+  const [showPassword, setShowPassword] = useState(true);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newInput = e.target.value; 
+    setInput(newInput);
+    onChange?.(newInput);
+  }
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  }
+
+  const handleFocus = () => {
+    setIsFocused(true);
+  }
+
+  const handleBlur = () => {
+    setIsFocused(false);
+  }
+
+  const getIconSrc = () => {
+    if (icon == "mail" && isFocused) {
+      return mailDarkIcon.src;
+    } else if (icon == "lock" && isFocused) {
+      return lockDarkIcon.src
+    } else if (icon == "mail" && !isFocused) {
+      return mailIcon.src;
+    } else if (icon == "lock") {
+      return lockIcon.src;
+    }
+  }
+    let inputType; 
+    if (type === "password" && !showPassword) {
+      inputType = "password";
+    } else {
+      inputType = "text";
+    }
+
+
+  const getContainerClasses = () => {
+    if (disabled) {
+      return "flex items-center border-[1px] rounded-[10px] pl-[18px] w-[450px] h-[60px] border-gray-300 bg-gray-200 text-gray-300";
+    } else if (isFocused) {
+      return "flex items-center border-[1px] rounded-[10px] pl-[18px] w-[450px] h-[60px] border-jila-400 bg-white text-gray-300";
+    } else { 
+      return "flex items-center border-[1px] rounded-[10px] pl-[18px] w-[450px] h-[60px] border-gray-300 bg-white text-gray-300";
+    }
+  }
+
+  const getInputClasses = () => {
+    if (disabled) {
+      return "link-text text-gray-300 w-[346px]";
+    } else if (isFocused) {
+      return "link-text text-type-400 w-[346px]";
+    } else {
+      return "link-text text-gray-300 w-[346px]";
+    }
+  }
+
+  return (
+    <label className={getContainerClasses()}>
+      <img className="pr-[8px]" src={getIconSrc()}></img>
+      <input
+        className={getInputClasses()}
+        type={inputType}
+        name="userinput"
+        value={input}
+        onChange = {handleInputChange}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
+        disabled={disabled} />
+      
+      {(() => {
+        if (showPasswordToggle && type === "password") {
+          return (
+          <img
+            className="pl-[12px] cursor-pointer"
+            src= {(() => {
+        if (showPassword && isFocused) {
+          return eyeDarkIcon.src;
+        } else if (!showPassword && isFocused) {
+          return eyeOffDarkIcon.src;
+        } else if (!showPassword && !isFocused) {
+          return eyeOffIcon.src;
+        } else {
+          return eyeIcon.src;
+        }
+      })()}
+            onClick = {togglePasswordVisibility}
+          ></img>
+        );  
+        }
+      })()}
+    </label>
+  );
+}
