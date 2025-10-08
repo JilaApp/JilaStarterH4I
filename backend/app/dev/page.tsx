@@ -1,5 +1,5 @@
 "use client";
-import Notification from "../../components/notification";
+import Notification from "@/components/Notification";
 
 export default function DevPage() {
   return (
