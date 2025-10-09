@@ -1,5 +1,6 @@
 "use client";
 import Input from "@/components/Input";
+import Notification from "@/components/Notification";
 
 export default function DevPage() {
   return (
@@ -30,6 +31,10 @@ export default function DevPage() {
           disabled
         />
       </div>
+      <Notification
+        message="We’ve resent the link to your email!"
+        onClose={() => {}}
+      />
       <div className="page-title-text">page-title-text</div>
       <div className="components-text">components-text</div>
       <div className="link-text">link-text</div>

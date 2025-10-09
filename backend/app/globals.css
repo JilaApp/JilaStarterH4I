@@ -54,4 +54,8 @@
   .body1-desktop-bold-text {
     @apply font-source text-2xl font-bold leading-none;
   }
+
+  .body1-desktop-text {
+    @apply font-source text-2xl font-normal leading-none;
+  }
 }
