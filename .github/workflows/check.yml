@@ -3,7 +3,7 @@ name: Check
 on:
   push:
     branches:
-      - '**'
+      - "**"
   workflow_dispatch:
 
 jobs:
@@ -18,15 +18,15 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18
-          cache: 'npm'
-          cache-dependency-path: frontend/package-lock.json
+          cache: "npm"
+          cache-dependency-path: mobile-app/package-lock.json
 
       - name: Install dependencies
-        working-directory: ./frontend
+        working-directory: ./mobile-app
         run: npm i
 
       - name: Check formatting
-        working-directory: ./frontend
+        working-directory: ./mobile-app
         run: npx expo lint
 
   frontend-build:
@@ -40,15 +40,15 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18
-          cache: 'npm'
-          cache-dependency-path: frontend/package-lock.json
+          cache: "npm"
+          cache-dependency-path: mobile-app/package-lock.json
 
       - name: Install dependencies
-        working-directory: ./frontend
+        working-directory: ./mobile-app
         run: npm i
 
       - name: Run build
-        working-directory: ./frontend
+        working-directory: ./mobile-app
         run: npx expo export
 
   backend-format:
@@ -62,15 +62,15 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18
-          cache: 'npm'
-          cache-dependency-path: backend/package-lock.json
+          cache: "npm"
+          cache-dependency-path: admin-dashboard/package-lock.json
 
       - name: Install dependencies
-        working-directory: ./backend
+        working-directory: ./admin-dashboard
         run: npm i
 
       - name: Check formatting
-        working-directory: ./backend
+        working-directory: ./admin-dashboard
         run: npm run format:check
 
   backend-build:
@@ -85,15 +85,15 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18
-          cache: 'npm'
-          cache-dependency-path: backend/package-lock.json
+          cache: "npm"
+          cache-dependency-path: admin-dashboard/package-lock.json
 
       - name: Install dependencies
-        working-directory: ./backend
+        working-directory: ./admin-dashboard
         run: npm i
 
       - name: Run build
-        working-directory: ./backend
+        working-directory: ./admin-dashboard
         env:
           JILA_BACKEND_PRISMA_DATABASE_URL: ${{ secrets.JILA_BACKEND_PRISMA_DATABASE_URL }}
           JILA_BACKEND_POSTGRES_URL: ${{ secrets.JILA_BACKEND_POSTGRES_URL }}
