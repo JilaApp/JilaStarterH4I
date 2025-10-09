@@ -12,11 +12,7 @@ export default function DevPage() {
           icon="mail"
         />
 
-        <Input
-          type="email"
-          id="email-disabled-input"
-          disabled
-        />
+        <Input type="email" id="email-disabled-input" disabled />
 
         <Input
           type="password"
@@ -33,7 +29,6 @@ export default function DevPage() {
           icon="lock"
           disabled
         />
-
       </div>
       <div className="page-title-text">page-title-text</div>
       <div className="components-text">components-text</div>
