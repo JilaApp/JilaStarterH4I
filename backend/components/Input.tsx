@@ -1,12 +1,7 @@
 import { useState } from "react";
-import mailIcon from "../assets/mail.svg";
-import lockIcon from "../assets/lock-keyhole.svg";
-import eyeIcon from "../assets/eye.svg";
-import eyeOffIcon from "../assets/eye-off.svg";
-import mailDarkIcon from "../assets/mail-dark.svg";
-import lockDarkIcon from "../assets/lock-dark.svg"
-import eyeDarkIcon from "../assets/eye-dark.svg"
-import eyeOffDarkIcon from "../assets/eye-off-dark.svg"
+import { clsx } from "clsx";
+
+import { Mail, LockKeyhole, Eye, EyeOff } from 'lucide-react';
 
 interface InputProps {
   type?: "email" | "password";
@@ -15,28 +10,38 @@ interface InputProps {
   onChange?: (value: string) => void;
   icon?: "mail" | "lock";
   showPasswordToggle?: boolean;
+  placeholder?: string;
+  id?: string;
 }
 
 export default function Input({
   type = "email",
   disabled = false,
-  value = "Enter Email",
-  onChange, 
-  icon = "mail", 
-  showPasswordToggle = true
-} : InputProps) {
-  const [input, setInput] = useState(value);
+  value = "",
+  onChange,
+  icon = "mail",
+  showPasswordToggle = true,
+  placeholder = "Enter Email",
+  id
+}: InputProps) {
+  const [input, setInput] = useState("");
   const [isFocused, setIsFocused] = useState(false);
   const [showPassword, setShowPassword] = useState(true);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newInput = e.target.value; 
+    const newInput = e.target.value;
     setInput(newInput);
     onChange?.(newInput);
   }
 
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
+  const togglePasswordVisibility = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (!disabled) {
+      setShowPassword(!showPassword);
+      setIsFocused(true);
+    }
   }
 
   const handleFocus = () => {
@@ -47,79 +52,70 @@ export default function Input({
     setIsFocused(false);
   }
 
-  const getIconSrc = () => {
-    if (icon == "mail" && isFocused) {
-      return mailDarkIcon.src;
-    } else if (icon == "lock" && isFocused) {
-      return lockDarkIcon.src
-    } else if (icon == "mail" && !isFocused) {
-      return mailIcon.src;
-    } else if (icon == "lock") {
-      return lockIcon.src;
+  const handleLabelMouseDown = (e: React.MouseEvent) => {
+    // Don't do anything if component is disabled
+    if (disabled) {
+      e.preventDefault();
+      return;
     }
+    
+    // Only prevent default if not clicking on the input itself
+    const target = e.target as HTMLElement;
+    if (target.tagName !== 'INPUT') {
+      e.preventDefault();
+    }
+    // Always set focus state when clicking anywhere in the component
+    setIsFocused(true);
   }
-    let inputType; 
-    if (type === "password" && !showPassword) {
-      inputType = "password";
-    } else {
-      inputType = "text";
-    }
+
+
+  let inputType;
+  if (type === "password" && !showPassword) {
+    inputType = "password";
+  } else {
+    inputType = "text";
+  }
 
 
   const getContainerClasses = () => {
-    if (disabled) {
-      return "flex items-center border-[1px] rounded-[10px] pl-[18px] w-[450px] h-[60px] border-gray-300 bg-gray-200 text-gray-300";
-    } else if (isFocused) {
-      return "flex items-center border-[1px] rounded-[10px] pl-[18px] w-[450px] h-[60px] border-jila-400 bg-white text-gray-300";
-    } else { 
-      return "flex items-center border-[1px] rounded-[10px] pl-[18px] w-[450px] h-[60px] border-gray-300 bg-white text-gray-300";
-    }
+    return clsx(
+      "flex items-center border-[1px] rounded-[10px] pl-[18px] w-[450px] h-[60px]",
+      {
+        "border-gray-300 bg-gray-200 text-gray-300": disabled,
+        "border-jila-400 bg-white text-gray-300": !disabled && isFocused,
+        "border-gray-300 bg-white text-gray-300": !disabled && !isFocused,
+      }
+    );
   }
 
   const getInputClasses = () => {
-    if (disabled) {
-      return "link-text text-gray-300 w-[346px]";
-    } else if (isFocused) {
-      return "link-text text-type-400 w-[346px]";
-    } else {
-      return "link-text text-gray-300 w-[346px]";
-    }
+    return clsx(
+      "focus:outline-none link-text w-[346px]",
+      {
+        "text-gray-300": disabled || !isFocused,
+        "text-type-400": !disabled && isFocused,
+      }
+    );
   }
 
   return (
-    <label className={getContainerClasses()}>
-      <img className="pr-[8px]" src={getIconSrc()}></img>
+    <label htmlFor={id} className={getContainerClasses()} onMouseDown={handleLabelMouseDown}>
+      <div className="mr-[8px]">
+        {icon === 'mail' ? (isFocused ? (<Mail color="var(--color-type-400)" />) : (<Mail color="var(--color-gray-300)" />)) : isFocused ? <LockKeyhole color="var(--color-type-400)" /> : <LockKeyhole color="var(--color-gray-300)" />}
+      </div>
       <input
+        id={id}
         className={getInputClasses()}
         type={inputType}
-        name="userinput"
         value={input}
-        onChange = {handleInputChange}
+        placeholder={!isFocused && !input ? placeholder : ""}
+        onChange={handleInputChange}
         onFocus={handleFocus}
         onBlur={handleBlur}
         disabled={disabled} />
-      
-      {(() => {
-        if (showPasswordToggle && type === "password") {
-          return (
-          <img
-            className="pl-[12px] cursor-pointer"
-            src= {(() => {
-        if (showPassword && isFocused) {
-          return eyeDarkIcon.src;
-        } else if (!showPassword && isFocused) {
-          return eyeOffDarkIcon.src;
-        } else if (!showPassword && !isFocused) {
-          return eyeOffIcon.src;
-        } else {
-          return eyeIcon.src;
-        }
-      })()}
-            onClick = {togglePasswordVisibility}
-          ></img>
-        );  
-        }
-      })()}
+      <div onMouseDown={disabled ? undefined : togglePasswordVisibility}>
+        {showPasswordToggle && icon === 'lock' && type === 'password' && (showPassword ? (isFocused && showPassword ? (<Eye color="var(--color-type-400)" />) : (<Eye color="var(--color-gray-300)" />)) : isFocused && !showPassword ? (<EyeOff color="var(--color-type-400)"/>) : (<EyeOff color="var(--color-gray-300)" />))}
+      </div>
     </label>
   );
 }

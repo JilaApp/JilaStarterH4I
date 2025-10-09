@@ -7,25 +7,29 @@ export default function DevPage() {
       <div className="flex flex-col gap-y-[20px] pl-[20px] pr-[20px] pt-[20px] pb-[20px]">
         <Input
           type="email"
-          value="Enter Email"
+          id="email-input"
+          placeholder="Enter Email"
           icon="mail"
         />
 
         <Input
           type="email"
+          id="email-disabled-input"
           disabled
         />
 
         <Input
           type="password"
-          value="Enter Password"
+          placeholder="Enter Password"
+          id="password-input"
           icon="lock"
           showPasswordToggle
         />
 
         <Input
           type="password"
-          value="Enter Password"
+          placeholder="Enter Password"
+          id="password-disabled-input"
           icon="lock"
           disabled
         />
