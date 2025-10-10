@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 import DisplayBoxTailIcon from "@/assets/display-box-tail.svg";
+import Image from "next/image";
 
 interface DisplayBoxProps {
-  children: React.ReactNode[];
+  children: React.ReactNode;
 }
 
 export default function DisplayBox({ children }: DisplayBoxProps) {
@@ -20,9 +21,12 @@ export default function DisplayBox({ children }: DisplayBoxProps) {
       <div className="rounded-[16px] bg-white p-[75px] shadow-[0_-4px_80px_var(--shadow-jila-10)]">
         {children}
       </div>
-      <img
-        className="w-[200px] absolute -mt-[80px] ml-[450px] z-[-1] drop-shadow-[0_4px_80px_var(--shadow-jila-10)] rounded-[6px]"
+      <Image
+        className="absolute -mt-[80px] ml-[450px] z-[-1] drop-shadow-[0_4px_80px_var(--shadow-jila-10)] rounded-[6px]"
         src={DisplayBoxTailIcon.src}
+        alt="tail-icon"
+        width={200}
+        height={200}
       />
     </div>
   );
