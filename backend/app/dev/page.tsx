@@ -43,7 +43,7 @@ export default function DevPage() {
         height="12"
         border_radius="lg"
         hover_bg_color="type-400"
-        onClick="void"
+        // onClick="void"
       />
     </div>
   );
