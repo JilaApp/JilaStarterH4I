@@ -1,13 +1,49 @@
 "use client";
 import Notification from "@/components/Notification";
+import DisplayBox from "@/components/DisplayBox";
+
+function DisplayBoxInnerContent() {
+  return (
+    <div className="text-center">
+      <h1 className="text-2xl font-semibold mb-2">Welcome back!</h1>
+      <p className="text-gray-600 mb-6">
+        Enter your details to get signed into your admin account
+      </p>
+
+      <form className="flex flex-col gap-3">
+        <input
+          type="email"
+          placeholder="Enter email"
+          className="w-full rounded-md border border-gray-300 p-3"
+        />
+        <input
+          type="password"
+          placeholder="Enter password"
+          className="w-full rounded-md border border-gray-300 p-3"
+        />
+        <a href="#" className="text-sm text-jila-400 hover:underline">
+          Forgot your password?
+        </a>
+        <button className="w-full rounded-md bg-jila-400 text-white p-3 hover:bg-rose-900">
+          Sign in
+        </button>
+      </form>
+    </div>
+  );
+}
 
 export default function DevPage() {
   return (
     <div>
-      <Notification
-        message="We’ve resent the link to your email!"
-        onClose={() => {}}
-      />
+      <div className="flex flex-col gap-20 p-10">
+        <Notification
+          message="We’ve resent the link to your email!"
+          onClose={() => {}}
+        />
+        <DisplayBox>
+          <DisplayBoxInnerContent />
+        </DisplayBox>
+      </div>
       <div className="page-title-text">page-title-text</div>
       <div className="components-text">components-text</div>
       <div className="link-text">link-text</div>
