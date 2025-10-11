@@ -45,6 +45,31 @@ async function addVideo(input: AddVideoInput) {
   });
 }
 
+const removeVideoInput = z.object({
+  id: z.number().int(),
+});
+
+type RemoveVideoInput = z.infer<typeof removeVideoInput>;
+
+async function removeVideo(input: RemoveVideoInput) {
+  const existing = await prisma.videos.findUnique({
+    where: { id: input.id },
+  });
+
+  if (!existing) {
+    throw new TRPCError({
+      code: "CONFLICT",
+      message: `Video with id ${input.id} does not exist`,
+    });
+  }
+
+  await prisma.videos.delete({
+    where: {
+      id: input.id,
+    },
+  });
+}
+
 async function getAllVideos() {
   const videos = await prisma.videos.findMany();
   return videos;
@@ -55,4 +80,7 @@ export const videosRouter = router({
     .input(addVideoInput)
     .mutation(({ input }) => addVideo(input)),
   getAllVideos: publicProcedure.query(getAllVideos),
+  removeVideo: publicProcedure
+    .input(removeVideoInput)
+    .mutation(({ input }) => removeVideo(input)),
 });
