@@ -1,16 +1,15 @@
 "use client";
-<<<<<<<<< Temporary merge branch 1
 import Notification from "@/components/Notification";
+import Input from "@/components/Input";
 
 export default function DevPage() {
   return (
     <div>
-<<<<<<<<< Temporary merge branch 1
       <Notification
         message="We’ve resent the link to your email!"
         onClose={() => {}}
       />
-=========
+      =========
       <div className="flex flex-col gap-y-[20px] pl-[20px] pr-[20px] pt-[20px] pb-[20px]">
         <Input
           type="email"
@@ -37,13 +36,12 @@ export default function DevPage() {
           disabled
         />
       </div>
->>>>>>>>> Temporary merge branch 2
+      Temporary merge branch 2
       <div className="page-title-text">page-title-text</div>
       <div className="components-text">components-text</div>
       <div className="link-text">link-text</div>
       <div className="body1-desktop-semi-text">body1-desktop-semi-text</div>
       <div className="body1-desktop-bold-text">body1-desktop-bold-text</div>
-
       <div className="bg-cream-300">bg-cream-300</div>
       <div className="bg-jila-400">
         <div className="text-white">bg-jila-400</div>
