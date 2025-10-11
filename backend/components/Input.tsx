@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { clsx } from "clsx";
 
 import { Mail, LockKeyhole, Eye, EyeOff } from "lucide-react";
@@ -27,6 +27,7 @@ export default function Input({
   const [input, setInput] = useState("");
   const [isFocused, setIsFocused] = useState(false);
   const [showPassword, setShowPassword] = useState(true);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newInput = e.target.value;
@@ -40,7 +41,8 @@ export default function Input({
 
     if (!disabled) {
       setShowPassword(!showPassword);
-      setIsFocused(true);
+      // Focus the input element
+      inputRef.current?.focus();
     }
   };
 
@@ -127,6 +129,7 @@ export default function Input({
     >
       <div className="mr-[8px]">{renderIcon()}</div>
       <input
+        ref={inputRef}
         id={id}
         className={getInputClasses()}
         type={inputType}
