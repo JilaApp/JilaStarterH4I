@@ -5,7 +5,6 @@ import Image from "next/image";
 
 interface PageBackgroundProps {
   children: React.ReactNode;
-  orientation?: "left" | "right"; // which side is JILA red
 }
 
 function LogoPanel() {
@@ -24,27 +23,15 @@ function LogoPanel() {
   );
 }
 
-export default function PageBackground({
-  children,
-  orientation = "left",
-}: PageBackgroundProps) {
+export default function PageBackground({ children }: PageBackgroundProps) {
   return (
     <div className="relative w-full h-screen overflow-hidden">
       {/* background split */}
       <div className="absolute inset-0 flex bg-gradient-to-b from-[#A73D24] to-[#FFFBF3]">
-        {orientation === "left" ? (
-          <>
-            <LogoPanel />
-            <div className="bg-white w-3/5 h-full flex justify-center items-center rounded-tl-[60px]">
-              {children}
-            </div>
-          </>
-        ) : (
-          <>
-            <div className="bg-white w-3/5 h-full" />
-            <div className="bg-jila-400 w-2/5 h-full" />
-          </>
-        )}
+        <LogoPanel />
+        <div className="bg-[#FFFBF3] w-3/5 h-full flex justify-center items-center rounded-tl-[60px]">
+          {children}
+        </div>
       </div>
     </div>
   );
