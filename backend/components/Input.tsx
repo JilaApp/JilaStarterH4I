@@ -66,6 +66,34 @@ export default function Input({
     setIsFocused(true);
   };
 
+  const renderIcon = () => {
+    const iconColor = isFocused
+      ? "var(--color-type-400)"
+      : "var(--color-gray-300)";
+
+    if (icon === "mail") {
+      return <Mail color={iconColor} />;
+    } else {
+      return <LockKeyhole color={iconColor} />;
+    }
+  };
+
+  const renderPasswordToggle = () => {
+    if (!showPasswordToggle || icon !== "lock" || type !== "password") {
+      return null;
+    }
+
+    const iconColor = isFocused
+      ? "var(--color-type-400)"
+      : "var(--color-gray-300)";
+
+    if (showPassword) {
+      return <Eye color={iconColor} />;
+    } else {
+      return <EyeOff color={iconColor} />;
+    }
+  };
+
   let inputType;
   if (type === "password" && !showPassword) {
     inputType = "password";
@@ -97,19 +125,7 @@ export default function Input({
       className={getContainerClasses()}
       onMouseDown={handleLabelMouseDown}
     >
-      <div className="mr-[8px]">
-        {icon === "mail" ? (
-          isFocused ? (
-            <Mail color="var(--color-type-400)" />
-          ) : (
-            <Mail color="var(--color-gray-300)" />
-          )
-        ) : isFocused ? (
-          <LockKeyhole color="var(--color-type-400)" />
-        ) : (
-          <LockKeyhole color="var(--color-gray-300)" />
-        )}
-      </div>
+      <div className="mr-[8px]">{renderIcon()}</div>
       <input
         id={id}
         className={getInputClasses()}
@@ -122,20 +138,7 @@ export default function Input({
         disabled={disabled}
       />
       <div onMouseDown={disabled ? undefined : togglePasswordVisibility}>
-        {showPasswordToggle &&
-          icon === "lock" &&
-          type === "password" &&
-          (showPassword ? (
-            isFocused && showPassword ? (
-              <Eye color="var(--color-type-400)" />
-            ) : (
-              <Eye color="var(--color-gray-300)" />
-            )
-          ) : isFocused && !showPassword ? (
-            <EyeOff color="var(--color-type-400)" />
-          ) : (
-            <EyeOff color="var(--color-gray-300)" />
-          ))}
+        {renderPasswordToggle()}
       </div>
     </label>
   );
