@@ -1,6 +1,7 @@
 "use client";
 import Notification from "@/components/Notification";
 import DisplayBox from "@/components/DisplayBox";
+import PageBackground from "@/components/PageBackground";
 
 function DisplayBoxInnerContent() {
   return (
@@ -43,6 +44,11 @@ export default function DevPage() {
         <DisplayBox>
           <DisplayBoxInnerContent />
         </DisplayBox>
+        <PageBackground>
+          <DisplayBox>
+            <DisplayBoxInnerContent />
+          </DisplayBox>
+        </PageBackground>
       </div>
       <div className="page-title-text">page-title-text</div>
       <div className="components-text">components-text</div>
