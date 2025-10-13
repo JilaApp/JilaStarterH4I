@@ -33,18 +33,7 @@ export default function DevPage() {
       <div className="bg-gray-300">bg-gray-300</div>
       <div className="bg-gray-200">bg-gray-200</div>
 
-      <Button
-        text="Sign In"
-        bg_color="jila-400"
-        text_color="white-400"
-        font_size="base"
-        padding="3"
-        width="60"
-        height="12"
-        border_radius="lg"
-        hover_bg_color="type-400"
-        // onClick="void"
-      />
+      <Button text="Sign In" onClick={() => console.log("Hello!")} />
     </div>
   );
 }
