@@ -1,55 +1,45 @@
 "use client";
 import Notification from "@/components/Notification";
-import DisplayBox from "@/components/DisplayBox";
-
-function DisplayBoxInnerContent() {
-  return (
-    <div className="text-center">
-      <h1 className="text-2xl font-semibold mb-2">Welcome back!</h1>
-      <p className="text-gray-600 mb-6">
-        Enter your details to get signed into your admin account
-      </p>
-
-      <form className="flex flex-col gap-3">
-        <input
-          type="email"
-          placeholder="Enter email"
-          className="w-full rounded-md border border-gray-300 p-3"
-        />
-        <input
-          type="password"
-          placeholder="Enter password"
-          className="w-full rounded-md border border-gray-300 p-3"
-        />
-        <a href="#" className="text-sm text-jila-400 hover:underline">
-          Forgot your password?
-        </a>
-        <button className="w-full rounded-md bg-jila-400 text-white p-3 hover:bg-rose-900">
-          Sign in
-        </button>
-      </form>
-    </div>
-  );
-}
+import Input from "@/components/Input";
 
 export default function DevPage() {
   return (
     <div>
-      <div className="flex flex-col gap-20 p-10">
-        <Notification
-          message="We’ve resent the link to your email!"
-          onClose={() => {}}
+      <Notification
+        message="We’ve resent the link to your email!"
+        onClose={() => {}}
+      />
+      <div className="flex flex-col gap-y-[20px] pl-[20px] pr-[20px] pt-[20px] pb-[20px]">
+        <Input
+          type="email"
+          id="email-input"
+          placeholder="Enter Email"
+          icon="mail"
         />
-        <DisplayBox>
-          <DisplayBoxInnerContent />
-        </DisplayBox>
+
+        <Input type="email" id="email-disabled-input" disabled />
+
+        <Input
+          type="password"
+          placeholder="Enter Password"
+          id="password-input"
+          icon="lock"
+          showPasswordToggle
+        />
+
+        <Input
+          type="password"
+          placeholder="Enter Password"
+          id="password-disabled-input"
+          icon="lock"
+          disabled
+        />
       </div>
       <div className="page-title-text">page-title-text</div>
       <div className="components-text">components-text</div>
       <div className="link-text">link-text</div>
       <div className="body1-desktop-semi-text">body1-desktop-semi-text</div>
       <div className="body1-desktop-bold-text">body1-desktop-bold-text</div>
-
       <div className="bg-cream-300">bg-cream-300</div>
       <div className="bg-jila-400">
         <div className="text-white">bg-jila-400</div>
