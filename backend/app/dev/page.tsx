@@ -1,4 +1,5 @@
 "use client";
+import Button from "@/components/Button";
 import Notification from "@/components/Notification";
 import Input from "@/components/Input";
 
@@ -62,6 +63,8 @@ export default function DevPage() {
       <div className="bg-gray-400">bg-gray-400</div>
       <div className="bg-gray-300">bg-gray-300</div>
       <div className="bg-gray-200">bg-gray-200</div>
+
+      <Button text="Sign In" onClick={() => console.log("Hello!")} />
     </div>
   );
 }
