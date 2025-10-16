@@ -1,9 +1,16 @@
 "use client";
+import { useState } from "react";
 import Button from "@/components/Button";
 import Notification from "@/components/Notification";
 import Input from "@/components/Input";
+import Dropdown from "@/components/Dropdown";
 
 export default function DevPage() {
+  const [dropdownValue, setDropdownValue] = useState<string>("");
+
+  const onDropdownChange = (value: string) => {
+    setDropdownValue(value);
+  };
   return (
     <div>
       <Notification
@@ -36,6 +43,24 @@ export default function DevPage() {
           disabled
         />
       </div>
+      <Dropdown
+        options={[
+          "Part-time",
+          "Full-time",
+          "Internship",
+          "Part-time",
+          "Full-time",
+          "Internship",
+          "Part-time",
+          "Full-time",
+          "Internship",
+          "Part-time",
+          "Full-time",
+          "Internship",
+        ]}
+        currentValue={dropdownValue}
+        onChange={onDropdownChange}
+      />{" "}
       <div className="page-title-text">page-title-text</div>
       <div className="components-text">components-text</div>
       <div className="link-text">link-text</div>
@@ -63,7 +88,6 @@ export default function DevPage() {
       <div className="bg-gray-400">bg-gray-400</div>
       <div className="bg-gray-300">bg-gray-300</div>
       <div className="bg-gray-200">bg-gray-200</div>
-
       <Button text="Sign In" onClick={() => console.log("Hello!")} />
     </div>
   );
