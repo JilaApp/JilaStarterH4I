@@ -1,10 +1,10 @@
 import * as React from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
-import { useSignUp } from "@clerk/clerk-expo";
+import { useSignIn } from "@clerk/clerk-expo";
 import { Link } from "expo-router";
 
 export default function SignUpScreen() {
-  const { isLoaded, signUp } = useSignUp();
+  const { isLoaded, signIn } = useSignIn();
 
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
@@ -15,8 +15,8 @@ export default function SignUpScreen() {
 
     // Start sign-up process using email and password provided
     try {
-      await signUp.create({
-        username,
+      await signIn.create({
+        identifier: username,
         password,
       });
     } catch (err) {
@@ -29,7 +29,7 @@ export default function SignUpScreen() {
   return (
     <View>
       <>
-        <Text>Sign up</Text>
+        <Text>Sign in</Text>
         <TextInput
           autoCapitalize="none"
           value={username}
@@ -45,12 +45,6 @@ export default function SignUpScreen() {
         <TouchableOpacity onPress={onSignUpPress}>
           <Text>Continue</Text>
         </TouchableOpacity>
-        <View style={{ display: "flex", flexDirection: "row", gap: 3 }}>
-          <Text>Already have an account?</Text>
-          <Link href="/auth/sign-in">
-            <Text>Sign in</Text>
-          </Link>
-        </View>
       </>
     </View>
   );
