@@ -33,6 +33,17 @@ model videos {
   language    String
 }
 
+model social_services {
+  id            Int            @id @default(autoincrement())
+  title         String
+  category      SocialServiceCategory
+  phone_number  Int?           @unique
+  address       String?
+  description   String?
+  url           String?        @unique
+}
+
+
 enum VideoSource {
   YOUTUBE
   GOOGLE_DRIVE
@@ -45,5 +56,13 @@ enum VideoCategory {
   MEDICAL
   TRANSPORTATION
   LEGAL
+  OTHER
+}
+
+enum SocialServiceCategory {
+  EMERGENCIA
+  SHELTERS
+  FOOD
+  TRANSPORTATION
   OTHER
 }
