@@ -39,4 +39,4 @@ yarn-error.log*
 *.tsbuildinfo
 
 # clerk configuration (can include secrets)
-/.clerk/
+.clerk/
