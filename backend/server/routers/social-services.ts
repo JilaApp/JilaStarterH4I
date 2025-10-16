@@ -4,7 +4,6 @@ import { SocialServiceCategory } from "@prisma/client";
 import prisma from "../../lib/prisma";
 import { TRPCError } from "@trpc/server";
 
-
 // ADDING
 const addSocialServiceInput = z.object({
   // mandatory
@@ -21,7 +20,6 @@ const addSocialServiceInput = z.object({
 type AddSocialServiceInput = z.infer<typeof addSocialServiceInput>;
 
 async function addSocialService(input: AddSocialServiceInput) {
-
   const existing = await prisma.social_services.findUnique({
     where: { phone_number: input.phone_number },
     select: { id: true },
@@ -45,7 +43,6 @@ async function addSocialService(input: AddSocialServiceInput) {
     },
   });
 }
-
 
 // REMOVING
 const removeSocialServiceInput = z.object({
@@ -72,7 +69,6 @@ async function removeSocialService(input: RemoveSocialServiceInput) {
     },
   });
 }
-
 
 // EDITTING
 const editSocialServiceInput = z.object({
@@ -117,13 +113,11 @@ async function editSocialService(input: EditSocialServiceInput) {
   });
 }
 
-
 // GET ALL
 async function getAllSocialServices() {
   const services = await prisma.social_services.findMany();
   return services;
 }
-
 
 // ROUTER EXPORT
 export const socialServicesRouter = router({
