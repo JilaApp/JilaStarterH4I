@@ -3,16 +3,18 @@ import { ChevronDown } from "lucide-react";
 
 interface DropdownProps {
   options: string[];
-  currentValue?: string;
-  onChange: (value: string) => void;
+  currentIndex?: number;
+  onChange: (value: number) => void;
   placeholder?: string;
+  state?: "normal" | "error";
 }
 
 export default function Dropdown({
   options,
-  currentValue,
+  currentIndex = undefined,
   onChange,
   placeholder = "Choose the most applicable",
+  state = "normal",
 }: DropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -20,11 +22,13 @@ export default function Dropdown({
     <div className="relative inline-block w-full">
       <button
         onClick={() => setIsOpen((prev) => !prev)}
-        className={`w-full h-[60px] border-[1px] border-gray-300 rounded-[10px] px-[16px] py-[10px] bg-white text-left flex justify-between items-center font-[500] cursor-pointer ${
-          currentValue ? "text-black" : "text-gray-400"
+        className={`w-full h-[60px] border-[1px] ${state == "normal" ? "border-gray-300" : "border-[var(--color-error-400)]"} rounded-[10px] px-[16px] py-[10px] bg-white text-left flex justify-between items-center font-[500] cursor-pointer ${
+          currentIndex !== undefined ? "text-black" : "text-gray-400"
         }`}
       >
-        <span>{currentValue || placeholder}</span>
+        <span>
+          {currentIndex !== undefined ? options[currentIndex] : placeholder}
+        </span>
         <ChevronDown
           className={`transition-transform duration-300 ${isOpen ? "rotate-180" : "rotate-0"}`}
           color="black"
@@ -37,15 +41,17 @@ export default function Dropdown({
           ${isOpen ? "scale-y-100 opacity-100" : "scale-y-0 opacity-0 pointer-events-none"}
         `}
       >
-        {options.map((option) => (
+        {options.map((option, index) => (
           <li
-            key={option}
+            key={index}
             onClick={() => {
-              onChange(option);
+              onChange(index);
               setIsOpen(false);
             }}
             className={`px-[16px] py-[10px] hover:bg-gray-100 cursor-pointer ${
-              option === currentValue ? "bg-gray-200" : ""
+              currentIndex !== undefined && index == currentIndex
+                ? "bg-gray-200"
+                : ""
             }`}
           >
             {option}
