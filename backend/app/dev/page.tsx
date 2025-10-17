@@ -8,9 +8,14 @@ import FormInputWrapper from "@/components/FormInputWrapper";
 
 export default function DevPage() {
   const [dropdownIndex, setDropdownIndex] = useState<number>();
+  const [errorDropdownIndex, setErrorDropdownIndex] = useState<number>();
 
   const onDropdownChange = (index: number) => {
     setDropdownIndex(index);
+  };
+
+  const onErrorDropdownChange = (index: number) => {
+    setErrorDropdownIndex(index);
   };
   return (
     <>
@@ -72,8 +77,8 @@ export default function DevPage() {
         >
           <Dropdown
             options={["Part-time", "Full-time", "Internship"]}
-            currentIndex={dropdownIndex}
-            onChange={onDropdownChange}
+            currentIndex={errorDropdownIndex}
+            onChange={onErrorDropdownChange}
           />
         </FormInputWrapper>
         <FormInputWrapper

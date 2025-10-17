@@ -40,7 +40,7 @@ export default function Dropdown({
     <div className="relative inline-block w-full" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen((prev) => !prev)}
-        className={`w-full h-[60px] border-[1px] ${state == "normal" ? "border-gray-300" : "border-[var(--color-error-400)]"} rounded-[10px] px-[16px] py-[10px] bg-white text-left flex justify-between items-center font-[500] cursor-pointer ${
+        className={`w-full h-[60px] border-[1px] ${state == "normal" ? "border-gray-300" : "border-[var(--color-error-400)] shadow-[0_0_0_3px_#FFA8A8]"} rounded-[10px] px-[16px] py-[10px] bg-white text-left flex justify-between items-center font-[500] cursor-pointer ${
           currentIndex !== undefined ? "text-black" : "text-gray-400"
         }`}
       >

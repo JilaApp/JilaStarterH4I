@@ -128,7 +128,10 @@ export default function Input({
       onMouseDown={handleLabelMouseDown}
       style={
         state === "error"
-          ? { borderColor: "var(--color-error-400)" }
+          ? {
+              borderColor: "var(--color-error-400)",
+              boxShadow: "0 0 0 3px #FFA8A8",
+            }
           : undefined
       }
     >
