@@ -63,7 +63,7 @@ export default function DevPage() {
           ]}
           currentIndex={dropdownIndex}
           onChange={onDropdownChange}
-        />{" "}
+        />
         <FormInputWrapper
           required={true}
           title="Title"

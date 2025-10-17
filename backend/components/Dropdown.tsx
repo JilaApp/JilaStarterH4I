@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ChevronDown } from "lucide-react";
 
 interface DropdownProps {
@@ -18,8 +18,26 @@ export default function Dropdown({
 }: DropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
 
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
-    <div className="relative inline-block w-full">
+    <div className="relative inline-block w-full" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen((prev) => !prev)}
         className={`w-full h-[60px] border-[1px] ${state == "normal" ? "border-gray-300" : "border-[var(--color-error-400)]"} rounded-[10px] px-[16px] py-[10px] bg-white text-left flex justify-between items-center font-[500] cursor-pointer ${
