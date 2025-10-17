@@ -1,7 +1,7 @@
 import { router, publicProcedure } from "../trpc";
 import { z } from "zod";
 import { SocialServiceCategory } from "@prisma/client";
-import prisma from "../../lib/prisma";
+import prisma from "@/lib/prisma";
 import { TRPCError } from "@trpc/server";
 
 // ADDING
@@ -9,7 +9,7 @@ const addSocialServiceInput = z.object({
   // mandatory
   title: z.string(),
   category: z.enum(SocialServiceCategory),
-  phone_number: z.number().int(),
+  phone_number: z.string(),
 
   // optional
   address: z.string().optional(),
@@ -58,7 +58,7 @@ async function removeSocialService(input: RemoveSocialServiceInput) {
 
   if (!existing) {
     throw new TRPCError({
-      code: "CONFLICT",
+      code: "NOT_FOUND",
       message: `Social Service with id ${input.id} does not exist`,
     });
   }
@@ -70,7 +70,7 @@ async function removeSocialService(input: RemoveSocialServiceInput) {
   });
 }
 
-// EDITTING
+// EDITING
 const editSocialServiceInput = z.object({
   // mandatory
   id: z.number(),
@@ -93,7 +93,7 @@ async function editSocialService(input: EditSocialServiceInput) {
 
   if (!existing) {
     throw new TRPCError({
-      code: "CONFLICT",
+      code: "NOT_FOUND",
       message: `Social Service with id ${input.id} does not exist`,
     });
   }

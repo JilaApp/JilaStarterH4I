@@ -37,7 +37,7 @@ model social_services {
   id            Int            @id @default(autoincrement())
   title         String
   category      SocialServiceCategory
-  phone_number  Int?           @unique
+  phone_number  String         @unique @db.VarChar(20)
   address       String?
   description   String?
   url           String?        @unique
