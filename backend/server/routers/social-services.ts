@@ -76,7 +76,7 @@ const editSocialServiceInput = z.object({
   id: z.number(),
   title: z.string(),
   category: z.enum(SocialServiceCategory),
-  phone_number: z.number().int(),
+  phone_number: z.string(),
 
   // optional
   address: z.string().optional(),
