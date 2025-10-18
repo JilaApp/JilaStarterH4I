@@ -2,6 +2,7 @@
 import Button from "@/components/Button";
 import Notification from "@/components/Notification";
 import Input from "@/components/Input";
+import TopicTag from "@/components/TopicTag";
 
 export default function DevPage() {
   return (
@@ -35,6 +36,15 @@ export default function DevPage() {
           icon="lock"
           disabled
         />
+        <TopicTag variant="Career" />
+        <TopicTag variant="Legal" />
+        <TopicTag variant="Medical" />
+        <TopicTag variant="Transport" />
+        <TopicTag variant="Other" />
+        <TopicTag variant="Shelters" />
+        <TopicTag variant="Food" />
+        <TopicTag variant="Emergencia" />
+        <TopicTag variant="Transportation" />
       </div>
       <div className="page-title-text">page-title-text</div>
       <div className="components-text">components-text</div>
