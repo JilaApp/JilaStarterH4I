@@ -2,119 +2,113 @@
 
 import { useEffect, useState } from "react";
 import { useSignUp } from "@clerk/nextjs";
-import { useRouter } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import Input from "@/components/Input";
 import Button from "@/components/Button";
 import DisplayBox from "@/components/DisplayBox";
 
 export default function InviteSignUpPage() {
-  // Clerk hooks
   const { isLoaded, signUp, setActive } = useSignUp();
+  const searchParams = useSearchParams();
   const router = useRouter();
 
-  // Component state
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  // State to prevent running the invitation check multiple times
-  const [invitationChecked, setInvitationChecked] = useState(false);
+  // New state to prevent re-running the ticket creation
+  const [isTicketProcessed, setIsTicketProcessed] = useState(false);
 
-  // This useEffect now correctly processes the invitation ticket
   useEffect(() => {
-    // Ensure all dependencies are loaded before proceeding
-    if (!isLoaded || !signUp || invitationChecked) {
+    if (!isLoaded || isTicketProcessed) {
       return;
     }
 
-    // This async function handles the creation of the sign-up from the ticket
-    const processInvitation = async () => {
+    const ticket = searchParams.get("__clerk_ticket");
+
+    if (!ticket) {
+      setError(
+        "Invitation ticket is missing. Please use the link provided in your email.",
+      );
+      return;
+    }
+
+    const createSignUpFromTicket = async () => {
       try {
-        // This is the key step: create the sign-up using the ticket strategy.
-        // Clerk automatically finds the __clerk_ticket from the URL.
-        await signUp.create({
+        const createdSignUp = await signUp.create({
           strategy: "ticket",
+          ticket: ticket,
         });
 
-        // After creation, the signUp object is now populated with the invitation data
-        if (signUp.emailAddress) {
-          setEmail(signUp.emailAddress);
-        } else {
-          setError("Invitation is invalid or has expired. No email found.");
+        // If sign up is successful and has an email, set it
+        if (
+          createdSignUp.status === "missing_requirements" &&
+          createdSignUp.emailAddress
+        ) {
+          setEmail(createdSignUp.emailAddress);
         }
       } catch (err: any) {
-        console.error("Error processing invitation ticket:", err);
+        console.error(
+          "Error processing invitation ticket:",
+          JSON.stringify(err, null, 2),
+        );
         setError(
           err.errors?.[0]?.longMessage ||
             "This invitation is invalid or has expired.",
         );
       } finally {
-        // Mark the check as complete to prevent re-running
-        setInvitationChecked(true);
+        // Mark the ticket as processed regardless of outcome to prevent re-running
+        setIsTicketProcessed(true);
       }
     };
 
-    // Only run the process if the sign-up status indicates no process has started
-    if (signUp.status === "missing_requirements") {
-      processInvitation();
-    } else if (signUp.emailAddress) {
-      // If the page reloads and a signUp is already active, just set the email
-      setEmail(signUp.emailAddress);
-      setInvitationChecked(true);
-    }
-  }, [isLoaded, signUp, invitationChecked]);
+    createSignUpFromTicket();
+  }, [isLoaded, searchParams, signUp, isTicketProcessed]); // Dependencies are now safer
 
-  // This handleSubmit now uses the correct flow for completing the sign-up
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!isLoaded || !signUp) {
-      setError("Sign up is not loaded yet");
-      return;
+      return setError(
+        "The sign-up component is not ready. Please refresh the page.",
+      );
     }
 
     setError("");
-
     if (password !== confirmPassword) {
-      return setError("Passwords do not match");
+      return setError("Passwords do not match.");
     }
     if (password.length < 8) {
-      return setError("Password must be at least 8 characters");
+      return setError("Password must be at least 8 characters long.");
     }
 
     setIsLoading(true);
 
     try {
-      // The invitation flow only requires updating the sign-up with the password.
       const result = await signUp.update({
         password,
       });
 
-      console.log("Sign up update result:", result);
-
-      // Check if the sign-up is complete
       if (result.status === "complete") {
-        // If complete, set the session as active and redirect
         await setActive({ session: result.createdSessionId });
         router.push("/");
       } else {
-        // This case should ideally not be hit in a normal flow
         console.error("Sign up status is not complete:", result);
-        setError("Could not complete sign up. Please try again.");
+        setError("Could not complete your sign up. Please try again.");
       }
     } catch (err: any) {
       console.error("Error completing sign up:", JSON.stringify(err, null, 2));
       setError(
-        err.errors?.[0]?.longMessage || "An error occurred during sign up.",
+        err.errors?.[0]?.longMessage ||
+          "An unexpected error occurred during sign up.",
       );
     } finally {
       setIsLoading(false);
     }
   };
 
-  // ... your JSX remains the same, but the email field will now be populated
   return (
     <div className="flex min-h-screen items-center justify-center bg-cream-300 p-4">
       <DisplayBox>
@@ -137,14 +131,12 @@ export default function InviteSignUpPage() {
               <Input
                 type="email"
                 id="email-input"
-                // The value will now be correctly set from the state
                 value={email}
                 disabled
-                placeholder="Loading email..."
+                placeholder="Loading from invitation..."
               />
             </div>
 
-            {/* ... rest of your form ... */}
             <div>
               <label className="components-text text-type-400 mb-2 block">
                 Password
@@ -183,8 +175,9 @@ export default function InviteSignUpPage() {
 
             <Button
               text={isLoading ? "Creating Account..." : "Create Account"}
-              type="submit" // Ensure button type is submit for form
+              type="submit"
               defaultClassName="w-full"
+              disabled={isLoading || !email}
             />
           </form>
         </div>
