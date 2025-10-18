@@ -135,7 +135,7 @@ export default function InviteSignUpPage() {
               Complete Your Registration
             </h1>
             <p className="body1-desktop-text text-type-400">
-              You've been invited to join. Create your password to get started.
+              You&apos;ve been invited to join. Create your password to get started.
             </p>
           </div>
 
