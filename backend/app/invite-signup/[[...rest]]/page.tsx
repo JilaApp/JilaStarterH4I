@@ -93,7 +93,7 @@ export default function InviteSignUpPage() {
 
       if (result.status === "complete") {
         await setActive({ session: result.createdSessionId });
-        router.push("/");
+        router.push("/dashboard");
       } else {
         console.error("Sign up status is not complete:", result);
         setError("Could not complete your sign up. Please try again.");
