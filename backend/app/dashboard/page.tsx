@@ -57,15 +57,15 @@ export default function DashboardPage() {
               <h2 className="body1-desktop-bold-text text-type-400 mb-2">
                 Welcome, {user.emailAddresses[0]?.emailAddress}
               </h2>
-              <p className="text-gray-400">
-                Role: Admin
-              </p>
+              <p className="text-gray-400">Role: Admin</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Link href="/dashboard/users">
                 <div className="bg-jila-300 hover:bg-jila-400 transition-colors p-6 rounded-lg cursor-pointer">
-                  <h3 className="components-text text-white-400">View All Users</h3>
+                  <h3 className="components-text text-white-400">
+                    View All Users
+                  </h3>
                   <p className="text-white-400 text-sm mt-2">
                     See all admin and app users
                   </p>
@@ -73,10 +73,10 @@ export default function DashboardPage() {
               </Link>
 
               <div className="bg-orange-300 hover:bg-orange-400 transition-colors p-6 rounded-lg cursor-pointer">
-                <h3 className="components-text text-white-400">Video Management</h3>
-                <p className="text-white-400 text-sm mt-2">
-                  Coming soon...
-                </p>
+                <h3 className="components-text text-white-400">
+                  Video Management
+                </h3>
+                <p className="text-white-400 text-sm mt-2">Coming soon...</p>
               </div>
             </div>
           </div>

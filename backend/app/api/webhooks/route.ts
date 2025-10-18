@@ -7,66 +7,85 @@ export async function POST(req: NextRequest) {
   try {
     const evt = await verifyWebhook(req);
 
-    const { id: clerkId, type } = evt;
     const eventType = evt.type;
-
-    console.log(`Received webhook with ID ${clerkId} and event type of ${eventType}`);
+    console.log(`\n========== WEBHOOK RECEIVED ==========`);
+    console.log(`Event Type: ${eventType}`);
 
     // Handle user creation
     if (eventType === "user.created") {
       const data = evt.data;
-      
-      // Check if this is an admin (invited user)
+
+      console.log(`User ID: ${data.id}`);
+      console.log(`Public Metadata:`, data.public_metadata);
+      console.log(`Unsafe Metadata:`, data.unsafe_metadata);
+      console.log(`======================================\n`);
+
       const isAdmin = data.public_metadata?.invitation_accepted === true;
-      
+      console.log(`Is Admin: ${isAdmin}`);
+
       if (isAdmin) {
-        // Create Admin User
         const email = data.email_addresses?.[0]?.email_address;
-        
+
         if (!email) {
           console.error("Admin user created without email");
-          return NextResponse.json({ error: "Email required for admin" }, { status: 400 });
+          return NextResponse.json(
+            { error: "Email required for admin" },
+            { status: 400 },
+          );
         }
 
+        console.log(`Creating admin user for: ${email}`);
+
         // Set userType in Clerk metadata
-        await clerkClient.users.updateUserMetadata(data.id, {
-          publicMetadata: { userType: "admin" }
+        const client = await clerkClient(); // Correctly get the client instance
+        await client.users.updateUserMetadata(data.id, {
+          publicMetadata: { userType: "admin" },
         });
 
-        // Create in database
+        console.log(`Set userType=admin for ${data.id}`);
+
         await prisma.adminUser.create({
           data: {
             clerkId: data.id,
             email: email,
-            communityOrg: "Default Org", // Will be updated by admin later
+            communityOrg: "Default Org",
           },
         });
 
-        console.log(`Admin user created: ${email}`);
+        console.log(`Admin user created in database: ${email}`);
       } else {
-        // Create App User (mobile user)
         const username = data.username;
-        
+
         if (!username) {
           console.error("App user created without username");
-          return NextResponse.json({ error: "Username required for app user" }, { status: 400 });
+          return NextResponse.json(
+            { error: "Username required for app user" },
+            { status: 400 },
+          );
         }
 
-        // Get community org and language from unsafe metadata (set during signup)
+        console.log(`Creating app user for: ${username}`);
+
         const communityOrg = data.unsafe_metadata?.communityOrg as string;
         const language = data.unsafe_metadata?.language as string;
+        console.log(`Community Org: ${communityOrg}, Language: ${language}`);
 
         if (!communityOrg || !language) {
           console.error("App user missing required fields");
-          return NextResponse.json({ error: "Community org and language required" }, { status: 400 });
+          return NextResponse.json(
+            { error: "Community org and language required" },
+            { status: 400 },
+          );
         }
 
         // Set userType in Clerk metadata
-        await clerkClient.users.updateUserMetadata(data.id, {
-          publicMetadata: { userType: "app_user" }
+        const client = await clerkClient(); // Correctly get the client instance
+        await client.users.updateUserMetadata(data.id, {
+          publicMetadata: { userType: "app_user" },
         });
 
-        // Create in database
+        console.log(`Set userType=app_user for ${data.id}`);
+
         await prisma.appUser.create({
           data: {
             clerkId: data.id,
@@ -76,7 +95,7 @@ export async function POST(req: NextRequest) {
           },
         });
 
-        console.log(`App user created: ${username}`);
+        console.log(`App user created in database: ${username}`);
       }
     }
 
@@ -84,6 +103,8 @@ export async function POST(req: NextRequest) {
     if (eventType === "user.updated") {
       const data = evt.data;
       const userType = data.public_metadata?.userType;
+
+      console.log(`User updated: ${data.id}, userType: ${userType}`);
 
       if (userType === "admin") {
         await prisma.adminUser.update({
@@ -107,22 +128,35 @@ export async function POST(req: NextRequest) {
     // Handle user deletion
     if (eventType === "user.deleted") {
       const data = evt.data;
-      const userType = data.public_metadata?.userType;
 
-      if (userType === "admin") {
-        await prisma.adminUser.delete({
-          where: { clerkId: data.id },
-        });
-      } else if (userType === "app_user") {
-        await prisma.appUser.delete({
-          where: { clerkId: data.id },
-        });
+      // Note: public_metadata is not available in the webhook payload for user.deleted events.
+      // We must try to delete from both tables. One will succeed, the other will fail gracefully.
+      console.log(`Attempting to delete user: ${data.id}`);
+
+      try {
+        await prisma.adminUser.delete({ where: { clerkId: data.id } });
+        console.log(`Deleted admin user: ${data.id}`);
+      } catch (e) {
+        // Suppress error if user not found, as they might be an app_user
+      }
+
+      try {
+        await prisma.appUser.delete({ where: { clerkId: data.id } });
+        console.log(`Deleted app user: ${data.id}`);
+      } catch (e) {
+        // Suppress error if user not found, as they might have been an admin_user
       }
     }
 
-    return NextResponse.json({ message: "Webhook processed successfully" }, { status: 200 });
+    return NextResponse.json(
+      { message: "Webhook processed successfully" },
+      { status: 200 },
+    );
   } catch (err) {
     console.error("Error processing webhook:", err);
-    return NextResponse.json({ error: "Error processing webhook" }, { status: 400 });
+    return NextResponse.json(
+      { error: "Error processing webhook" },
+      { status: 400 },
+    );
   }
 }

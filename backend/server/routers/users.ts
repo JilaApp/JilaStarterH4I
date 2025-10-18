@@ -4,7 +4,7 @@ import prisma from "../../lib/prisma";
 async function getAllAdminUsers() {
   const adminUsers = await prisma.adminUser.findMany({
     orderBy: {
-      createdAt: 'desc',
+      createdAt: "desc",
     },
   });
   return adminUsers;
@@ -13,7 +13,7 @@ async function getAllAdminUsers() {
 async function getAllAppUsers() {
   const appUsers = await prisma.appUser.findMany({
     orderBy: {
-      createdAt: 'desc',
+      createdAt: "desc",
     },
   });
   return appUsers;

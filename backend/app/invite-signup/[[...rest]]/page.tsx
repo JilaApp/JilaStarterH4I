@@ -27,7 +27,7 @@ export default function InviteSignUpPage() {
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!isLoaded) return;
 
     if (password !== confirmPassword) {
@@ -81,7 +81,7 @@ export default function InviteSignUpPage() {
               Set your password to complete admin registration
             </p>
           </div>
-          
+
           <form onSubmit={handleSignUp} className="flex flex-col gap-y-5">
             <Input
               type="email"
@@ -113,9 +113,7 @@ export default function InviteSignUpPage() {
               onChange={setConfirmPassword}
             />
 
-            {error && (
-              <div className="text-error-400 text-sm">{error}</div>
-            )}
+            {error && <div className="text-error-400 text-sm">{error}</div>}
 
             <Button
               text={loading ? "Creating account..." : "Complete Signup"}

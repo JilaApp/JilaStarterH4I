@@ -18,7 +18,7 @@ export default function SignInPage() {
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!isLoaded) return;
 
     setError("");
@@ -47,7 +47,7 @@ export default function SignInPage() {
       <DisplayBox>
         <div className="flex flex-col gap-y-8">
           <h1 className="page-title-text text-jila-400">Admin Sign In</h1>
-          
+
           <form onSubmit={handleSignIn} className="flex flex-col gap-y-5">
             <Input
               type="email"
@@ -68,9 +68,7 @@ export default function SignInPage() {
               onChange={setPassword}
             />
 
-            {error && (
-              <div className="text-error-400 text-sm">{error}</div>
-            )}
+            {error && <div className="text-error-400 text-sm">{error}</div>}
 
             <Button
               text={loading ? "Signing in..." : "Sign In"}
