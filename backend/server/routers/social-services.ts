@@ -101,19 +101,21 @@ async function editSocialService(input: EditSocialServiceInput) {
     phone_number: input.phone_number,
     address: input.address,
     description: input.description,
-    url: input.url
-  }
+    url: input.url,
+  };
 
   // used to filter out undefined properties from input
   const data = Object.fromEntries(
-    Object.entries(removing_undefined_vals).filter(([_, value]) => value !== undefined)
+    Object.entries(removing_undefined_vals).filter(
+      ([_, value]) => value !== undefined,
+    ),
   );
 
   await prisma.socialServices.update({
     where: {
       id: input.id,
     },
-    data
+    data,
   });
 }
 
