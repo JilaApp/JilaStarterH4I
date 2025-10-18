@@ -11,7 +11,7 @@ datasource db {
   directUrl = env("JILA_BACKEND_POSTGRES_URL") // uses a direct connection
 }
 
-model users {
+model Users {
   id        Int      @id @default(autoincrement())
   name      String
   email     String   @unique
@@ -19,7 +19,7 @@ model users {
   createdAt DateTime @default(now())
 }
 
-model videos {
+model Videos {
   id          Int           @id @default(autoincrement())
   title       String
   category    VideoCategory
@@ -33,7 +33,7 @@ model videos {
   language    String
 }
 
-model social_services {
+model SocialServices {
   id            Int            @id @default(autoincrement())
   title         String
   category      SocialServiceCategory
