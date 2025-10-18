@@ -1,109 +1,102 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { useSignUp } from "@clerk/nextjs";
-import { useRouter, useSearchParams } from "next/navigation";
-import { Mail } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
 import Input from "@/components/Input";
 import Button from "@/components/Button";
 import DisplayBox from "@/components/DisplayBox";
 
 export default function InviteSignUpPage() {
-  const { signUp, setActive } = useSignUp();
+  const { isLoaded, signUp, setActive } = useSignUp();
   const router = useRouter();
-  const searchParams = useSearchParams();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [invitationToken, setInvitationToken] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // Get invitation token from URL
-    const token = searchParams.get("__clerk_ticket");
-    if (token) {
-      setInvitationToken(token);
+    if (isLoaded && signUp) {
+      // Get email from the invitation metadata
+      const invitationEmail = signUp.emailAddress || "";
+      setEmail(invitationEmail);
     }
+  }, [isLoaded, signUp]);
 
-    // Get email from invitation if available
-    const invitationEmail = searchParams.get("__clerk_email");
-    if (invitationEmail) {
-      setEmail(decodeURIComponent(invitationEmail));
-    }
-  }, [searchParams]);
-
-  const handleSignUp = async () => {
-    if (!password || !confirmPassword) {
-      setErrorMessage("Please fill in all fields");
-      return;
-    }
+  const handleSignUp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!isLoaded) return;
 
     if (password !== confirmPassword) {
-      setErrorMessage("Passwords do not match");
+      setError("Passwords do not match");
       return;
     }
 
     if (password.length < 8) {
-      setErrorMessage("Password must be at least 8 characters");
+      setError("Password must be at least 8 characters");
       return;
     }
 
-    setIsLoading(true);
-    setErrorMessage("");
+    setError("");
+    setLoading(true);
 
     try {
-      if (!signUp) {
-        throw new Error("Sign up not initialized");
-      }
-
-      // Create the sign up with invitation ticket
-      await signUp.create({
-        strategy: "ticket",
-        ticket: invitationToken,
-        password: password,
+      // Create the user with password
+      const result = await signUp.create({
+        password,
       });
 
-      // Set the session active
-      if (signUp.createdSessionId) {
-        await setActive({ session: signUp.createdSessionId });
-        router.push("/");
+      if (result.status === "complete") {
+        await setActive({ session: result.createdSessionId });
+        router.push("/dashboard");
       }
     } catch (err: any) {
       console.error("Sign up error:", err);
-      setErrorMessage(err.errors?.[0]?.message || "Failed to sign up. Please try again.");
+      setError(err.errors?.[0]?.message || "Failed to complete signup");
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
+  if (!isLoaded) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-cream-300">
+        <DisplayBox>
+          <div className="page-title-text text-jila-400">Loading...</div>
+        </DisplayBox>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-cream-300 flex items-center justify-center p-8">
+    <div className="flex items-center justify-center min-h-screen bg-cream-300">
       <DisplayBox>
-        <div className="flex flex-col gap-8">
+        <div className="flex flex-col gap-y-8">
           <div>
-            <h1 className="page-title-text text-jila-400 mb-4">
-              Welcome to Jila
-            </h1>
-            <p className="body1-desktop-text text-type-400">
-              Complete your account setup
+            <h1 className="page-title-text text-jila-400">Complete Setup</h1>
+            <p className="body1-desktop-text text-gray-400 mt-2">
+              Set your password to complete admin registration
             </p>
           </div>
-
-          <div className="flex flex-col gap-4">
-            <div className="flex items-center border-[1px] rounded-[10px] pl-[18px] w-[450px] h-[60px] border-gray-300 bg-gray-200">
-              <div className="mr-[8px]">
-                <Mail color="var(--color-gray-300)" />
-              </div>
-              <div className="link-text text-type-400">
-                {email || "Loading..."}
-              </div>
-            </div>
+          
+          <form onSubmit={handleSignUp} className="flex flex-col gap-y-5">
+            <Input
+              type="email"
+              id="email"
+              placeholder="Email"
+              icon="mail"
+              value={email}
+              disabled
+              onChange={() => {}}
+            />
 
             <Input
               type="password"
-              id="password-input"
-              placeholder="Create Password"
+              id="password"
+              placeholder="Enter Password"
               icon="lock"
               showPasswordToggle
               value={password}
@@ -112,7 +105,7 @@ export default function InviteSignUpPage() {
 
             <Input
               type="password"
-              id="confirm-password-input"
+              id="confirm-password"
               placeholder="Confirm Password"
               icon="lock"
               showPasswordToggle
@@ -120,18 +113,16 @@ export default function InviteSignUpPage() {
               onChange={setConfirmPassword}
             />
 
-            {errorMessage && (
-              <div className="text-error-400 body1-desktop-text">
-                {errorMessage}
-              </div>
+            {error && (
+              <div className="text-error-400 text-sm">{error}</div>
             )}
 
             <Button
-              text={isLoading ? "Creating Account..." : "Create Account"}
+              text={loading ? "Creating account..." : "Complete Signup"}
               onClick={handleSignUp}
-              defaultClassName="w-full"
+              defaultClassName={loading ? "opacity-50 cursor-not-allowed" : ""}
             />
-          </div>
+          </form>
         </div>
       </DisplayBox>
     </div>
