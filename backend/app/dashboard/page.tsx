@@ -21,9 +21,7 @@ export default function DashboardPage() {
       role="admin"
       fallback={
         <div className="flex items-center justify-center min-h-screen bg-cream-300">
-          <div className="page-title-text text-jila-400">
-            Redirecting...
-          </div>
+          <div className="page-title-text text-jila-400">Redirecting...</div>
         </div>
       }
     >
