@@ -11,6 +11,7 @@ export default function DashboardPage() {
   const { signOut } = useClerk();
   const router = useRouter();
   const [isChecking, setIsChecking] = useState(true);
+  const [retryCount, setRetryCount] = useState(0);
 
   useEffect(() => {
     if (!isLoaded) return;
@@ -22,15 +23,26 @@ export default function DashboardPage() {
 
     // Check if user is admin
     const userType = user.publicMetadata?.userType;
-    console.log("User type:", userType); // Debug log
+    console.log("User type:", userType, "Retry count:", retryCount);
 
-    if (userType !== "admin") {
-      console.log("Not an admin, redirecting to sign-in");
-      router.push("/sign-in");
-    } else {
+    if (userType === "admin") {
       setIsChecking(false);
+    } else if (retryCount < 5) {
+      // Retry up to 5 times (5 seconds total)
+      // This gives the webhook time to set the metadata
+      console.log("Metadata not ready, retrying in 1 second...");
+      const timer = setTimeout(() => {
+        setRetryCount((prev) => prev + 1);
+        // Force a refetch of user data
+        window.location.reload();
+      }, 1000);
+      return () => clearTimeout(timer);
+    } else {
+      // After 5 retries, redirect to sign-in
+      console.log("Not an admin after retries, redirecting to sign-in");
+      router.push("/sign-in");
     }
-  }, [isLoaded, user, router]);
+  }, [isLoaded, user, router, retryCount]);
 
   const handleSignOut = async () => {
     await signOut();
@@ -41,7 +53,9 @@ export default function DashboardPage() {
   if (!isLoaded || isChecking) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-cream-300">
-        <div className="page-title-text text-jila-400">Loading...</div>
+        <div className="page-title-text text-jila-400">
+          {retryCount > 0 ? "Setting up your account..." : "Loading..."}
+        </div>
       </div>
     );
   }
@@ -65,10 +79,6 @@ export default function DashboardPage() {
                 Welcome, {user?.emailAddresses[0]?.emailAddress}
               </h2>
               <p className="text-gray-400">Role: Admin</p>
-              <p className="text-gray-400 text-sm">
-                User Type:{" "}
-                {(user.publicMetadata?.userType as string) || "Not set"}
-              </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
