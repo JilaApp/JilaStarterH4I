@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useSignUp } from "@clerk/nextjs";
+import { useSignUp, useUser } from "@clerk/nextjs";
 import { useSearchParams, useRouter } from "next/navigation";
 import Input from "@/components/Input";
 import Button from "@/components/Button";
@@ -9,6 +9,7 @@ import DisplayBox from "@/components/DisplayBox";
 
 export default function InviteSignUpPage() {
   const { isLoaded, signUp, setActive } = useSignUp();
+  const { user } = useUser();
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -17,9 +18,41 @@ export default function InviteSignUpPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isWaitingForWebhook, setIsWaitingForWebhook] = useState(false);
 
   // New state to prevent re-running the ticket creation
   const [isTicketProcessed, setIsTicketProcessed] = useState(false);
+
+  // Check if webhook has completed by polling user metadata
+  useEffect(() => {
+    if (isWaitingForWebhook && user) {
+      const checkMetadata = setInterval(() => {
+        const userType = user.publicMetadata?.userType;
+        console.log("Checking metadata:", userType);
+
+        if (userType === "admin") {
+          clearInterval(checkMetadata);
+          router.push("/dashboard");
+        }
+      }, 500); // Check every 500ms
+
+      // Timeout after 30 seconds
+      const timeout = setTimeout(() => {
+        clearInterval(checkMetadata);
+        if (!user.publicMetadata?.userType) {
+          setError(
+            "Account setup is taking longer than expected. Please refresh the page.",
+          );
+          setIsWaitingForWebhook(false);
+        }
+      }, 30000);
+
+      return () => {
+        clearInterval(checkMetadata);
+        clearTimeout(timeout);
+      };
+    }
+  }, [isWaitingForWebhook, user, router]);
 
   useEffect(() => {
     if (!isLoaded || isTicketProcessed) {
@@ -42,7 +75,6 @@ export default function InviteSignUpPage() {
           ticket: ticket,
         });
 
-        // If sign up is successful and has an email, set it
         if (
           createdSignUp.status === "missing_requirements" &&
           createdSignUp.emailAddress
@@ -59,13 +91,12 @@ export default function InviteSignUpPage() {
             "This invitation is invalid or has expired.",
         );
       } finally {
-        // Mark the ticket as processed regardless of outcome to prevent re-running
         setIsTicketProcessed(true);
       }
     };
 
     createSignUpFromTicket();
-  }, [isLoaded, searchParams, signUp, isTicketProcessed]); // Dependencies are now safer
+  }, [isLoaded, searchParams, signUp, isTicketProcessed]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -93,10 +124,14 @@ export default function InviteSignUpPage() {
 
       if (result.status === "complete") {
         await setActive({ session: result.createdSessionId });
-        router.push("/dashboard");
+
+        // Now wait for webhook to complete
+        setIsLoading(false);
+        setIsWaitingForWebhook(true);
       } else {
         console.error("Sign up status is not complete:", result);
         setError("Could not complete your sign up. Please try again.");
+        setIsLoading(false);
       }
     } catch (err: any) {
       console.error("Error completing sign up:", JSON.stringify(err, null, 2));
@@ -104,10 +139,29 @@ export default function InviteSignUpPage() {
         err.errors?.[0]?.longMessage ||
           "An unexpected error occurred during sign up.",
       );
-    } finally {
       setIsLoading(false);
     }
   };
+
+  if (isWaitingForWebhook) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-cream-300 p-4">
+        <DisplayBox>
+          <div className="flex flex-col gap-y-8 items-center">
+            <h1 className="page-title-text text-jila-400 text-center">
+              Setting Up Your Account
+            </h1>
+            <div className="flex flex-col items-center gap-4">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-jila-400"></div>
+              <p className="body1-desktop-text text-type-400 text-center">
+                Please wait while we finalize your account...
+              </p>
+            </div>
+          </div>
+        </DisplayBox>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-cream-300 p-4">

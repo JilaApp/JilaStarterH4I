@@ -2,7 +2,7 @@
 
 import { useUser, useClerk } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import Button from "@/components/Button";
 import Link from "next/link";
 
@@ -10,8 +10,6 @@ export default function DashboardPage() {
   const { user, isLoaded } = useUser();
   const { signOut } = useClerk();
   const router = useRouter();
-  const [isChecking, setIsChecking] = useState(true);
-  const [retryCount, setRetryCount] = useState(0);
 
   useEffect(() => {
     if (!isLoaded) return;
@@ -21,47 +19,29 @@ export default function DashboardPage() {
       return;
     }
 
-    // Check if user is admin
+    // Simple check - no retries
     const userType = user.publicMetadata?.userType;
-    console.log("User type:", userType, "Retry count:", retryCount);
-
-    if (userType === "admin") {
-      setIsChecking(false);
-    } else if (retryCount < 5) {
-      // Retry up to 5 times (5 seconds total)
-      // This gives the webhook time to set the metadata
-      console.log("Metadata not ready, retrying in 1 second...");
-      const timer = setTimeout(() => {
-        setRetryCount((prev) => prev + 1);
-        // Force a refetch of user data
-        window.location.reload();
-      }, 1000);
-      return () => clearTimeout(timer);
-    } else {
-      // After 5 retries, redirect to sign-in
-      console.log("Not an admin after retries, redirecting to sign-in");
+    if (userType !== "admin") {
       router.push("/sign-in");
     }
-  }, [isLoaded, user, router, retryCount]);
+  }, [isLoaded, user, router]);
 
   const handleSignOut = async () => {
     await signOut();
     router.push("/sign-in");
   };
 
-  // Show loading state while checking auth
-  if (!isLoaded || isChecking) {
+  if (!isLoaded || !user) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-cream-300">
-        <div className="page-title-text text-jila-400">
-          {retryCount > 0 ? "Setting up your account..." : "Loading..."}
-        </div>
+        <div className="page-title-text text-jila-400">Loading...</div>
       </div>
     );
   }
 
-  if (!user) {
-    return null; // Will redirect in useEffect
+  const userType = user.publicMetadata?.userType;
+  if (userType !== "admin") {
+    return null;
   }
 
   return (
