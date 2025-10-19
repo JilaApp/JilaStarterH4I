@@ -2,7 +2,7 @@
 
 import { useUser, useClerk } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Button from "@/components/Button";
 import Link from "next/link";
 
@@ -10,18 +10,25 @@ export default function DashboardPage() {
   const { user, isLoaded } = useUser();
   const { signOut } = useClerk();
   const router = useRouter();
+  const [isChecking, setIsChecking] = useState(true);
 
   useEffect(() => {
-    if (isLoaded && !user) {
+    if (!isLoaded) return;
+
+    if (!user) {
       router.push("/sign-in");
+      return;
     }
 
     // Check if user is admin
-    if (isLoaded && user) {
-      const userType = user.publicMetadata?.userType;
-      if (userType !== "admin") {
-        router.push("/sign-in");
-      }
+    const userType = user.publicMetadata?.userType;
+    console.log("User type:", userType); // Debug log
+
+    if (userType !== "admin") {
+      console.log("Not an admin, redirecting to sign-in");
+      router.push("/sign-in");
+    } else {
+      setIsChecking(false);
     }
   }, [isLoaded, user, router]);
 
@@ -31,7 +38,7 @@ export default function DashboardPage() {
   };
 
   // Show loading state while checking auth
-  if (!isLoaded || !user) {
+  if (!isLoaded || isChecking) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-cream-300">
         <div className="page-title-text text-jila-400">Loading...</div>
@@ -39,14 +46,8 @@ export default function DashboardPage() {
     );
   }
 
-  // Check if user is admin
-  const userType = user.publicMetadata?.userType;
-  if (userType !== "admin") {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-cream-300">
-        <div className="page-title-text text-jila-400">Redirecting...</div>
-      </div>
-    );
+  if (!user) {
+    return null; // Will redirect in useEffect
   }
 
   return (
@@ -64,6 +65,10 @@ export default function DashboardPage() {
                 Welcome, {user?.emailAddresses[0]?.emailAddress}
               </h2>
               <p className="text-gray-400">Role: Admin</p>
+              <p className="text-gray-400 text-sm">
+                User Type:{" "}
+                {(user.publicMetadata?.userType as string) || "Not set"}
+              </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

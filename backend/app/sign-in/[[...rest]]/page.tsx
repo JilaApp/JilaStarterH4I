@@ -1,20 +1,38 @@
 "use client";
 
-import { useSignIn } from "@clerk/nextjs";
+import { useSignIn, useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Input from "@/components/Input";
 import Button from "@/components/Button";
 import DisplayBox from "@/components/DisplayBox";
 
 export default function SignInPage() {
   const { isLoaded, signIn, setActive } = useSignIn();
+  const { user, isLoaded: isUserLoaded } = useUser();
   const router = useRouter();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  // If user is already signed in, redirect them
+  useEffect(() => {
+    if (isUserLoaded && user) {
+      const userType = user.publicMetadata?.userType;
+      console.log("User already signed in, userType:", userType);
+
+      if (userType === "admin") {
+        router.push("/dashboard");
+      } else {
+        // Not an admin, show error and allow sign out
+        setError(
+          "You are already signed in with a non-admin account. Please sign out first.",
+        );
+      }
+    }
+  }, [isUserLoaded, user, router]);
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,7 +50,11 @@ export default function SignInPage() {
 
       if (result.status === "complete") {
         await setActive({ session: result.createdSessionId });
-        router.push("/dashboard");
+
+        // Wait a moment for metadata to be available
+        setTimeout(() => {
+          router.push("/dashboard");
+        }, 500);
       }
     } catch (err: any) {
       console.error("Sign in error:", err);
