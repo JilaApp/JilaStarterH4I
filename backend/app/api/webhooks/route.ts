@@ -75,6 +75,15 @@ export async function POST(req: NextRequest) {
         // This is an app user (regular signup from mobile)
         const username = data.username;
 
+        // Type guard: we know username is not null here because of hasUsername check
+        if (!username) {
+          console.error("App user created without username");
+          return NextResponse.json(
+            { error: "Username required for app user" },
+            { status: 400 },
+          );
+        }
+
         console.log(`Creating app user for: ${username}`);
 
         const communityOrg = data.unsafe_metadata?.communityOrg as string;
@@ -102,7 +111,7 @@ export async function POST(req: NextRequest) {
           await prisma.appUser.create({
             data: {
               clerkId: data.id,
-              username: username,
+              username: username, // TypeScript now knows this is not null
               communityOrg: communityOrg,
               language: language,
             },
