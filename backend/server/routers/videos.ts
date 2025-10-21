@@ -1,7 +1,7 @@
 import { router, publicProcedure } from "../trpc";
 import { z } from "zod";
 import { VideoCategory, VideoSource } from "@prisma/client";
-import prisma from "../../lib/prisma";
+import prisma from "@/lib/prisma";
 import { TRPCError } from "@trpc/server";
 
 const addVideoInput = z.object({
@@ -58,7 +58,7 @@ async function removeVideo(input: RemoveVideoInput) {
 
   if (!existing) {
     throw new TRPCError({
-      code: "CONFLICT",
+      code: "NOT_FOUND",
       message: `Video with id ${input.id} does not exist`,
     });
   }
