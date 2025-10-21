@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 import Input from "@/components/Input";
 import Button from "@/components/Button";
 import DisplayBox from "@/components/DisplayBox";
+import Link from "next/link";
 
 export default function SignInPage() {
   const { isLoaded, signIn, setActive } = useSignIn();
@@ -143,6 +144,15 @@ export default function SignInPage() {
               defaultClassName={loading ? "opacity-50 cursor-not-allowed" : ""}
               disabled={loading}
             />
+
+            <div className="text-center">
+              <Link
+                href="/forgot-password"
+                className="link-text text-jila-400 hover:underline"
+              >
+                Forgot Password?
+              </Link>
+            </div>
           </form>
         </div>
       </DisplayBox>
