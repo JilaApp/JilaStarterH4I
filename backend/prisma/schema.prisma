@@ -11,7 +11,7 @@ datasource db {
   directUrl = env("JILA_BACKEND_POSTGRES_URL") // uses a direct connection
 }
 
-model users {
+model Users {
   id        Int      @id @default(autoincrement())
   name      String
   email     String   @unique
@@ -19,7 +19,7 @@ model users {
   createdAt DateTime @default(now())
 }
 
-model videos {
+model Videos {
   id          Int           @id @default(autoincrement())
   title       String
   category    VideoCategory
@@ -33,6 +33,17 @@ model videos {
   language    String
 }
 
+model SocialServices {
+  id            Int            @id @default(autoincrement())
+  title         String
+  category      SocialServiceCategory
+  phone_number  String         @unique @db.VarChar(20)
+  address       String?
+  description   String?
+  url           String?        @unique
+}
+
+
 enum VideoSource {
   YOUTUBE
   GOOGLE_DRIVE
@@ -45,5 +56,13 @@ enum VideoCategory {
   MEDICAL
   TRANSPORTATION
   LEGAL
+  OTHER
+}
+
+enum SocialServiceCategory {
+  EMERGENCIA
+  SHELTERS
+  FOOD
+  TRANSPORTATION
   OTHER
 }
