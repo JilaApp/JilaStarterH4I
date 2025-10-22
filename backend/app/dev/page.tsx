@@ -1,38 +1,71 @@
 "use client";
+import { useState } from "react";
 import Notification from "@/components/Notification";
 import Input from "@/components/Input";
 
 export default function DevPage() {
+  const [emailValue, setEmailValue] = useState("");
+  const [passwordValue, setPasswordValue] = useState("");
+  const [basicTextValue, setBasicTextValue] = useState("");
+  const [errorTextValue, setErrorTextValue] = useState("");
+  const [disabledValue, setDisabledValue] = useState("");
+
   return (
     <div>
       <Notification
-        message="We’ve resent the link to your email!"
+        message="We've resent the link to your email!"
         onClose={() => {}}
       />
       <div className="flex flex-col gap-y-[20px] pl-[20px] pr-[20px] pt-[20px] pb-[20px]">
         <Input
           type="email"
           id="email-input"
-          placeholder="Enter Email"
+          title="Email Validation"
+          placeholder="Enter email"
           icon="mail"
+          value={emailValue}
+          onChange={setEmailValue}
+          required={true}
         />
-
-        <Input type="email" id="email-disabled-input" disabled />
 
         <Input
           type="password"
-          placeholder="Enter Password"
+          placeholder="Enter password"
           id="password-input"
           icon="lock"
           showPasswordToggle
+          required={true}
+          value={passwordValue}
+          onChange={setPasswordValue}
         />
 
         <Input
           type="password"
-          placeholder="Enter Password"
+          placeholder="Enter password"
           id="password-disabled-input"
           icon="lock"
           disabled
+          value={disabledValue}
+          onChange={setDisabledValue}
+        />
+
+        <Input
+          type="text"
+          id="basic-text-input"
+          title="Required Field"
+          placeholder="Enter text"
+          required={true}
+          value={basicTextValue}
+          onChange={setBasicTextValue}
+        />
+        
+        <Input 
+          type="text" 
+          id="disabled_input" 
+          placeholder="Enter text" 
+          disabled 
+          value=""
+          onChange={() => {}}
         />
       </div>
       <div className="page-title-text">page-title-text</div>
