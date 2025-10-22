@@ -41,7 +41,7 @@
   .page-title-text {
     @apply font-source text-7xl font-bold leading-none;
   }
-  
+
   .components-text {
     @apply font-source text-lg font-bold leading-none;
   }

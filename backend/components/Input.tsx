@@ -37,7 +37,9 @@ export default function Input({
   const [isFocused, setIsFocused] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [hasError, setHasError] = useState(error);
-  const [currentErrorMessage, setCurrentErrorMessage] = useState(errorMessage || "");
+  const [currentErrorMessage, setCurrentErrorMessage] = useState(
+    errorMessage || "",
+  );
   const [hasInteracted, setHasInteracted] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -92,7 +94,12 @@ export default function Input({
 
     if (required && hasInteracted && !value.trim()) {
       setError("This field is required");
-    } else if (type === "email" && hasInteracted && value.trim() && !isValidEmail(value)) {
+    } else if (
+      type === "email" &&
+      hasInteracted &&
+      value.trim() &&
+      !isValidEmail(value)
+    ) {
       setError("Please enter a valid email address");
     }
   };
@@ -151,9 +158,12 @@ export default function Input({
       "flex items-center border-[1px] rounded-[10px] pl-[18px] w-[450px] h-[60px]",
       {
         "border-gray-300 bg-gray-200 text-gray-300": disabled,
-        "border-error-400 bg-white text-gray-300 shadow-[0px_0px_0px_3px_rgba(255,168,168,1)]": !disabled && hasError,
-        "border-jila-400 bg-white text-gray-300": !disabled && isFocused && !hasError,
-        "border-gray-300 bg-white text-gray-300": !disabled && !isFocused && !hasError,
+        "border-error-400 bg-white text-gray-300 shadow-[0px_0px_0px_3px_rgba(255,168,168,1)]":
+          !disabled && hasError,
+        "border-jila-400 bg-white text-gray-300":
+          !disabled && isFocused && !hasError,
+        "border-gray-300 bg-white text-gray-300":
+          !disabled && !isFocused && !hasError,
       },
     );
   };
@@ -200,7 +210,9 @@ export default function Input({
       {hasError && currentErrorMessage && (
         <div className="flex items-center mt-[8px]">
           <Ban color="var(--color-error-400)" size={24} className="mr-[6px]" />
-          <span className="text-error-400 link-text">{currentErrorMessage}</span>
+          <span className="text-error-400 link-text">
+            {currentErrorMessage}
+          </span>
         </div>
       )}
     </div>

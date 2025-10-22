@@ -59,12 +59,12 @@ export default function DevPage() {
           value={basicTextValue}
           onChange={setBasicTextValue}
         />
-        
-        <Input 
-          type="text" 
-          id="disabled_input" 
-          placeholder="Enter text" 
-          disabled 
+
+        <Input
+          type="text"
+          id="disabled_input"
+          placeholder="Enter text"
+          disabled
           value=""
           onChange={() => {}}
         />
