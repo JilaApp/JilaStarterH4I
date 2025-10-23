@@ -244,12 +244,9 @@ export default function InviteSignUpPage() {
               </div>
               <Button
                 text="Sign up"
-                type="button"
+                type="submit"
                 defaultClassName="w-full"
                 disabled={isLoading}
-                onClick={() => {
-                  setEmailApproved(true);
-                }}
               />
             </form>
           </div>
