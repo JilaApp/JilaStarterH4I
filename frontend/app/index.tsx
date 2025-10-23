@@ -44,16 +44,18 @@ export default function App() {
         <Text className="text-4xl font-bold text-jila-400 mb-4 text-center">
           Hello, {user.username}!
         </Text>
-        
+
         <View className="bg-gray-200 rounded-lg p-4 mb-6">
           <Text className="text-type-400 text-base mb-2">
             <Text className="font-bold">Username:</Text> {user.username}
           </Text>
           <Text className="text-type-400 text-base mb-2">
-            <Text className="font-bold">User Type:</Text> {user.publicMetadata?.userType || "Loading..."}
+            <Text className="font-bold">User Type:</Text>{" "}
+            {user.publicMetadata?.userType || "Loading..."}
           </Text>
           <Text className="text-type-400 text-base">
-            <Text className="font-bold">Member Since:</Text> {new Date(user.createdAt).toLocaleDateString()}
+            <Text className="font-bold">Member Since:</Text>{" "}
+            {new Date(user.createdAt).toLocaleDateString()}
           </Text>
         </View>
 

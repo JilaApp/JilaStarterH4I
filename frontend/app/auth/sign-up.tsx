@@ -1,5 +1,11 @@
 import * as React from "react";
-import { Text, TextInput, TouchableOpacity, View, ScrollView } from "react-native";
+import {
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+  ScrollView,
+} from "react-native";
 import { useSignUp } from "@clerk/clerk-expo";
 import { useRouter } from "expo-router";
 import { Picker } from "@react-native-picker/picker";
@@ -9,7 +15,7 @@ const COMMUNITY_ORGS = [
   "Community Org 1",
   "Community Org 2",
   "Community Org 3",
-  "Other"
+  "Other",
 ];
 
 const LANGUAGES = [
@@ -18,7 +24,7 @@ const LANGUAGES = [
   "Q'anjob'al",
   "Mam",
   "K'iche'",
-  "Other"
+  "Other",
 ];
 
 export default function SignUpScreen() {
@@ -70,7 +76,7 @@ export default function SignUpScreen() {
 
       // Set the session active
       await setActive({ session: signUp.createdSessionId });
-      
+
       // Navigate to home
       router.replace("/");
     } catch (err: any) {
@@ -86,10 +92,12 @@ export default function SignUpScreen() {
       <View className="flex-1 justify-center p-6 min-h-screen">
         <View className="bg-white rounded-2xl p-6 shadow-lg">
           <Text className="page-title-text text-jila-400 mb-6">Sign Up</Text>
-          
+
           <View className="space-y-4">
             <View>
-              <Text className="components-text text-type-400 mb-2">Username</Text>
+              <Text className="components-text text-type-400 mb-2">
+                Username
+              </Text>
               <TextInput
                 className="border border-gray-300 rounded-lg p-3 text-base"
                 autoCapitalize="none"
@@ -100,7 +108,9 @@ export default function SignUpScreen() {
             </View>
 
             <View>
-              <Text className="components-text text-type-400 mb-2">Password</Text>
+              <Text className="components-text text-type-400 mb-2">
+                Password
+              </Text>
               <View className="flex-row items-center border border-gray-300 rounded-lg">
                 <TextInput
                   className="flex-1 p-3 text-base"
@@ -123,7 +133,9 @@ export default function SignUpScreen() {
             </View>
 
             <View>
-              <Text className="components-text text-type-400 mb-2">Confirm Password</Text>
+              <Text className="components-text text-type-400 mb-2">
+                Confirm Password
+              </Text>
               <View className="flex-row items-center border border-gray-300 rounded-lg">
                 <TextInput
                   className="flex-1 p-3 text-base"
@@ -146,7 +158,9 @@ export default function SignUpScreen() {
             </View>
 
             <View>
-              <Text className="components-text text-type-400 mb-2">Community Organization</Text>
+              <Text className="components-text text-type-400 mb-2">
+                Community Organization
+              </Text>
               <View className="border border-gray-300 rounded-lg">
                 <Picker
                   selectedValue={communityOrg}
@@ -160,12 +174,11 @@ export default function SignUpScreen() {
             </View>
 
             <View>
-              <Text className="components-text text-type-400 mb-2">Language</Text>
+              <Text className="components-text text-type-400 mb-2">
+                Language
+              </Text>
               <View className="border border-gray-300 rounded-lg">
-                <Picker
-                  selectedValue={language}
-                  onValueChange={setLanguage}
-                >
+                <Picker selectedValue={language} onValueChange={setLanguage}>
                   {LANGUAGES.map((lang) => (
                     <Picker.Item key={lang} label={lang} value={lang} />
                   ))}

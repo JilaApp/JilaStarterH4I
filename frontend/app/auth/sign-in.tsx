@@ -1,5 +1,11 @@
 import * as React from "react";
-import { Text, TextInput, TouchableOpacity, View, ScrollView } from "react-native";
+import {
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+  ScrollView,
+} from "react-native";
 import { useSignIn } from "@clerk/clerk-expo";
 import { useRouter } from "expo-router";
 import { Eye, EyeOff } from "lucide-react-native";
@@ -43,10 +49,12 @@ export default function SignInScreen() {
       <View className="flex-1 justify-center p-6 min-h-screen">
         <View className="bg-white rounded-2xl p-6 shadow-lg">
           <Text className="page-title-text text-jila-400 mb-6">Sign In</Text>
-          
+
           <View className="space-y-4">
             <View>
-              <Text className="components-text text-type-400 mb-2">Username</Text>
+              <Text className="components-text text-type-400 mb-2">
+                Username
+              </Text>
               <TextInput
                 className="border border-gray-300 rounded-lg p-3 text-base"
                 autoCapitalize="none"
@@ -57,7 +65,9 @@ export default function SignInScreen() {
             </View>
 
             <View>
-              <Text className="components-text text-type-400 mb-2">Password</Text>
+              <Text className="components-text text-type-400 mb-2">
+                Password
+              </Text>
               <View className="flex-row items-center border border-gray-300 rounded-lg">
                 <TextInput
                   className="flex-1 p-3 text-base"
@@ -94,7 +104,9 @@ export default function SignInScreen() {
             </TouchableOpacity>
 
             <View className="flex-row justify-center mt-4">
-              <Text className="text-gray-400">Don't have an account? </Text>
+              <Text className="text-gray-400">
+                Don&apos;t have an account?{" "}
+              </Text>
               <TouchableOpacity onPress={() => router.push("/auth/sign-up")}>
                 <Text className="text-jila-400 font-bold">Sign Up</Text>
               </TouchableOpacity>

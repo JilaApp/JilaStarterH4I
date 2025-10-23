@@ -43,7 +43,7 @@ export default function InviteSignUpPage() {
         clearInterval(checkMetadata);
         if (!user.publicMetadata?.userType) {
           setError(
-            "Account setup is taking longer than expected. Please refresh the page."
+            "Account setup is taking longer than expected. Please refresh the page.",
           );
           setIsWaitingForWebhook(false);
         }
@@ -65,7 +65,7 @@ export default function InviteSignUpPage() {
 
     if (!ticket) {
       setError(
-        "Invitation ticket is missing. Please use the link provided in your email."
+        "Invitation ticket is missing. Please use the link provided in your email.",
       );
       return;
     }
@@ -86,11 +86,11 @@ export default function InviteSignUpPage() {
       } catch (err: any) {
         console.error(
           "Error processing invitation ticket:",
-          JSON.stringify(err, null, 2)
+          JSON.stringify(err, null, 2),
         );
         setError(
           err.errors?.[0]?.longMessage ||
-            "This invitation is invalid or has expired."
+            "This invitation is invalid or has expired.",
         );
       } finally {
         setIsTicketProcessed(true);
@@ -105,7 +105,7 @@ export default function InviteSignUpPage() {
 
     if (!isLoaded || !signUp) {
       return setError(
-        "The sign-up component is not ready. Please refresh the page."
+        "The sign-up component is not ready. Please refresh the page.",
       );
     }
 
@@ -139,7 +139,7 @@ export default function InviteSignUpPage() {
       console.error("Error completing sign up:", JSON.stringify(err, null, 2));
       setError(
         err.errors?.[0]?.longMessage ||
-          "An unexpected error occurred during sign up."
+          "An unexpected error occurred during sign up.",
       );
       setIsLoading(false);
     }
