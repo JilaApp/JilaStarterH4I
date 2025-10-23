@@ -2,6 +2,7 @@
 import Button from "@/components/Button";
 import Notification from "@/components/Notification";
 import Input from "@/components/Input";
+import Tabs from "@/components/Tabs";
 
 export default function DevPage() {
   return (
@@ -65,6 +66,8 @@ export default function DevPage() {
       <div className="bg-gray-200">bg-gray-200</div>
 
       <Button text="Sign In" onClick={() => console.log("Hello!")} />
+
+      <Tabs videos_name="Video resources" social_content="Social services" video_content={<p>Hello</p>} socials_name={<p>Good bye</p>} />
     </div>
   );
 }
