@@ -6,23 +6,23 @@ import { Mail, LockKeyhole, Eye, EyeOff } from "lucide-react";
 interface InputProps {
   type?: "email" | "password";
   disabled?: boolean;
-  value?: string;
   onChange?: (value: string) => void;
   icon?: "mail" | "lock";
   showPasswordToggle?: boolean;
   placeholder?: string;
   id?: string;
+  state?: "normal" | "error";
 }
 
 export default function Input({
   type = "email",
   disabled = false,
-  value = "",
   onChange,
   icon = "mail",
   showPasswordToggle = true,
   placeholder = "Enter Email",
   id,
+  state,
 }: InputProps) {
   const [input, setInput] = useState("");
   const [isFocused, setIsFocused] = useState(false);
@@ -126,6 +126,14 @@ export default function Input({
       htmlFor={id}
       className={getContainerClasses()}
       onMouseDown={handleLabelMouseDown}
+      style={
+        state === "error"
+          ? {
+              borderColor: "var(--color-error-400)",
+              boxShadow: "0 0 0 3px #FFA8A8",
+            }
+          : undefined
+      }
     >
       <div className="mr-[8px]">{renderIcon()}</div>
       <input
