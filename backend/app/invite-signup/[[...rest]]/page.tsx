@@ -20,6 +20,8 @@ export default function InviteSignUpPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isWaitingForWebhook, setIsWaitingForWebhook] = useState(false);
 
+  const [emailApproved, setEmailApproved] = useState(false);
+
   // New state to prevent re-running the ticket creation
   const [isTicketProcessed, setIsTicketProcessed] = useState(false);
 
@@ -41,7 +43,7 @@ export default function InviteSignUpPage() {
         clearInterval(checkMetadata);
         if (!user.publicMetadata?.userType) {
           setError(
-            "Account setup is taking longer than expected. Please refresh the page.",
+            "Account setup is taking longer than expected. Please refresh the page."
           );
           setIsWaitingForWebhook(false);
         }
@@ -63,7 +65,7 @@ export default function InviteSignUpPage() {
 
     if (!ticket) {
       setError(
-        "Invitation ticket is missing. Please use the link provided in your email.",
+        "Invitation ticket is missing. Please use the link provided in your email."
       );
       return;
     }
@@ -84,11 +86,11 @@ export default function InviteSignUpPage() {
       } catch (err: any) {
         console.error(
           "Error processing invitation ticket:",
-          JSON.stringify(err, null, 2),
+          JSON.stringify(err, null, 2)
         );
         setError(
           err.errors?.[0]?.longMessage ||
-            "This invitation is invalid or has expired.",
+            "This invitation is invalid or has expired."
         );
       } finally {
         setIsTicketProcessed(true);
@@ -103,7 +105,7 @@ export default function InviteSignUpPage() {
 
     if (!isLoaded || !signUp) {
       return setError(
-        "The sign-up component is not ready. Please refresh the page.",
+        "The sign-up component is not ready. Please refresh the page."
       );
     }
 
@@ -137,7 +139,7 @@ export default function InviteSignUpPage() {
       console.error("Error completing sign up:", JSON.stringify(err, null, 2));
       setError(
         err.errors?.[0]?.longMessage ||
-          "An unexpected error occurred during sign up.",
+          "An unexpected error occurred during sign up."
       );
       setIsLoading(false);
     }
@@ -166,22 +168,15 @@ export default function InviteSignUpPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-cream-300 p-4">
       <DisplayBox>
-        <div className="flex flex-col gap-y-8">
-          <div>
-            <h1 className="page-title-text text-jila-400 mb-2">
-              Complete Your Registration
+        {!emailApproved ? (
+          <div className="flex flex-col gap-y-7 justify-center items-center">
+            <h1 className="body1-desktop-text text-4xl font-bold">
+              Welcome to JILA!
             </h1>
-            <p className="body1-desktop-text text-type-400">
-              You&apos;ve been invited to join. Create your password to get
-              started.
+            <p className="body1-desktop-text text-xl text-center font-light">
+              We've approved the following email for creating your admin account
             </p>
-          </div>
-
-          <form onSubmit={handleSubmit} className="flex flex-col gap-y-6">
             <div>
-              <label className="components-text text-type-400 mb-2 block">
-                Email
-              </label>
               <Input
                 type="email"
                 id="email-input"
@@ -190,51 +185,74 @@ export default function InviteSignUpPage() {
                 placeholder="Loading from invitation..."
               />
             </div>
-
-            <div>
-              <label className="components-text text-type-400 mb-2 block">
-                Password
-              </label>
-              <Input
-                type="password"
-                id="password-input"
-                placeholder="Create a password"
-                icon="lock"
-                showPasswordToggle
-                value={password}
-                onChange={setPassword}
-              />
-            </div>
-
-            <div>
-              <label className="components-text text-type-400 mb-2 block">
-                Confirm Password
-              </label>
-              <Input
-                type="password"
-                id="confirm-password-input"
-                placeholder="Confirm your password"
-                icon="lock"
-                showPasswordToggle
-                value={confirmPassword}
-                onChange={setConfirmPassword}
-              />
-            </div>
-
             {error && (
               <div className="rounded-lg bg-error-200 p-4 text-error-400">
                 {error}
               </div>
             )}
+            <div className="flex flex-col w-full">
+              <label className="components-text text-type-400 mb-2 block">
+                Have an account?{" "}
+                <a href="/sign-in" className="text-jila-400">
+                  Sign in
+                </a>
+              </label>
+              <Button
+                text="Sign up"
+                type="button"
+                defaultClassName="w-full"
+                disabled={isLoading}
+                onClick={() => {
+                  setEmailApproved(true);
+                }}
+              />
+            </div>
+          </div>
+        ) : (
+          <div className="flex flex-col gap-y-8">
+            <form
+              onSubmit={handleSubmit}
+              className="flex flex-col gap-y-6 items-center justify-center"
+            >
+              <h1 className="body1-desktop-text text-4xl font-bold">
+                Set up your password
+              </h1>
+              <p className="body1-desktop-text text-xl text-center font-light">
+                Create a secure password for your account
+              </p>
+              <div className="flex flex-col gap-y-2">
+                <Input
+                  type="password"
+                  id="password-input"
+                  placeholder="Enter password"
+                  icon="lock"
+                  showPasswordToggle
+                  value={password}
+                  onChange={setPassword}
+                />
 
-            <Button
-              text={isLoading ? "Creating Account..." : "Create Account"}
-              type="submit"
-              defaultClassName="w-full"
-              disabled={isLoading || !email}
-            />
-          </form>
-        </div>
+                <Input
+                  type="password"
+                  id="confirm-password-input"
+                  placeholder="Confirm your password"
+                  icon="lock"
+                  showPasswordToggle
+                  value={confirmPassword}
+                  onChange={setConfirmPassword}
+                />
+              </div>
+              <Button
+                text="Sign up"
+                type="button"
+                defaultClassName="w-full"
+                disabled={isLoading}
+                onClick={() => {
+                  setEmailApproved(true);
+                }}
+              />
+            </form>
+          </div>
+        )}
       </DisplayBox>
     </div>
   );
