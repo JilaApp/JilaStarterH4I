@@ -51,29 +51,37 @@ export default function DevPage() {
             disabled
           />
         </div>
-        <Dropdown
-          options={[
-            "Part-time",
-            "Full-time",
-            "Internship",
-            "Part-time",
-            "Full-time",
-            "Internship",
-            "Part-time",
-            "Full-time",
-            "Internship",
-            "Part-time",
-            "Full-time",
-            "Internship",
-          ]}
-          currentIndex={dropdownIndex}
-          onChange={onDropdownChange}
-        />
+        <FormInputWrapper
+          required={true}
+          title="Title"
+          description="Maximum size: 67MB"
+        >
+          <Dropdown
+            options={[
+              "Part-time",
+              "Full-time",
+              "Internship",
+              "Part-time",
+              "Full-time",
+              "Internship",
+              "Part-time",
+              "Full-time",
+              "Internship",
+              "Part-time",
+              "Full-time",
+              "Internship",
+            ]}
+            currentIndex={dropdownIndex}
+            onChange={onDropdownChange}
+          />
+        </FormInputWrapper>
+
         <FormInputWrapper
           required={true}
           title="Title"
           state="error"
           errorString="This is an error string!"
+          description="Maximum size: 67MB"
         >
           <Dropdown
             options={["Part-time", "Full-time", "Internship"]}
