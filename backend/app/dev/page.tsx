@@ -1,73 +1,100 @@
 "use client";
+import { useState } from "react";
 import Button from "@/components/Button";
 import { useState } from "react";
 import Notification from "@/components/Notification";
 import Input from "@/components/Input";
+import Dropdown from "@/components/Dropdown";
+import FormInputWrapper from "@/components/FormInputWrapper";
 
 export default function DevPage() {
-  const [emailValue, setEmailValue] = useState("");
-  const [passwordValue, setPasswordValue] = useState("");
-  const [basicTextValue, setBasicTextValue] = useState("");
-  const [errorTextValue, setErrorTextValue] = useState("");
-  const [disabledValue, setDisabledValue] = useState("");
+  const [dropdownIndex, setDropdownIndex] = useState<number>();
+  const [errorDropdownIndex, setErrorDropdownIndex] = useState<number>();
 
+  const onDropdownChange = (index: number) => {
+    setDropdownIndex(index);
+  };
+
+  const onErrorDropdownChange = (index: number) => {
+    setErrorDropdownIndex(index);
+  };
   return (
-    <div>
-      <Notification
-        message="We've resent the link to your email!"
-        onClose={() => {}}
-      />
-      <div className="flex flex-col gap-y-[20px] pl-[20px] pr-[20px] pt-[20px] pb-[20px]">
-        <Input
-          type="email"
-          id="email-input"
-          title="Email Validation"
-          placeholder="Enter email"
-          icon="mail"
-          value={emailValue}
-          onChange={setEmailValue}
+    <>
+      <div className="flex flex-col gap-3 px-5">
+        <Notification
+          message="We’ve resent the link to your email!"
+          onClose={() => {}}
+        />
+        <div className="flex flex-col gap-y-[20px] pl-[20px] pr-[20px] pt-[20px] pb-[20px]">
+          <Input
+            type="email"
+            id="email-input"
+            placeholder="Enter Email"
+            icon="mail"
+            state="error"
+          />
+
+          <Input type="email" id="email-disabled-input" disabled />
+
+          <Input
+            type="password"
+            placeholder="Enter Password"
+            id="password-input"
+            icon="lock"
+            showPasswordToggle
+          />
+
+          <Input
+            type="password"
+            placeholder="Enter Password"
+            id="password-disabled-input"
+            icon="lock"
+            disabled
+          />
+        </div>
+        <Dropdown
+          options={[
+            "Part-time",
+            "Full-time",
+            "Internship",
+            "Part-time",
+            "Full-time",
+            "Internship",
+            "Part-time",
+            "Full-time",
+            "Internship",
+            "Part-time",
+            "Full-time",
+            "Internship",
+          ]}
+          currentIndex={dropdownIndex}
+          onChange={onDropdownChange}
+        />
+        <FormInputWrapper
           required={true}
-        />
-
-        <Input
-          type="password"
-          placeholder="Enter password"
-          id="password-input"
-          icon="lock"
-          showPasswordToggle
-          required={true}
-          value={passwordValue}
-          onChange={setPasswordValue}
-        />
-
-        <Input
-          type="password"
-          placeholder="Enter password"
-          id="password-disabled-input"
-          icon="lock"
-          disabled
-          value={disabledValue}
-          onChange={setDisabledValue}
-        />
-
-        <Input
-          type="text"
-          id="basic-text-input"
-          title="Required Field"
-          placeholder="Enter text"
-          required={true}
-          value={basicTextValue}
-          onChange={setBasicTextValue}
-        />
-
-        <Input
-          type="text"
-          id="disabled_input"
-          placeholder="Enter text"
-          disabled
-          value=""
-          onChange={() => {}}
-        />
+          title="Title"
+          state="error"
+          errorString="This is an error string!"
+        >
+          <Dropdown
+            options={["Part-time", "Full-time", "Internship"]}
+            currentIndex={errorDropdownIndex}
+            onChange={onErrorDropdownChange}
+          />
+        </FormInputWrapper>
+        <FormInputWrapper
+          title="Enter your password lil bro"
+          state="error"
+          errorString="u got it wrong haha"
+        >
+          <Input
+            type="password"
+            placeholder="Enter Password"
+            id="password-input"
+            icon="lock"
+            showPasswordToggle
+          />
+        </FormInputWrapper>
       </div>
       <div className="page-title-text">page-title-text</div>
       <div className="components-text">components-text</div>
@@ -96,8 +123,7 @@ export default function DevPage() {
       <div className="bg-gray-400">bg-gray-400</div>
       <div className="bg-gray-300">bg-gray-300</div>
       <div className="bg-gray-200">bg-gray-200</div>
-
       <Button text="Sign In" onClick={() => console.log("Hello!")} />
-    </div>
+    </>
   );
 }

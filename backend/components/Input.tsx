@@ -6,33 +6,23 @@ import { Mail, LockKeyhole, Eye, EyeOff, Ban } from "lucide-react";
 interface InputProps {
   type?: "text" | "email" | "password";
   disabled?: boolean;
-  value: string;
-  onChange: (value: string) => void;
-  icon?: "mail" | "lock" | "error";
+  onChange?: (value: string) => void;
+  icon?: "mail" | "lock";
   showPasswordToggle?: boolean;
   placeholder?: string;
   id?: string;
-  error?: boolean;
-  errorMessage?: string;
-  title?: string;
-  onErrorChange?: (hasError: boolean, message: string) => void;
-  required?: boolean;
+  state?: "normal" | "error";
 }
 
 export default function Input({
   type = "text",
   disabled = false,
-  value,
   onChange,
   icon,
   showPasswordToggle = true,
   placeholder = "Enter text",
   id,
-  error = false,
-  errorMessage,
-  title,
-  onErrorChange,
-  required = false,
+  state,
 }: InputProps) {
   const [isFocused, setIsFocused] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -179,42 +169,35 @@ export default function Input({
   };
 
   return (
-    <div className="flex flex-col">
-      {title && (
-        <div className="flex items-center mb-[8px]">
-          <span className="text-black body2-desktop-text">{title}</span>
-        </div>
-      )}
-      <label
-        htmlFor={id}
-        className={getContainerClasses()}
-        onMouseDown={handleLabelMouseDown}
-      >
-        {icon && <div className="mr-[8px]">{renderIcon()}</div>}
-        <input
-          ref={inputRef}
-          id={id}
-          className={getInputClasses()}
-          type={inputType}
-          value={value}
-          placeholder={!isFocused && !value ? placeholder : ""}
-          onChange={handleInputChange}
-          onFocus={handleFocus}
-          onBlur={handleBlur}
-          disabled={disabled}
-        />
-        <div onMouseDown={disabled ? undefined : togglePasswordVisibility}>
-          {renderPasswordToggle()}
-        </div>
-      </label>
-      {hasError && currentErrorMessage && (
-        <div className="flex items-center mt-[8px]">
-          <Ban color="var(--color-error-400)" size={24} className="mr-[6px]" />
-          <span className="text-error-400 link-text">
-            {currentErrorMessage}
-          </span>
-        </div>
-      )}
-    </div>
+    <label
+      htmlFor={id}
+      className={getContainerClasses()}
+      onMouseDown={handleLabelMouseDown}
+      style={
+        state === "error"
+          ? {
+              borderColor: "var(--color-error-400)",
+              boxShadow: "0 0 0 3px #FFA8A8",
+            }
+          : undefined
+      }
+    >
+      <div className="mr-[8px]">{renderIcon()}</div>
+      <input
+        ref={inputRef}
+        id={id}
+        className={getInputClasses()}
+        type={inputType}
+        value={input}
+        placeholder={!isFocused && !input ? placeholder : ""}
+        onChange={handleInputChange}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
+        disabled={disabled}
+      />
+      <div onMouseDown={disabled ? undefined : togglePasswordVisibility}>
+        {renderPasswordToggle()}
+      </div>
+    </label>
   );
 }
