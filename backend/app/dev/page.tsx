@@ -67,7 +67,12 @@ export default function DevPage() {
 
       <Button text="Sign In" onClick={() => console.log("Hello!")} />
 
-      <Tabs videos_name="Video resources" social_content="Social services" video_content={<p>Hello</p>} socials_name={<p>Good bye</p>} />
+      <Tabs
+        video_name="Video resources"
+        social_name="Social services"
+        video_content={<p>Hello</p>}
+        social_content={<p>Bye</p>}
+      />
     </div>
   );
 }
