@@ -114,44 +114,52 @@ export default function SignInPage() {
     <div className="flex items-center justify-center min-h-screen bg-cream-300">
       <DisplayBox>
         <div className="flex flex-col gap-y-8">
-          <h1 className="page-title-text text-jila-400">Admin Sign In</h1>
-
-          <form onSubmit={handleSignIn} className="flex flex-col gap-y-5">
-            <Input
-              type="email"
-              id="email"
-              placeholder="Enter Email"
-              icon="mail"
-              value={email}
-              onChange={setEmail}
-            />
-
-            <Input
-              type="password"
-              id="password"
-              placeholder="Enter Password"
-              icon="lock"
-              showPasswordToggle
-              value={password}
-              onChange={setPassword}
-            />
-
-            {error && <div className="text-error-400 text-sm">{error}</div>}
-
-            <Button
-              text={loading ? "Signing in..." : "Sign In"}
-              onClick={handleSignIn}
-              defaultClassName={loading ? "opacity-50 cursor-not-allowed" : ""}
-              disabled={loading}
-            />
-
-            <div className="text-center">
-              <Link
-                href="/forgot-password"
-                className="link-text text-jila-400 hover:underline"
-              >
-                Forgot Password?
-              </Link>
+          <form
+            onSubmit={handleSignIn}
+            className="flex flex-col gap-y-6 items-center justify-center"
+          >
+            <h1 className="body1-desktop-text text-4xl font-bold">
+              Welcome back!
+            </h1>
+            <p className="body1-desktop-text text-xl text-center font-light">
+              Enter your details to get signed into your admin account
+            </p>
+            <div className="flex flex-col gap-y-2">
+              <Input
+                type="email"
+                id="email"
+                placeholder="Enter Email"
+                icon="mail"
+                value={email}
+                onChange={setEmail}
+              />
+              <Input
+                type="password"
+                id="password-input"
+                placeholder="Enter password"
+                icon="lock"
+                showPasswordToggle
+                value={password}
+                onChange={setPassword}
+              />
+            </div>
+            <div className="w-full flex flex-col gap-y-2">
+              <div>
+                <Link
+                  href="/forgot-password"
+                  className="link-text text-jila-400 hover:underline mb-3"
+                >
+                  Forgot your password?
+                </Link>
+              </div>
+              <Button
+                text={loading ? "Signing in..." : "Sign In"}
+                onClick={handleSignIn}
+                defaultClassName={
+                  loading ? "opacity-50 cursor-not-allowed w-full" : "w-full"
+                }
+                disabled={loading}
+              />
             </div>
           </form>
         </div>
