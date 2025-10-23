@@ -174,7 +174,8 @@ export default function InviteSignUpPage() {
               Welcome to JILA!
             </h1>
             <p className="body1-desktop-text text-xl text-center font-light">
-              We've approved the following email for creating your admin account
+              We&apos;ve approved the following email for creating your admin
+              account
             </p>
             <div>
               <Input
