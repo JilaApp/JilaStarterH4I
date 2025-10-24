@@ -2,10 +2,12 @@
 import Button from "@/components/Button";
 import Notification from "@/components/Notification";
 import Input from "@/components/Input";
+import Sidebar from "@/components/Sidebar";
 
 export default function DevPage() {
   return (
     <div>
+      <Sidebar />
       <Notification
         message="We’ve resent the link to your email!"
         onClose={() => {}}
