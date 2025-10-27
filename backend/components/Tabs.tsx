@@ -70,7 +70,7 @@ export default function Tabs({
         </div> */}
       </div>
 
-      <div>{tabContent[activeTab]}</div>
+      <div>{tabContent[activeTab as keyof typeof tabContent]}</div>
     </div>
   );
 }
