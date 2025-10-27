@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Video, MessageCircle } from "lucide-react";
-import { JsxElement } from "typescript";
 
 interface TabsProps {
   video_name: string;
@@ -49,17 +48,26 @@ export default function Tabs({
       <div className="flex flex-wrap">
         {tabs.map((tab) => (
           <button
-            key={tab.id}
+            key={tab!.id}
             className={`px-4 py-2 font-semibold ${
-              activeTab === tab.id
+              activeTab === tab!.id
                 ? "border-b-3 border-jila-400 text-jila-400"
                 : "text-gray-400 hover:text-jila-300 cursor-pointer"
             }`}
-            onClick={() => setActiveTab(tab.id)}
+            onClick={() => setActiveTab(tab!.id)}
           >
-            {tab.label}
+            {tab!.label}
           </button>
         ))}
+
+        {/* Search bar was removed from figma
+        <div className="flex justify-end ml-auto">
+            <input
+            type="string"
+            id="search_bar"
+            placeholder="search"
+            />
+        </div> */}
       </div>
 
       <div>{tabContent[activeTab]}</div>
