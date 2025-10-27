@@ -1,13 +1,13 @@
-import { useState } from "react";
 import Image from "next/image";
-import TempJilaLogo from "@/assets/jila-png.png";
+import TempJilaLogo from "@/assets/jila-white.svg";
 import { LayoutDashboard, Settings } from "lucide-react";
 
-interface InputProps {}
+interface InputProps {
+  activeButton: string | null;
+  setActiveButton: (id: string | null) => void;
+}
 
-export default function Sidebar({}: InputProps) {
-  const [activeButton, setActiveButton] = useState<string | null>(null);
-
+export default function Sidebar({ activeButton, setActiveButton }: InputProps) {
   const buttons = [
     { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
     { id: "upload", label: "Upload", icon: LayoutDashboard },
@@ -15,10 +15,15 @@ export default function Sidebar({}: InputProps) {
     { id: "metrics", label: "Metrics", icon: LayoutDashboard },
   ];
 
+  //this is a dummy function bc settings hasnt been designed yet
+  const dummyButtonClick = () => {
+    console.log("Settings?");
+  }
+
   return (
     <div className="h-screen w-[196px] left-0 bg-[linear-gradient(348deg,_#7E0601_51.81%,_#E8965B_130.16%)] rounded-br-[60px]">
       <Image
-        className="w-[127px] h-[65px] absolute left-[24px] top-[24px]"
+        className="w-[150px] h-[90px] absolute left-[16px] top-[22px]"
         src={TempJilaLogo}
         alt="logo"
       />
@@ -61,9 +66,10 @@ export default function Sidebar({}: InputProps) {
         })}
       </div>
 
-      <div className="flex font-semibold flex-row gap-[16px] left-[24px] absolute bottom-[24px] text-white-400 hover:cursor-default">
+      {/*button functionality has not been designed yet*/}
+      <button onClick={() => dummyButtonClick()} className="flex font-semibold flex-row gap-[16px] left-[24px] absolute bottom-[24px] text-white-400 hover:cursor-default">
         <Settings color={"var(--color-white-400)"} /> Settings
-      </div>
+      </button>
     </div>
   );
 }
