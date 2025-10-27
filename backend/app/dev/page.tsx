@@ -6,10 +6,10 @@ import Sidebar from "@/components/Sidebar";
 import { useState } from "react";
 
 export default function DevPage() {
-  const[activeButton, setActiveButton] = useState<string | null>(null);
+  const [activeButton, setActiveButton] = useState<string | null>(null);
   return (
     <div>
-      <Sidebar activeButton={activeButton} setActiveButton={setActiveButton}/>
+      <Sidebar activeButton={activeButton} setActiveButton={setActiveButton} />
       <Notification
         message="We’ve resent the link to your email!"
         onClose={() => {}}

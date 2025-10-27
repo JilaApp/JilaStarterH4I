@@ -18,7 +18,7 @@ export default function Sidebar({ activeButton, setActiveButton }: InputProps) {
   //this is a dummy function bc settings hasnt been designed yet
   const dummyButtonClick = () => {
     console.log("Settings?");
-  }
+  };
 
   return (
     <div className="h-screen w-[196px] left-0 bg-[linear-gradient(348deg,_#7E0601_51.81%,_#E8965B_130.16%)] rounded-br-[60px]">
@@ -67,7 +67,10 @@ export default function Sidebar({ activeButton, setActiveButton }: InputProps) {
       </div>
 
       {/*button functionality has not been designed yet*/}
-      <button onClick={() => dummyButtonClick()} className="flex font-semibold flex-row gap-[16px] left-[24px] absolute bottom-[24px] text-white-400 hover:cursor-default">
+      <button
+        onClick={() => dummyButtonClick()}
+        className="flex font-semibold flex-row gap-[16px] left-[24px] absolute bottom-[24px] text-white-400 hover:cursor-default"
+      >
         <Settings color={"var(--color-white-400)"} /> Settings
       </button>
     </div>
