@@ -24,7 +24,6 @@ export default function FormInputWrapper({
     <div className="flex flex-col w-full font-[400] text-[18px]">
       <div className="flex items-center gap-1 h-[30px] mb-1">
         <span>{title}</span>
-        {required && <span className="text-[var(--color-error-400)]">*</span>}
       </div>{" "}
       {childWithState}
       {state === "error" && (

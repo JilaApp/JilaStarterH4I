@@ -1,178 +1,82 @@
-import { useState, useRef, useEffect } from "react";
+import { useRef } from "react";
 import { clsx } from "clsx";
+import { Mail, LockKeyhole, Eye, EyeOff, Type } from "lucide-react";
 
-import { Mail, LockKeyhole, Eye, EyeOff, Ban } from "lucide-react";
-
-interface InputProps {
-  type?: "text" | "email" | "password";
+interface BaseInputProps {
+  type?: string;
   disabled?: boolean;
   onChange?: (value: string) => void;
-  icon?: "mail" | "lock";
-  showPasswordToggle?: boolean;
+  onFocus?: () => void;
+  onBlur?: () => void;
   placeholder?: string;
   id?: string;
   state?: "normal" | "error";
+  value?: string;
+  isFocused?: boolean;
+  icon?: React.ReactNode;
+  rightElement?: React.ReactNode;
+  className?: string;
 }
 
-export default function Input({
+function BaseInput({
   type = "text",
   disabled = false,
-  onChange,
-  icon,
-  showPasswordToggle = true,
   placeholder = "Enter text",
   id,
-  state,
-}: InputProps) {
-  const [isFocused, setIsFocused] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const [hasError, setHasError] = useState(error);
-  const [currentErrorMessage, setCurrentErrorMessage] = useState(
-    errorMessage || "",
-  );
-  const [hasInteracted, setHasInteracted] = useState(false);
+  state = "normal",
+  value,
+  onChange,
+  onFocus,
+  onBlur,
+  isFocused = false,
+  icon,
+  rightElement,
+  className = "",
+}: BaseInputProps) {
   const inputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    setHasError(error);
-    setCurrentErrorMessage(errorMessage || "");
-  }, [error, errorMessage]);
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newInput = e.target.value;
-    onChange(newInput);
-
-    if (hasError) {
-      clearError();
-    }
-  };
-
-  const setError = (message: string) => {
-    setHasError(true);
-    setCurrentErrorMessage(message);
-    onErrorChange?.(true, message);
-  };
-
-  const clearError = () => {
-    setHasError(false);
-    setCurrentErrorMessage("");
-    onErrorChange?.(false, "");
-  };
-
-  const isValidEmail = (email: string): boolean => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
-
-  const togglePasswordVisibility = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    if (!disabled) {
-      setShowPassword(!showPassword);
-      inputRef.current?.focus();
-    }
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onChange?.(e.target.value);
   };
 
   const handleFocus = () => {
-    setIsFocused(true);
-    setHasInteracted(true);
+    onFocus?.();
   };
 
   const handleBlur = () => {
-    setIsFocused(false);
-
-    if (required && hasInteracted && !value.trim()) {
-      setError("This field is required");
-    } else if (
-      type === "email" &&
-      hasInteracted &&
-      value.trim() &&
-      !isValidEmail(value)
-    ) {
-      setError("Please enter a valid email address");
-    }
+    onBlur?.();
   };
-
-  const handleLabelMouseDown = (e: React.MouseEvent) => {
-    if (disabled) {
-      e.preventDefault();
-      return;
-    }
-
-    const target = e.target as HTMLElement;
-    if (target.tagName !== "INPUT") {
-      e.preventDefault();
-    }
-
-    setIsFocused(true);
-  };
-
-  const renderIcon = () => {
-    const iconColor = isFocused
-      ? "var(--color-type-400)"
-      : "var(--color-gray-300)";
-
-    if (icon === "mail") {
-      return <Mail color={iconColor} />;
-    } else if (icon === "lock") {
-      return <LockKeyhole color={iconColor} />;
-    }
-  };
-
-  const renderPasswordToggle = () => {
-    if (!showPasswordToggle || icon !== "lock" || type !== "password") {
-      return null;
-    }
-
-    const iconColor = isFocused
-      ? "var(--color-type-400)"
-      : "var(--color-gray-300)";
-
-    if (showPassword) {
-      return <Eye color={iconColor} />;
-    } else {
-      return <EyeOff color={iconColor} />;
-    }
-  };
-
-  let inputType;
-  if (type === "password" && !showPassword) {
-    inputType = "password";
-  } else {
-    inputType = "text";
-  }
 
   const getContainerClasses = () => {
     return clsx(
-      "flex items-center border-[1px] rounded-[10px] pl-[18px] w-[450px] h-[60px]",
+      "flex items-center border-[1px] rounded-[10px] w-[450px] h-[60px] pr-[18px]",
       {
-        "border-gray-300 bg-gray-200 text-gray-300": disabled,
-        "border-error-400 bg-white text-gray-300 shadow-[0px_0px_0px_3px_rgba(255,168,168,1)]":
-          !disabled && hasError,
-        "border-jila-400 bg-white text-gray-300":
-          !disabled && isFocused && !hasError,
-        "border-gray-300 bg-white text-gray-300":
-          !disabled && !isFocused && !hasError,
+        "border-gray-300 bg-gray-200": disabled,
+        "border-error-400 bg-white": !disabled && state === "error",
+        "border-jila-400 bg-white shadow-[0px_0px_0px_3px_rgba(255,225,225,1)]":
+          !disabled && isFocused && state !== "error",
+        "border-gray-300 bg-white": !disabled && !isFocused && state !== "error",
       },
+      className
     );
   };
 
   const getInputClasses = () => {
-    return clsx("focus:outline-none link-text", {
-      "w-[346px]": icon,
-      "w-[414px]": !icon,
-      "text-gray-300": disabled || (!isFocused && !hasError),
-      "text-type-400": !disabled && isFocused && !hasError,
-      "text-red-500": !disabled && hasError,
-    });
+    return clsx(
+      "focus:outline-none link-text w-full h-full pl-[18px]",
+      {
+        "cursor-not-allowed": disabled,
+        "text-gray-400": disabled,
+      }
+    );
   };
+
+  const iconColor = isFocused ? "var(--color-type-400)" : "var(--color-gray-300)";
 
   return (
     <label
       htmlFor={id}
       className={getContainerClasses()}
-      onMouseDown={handleLabelMouseDown}
       style={
         state === "error"
           ? {
@@ -182,22 +86,161 @@ export default function Input({
           : undefined
       }
     >
-      <div className="mr-[8px]">{renderIcon()}</div>
+      {icon && (
+        <div className="pl-[18px] pr-[12px] flex items-center" style={{ color: iconColor }}>
+          {icon}
+        </div>
+      )}
       <input
         ref={inputRef}
         id={id}
         className={getInputClasses()}
-        type={inputType}
-        value={input}
-        placeholder={!isFocused && !input ? placeholder : ""}
-        onChange={handleInputChange}
+        type={type}
+        value={value}
+        placeholder={placeholder}
+        onChange={handleChange}
         onFocus={handleFocus}
         onBlur={handleBlur}
         disabled={disabled}
+        style={{
+          color: !disabled && state === "error" 
+            ? "rgba(205, 205, 205, 1)"
+            : !disabled && !isFocused
+            ? "rgba(161, 161, 161, 1)"
+            : undefined
+        }}
       />
-      <div onMouseDown={disabled ? undefined : togglePasswordVisibility}>
-        {renderPasswordToggle()}
-      </div>
+      {rightElement && (
+        <div className="flex items-center">
+          {rightElement}
+        </div>
+      )}
     </label>
   );
 }
+
+// Input Variant Mapping
+const inputVariants = {
+  email: {
+    type: "email",
+    icon: Mail,
+    placeholder: "Enter your email",
+  },
+  password: {
+    type: "password",
+    icon: LockKeyhole,
+    placeholder: "Enter your password",
+  },
+  text: {
+    type: "text",
+    icon: Type,
+    placeholder: "Enter text",
+  },
+};
+
+// Text Input
+interface TextInputProps {
+  disabled?: boolean;
+  onChange?: (value: string) => void;
+  onFocus?: () => void;
+  onBlur?: () => void;
+  placeholder?: string;
+  id?: string;
+  state?: "normal" | "error";
+  value?: string;
+  isFocused?: boolean;
+  className?: string;
+}
+
+export function TextInput({
+  placeholder = inputVariants.text.placeholder,
+  ...props
+}: TextInputProps) {
+  const { type } = inputVariants.text;
+  
+  return (
+    <BaseInput
+      type={type}
+      placeholder={placeholder}
+      {...props}
+    />
+  );
+}
+
+// Email Input
+interface EmailInputProps {
+  disabled?: boolean;
+  onChange?: (value: string) => void;
+  onFocus?: () => void;
+  onBlur?: () => void;
+  placeholder?: string;
+  id?: string;
+  state?: "normal" | "error";
+  value?: string;
+  isFocused?: boolean;
+  className?: string;
+}
+
+export function EmailInput({
+  placeholder = inputVariants.email.placeholder,
+  ...props
+}: EmailInputProps) {
+  const { type, icon: Icon } = inputVariants.email;
+  
+  return (
+    <BaseInput
+      type={type}
+      placeholder={placeholder}
+      icon={<Icon size={20} />}
+      {...props}
+    />
+  );
+}
+
+// Password Input
+interface PasswordInputProps {
+  disabled?: boolean;
+  onChange?: (value: string) => void;
+  onFocus?: () => void;
+  onBlur?: () => void;
+  placeholder?: string;
+  id?: string;
+  state?: "normal" | "error";
+  value?: string;
+  isFocused?: boolean;
+  className?: string;
+  showPassword?: boolean;
+  onTogglePassword?: () => void;
+}
+
+export function PasswordInput({
+  placeholder = inputVariants.password.placeholder,
+  showPassword = false,
+  onTogglePassword,
+  ...props
+}: PasswordInputProps) {
+  const { icon: Icon } = inputVariants.password;
+  
+  return (
+    <BaseInput
+      type={showPassword ? "text" : "password"}
+      placeholder={placeholder}
+      icon={<Icon size={20} />}
+      rightElement={
+        onTogglePassword && (
+          <button
+            type="button"
+            onClick={onTogglePassword}
+            disabled={props.disabled}
+            className="text-gray-400 hover:text-gray-600 transition-colors disabled:cursor-not-allowed"
+          >
+            {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+          </button>
+        )
+      }
+      {...props}
+    />
+  );
+}
+
+export default BaseInput;

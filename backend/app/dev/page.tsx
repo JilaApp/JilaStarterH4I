@@ -1,15 +1,91 @@
 "use client";
 import { useState } from "react";
 import Button from "@/components/Button";
-import { useState } from "react";
 import Notification from "@/components/Notification";
-import Input from "@/components/Input";
 import Dropdown from "@/components/Dropdown";
 import FormInputWrapper from "@/components/FormInputWrapper";
+import { TextInput, EmailInput, PasswordInput } from "@/components/Input";
 
 export default function DevPage() {
   const [dropdownIndex, setDropdownIndex] = useState<number>();
   const [errorDropdownIndex, setErrorDropdownIndex] = useState<number>();
+
+  const [textValue, setTextValue] = useState("");
+  const [emailValue, setEmailValue] = useState("");
+  const [passwordValue, setPasswordValue] = useState("");
+  const [textError, setTextError] = useState(false);
+  const [emailError, setEmailError] = useState(false);
+  const [passwordError, setPasswordError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [isFocused, setIsFocused] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
+  const isValidEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const handleTextChange = (value: string) => {
+    setTextValue(value);
+    if (textError) {
+      setTextError(false);
+      setErrorMessage("");
+    }
+  };
+
+  const handleEmailChange = (value: string) => {
+    setEmailValue(value);
+    if (emailError) {
+      setEmailError(false);
+      setErrorMessage("");
+    }
+  };
+
+  const handlePasswordChange = (value: string) => {
+    setPasswordValue(value);
+    if (passwordError) {
+      setPasswordError(false);
+      setErrorMessage("");
+    }
+  };
+
+  const handleTextBlur = () => {
+    setIsFocused(false);
+    if (!textValue.trim()) {
+      setTextError(true);
+      setErrorMessage("This field is required");
+    }
+  };
+
+  const handleEmailBlur = () => {
+    setIsFocused(false);
+    if (!emailValue.trim()) {
+      setEmailError(true);
+      setErrorMessage("This field is required");
+    } else if (!isValidEmail(emailValue)) {
+      setEmailError(true);
+      setErrorMessage("Please enter a valid email address");
+    }
+  };
+
+  const handlePasswordBlur = () => {
+    setIsFocused(false);
+    if (!passwordValue.trim()) {
+      setPasswordError(true);
+      setErrorMessage("This field is required");
+    } else if (passwordValue.length < 6) {
+      setPasswordError(true);
+      setErrorMessage("Password must be at least 6 characters");
+    }
+  };
+
+  const handleFocus = () => {
+    setIsFocused(true);
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
 
   const onDropdownChange = (index: number) => {
     setDropdownIndex(index);
@@ -22,36 +98,64 @@ export default function DevPage() {
     <>
       <div className="flex flex-col gap-3 px-5">
         <Notification
-          message="We’ve resent the link to your email!"
+          message="We've resent the link to your email!"
           onClose={() => {}}
         />
         <div className="flex flex-col gap-y-[20px] pl-[20px] pr-[20px] pt-[20px] pb-[20px]">
-          <Input
-            type="email"
-            id="email-input"
-            placeholder="Enter Email"
-            icon="mail"
-            state="error"
-          />
+          <FormInputWrapper
+            title="Text Input"
+            required={true}
+            state={textError ? "error" : "normal"}
+            errorString={errorMessage}
+          >
+            <TextInput
+              value={textValue}
+              onChange={handleTextChange}
+              onFocus={handleFocus}
+              onBlur={handleTextBlur}
+              isFocused={isFocused}
+              state={textError ? "error" : "normal"}
+              id="text-input"
+            />
+          </FormInputWrapper>
 
-          <Input type="email" id="email-disabled-input" disabled />
+          <FormInputWrapper
+            title="Email Input"
+            required={true}
+            state={emailError ? "error" : "normal"}
+            errorString={errorMessage}
+          >
+            <EmailInput
+              value={emailValue}
+              onChange={handleEmailChange}
+              onFocus={handleFocus}
+              onBlur={handleEmailBlur}
+              isFocused={isFocused}
+              state={emailError ? "error" : "normal"}
+              id="email-input"
+            />
+          </FormInputWrapper>
 
-          <Input
-            type="password"
-            placeholder="Enter Password"
-            id="password-input"
-            icon="lock"
-            showPasswordToggle
-          />
-
-          <Input
-            type="password"
-            placeholder="Enter Password"
-            id="password-disabled-input"
-            icon="lock"
-            disabled
-          />
+          <FormInputWrapper
+            title="Password Input"
+            required={true}
+            state={passwordError ? "error" : "normal"}
+            errorString={errorMessage}
+          >
+            <PasswordInput
+              value={passwordValue}
+              onChange={handlePasswordChange}
+              onFocus={handleFocus}
+              onBlur={handlePasswordBlur}
+              isFocused={isFocused}
+              state={passwordError ? "error" : "normal"}
+              showPassword={showPassword}
+              onTogglePassword={togglePasswordVisibility}
+              id="password-input"
+            />
+          </FormInputWrapper>
         </div>
+
         <Dropdown
           options={[
             "Part-time",
@@ -80,19 +184,6 @@ export default function DevPage() {
             options={["Part-time", "Full-time", "Internship"]}
             currentIndex={errorDropdownIndex}
             onChange={onErrorDropdownChange}
-          />
-        </FormInputWrapper>
-        <FormInputWrapper
-          title="Enter your password lil bro"
-          state="error"
-          errorString="u got it wrong haha"
-        >
-          <Input
-            type="password"
-            placeholder="Enter Password"
-            id="password-input"
-            icon="lock"
-            showPasswordToggle
           />
         </FormInputWrapper>
       </div>
