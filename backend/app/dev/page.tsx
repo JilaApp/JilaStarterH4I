@@ -1,4 +1,6 @@
 "use client";
+import { Video, MessageCircle } from "lucide-react";
+
 import Button from "@/components/Button";
 import Notification from "@/components/Notification";
 import Input from "@/components/Input";
@@ -68,10 +70,14 @@ export default function DevPage() {
       <Button text="Sign In" onClick={() => console.log("Hello!")} />
 
       <Tabs
-        video_name="Video resources"
-        social_name="Social services"
-        video_content={<p>Hello</p>}
-        social_content={<p>Bye</p>}
+        tab1={{
+          header: { logo: <Video />, text: "Video Resources" },
+          content: <p>Hello</p>,
+        }}
+        tab2={{
+          header: { logo: <MessageCircle />, text: "Social Services" },
+          content: <p>Bye</p>,
+        }}
       />
     </div>
   );

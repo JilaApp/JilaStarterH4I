@@ -1,52 +1,45 @@
 import { useState } from "react";
-import { Video, MessageCircle } from "lucide-react";
 
-interface TabsProps {
-  video_name: string;
-  social_name: string;
-  video_content: React.ReactNode;
-  social_content: React.ReactNode;
+interface TabHeader {
+  logo: React.ReactNode;
+  text: string;
 }
 
-export default function Tabs({
-  video_name,
-  social_name,
-  video_content,
-  social_content,
-}: TabsProps) {
-  const [activeTab, setActiveTab] = useState("tab1");
+interface Tab {
+  header: TabHeader;
+  content: React.ReactNode;
+}
 
-  const tabs = [
+interface TabsProps {
+  tab1: Tab;
+  tab2: Tab;
+}
+
+export default function Tabs({ tab1, tab2 }: TabsProps) {
+  const [activeTab, setActiveTab] = useState(0);
+
+  const tabDict = [
     {
-      id: "tab1",
-      label: (
-        <div className="flex justify-start gap-2">
-          <Video />
-          <span>{video_name}</span>
-        </div>
-      ),
+      id: 0,
+      header_logo: tab1.header.logo,
+      header_text: tab1.header.text,
+      content: tab1.content,
     },
     {
-      id: "tab2",
-      label: (
-        <div className="flex justify-start gap-2">
-          <MessageCircle />
-          <span>{social_name}</span>
-        </div>
-      ),
+      id: 1,
+      header_logo: tab2.header.logo,
+      header_text: tab2.header.text,
+      content: tab2.content,
     },
-    ,
   ];
 
-  const tabContent = {
-    tab1: video_content,
-    tab2: social_content,
-  };
+  const active = tabDict.find((t) => t.id === activeTab);
 
   return (
     <div className="shadow-lg shadow-gray-400 rounded-xl p-6 mx-10 space-y-5 bg-[linear-gradient(to_bottom,white_0%,rgba(109,15,0,0.07)_30%,rgba(109,15,0,0.07)_70%,white_100%)]">
       <div className="flex flex-wrap">
-        {tabs.map((tab) => (
+        {tabDict.map((tab) => (
+          // styling for active tab
           <button
             key={tab!.id}
             className={`px-4 py-2 font-semibold ${
@@ -56,21 +49,24 @@ export default function Tabs({
             }`}
             onClick={() => setActiveTab(tab!.id)}
           >
-            {tab!.label}
+            <div className="flex justify-start gap-2">
+              {tab!.header_logo}
+              <span>{tab!.header_text}</span>
+            </div>
           </button>
         ))}
-
-        {/* Search bar was removed from figma
-        <div className="flex justify-end ml-auto">
-            <input
-            type="string"
-            id="search_bar"
-            placeholder="search"
-            />
-        </div> */}
       </div>
+      {/* display active tab content */}
+      <div>{active?.content}</div>
 
-      <div>{tabContent[activeTab as keyof typeof tabContent]}</div>
+      {/* Search Bar
+      <div className="flex justify-end ml-auto">
+          <input
+          type="string"
+          id="search_bar"
+          placeholder="search"
+          />
+      </div> */}
     </div>
   );
 }
