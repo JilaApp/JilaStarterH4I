@@ -55,23 +55,23 @@ function BaseInput({
         "border-error-400 bg-white": !disabled && state === "error",
         "border-jila-400 bg-white shadow-[0px_0px_0px_3px_rgba(255,225,225,1)]":
           !disabled && isFocused && state !== "error",
-        "border-gray-300 bg-white": !disabled && !isFocused && state !== "error",
+        "border-gray-300 bg-white":
+          !disabled && !isFocused && state !== "error",
       },
-      className
+      className,
     );
   };
 
   const getInputClasses = () => {
-    return clsx(
-      "focus:outline-none link-text w-full h-full pl-[18px]",
-      {
-        "cursor-not-allowed": disabled,
-        "text-gray-400": disabled,
-      }
-    );
+    return clsx("focus:outline-none link-text w-full h-full pl-[18px]", {
+      "cursor-not-allowed": disabled,
+      "text-gray-400": disabled,
+    });
   };
 
-  const iconColor = isFocused ? "var(--color-type-400)" : "var(--color-gray-300)";
+  const iconColor = isFocused
+    ? "var(--color-type-400)"
+    : "var(--color-gray-300)";
 
   return (
     <label
@@ -87,7 +87,10 @@ function BaseInput({
       }
     >
       {icon && (
-        <div className="pl-[18px] pr-[12px] flex items-center" style={{ color: iconColor }}>
+        <div
+          className="pl-[18px] pr-[12px] flex items-center"
+          style={{ color: iconColor }}
+        >
           {icon}
         </div>
       )}
@@ -103,18 +106,15 @@ function BaseInput({
         onBlur={handleBlur}
         disabled={disabled}
         style={{
-          color: !disabled && state === "error" 
-            ? "rgba(205, 205, 205, 1)"
-            : !disabled && !isFocused
-            ? "rgba(161, 161, 161, 1)"
-            : undefined
+          color:
+            !disabled && state === "error"
+              ? "rgba(205, 205, 205, 1)"
+              : !disabled && !isFocused
+                ? "rgba(161, 161, 161, 1)"
+                : undefined,
         }}
       />
-      {rightElement && (
-        <div className="flex items-center">
-          {rightElement}
-        </div>
-      )}
+      {rightElement && <div className="flex items-center">{rightElement}</div>}
     </label>
   );
 }
@@ -157,14 +157,8 @@ export function TextInput({
   ...props
 }: TextInputProps) {
   const { type } = inputVariants.text;
-  
-  return (
-    <BaseInput
-      type={type}
-      placeholder={placeholder}
-      {...props}
-    />
-  );
+
+  return <BaseInput type={type} placeholder={placeholder} {...props} />;
 }
 
 // Email Input
@@ -186,7 +180,7 @@ export function EmailInput({
   ...props
 }: EmailInputProps) {
   const { type, icon: Icon } = inputVariants.email;
-  
+
   return (
     <BaseInput
       type={type}
@@ -220,7 +214,7 @@ export function PasswordInput({
   ...props
 }: PasswordInputProps) {
   const { icon: Icon } = inputVariants.password;
-  
+
   return (
     <BaseInput
       type={showPassword ? "text" : "password"}
