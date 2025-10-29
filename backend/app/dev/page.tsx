@@ -4,7 +4,6 @@ import Button from "@/components/Button";
 import Notification from "@/components/Notification";
 import FormInputWrapper from "@/components/FormInputWrapper";
 import { TextInput, EmailInput, PasswordInput } from "@/components/Input";
-import Input from "@/components/Input";
 import Sidebar from "@/components/Sidebar";
 import Dropdown from "@/components/Dropdown";
 import { Video, MessageCircle } from "lucide-react";
@@ -89,7 +88,7 @@ export default function DevPage() {
     <>
       <div className="flex flex-col gap-3 px-5">
         <Notification
-          message="We've resent the link to your email!"
+          message="We’ve resent the link to your email!"
           onClose={() => {}}
         />
         <div className="flex flex-col gap-y-[20px] pl-[20px] pr-[20px] pt-[20px] pb-[20px]">
