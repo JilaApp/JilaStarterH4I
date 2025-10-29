@@ -1,14 +1,8 @@
 import { useState } from "react";
-import { LockKeyhole, Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
 import { BaseInput } from "./BaseInput";
 import { CommonInputProps } from "./types";
-
-const inputVariants = {
-  password: {
-    icon: LockKeyhole,
-    placeholder: "Enter your password",
-  },
-};
+import { inputVariants } from "./variants";
 
 export function PasswordInput({
   placeholder = inputVariants.password.placeholder,

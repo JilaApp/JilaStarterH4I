@@ -1,14 +1,6 @@
-import { Type } from "lucide-react";
 import { BaseInput } from "./BaseInput";
 import { CommonInputProps } from "./types";
-
-const inputVariants = {
-  text: {
-    type: "text",
-    icon: Type,
-    placeholder: "Enter text",
-  },
-};
+import { inputVariants } from "./variants";
 
 export function TextInput({
   placeholder = inputVariants.text.placeholder,

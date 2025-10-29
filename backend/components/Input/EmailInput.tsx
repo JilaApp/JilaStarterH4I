@@ -1,14 +1,6 @@
-import { Mail } from "lucide-react";
 import { BaseInput } from "./BaseInput";
 import { CommonInputProps } from "./types";
-
-const inputVariants = {
-  email: {
-    type: "email",
-    icon: Mail,
-    placeholder: "Enter your email",
-  },
-};
+import { inputVariants } from "./variants";
 
 export function EmailInput({
   placeholder = inputVariants.email.placeholder,
