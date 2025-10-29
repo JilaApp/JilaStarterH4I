@@ -8,6 +8,7 @@ import Dropdown from "@/components/Dropdown";
 import FormInputWrapper from "@/components/FormInputWrapper";
 import { Video, MessageCircle } from "lucide-react";
 import Tabs from "@/components/Tabs";
+import FilterBar from "@/components/FilterBar";
 
 export default function DevPage() {
   const tabs = [
@@ -33,12 +34,24 @@ export default function DevPage() {
   const onErrorDropdownChange = (index: number) => {
     setErrorDropdownIndex(index);
   };
+
+  const [selectedOptions, setSelectedOptions] = useState([
+    "one",
+    "two",
+    "three",
+  ]);
+
   return (
     <>
       <div className="flex flex-col gap-3 px-5">
         <Notification
           message="We’ve resent the link to your email!"
           onClose={() => {}}
+        />
+        <FilterBar
+          options={["one", "two", "three"]}
+          selectedOptions={selectedOptions}
+          setSelectedOptions={setSelectedOptions}
         />
         <div className="flex flex-col gap-y-[20px] pl-[20px] pr-[20px] pt-[20px] pb-[20px]">
           <Input
