@@ -5,6 +5,8 @@ import Notification from "@/components/Notification";
 import Input from "@/components/Input";
 import Dropdown from "@/components/Dropdown";
 import FormInputWrapper from "@/components/FormInputWrapper";
+import HeaderDropdown from "@/components/HeaderDropdown";
+import Header from "@/components/Header";
 
 export default function DevPage() {
   const [dropdownIndex, setDropdownIndex] = useState<number>();
@@ -19,6 +21,11 @@ export default function DevPage() {
   };
   return (
     <>
+      <Header
+        name="Sophia Kim"
+        organization="Hack4Impact"
+        title="Data Collection + Analytics"
+      />
       <div className="flex flex-col gap-3 px-5">
         <Notification
           message="We’ve resent the link to your email!"
