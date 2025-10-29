@@ -5,8 +5,21 @@ import Button from "@/components/Button";
 import Notification from "@/components/Notification";
 import Input from "@/components/Input";
 import Tabs from "@/components/Tabs";
+import { useState } from "react";
 
 export default function DevPage() {
+  const tabs = [
+    {
+      header: { logo: <Video />, text: "Video Resources" },
+      content: <p>Hello</p>,
+    },
+    {
+      header: { logo: <MessageCircle />, text: "Social Services" },
+      content: <p>Bye</p>,
+    },
+  ];
+  const [currentTabIndex, setCurrentTabIndex] = useState(1);
+
   return (
     <div>
       <Notification
@@ -70,14 +83,9 @@ export default function DevPage() {
       <Button text="Sign In" onClick={() => console.log("Hello!")} />
 
       <Tabs
-        tab1={{
-          header: { logo: <Video />, text: "Video Resources" },
-          content: <p>Hello</p>,
-        }}
-        tab2={{
-          header: { logo: <MessageCircle />, text: "Social Services" },
-          content: <p>Bye</p>,
-        }}
+        tabs={tabs}
+        activeIndex={currentTabIndex}
+        onTabChange={setCurrentTabIndex}
       />
     </div>
   );

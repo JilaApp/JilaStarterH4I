@@ -11,62 +11,39 @@ interface Tab {
 }
 
 interface TabsProps {
-  tab1: Tab;
-  tab2: Tab;
+  tabs: Tab[];
+  activeIndex: number;
+  onTabChange: (index: number) => void;
 }
 
-export default function Tabs({ tab1, tab2 }: TabsProps) {
-  const [activeTab, setActiveTab] = useState(0);
+export default function Tabs({ tabs, activeIndex, onTabChange }: TabsProps) {
+  if (!tabs || tabs.length === 0) {
+    return null;
+  }
 
-  const tabDict = [
-    {
-      id: 0,
-      header_logo: tab1.header.logo,
-      header_text: tab1.header.text,
-      content: tab1.content,
-    },
-    {
-      id: 1,
-      header_logo: tab2.header.logo,
-      header_text: tab2.header.text,
-      content: tab2.content,
-    },
-  ];
-
-  const active = tabDict.find((t) => t.id === activeTab);
+  const activeTab = tabs[activeIndex];
 
   return (
     <div className="shadow-lg shadow-gray-400 rounded-xl p-6 mx-10 space-y-5 bg-[linear-gradient(to_bottom,white_0%,rgba(109,15,0,0.07)_30%,rgba(109,15,0,0.07)_70%,white_100%)]">
       <div className="flex flex-wrap">
-        {tabDict.map((tab) => (
-          // styling for active tab
+        {tabs.map((tab, index) => (
           <button
-            key={tab!.id}
+            key={index}
             className={`px-4 py-2 font-semibold ${
-              activeTab === tab!.id
+              activeIndex === index
                 ? "border-b-3 border-jila-400 text-jila-400"
                 : "text-gray-400 hover:text-jila-300 cursor-pointer"
             }`}
-            onClick={() => setActiveTab(tab!.id)}
+            onClick={() => onTabChange(index)}
           >
             <div className="flex justify-start gap-2">
-              {tab!.header_logo}
-              <span>{tab!.header_text}</span>
+              {tab.header.logo}
+              <span>{tab.header.text}</span>
             </div>
           </button>
         ))}
       </div>
-      {/* display active tab content */}
-      <div>{active?.content}</div>
-
-      {/* Search Bar
-      <div className="flex justify-end ml-auto">
-          <input
-          type="string"
-          id="search_bar"
-          placeholder="search"
-          />
-      </div> */}
+      <div>{activeTab.content}</div>
     </div>
   );
 }
