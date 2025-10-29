@@ -2,11 +2,28 @@
 import { useState } from "react";
 import Button from "@/components/Button";
 import Notification from "@/components/Notification";
-import Dropdown from "@/components/Dropdown";
 import FormInputWrapper from "@/components/FormInputWrapper";
 import { TextInput, EmailInput, PasswordInput } from "@/components/Input";
+import Input from "@/components/Input";
+import Sidebar from "@/components/Sidebar";
+import Dropdown from "@/components/Dropdown";
+import { Video, MessageCircle } from "lucide-react";
+import Tabs from "@/components/Tabs";
 
 export default function DevPage() {
+  const tabs = [
+    {
+      header: { logo: <Video />, text: "Video Resources" },
+      content: <p>Hello</p>,
+    },
+    {
+      header: { logo: <MessageCircle />, text: "Social Services" },
+      content: <p>Bye</p>,
+    },
+  ];
+  // This starts on index 1 (second tab)
+  const [currentTabIndex, setCurrentTabIndex] = useState(1);
+
   const [dropdownIndex, setDropdownIndex] = useState<number>();
   const [errorDropdownIndex, setErrorDropdownIndex] = useState<number>();
 
@@ -177,8 +194,34 @@ export default function DevPage() {
         <FormInputWrapper
           required={true}
           title="Title"
+          description="Maximum size: 67MB"
+        >
+          <Dropdown
+            options={[
+              "Part-time",
+              "Full-time",
+              "Internship",
+              "Part-time",
+              "Full-time",
+              "Internship",
+              "Part-time",
+              "Full-time",
+              "Internship",
+              "Part-time",
+              "Full-time",
+              "Internship",
+            ]}
+            currentIndex={dropdownIndex}
+            onChange={onDropdownChange}
+          />
+        </FormInputWrapper>
+
+        <FormInputWrapper
+          required={true}
+          title="Title"
           state="error"
           errorString="This is an error string!"
+          description="Maximum size: 67MB"
         >
           <Dropdown
             options={["Part-time", "Full-time", "Internship"]}
@@ -215,6 +258,12 @@ export default function DevPage() {
       <div className="bg-gray-300">bg-gray-300</div>
       <div className="bg-gray-200">bg-gray-200</div>
       <Button text="Sign In" onClick={() => console.log("Hello!")} />
+
+      <Tabs
+        tabs={tabs}
+        activeIndex={currentTabIndex}
+        onTabChange={setCurrentTabIndex}
+      />
     </>
   );
 }
