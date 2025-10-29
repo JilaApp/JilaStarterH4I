@@ -11,6 +11,7 @@ interface InputProps {
   showPasswordToggle?: boolean;
   placeholder?: string;
   id?: string;
+  state?: "normal" | "error";
 }
 
 export default function Input({
@@ -22,6 +23,7 @@ export default function Input({
   showPasswordToggle = true,
   placeholder = "Enter Email",
   id,
+  state,
 }: InputProps) {
   // REMOVED: const [input, setInput] = useState("");
 
@@ -92,7 +94,7 @@ export default function Input({
         "border-gray-300 bg-gray-200 text-gray-300": disabled,
         "border-jila-400 bg-white text-gray-300": !disabled && isFocused,
         "border-gray-300 bg-white text-gray-300": !disabled && !isFocused,
-      },
+      }
     );
 
   const getInputClasses = () =>
@@ -106,6 +108,14 @@ export default function Input({
       htmlFor={id}
       className={getContainerClasses()}
       onMouseDown={handleLabelMouseDown}
+      style={
+        state === "error"
+          ? {
+              borderColor: "var(--color-error-400)",
+              boxShadow: "0 0 0 3px #FFA8A8",
+            }
+          : undefined
+      }
     >
       <div className="mr-[8px]">{renderIcon()}</div>
       <input
