@@ -20,7 +20,7 @@ const addSocialServiceInput = z.object({
 type AddSocialServiceInput = z.infer<typeof addSocialServiceInput>;
 
 async function addSocialService(input: AddSocialServiceInput) {
-  const existing = await prisma.social_services.findUnique({
+  const existing = await prisma.socialServices.findUnique({
     where: { phone_number: input.phone_number },
     select: { id: true },
   });
@@ -32,7 +32,7 @@ async function addSocialService(input: AddSocialServiceInput) {
     });
   }
 
-  await prisma.social_services.create({
+  await prisma.socialServices.create({
     data: {
       title: input.title,
       category: input.category,
@@ -52,7 +52,7 @@ const removeSocialServiceInput = z.object({
 type RemoveSocialServiceInput = z.infer<typeof removeSocialServiceInput>;
 
 async function removeSocialService(input: RemoveSocialServiceInput) {
-  const existing = await prisma.social_services.findUnique({
+  const existing = await prisma.socialServices.findUnique({
     where: { id: input.id },
   });
 
@@ -63,7 +63,7 @@ async function removeSocialService(input: RemoveSocialServiceInput) {
     });
   }
 
-  await prisma.social_services.delete({
+  await prisma.socialServices.delete({
     where: {
       id: input.id,
     },
@@ -72,13 +72,10 @@ async function removeSocialService(input: RemoveSocialServiceInput) {
 
 // EDITING
 const editSocialServiceInput = z.object({
-  // mandatory
-  id: z.number(),
-  title: z.string(),
-  category: z.enum(SocialServiceCategory),
-  phone_number: z.string(),
-
-  // optional
+  id: z.number().int(),
+  title: z.string().optional(),
+  category: z.enum(SocialServiceCategory).optional(),
+  phone_number: z.string().optional(),
   address: z.string().optional(),
   description: z.string().optional(),
   url: z.string().optional(),
@@ -87,7 +84,7 @@ const editSocialServiceInput = z.object({
 type EditSocialServiceInput = z.infer<typeof editSocialServiceInput>;
 
 async function editSocialService(input: EditSocialServiceInput) {
-  const existing = await prisma.social_services.findUnique({
+  const existing = await prisma.socialServices.findUnique({
     where: { id: input.id },
   });
 
@@ -98,24 +95,33 @@ async function editSocialService(input: EditSocialServiceInput) {
     });
   }
 
-  await prisma.social_services.update({
+  const removing_undefined_vals = {
+    title: input.title,
+    category: input.category,
+    phone_number: input.phone_number,
+    address: input.address,
+    description: input.description,
+    url: input.url,
+  };
+
+  // used to filter out undefined properties from input
+  const data = Object.fromEntries(
+    Object.entries(removing_undefined_vals).filter(
+      ([_, value]) => value !== undefined,
+    ),
+  );
+
+  await prisma.socialServices.update({
     where: {
       id: input.id,
     },
-    data: {
-      title: input.title,
-      category: input.category,
-      phone_number: input.phone_number,
-      address: input.address,
-      description: input.description,
-      url: input.url,
-    },
+    data,
   });
 }
 
 // GET ALL
 async function getAllSocialServices() {
-  const services = await prisma.social_services.findMany();
+  const services = await prisma.socialServices.findMany();
   return services;
 }
 
