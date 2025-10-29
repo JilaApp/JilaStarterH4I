@@ -4,23 +4,6 @@ import Button from "@/components/Button";
 import Notification from "@/components/Notification";
 import Input from "@/components/Input";
 import Sidebar from "@/components/Sidebar";
-import { useState } from "react";
-
-export default function DevPage() {
-  const [activeButton, setActiveButton] = useState<string | null>(null);
-  return (
-    <div>
-      <Sidebar activeButton={activeButton} setActiveButton={setActiveButton} />
-      <Notification
-        message="We’ve resent the link to your email!"
-        onClose={() => {}}
-      />
-      <div className="flex flex-col gap-y-[20px] pl-[20px] pr-[20px] pt-[20px] pb-[20px]">
-        <Input
-          type="email"
-          id="email-input"
-          placeholder="Enter Email"
-          icon="mail"
 import Dropdown from "@/components/Dropdown";
 import FormInputWrapper from "@/components/FormInputWrapper";
 
