@@ -1,5 +1,5 @@
 import React from "react";
-import TempJilaLogo from "@/assets/logos/temp_jila.png";
+import JilaQuote from "@/assets/logos/jila_quote.png";
 
 import Image from "next/image";
 
@@ -18,7 +18,7 @@ function LogoPanel() {
       }}
     >
       {/* logo */}
-      <Image src={TempJilaLogo} alt="Logo" width={600} height={600} />
+      <Image src={JilaQuote} alt="Logo" width={300} height={300} />
     </div>
   );
 }
