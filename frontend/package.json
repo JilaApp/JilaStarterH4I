@@ -8,10 +8,12 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "lint": "expo lint",
-    "lint:fix": "expo lint --fix"
+    "format": "expo lint",
+    "format:fix": "expo lint --fix",
+    "lint": "expo lint"
   },
   "dependencies": {
+    "@clerk/clerk-expo": "^2.16.1",
     "@expo/vector-icons": "^15.0.2",
     "@react-navigation/bottom-tabs": "^7.4.0",
     "@react-navigation/elements": "^2.6.3",
@@ -24,6 +26,7 @@
     "expo-linear-gradient": "^15.0.7",
     "expo-linking": "~8.0.8",
     "expo-router": "~6.0.6",
+    "expo-secure-store": "^15.0.7",
     "expo-splash-screen": "~31.0.10",
     "expo-status-bar": "~3.0.8",
     "expo-symbols": "~1.0.7",
