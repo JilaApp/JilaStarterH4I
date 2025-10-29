@@ -1,7 +1,7 @@
 "use client";
 
 import { useSignIn } from "@clerk/nextjs";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Input from "@/components/Input";
 import Button from "@/components/Button";
 import DisplayBox from "@/components/DisplayBox";
@@ -18,6 +18,15 @@ export default function ForgotPasswordPage() {
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const [showNotification, setShowNotification] = useState(false);
+
+  useEffect(() => {
+    if (showNotification) {
+      const timer = setTimeout(() => {
+        setShowNotification(false);
+      }, 6000);
+      return () => clearTimeout(timer);
+    }
+  }, [showNotification]);
 
   // Step 1: Request password reset
   // Step 2: Verify code and reset password
@@ -44,7 +53,7 @@ export default function ForgotPasswordPage() {
       console.error("Password reset request error:", err);
       setError(
         err.errors?.[0]?.message ||
-          "Failed to send reset code. Please check your email address.",
+          "Failed to send reset code. Please check your email address."
       );
     } finally {
       setLoading(false);
@@ -73,19 +82,19 @@ export default function ForgotPasswordPage() {
 
       if (result.status === "complete") {
         setSuccessMessage(
-          "Password reset successful! Redirecting to sign in...",
+          "Password reset successful! Redirecting to dashboard"
         );
         setShowNotification(true);
 
         // Redirect after 2 seconds
         setTimeout(() => {
-          window.location.href = "/sign-in";
+          window.location.href = "/dashboard";
         }, 2000);
       }
     } catch (err: any) {
       console.error("Password reset error:", err);
       setError(
-        err.errors?.[0]?.message || "Invalid code or failed to reset password.",
+        err.errors?.[0]?.message || "Invalid code or failed to reset password."
       );
     } finally {
       setLoading(false);
@@ -115,9 +124,9 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-cream-300 p-4">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-cream-300 p-4">
       {showNotification && (
-        <div className="fixed top-5 right-5 z-50">
+        <div className="fixed top-5 z-50">
           <Notification
             message={successMessage}
             onClose={() => setShowNotification(false)}
@@ -127,14 +136,14 @@ export default function ForgotPasswordPage() {
 
       <DisplayBox>
         <div className="flex flex-col gap-y-8">
-          <div>
-            <h1 className="page-title-text text-jila-400 mb-2">
-              {step === "request" ? "Forgot Password" : "Reset Password"}
+          <div className="flex flex-col items-center justify-center">
+            <h1 className="body1-desktop-text text-4xl font-bold mb-8">
+              {step === "request" ? "Forgot Password?" : "Check your email!"}
             </h1>
-            <p className="body1-desktop-text text-type-400">
+            <p className="body1-desktop-text text-type-400 text-center">
               {step === "request"
-                ? "Enter your email address and we'll send you a reset code."
-                : "Enter the code from your email and your new password."}
+                ? "Don't worry! Enter your account's email and we'll send you a reset code."
+                : `Enter the code sent to ${email} and your new password.`}
             </p>
           </div>
 
@@ -158,7 +167,7 @@ export default function ForgotPasswordPage() {
                 text={loading ? "Sending..." : "Send Reset Code"}
                 type="submit"
                 defaultClassName={
-                  loading ? "opacity-50 cursor-not-allowed" : ""
+                  loading ? "opacity-50 cursor-not-allowed w-full" : "w-full"
                 }
                 disabled={loading}
               />
@@ -177,13 +186,6 @@ export default function ForgotPasswordPage() {
               onSubmit={handleResetPassword}
               className="flex flex-col gap-y-5"
             >
-              <div>
-                <label className="components-text text-type-400 mb-2 block">
-                  Email
-                </label>
-                <Input type="email" id="email-display" value={email} disabled />
-              </div>
-
               <div>
                 <label className="components-text text-type-400 mb-2 block">
                   Reset Code
@@ -218,7 +220,7 @@ export default function ForgotPasswordPage() {
                 text={loading ? "Resetting..." : "Reset Password"}
                 type="submit"
                 defaultClassName={
-                  loading ? "opacity-50 cursor-not-allowed" : ""
+                  loading ? "opacity-50 cursor-not-allowed w-full" : "w-full"
                 }
                 disabled={loading}
               />
