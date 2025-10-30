@@ -19,6 +19,7 @@ export default function FileUploadWrapper({
   const [errorText, setErrorText] = useState<string>("");
 
   const handleFileSelect = async (file: File) => {
+    console.log("hadnling!");
     setState("pending");
     setErrorText("");
     try {

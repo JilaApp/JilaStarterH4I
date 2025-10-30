@@ -143,7 +143,15 @@ export default function FileUpload({
                 {uploadedFile && uploadedFile.fileSizeMB} MB
               </span>
             </div>
-            <X className="flex ml-auto cursor-pointer" onClick={onDelete} />
+            <X
+              className="flex ml-auto cursor-pointer"
+              onClick={() => {
+                if (fileInputRef.current) {
+                  fileInputRef.current.value = "";
+                }
+                onDelete();
+              }}
+            />
           </div>
         </div>
       )}
