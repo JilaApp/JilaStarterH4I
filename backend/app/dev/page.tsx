@@ -3,12 +3,31 @@ import { useState } from "react";
 import Button from "@/components/Button";
 import Notification from "@/components/Notification";
 import Input from "@/components/Input";
+import TopicTag from "@/components/TopicTag";
+import Sidebar from "@/components/Sidebar";
 import Dropdown from "@/components/Dropdown";
 import FormInputWrapper from "@/components/FormInputWrapper";
 import HeaderDropdown from "@/components/HeaderDropdown";
 import Header from "@/components/Header";
+import { Video, MessageCircle } from "lucide-react";
+import Tabs from "@/components/Tabs";
+import FilterBar from "@/components/FilterBar";
+import ParagraphInput from "@/components/ParagraphInput";
 
 export default function DevPage() {
+  const tabs = [
+    {
+      header: { logo: <Video />, text: "Video Resources" },
+      content: <p>Hello</p>,
+    },
+    {
+      header: { logo: <MessageCircle />, text: "Social Services" },
+      content: <p>Bye</p>,
+    },
+  ];
+  // This starts on index 1 (second tab)
+  const [currentTabIndex, setCurrentTabIndex] = useState(1);
+
   const [dropdownIndex, setDropdownIndex] = useState<number>();
   const [errorDropdownIndex, setErrorDropdownIndex] = useState<number>();
 
@@ -19,6 +38,15 @@ export default function DevPage() {
   const onErrorDropdownChange = (index: number) => {
     setErrorDropdownIndex(index);
   };
+
+  const [selectedOptions, setSelectedOptions] = useState([
+    "one",
+    "two",
+    "three",
+  ]);
+
+  const [paragraphInputValue, setParagraphInputValue] = useState<string>("");
+
   return (
     <>
       <div className="bg-[#FFFBF3]">
@@ -33,6 +61,11 @@ export default function DevPage() {
         <Notification
           message="We’ve resent the link to your email!"
           onClose={() => {}}
+        />
+        <FilterBar
+          options={["one", "two", "three"]}
+          selectedOptions={selectedOptions}
+          setSelectedOptions={setSelectedOptions}
         />
         <div className="flex flex-col gap-y-[20px] pl-[20px] pr-[20px] pt-[20px] pb-[20px]">
           <Input
@@ -60,7 +93,23 @@ export default function DevPage() {
             icon="lock"
             disabled
           />
+          <Input
+            type="password"
+            placeholder="Enter Password"
+            id="password-disabled-input"
+            icon="lock"
+            disabled
+          />
         </div>
+        <TopicTag variant="Career" />
+        <TopicTag variant="Legal" />
+        <TopicTag variant="Medical" />
+        <TopicTag variant="Transport" />
+        <TopicTag variant="Other" />
+        <TopicTag variant="Shelters" />
+        <TopicTag variant="Food" />
+        <TopicTag variant="Emergencia" />
+        <TopicTag variant="Transportation" />
         <FormInputWrapper
           required={true}
           title="Title"
@@ -112,6 +161,13 @@ export default function DevPage() {
             showPasswordToggle
           />
         </FormInputWrapper>
+
+        <FormInputWrapper title="Description">
+          <ParagraphInput
+            value={paragraphInputValue}
+            onChange={setParagraphInputValue}
+          ></ParagraphInput>
+        </FormInputWrapper>
       </div>
       <div className="page-title-text">page-title-text</div>
       <div className="components-text">components-text</div>
@@ -141,6 +197,12 @@ export default function DevPage() {
       <div className="bg-gray-300">bg-gray-300</div>
       <div className="bg-gray-200">bg-gray-200</div>
       <Button text="Sign In" onClick={() => console.log("Hello!")} />
+
+      <Tabs
+        tabs={tabs}
+        activeIndex={currentTabIndex}
+        onTabChange={setCurrentTabIndex}
+      />
     </>
   );
 }
