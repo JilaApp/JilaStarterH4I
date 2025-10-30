@@ -12,7 +12,9 @@
     "lint": "next lint",
     "format:check": "prettier --check .",
     "format:fix": "prettier --write .",
-    "prisma:seed": "ts-node --compiler-options '{\"module\":\"CommonJS\"}' prisma/seed.ts"
+    "prisma:seed": "ts-node --compiler-options '{\"module\":\"CommonJS\"}' prisma/seed.ts",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.33.1",
@@ -43,8 +45,13 @@
     "zod": "^4.1.11"
   },
   "devDependencies": {
+    "@storybook/cli": "^8.6.14",
+    "@storybook/nextjs": "^10.0.1",
+    "@storybook/react": "^10.0.1",
     "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-storybook": "^10.0.1",
     "prisma": "^6.16.3",
+    "storybook": "^10.0.1",
     "typescript": "^5.9.2"
   }
 }
