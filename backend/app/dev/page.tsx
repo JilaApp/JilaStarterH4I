@@ -11,6 +11,7 @@ import FileUpload from "@/components/FileUpload";
 import { Video, MessageCircle } from "lucide-react";
 import Tabs from "@/components/Tabs";
 import FilterBar from "@/components/FilterBar";
+import FileUploadWrapper from "@/components/FileUploadWrapper";
 
 export default function DevPage() {
   const tabs = [
@@ -105,105 +106,122 @@ export default function DevPage() {
         <TopicTag variant="Food" />
         <TopicTag variant="Emergencia" />
         <TopicTag variant="Transportation" />
-        <FormInputWrapper
-          required={true}
-          title="Title"
-          description="Maximum size: 67MB"
-        >
-          <Dropdown
-            options={[
-              "Part-time",
-              "Full-time",
-              "Internship",
-              "Part-time",
-              "Full-time",
-              "Internship",
-              "Part-time",
-              "Full-time",
-              "Internship",
-              "Part-time",
-              "Full-time",
-              "Internship",
-            ]}
-            currentIndex={dropdownIndex}
-            onChange={onDropdownChange}
-          />
-        </FormInputWrapper>
 
-        <FormInputWrapper
-          required={true}
-          title="Title"
-          state="error"
-          errorString="This is an error string!"
-          description="Maximum size: 67MB"
-        >
-          <Dropdown
-            options={["Part-time", "Full-time", "Internship"]}
-            currentIndex={errorDropdownIndex}
-            onChange={onErrorDropdownChange}
-          />
-        </FormInputWrapper>
-        <FormInputWrapper
-          title="Enter your password lil bro"
-          state="error"
-          errorString="u got it wrong haha"
-        >
-          <Input
-            type="password"
-            placeholder="Enter Password"
-            id="password-input"
-            icon="lock"
-            showPasswordToggle
-          />
-        </FormInputWrapper>
+        <div className="flex flex-col p-5 bg-[#F2F2F2]">
+          <FormInputWrapper
+            required={true}
+            title="Title"
+            description="Maximum size: 67MB"
+          >
+            <Dropdown
+              options={[
+                "Part-time",
+                "Full-time",
+                "Internship",
+                "Part-time",
+                "Full-time",
+                "Internship",
+                "Part-time",
+                "Full-time",
+                "Internship",
+                "Part-time",
+                "Full-time",
+                "Internship",
+              ]}
+              currentIndex={dropdownIndex}
+              onChange={onDropdownChange}
+            />
+          </FormInputWrapper>
 
-        <FormInputWrapper
-          title="Upload file"
-          description="Maximum size: 67MB"
-          state="default"
-        >
-          <FileUpload
-            onFileSelect={setFile}
-            onDelete={() => {}}
-            extendedText="Must be exactly 67MB!"
-          />
-        </FormInputWrapper>
+          <FormInputWrapper
+            required={true}
+            title="Title"
+            state="error"
+            errorString="This is an error string!"
+            description="Maximum size: 67MB"
+          >
+            <Dropdown
+              options={["Part-time", "Full-time", "Internship"]}
+              currentIndex={errorDropdownIndex}
+              onChange={onErrorDropdownChange}
+            />
+          </FormInputWrapper>
+          <FormInputWrapper
+            title="Enter your password lil bro"
+            state="error"
+            errorString="u got it wrong haha"
+          >
+            <Input
+              type="password"
+              placeholder="Enter Password"
+              id="password-input"
+              icon="lock"
+              showPasswordToggle
+            />
+          </FormInputWrapper>
 
-        <FormInputWrapper
-          title="Upload file"
-          description="Maximum size: 67MB"
-          state="pending"
-        >
-          <FileUpload
-            onDelete={() => {}}
-            extendedText="Must be exactly 67MB!"
-          />
-        </FormInputWrapper>
+          <FormInputWrapper
+            title="Upload file"
+            description="Maximum size: 67MB"
+            state="default"
+          >
+            <FileUpload
+              onFileSelect={setFile}
+              onDelete={() => {}}
+              extendedText="Must be exactly 67MB!"
+            />
+          </FormInputWrapper>
 
-        <FormInputWrapper
-          title="Upload file"
-          description="Maximum size: 67MB"
-          state="complete"
-        >
-          <FileUpload
-            onDelete={() => {}}
-            uploadedFile={uploadedFile}
-            extendedText="Must be exactly 67MB!"
-          />
-        </FormInputWrapper>
+          <FormInputWrapper
+            title="Upload file"
+            description="Maximum size: 67MB"
+            state="pending"
+          >
+            <FileUpload
+              onDelete={() => {}}
+              extendedText="Must be exactly 67MB!"
+            />
+          </FormInputWrapper>
 
-        <FormInputWrapper
-          title="Upload file"
-          description="Maximum size: 67MB"
-          state="error"
-        >
-          <FileUpload
-            onDelete={() => {}}
-            uploadedFile={uploadedFile}
-            extendedText="Must be exactly 67MB!"
-            errorText="File too large. Max size 67MB"
-          />
-        </FormInputWrapper>
+          <FormInputWrapper
+            title="Upload file"
+            description="Maximum size: 67MB"
+            state="complete"
+          >
+            <FileUpload
+              onDelete={() => {}}
+              uploadedFile={uploadedFile}
+              extendedText="Must be exactly 67MB!"
+            />
+          </FormInputWrapper>
+
+          <FormInputWrapper
+            title="Upload file"
+            description="Maximum size: 67MB"
+            state="error"
+          >
+            <FileUpload
+              onDelete={() => {}}
+              uploadedFile={uploadedFile}
+              extendedText="Must be exactly 67MB!"
+              errorText="File too large. Max size 67MB"
+            />
+          </FormInputWrapper>
+
+          <FormInputWrapper
+            title="Upload file"
+            description="Maximum size: 67MB"
+          >
+            <FileUploadWrapper
+              onUpload={(file: File) => {
+                setFile(file);
+              }}
+              onDelete={() => {
+                setFile(undefined);
+              }}
+            />
+          </FormInputWrapper>
+        </div>
       </div>
       <div className="page-title-text">page-title-text</div>
       <div className="components-text">components-text</div>

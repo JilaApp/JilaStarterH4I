@@ -1,7 +1,7 @@
 import { Upload, CircleCheck, CircleAlert, File, X } from "lucide-react";
 import { useRef } from "react";
 
-type UploadedFile = {
+export type UploadedFile = {
   fileName: string;
   fileSizeMB: number;
 };
@@ -125,7 +125,7 @@ export default function FileUpload({
           stroke-dashoffset='0' 
           stroke-linecap='square'
         />
-      </svg>`,
+      </svg>`
           )}")`,
         }}
       >
