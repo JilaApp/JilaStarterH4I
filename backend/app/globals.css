@@ -24,9 +24,9 @@
 
   --color-type-400: rgba(54, 24, 24);
   --color-white-400: rgba(255, 255, 255);
-  --color-gray-400: rgba(83, 83, 83);
-  --color-gray-300: rgba(161, 161, 161);
   --color-gray-200: rgba(232, 232, 232);
+  --color-gray-300: rgba(161, 161, 161);
+  --color-gray-400: rgba(83, 83, 83);
 }
 
 /*
@@ -60,6 +60,21 @@
 
   .body1-desktop-text {
     @apply font-source text-2xl font-normal leading-none;
+  }
+
+  .body2-desktop-text {
+    @apply font-source text-lg font-normal leading-none;
+  }
+
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 1000px white inset !important;
+    box-shadow: 0 0 0 1000px white inset !important;
+    -webkit-text-fill-color: inherit !important;
+    border-radius: 10px !important;
+    transition: background-color 5000s ease-in-out 0s;
   }
 }
 
