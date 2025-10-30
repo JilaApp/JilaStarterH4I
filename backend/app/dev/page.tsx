@@ -10,6 +10,7 @@ import Dropdown from "@/components/Dropdown";
 import { Video, MessageCircle } from "lucide-react";
 import Tabs from "@/components/Tabs";
 import FilterBar from "@/components/FilterBar";
+import ParagraphInput from "@/components/ParagraphInput";
 import TopicTag from "@/components/TopicTag";
 
 export default function DevPage() {
@@ -66,6 +67,8 @@ export default function DevPage() {
   const onErrorDropdownChange = (index: number) => {
     setErrorDropdownIndex(index);
   };
+
+  const [paragraphInputValue, setParagraphInputValue] = useState<string>("");
 
   return (
     <>
@@ -167,6 +170,12 @@ export default function DevPage() {
             currentIndex={errorDropdownIndex}
             onChange={onErrorDropdownChange}
           />
+        </FormInputWrapper>
+        <FormInputWrapper title="Description">
+          <ParagraphInput
+            value={paragraphInputValue}
+            onChange={setParagraphInputValue}
+          ></ParagraphInput>
         </FormInputWrapper>
       </div>
       <div className="page-title-text">page-title-text</div>
