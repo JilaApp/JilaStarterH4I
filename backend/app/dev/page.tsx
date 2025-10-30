@@ -6,6 +6,8 @@ import Input from "@/components/Input";
 import Sidebar from "@/components/Sidebar";
 import Dropdown from "@/components/Dropdown";
 import FormInputWrapper from "@/components/FormInputWrapper";
+import RadioButton from "@/components/RadioButtons";
+import { Radio } from "lucide-react";
 
 export default function DevPage() {
   const [dropdownIndex, setDropdownIndex] = useState<number>();
@@ -20,6 +22,7 @@ export default function DevPage() {
   };
   return (
     <>
+      <RadioButton name="Spanish" />
       <div className="flex flex-col gap-3 px-5">
         <Notification
           message="We’ve resent the link to your email!"
