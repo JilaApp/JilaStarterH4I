@@ -176,10 +176,7 @@ export default function DevPage() {
           state="error"
           errorString="u got it wrong haha"
         >
-          <PasswordInput
-            placeholder="Enter Password"
-            id="password-input"
-          />
+          <PasswordInput placeholder="Enter Password" id="password-input" />
         </FormInputWrapper>
 
         <FormInputWrapper title="Description">
