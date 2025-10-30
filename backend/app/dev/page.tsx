@@ -39,9 +39,24 @@ export default function DevPage() {
   };
 
   const tableData = [
-    { Title: 'C-U at Home', Topic: <TopicTag variant="Food" />, "Phone number": ['217-403-6150', 'font-normal'], Link: ["hack4impact.com", "text-jila-400"] },
-    { Title: 'Daily Bread Soup Kitchen', Topic: <TopicTag variant="Transport" />, "Phone number": ['217-403-6150', 'font-normal'], Link: ["google.com", "text-jila-400"] },
-    { Title: 'C-U at Home', Topic: <TopicTag variant="Medical" />, "Phone number": ['217-403-6150', 'font-normal'], Link: ["canva.com", "text-jila-400"] },
+    {
+      Title: "C-U at Home",
+      Topic: <TopicTag variant="Food" />,
+      "Phone number": ["217-403-6150", "font-normal"],
+      Link: ["hack4impact.com", "text-jila-400"],
+    },
+    {
+      Title: "Daily Bread Soup Kitchen",
+      Topic: <TopicTag variant="Transport" />,
+      "Phone number": ["217-403-6150", "font-normal"],
+      Link: ["google.com", "text-jila-400"],
+    },
+    {
+      Title: "C-U at Home",
+      Topic: <TopicTag variant="Medical" />,
+      "Phone number": ["217-403-6150", "font-normal"],
+      Link: ["canva.com", "text-jila-400"],
+    },
   ];
   const [selectedOptions, setSelectedOptions] = useState([
     "one",
@@ -193,7 +208,11 @@ export default function DevPage() {
       <div className="bg-gray-300">bg-gray-300</div>
       <div className="bg-gray-200">bg-gray-200</div>
       <Button text="Sign In" onClick={() => console.log("Hello!")} />
-      <Table data={tableData} edit_func={() => console.log("Editting")} delete_func={() => console.log("Deleting")} />
+      <Table
+        data={tableData}
+        edit_func={() => console.log("Editting")}
+        delete_func={() => console.log("Deleting")}
+      />
 
       <Tabs
         tabs={tabs}
