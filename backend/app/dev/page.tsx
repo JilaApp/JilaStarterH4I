@@ -193,7 +193,7 @@ export default function DevPage() {
       <div className="bg-gray-300">bg-gray-300</div>
       <div className="bg-gray-200">bg-gray-200</div>
       <Button text="Sign In" onClick={() => console.log("Hello!")} />
-      <Table data={tableData} />
+      <Table data={tableData} edit_func={() => console.log("Editting")} delete_func={() => console.log("Deleting")} />
 
       <Tabs
         tabs={tabs}
