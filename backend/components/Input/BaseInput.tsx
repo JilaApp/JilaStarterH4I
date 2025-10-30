@@ -48,10 +48,13 @@ export function BaseInput({
   };
 
   const getInputClasses = () => {
-    return clsx("focus:outline-none link-text w-full h-full pl-[18px] rounded-[10px]", {
-      "cursor-not-allowed text-gray-400": disabled,
-      "text-gray-400": !isFocused && value,
-    });
+    return clsx(
+      "focus:outline-none link-text w-full h-full pl-[18px] rounded-[10px]",
+      {
+        "cursor-not-allowed text-gray-400": disabled,
+        "text-gray-400": !isFocused && value,
+      },
+    );
   };
 
   const iconColor = isFocused
