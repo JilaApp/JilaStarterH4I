@@ -13,6 +13,7 @@ import Tabs from "@/components/Tabs";
 import FilterBar from "@/components/FilterBar";
 import ParagraphInput from "@/components/ParagraphInput";
 import TopicTag from "@/components/TopicTag";
+import Header from "@/components/Header";
 
 export default function DevPage() {
   const tabs = [
@@ -81,6 +82,13 @@ export default function DevPage() {
 
   return (
     <>
+      <div className="bg-[#FFFBF3]">
+        <Header
+          name="Sophia Kim"
+          organization="Hack4Impact"
+          title="Data Collection + Analytics"
+        />
+      </div>
       <RadioButtonGroup
         options={myOptions}
         selectedOptions={selected}
