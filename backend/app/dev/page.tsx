@@ -3,12 +3,14 @@ import { useState } from "react";
 import Button from "@/components/Button";
 import Notification from "@/components/Notification";
 import Input from "@/components/Input";
+import TopicTag from "@/components/TopicTag";
 import Sidebar from "@/components/Sidebar";
 import Dropdown from "@/components/Dropdown";
 import FormInputWrapper from "@/components/FormInputWrapper";
 import FileUpload from "@/components/FileUpload";
 import { Video, MessageCircle } from "lucide-react";
 import Tabs from "@/components/Tabs";
+import FilterBar from "@/components/FilterBar";
 
 export default function DevPage() {
   const tabs = [
@@ -41,6 +43,13 @@ export default function DevPage() {
     fileName: "sixty-seven.zip",
     fileSizeMB: 67,
   };
+
+  const [selectedOptions, setSelectedOptions] = useState([
+    "one",
+    "two",
+    "three",
+  ]);
+
   return (
     <>
       <div className="flex flex-col gap-3 px-5">
@@ -48,135 +57,153 @@ export default function DevPage() {
           message="We’ve resent the link to your email!"
           onClose={() => {}}
         />
-        {/*form inputs!*/}
-        <div className="flex flex-col g-2 bg-[#F2F2F2] rounded-[10px] p-[30px]">
-          <div className="flex flex-col gap-y-[20px] pl-[20px] pr-[20px] pt-[20px] pb-[20px]">
-            <Input
-              type="email"
-              id="email-input"
-              placeholder="Enter Email"
-              icon="mail"
-              state="error"
-            />
-
-            <Input type="email" id="email-disabled-input" disabled />
-
-            <Input
-              type="password"
-              placeholder="Enter Password"
-              id="password-input"
-              icon="lock"
-              showPasswordToggle
-            />
-
-            <Input
-              type="password"
-              placeholder="Enter Password"
-              id="password-disabled-input"
-              icon="lock"
-              disabled
-            />
-          </div>
-          <FormInputWrapper
-            required={true}
-            title="Title"
-            description="Maximum size: 67MB"
-          >
-            <Dropdown
-              options={[
-                "Part-time",
-                "Full-time",
-                "Internship",
-                "Part-time",
-                "Full-time",
-                "Internship",
-                "Part-time",
-                "Full-time",
-                "Internship",
-                "Part-time",
-                "Full-time",
-                "Internship",
-              ]}
-              currentIndex={dropdownIndex}
-              onChange={onDropdownChange}
-            />
-          </FormInputWrapper>
-
-          <FormInputWrapper
-            required={true}
-            title="Title"
+        <FilterBar
+          options={["one", "two", "three"]}
+          selectedOptions={selectedOptions}
+          setSelectedOptions={setSelectedOptions}
+        />
+        <div className="flex flex-col gap-y-[20px] pl-[20px] pr-[20px] pt-[20px] pb-[20px]">
+          <Input
+            type="email"
+            id="email-input"
+            placeholder="Enter Email"
+            icon="mail"
             state="error"
-            errorString="This is an error string!"
-            description="Maximum size: 67MB"
-          >
-            <Dropdown
-              options={["Part-time", "Full-time", "Internship"]}
-              currentIndex={errorDropdownIndex}
-              onChange={onErrorDropdownChange}
-            />
-          </FormInputWrapper>
-          <FormInputWrapper
-            title="Enter your password lil bro"
-            state="error"
-            errorString="u got it wrong haha"
-          >
-            <Input
-              type="password"
-              placeholder="Enter Password"
-              id="password-input"
-              icon="lock"
-              showPasswordToggle
-            />
-          </FormInputWrapper>
+          />
 
-          <FormInputWrapper
-            title="Upload file"
-            description="Maximum size: 67MB"
-            state="default"
-          >
-            <FileUpload
-              onFileSelect={setFile}
-              onDelete={() => {}}
-              extendedText="Must be exactly 67MB!"
-            />
-          </FormInputWrapper>
+          <Input type="email" id="email-disabled-input" disabled />
 
-          <FormInputWrapper
-            title="Upload file"
-            description="Maximum size: 67MB"
-            state="pending"
-          >
-            <FileUpload
-              onDelete={() => {}}
-              extendedText="Must be exactly 67MB!"
-            />
-          </FormInputWrapper>
+          <Input
+            type="password"
+            placeholder="Enter Password"
+            id="password-input"
+            icon="lock"
+            showPasswordToggle
+          />
 
-          <FormInputWrapper
-            title="Upload file"
-            description="Maximum size: 67MB"
-            state="complete"
-          >
-            <FileUpload
-              onDelete={() => {}}
-              uploadedFile={uploadedFile}
-              extendedText="Must be exactly 67MB!"
-            />
-          </FormInputWrapper>
-
-          <FormInputWrapper
-            title="Upload file"
-            description="Maximum size: 67MB"
-            state="error"
-          >
-            <FileUpload
-              onDelete={() => {}}
-              uploadedFile={uploadedFile}
-              extendedText="Must be exactly 67MB!"
-              errorText="File too large. Max size 67MB"
-            />
-          </FormInputWrapper>
+          <Input
+            type="password"
+            placeholder="Enter Password"
+            id="password-disabled-input"
+            icon="lock"
+            disabled
+          />
+          <Input
+            type="password"
+            placeholder="Enter Password"
+            id="password-disabled-input"
+            icon="lock"
+            disabled
+          />
         </div>
+        <TopicTag variant="Career" />
+        <TopicTag variant="Legal" />
+        <TopicTag variant="Medical" />
+        <TopicTag variant="Transport" />
+        <TopicTag variant="Other" />
+        <TopicTag variant="Shelters" />
+        <TopicTag variant="Food" />
+        <TopicTag variant="Emergencia" />
+        <TopicTag variant="Transportation" />
+        <FormInputWrapper
+          required={true}
+          title="Title"
+          description="Maximum size: 67MB"
+        >
+          <Dropdown
+            options={[
+              "Part-time",
+              "Full-time",
+              "Internship",
+              "Part-time",
+              "Full-time",
+              "Internship",
+              "Part-time",
+              "Full-time",
+              "Internship",
+              "Part-time",
+              "Full-time",
+              "Internship",
+            ]}
+            currentIndex={dropdownIndex}
+            onChange={onDropdownChange}
+          />
+        </FormInputWrapper>
+
+        <FormInputWrapper
+          required={true}
+          title="Title"
+          state="error"
+          errorString="This is an error string!"
+          description="Maximum size: 67MB"
+        >
+          <Dropdown
+            options={["Part-time", "Full-time", "Internship"]}
+            currentIndex={errorDropdownIndex}
+            onChange={onErrorDropdownChange}
+          />
+        </FormInputWrapper>
+        <FormInputWrapper
+          title="Enter your password lil bro"
+          state="error"
+          errorString="u got it wrong haha"
+        >
+          <Input
+            type="password"
+            placeholder="Enter Password"
+            id="password-input"
+            icon="lock"
+            showPasswordToggle
+          />
+        </FormInputWrapper>
+
+        <FormInputWrapper
+          title="Upload file"
+          description="Maximum size: 67MB"
+          state="default"
+        >
+          <FileUpload
+            onFileSelect={setFile}
+            onDelete={() => {}}
+            extendedText="Must be exactly 67MB!"
+          />
+        </FormInputWrapper>
+
+        <FormInputWrapper
+          title="Upload file"
+          description="Maximum size: 67MB"
+          state="pending"
+        >
+          <FileUpload
+            onDelete={() => {}}
+            extendedText="Must be exactly 67MB!"
+          />
+        </FormInputWrapper>
+
+        <FormInputWrapper
+          title="Upload file"
+          description="Maximum size: 67MB"
+          state="complete"
+        >
+          <FileUpload
+            onDelete={() => {}}
+            uploadedFile={uploadedFile}
+            extendedText="Must be exactly 67MB!"
+          />
+        </FormInputWrapper>
+
+        <FormInputWrapper
+          title="Upload file"
+          description="Maximum size: 67MB"
+          state="error"
+        >
+          <FileUpload
+            onDelete={() => {}}
+            uploadedFile={uploadedFile}
+            extendedText="Must be exactly 67MB!"
+            errorText="File too large. Max size 67MB"
+          />
+        </FormInputWrapper>
       </div>
       <div className="page-title-text">page-title-text</div>
       <div className="components-text">components-text</div>
