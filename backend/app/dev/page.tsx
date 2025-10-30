@@ -37,15 +37,15 @@ export default function DevPage() {
   };
 
   type ButtonData = {
-    clickedOnDefault: boolean,
-    name: string,
-    disabled: boolean,
+    clickedOnDefault: boolean;
+    name: string;
+    disabled: boolean;
   };
 
   const [disabled, setDisabled] = useState(false);
   const [clickedOndefault, setClickedOnDefault] = useState(true);
 
-const my_array: ButtonData[] = [
+  const my_array: ButtonData[] = [
     {
       clickedOnDefault: true, // This one will be selected by default
       name: "Spanish",
