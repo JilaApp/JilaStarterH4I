@@ -30,7 +30,6 @@ export default function InviteSignUpPage() {
     if (isWaitingForWebhook && user) {
       const checkMetadata = setInterval(() => {
         const userType = user.publicMetadata?.userType;
-        console.log("Checking metadata:", userType);
 
         if (userType === "admin") {
           clearInterval(checkMetadata);
@@ -84,10 +83,6 @@ export default function InviteSignUpPage() {
           setEmail(createdSignUp.emailAddress);
         }
       } catch (err: any) {
-        console.error(
-          "Error processing invitation ticket:",
-          JSON.stringify(err, null, 2),
-        );
         setError(
           err.errors?.[0]?.longMessage ||
             "This invitation is invalid or has expired.",
@@ -131,12 +126,10 @@ export default function InviteSignUpPage() {
         setIsLoading(false);
         setIsWaitingForWebhook(true);
       } else {
-        console.error("Sign up status is not complete:", result);
         setError("Could not complete your sign up. Please try again.");
         setIsLoading(false);
       }
     } catch (err: any) {
-      console.error("Error completing sign up:", JSON.stringify(err, null, 2));
       setError(
         err.errors?.[0]?.longMessage ||
           "An unexpected error occurred during sign up.",

@@ -94,7 +94,7 @@ export default function Input({
         "border-gray-300 bg-gray-200 text-gray-300": disabled,
         "border-jila-400 bg-white text-gray-300": !disabled && isFocused,
         "border-gray-300 bg-white text-gray-300": !disabled && !isFocused,
-      }
+      },
     );
 
   const getInputClasses = () =>

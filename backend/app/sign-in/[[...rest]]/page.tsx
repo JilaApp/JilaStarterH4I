@@ -38,7 +38,6 @@ export default function SignInPage() {
     if (isWaitingForMetadata && user) {
       const checkMetadata = setInterval(() => {
         const userType = user.publicMetadata?.userType;
-        console.log("Checking metadata:", userType);
 
         if (userType === "admin") {
           clearInterval(checkMetadata);
@@ -88,7 +87,6 @@ export default function SignInPage() {
         setIsWaitingForMetadata(true);
       }
     } catch (err: any) {
-      console.error("Sign in error:", err);
       setError(err.errors?.[0]?.message || "Invalid email or password");
       setLoading(false);
     }
