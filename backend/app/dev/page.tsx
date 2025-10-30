@@ -35,6 +35,8 @@ export default function DevPage() {
     setErrorDropdownIndex(index);
   };
 
+  const [file, setFile] = useState<File>();
+
   const uploadedFile = {
     fileName: "sixty-seven.zip",
     fileSizeMB: 67,
@@ -133,7 +135,7 @@ export default function DevPage() {
             state="default"
           >
             <FileUpload
-              onClickUpload={() => {}}
+              onFileSelect={setFile}
               onDelete={() => {}}
               extendedText="Must be exactly 67MB!"
             />
@@ -145,7 +147,6 @@ export default function DevPage() {
             state="pending"
           >
             <FileUpload
-              onClickUpload={() => {}}
               onDelete={() => {}}
               extendedText="Must be exactly 67MB!"
             />
@@ -157,7 +158,6 @@ export default function DevPage() {
             state="complete"
           >
             <FileUpload
-              onClickUpload={() => {}}
               onDelete={() => {}}
               uploadedFile={uploadedFile}
               extendedText="Must be exactly 67MB!"
@@ -170,7 +170,6 @@ export default function DevPage() {
             state="error"
           >
             <FileUpload
-              onClickUpload={() => {}}
               onDelete={() => {}}
               uploadedFile={uploadedFile}
               extendedText="Must be exactly 67MB!"

@@ -1,4 +1,5 @@
 import { Upload, CircleCheck, CircleAlert, File, X } from "lucide-react";
+import { useRef } from "react";
 
 type UploadedFile = {
   fileName: string;
@@ -6,7 +7,7 @@ type UploadedFile = {
 };
 
 interface FileUploadProps {
-  onClickUpload: () => void;
+  onFileSelect?: (file: File) => void;
   onDelete: () => void;
   state?: "default" | "pending" | "complete" | "error";
   uploadedFile?: UploadedFile;
@@ -15,21 +16,31 @@ interface FileUploadProps {
 }
 
 export default function FileUpload({
-  onClickUpload,
+  onFileSelect = (file: File) => {},
   onDelete,
   state = "default",
   uploadedFile,
   extendedText = "",
   errorText = "",
 }: FileUploadProps) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleClickUpload = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      onFileSelect(file);
+    }
+  };
+
   const renderContent = () => {
     switch (state) {
       case "default":
         return (
-          <div
-            className="flex flex-col justify-center items-center text-[var(--color-gray-300)] cursor-pointer"
-            onClick={onClickUpload}
-          >
+          <div className="flex flex-col justify-center items-center text-[var(--color-gray-300)] cursor-pointer">
             <Upload />
             <div className="flex items-center h-[40px] text-[18px] font-[500]">
               Upload your file here
@@ -86,10 +97,18 @@ export default function FileUpload({
       <span className="flex text-[var(--color-gray-300)] font-[300] leading-none mt-[2px]">
         {extendedText}
       </span>
+      <input
+        ref={fileInputRef}
+        type="file"
+        className="hidden"
+        onChange={handleFileChange}
+      />
       <div
+        onClick={state === "default" ? handleClickUpload : undefined}
         className={`
     flex justify-center items-center w-full h-[122px] 
     rounded-[10px]
+    ${state === "default" ? "cursor-pointer hover:bg-[var(--color-cream-300)]" : ""}
     ${state === "error" ? "bg-[#FFF3F3]" : "bg-white"}
   `}
         style={{
