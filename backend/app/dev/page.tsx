@@ -10,6 +10,7 @@ import FormInputWrapper from "@/components/FormInputWrapper";
 import { Video, MessageCircle } from "lucide-react";
 import Tabs from "@/components/Tabs";
 import FilterBar from "@/components/FilterBar";
+import ParagraphInput from "@/components/ParagraphInput";
 
 export default function DevPage() {
   const tabs = [
@@ -41,6 +42,8 @@ export default function DevPage() {
     "two",
     "three",
   ]);
+
+  const [paragraphInputValue, setParagraphInputValue] = useState<string>("");
 
   return (
     <>
@@ -147,6 +150,13 @@ export default function DevPage() {
             icon="lock"
             showPasswordToggle
           />
+        </FormInputWrapper>
+
+        <FormInputWrapper title="Description">
+          <ParagraphInput
+            value={paragraphInputValue}
+            onChange={setParagraphInputValue}
+          ></ParagraphInput>
         </FormInputWrapper>
       </div>
       <div className="page-title-text">page-title-text</div>
