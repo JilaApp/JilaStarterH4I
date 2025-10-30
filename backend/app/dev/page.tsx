@@ -40,6 +40,8 @@ export default function DevPage() {
     "three",
   ]);
 
+  const [paragraphInputValue, setParagraphInputValue] = useState<string>("");
+
   const isValidEmail = (email: string): boolean => {
     const emailRegex =
       /^[A-Za-z0-9]+([._-]?[A-Za-z0-9]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}$/;
@@ -67,8 +69,6 @@ export default function DevPage() {
   const onErrorDropdownChange = (index: number) => {
     setErrorDropdownIndex(index);
   };
-
-  const [paragraphInputValue, setParagraphInputValue] = useState<string>("");
 
   return (
     <>
@@ -171,6 +171,17 @@ export default function DevPage() {
             onChange={onErrorDropdownChange}
           />
         </FormInputWrapper>
+        <FormInputWrapper
+          title="Enter your password lil bro"
+          state="error"
+          errorString="u got it wrong haha"
+        >
+          <PasswordInput
+            placeholder="Enter Password"
+            id="password-input"
+          />
+        </FormInputWrapper>
+
         <FormInputWrapper title="Description">
           <ParagraphInput
             value={paragraphInputValue}
