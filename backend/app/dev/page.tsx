@@ -21,11 +21,14 @@ export default function DevPage() {
   };
   return (
     <>
+    <div className="bg-[#FFFBF3]">
       <Header
         name="Sophia Kim"
         organization="Hack4Impact"
         title="Data Collection + Analytics"
       />
+    </div>
+
       <div className="flex flex-col gap-3 px-5">
         <Notification
           message="We’ve resent the link to your email!"

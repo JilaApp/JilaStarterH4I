@@ -13,7 +13,7 @@ export default function Header({ title, name, organization }: InputProps) {
       <div className="font-semibold text-[24px] ml-[220px]">{title}</div>
 
       <div className="flex flex-row">
-        <div className="bg-jila-300 h-[72px] w-[64px] mr-[40px] pt-[24px] pl-[20px] rounded-[10px]">
+        <div className="bg-white-400 hover:bg-[#F8F8F8] h-[72px] w-[64px] mr-[40px] pt-[24px] pl-[20px] rounded-[10px]">
           <Bell />
         </div>
 
