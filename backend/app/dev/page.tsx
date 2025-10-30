@@ -12,6 +12,7 @@ import { Video, MessageCircle } from "lucide-react";
 import Tabs from "@/components/Tabs";
 import FilterBar from "@/components/FilterBar";
 import FileUploadWrapper from "@/components/FileUploadWrapper";
+import ParagraphInput from "@/components/ParagraphInput";
 
 export default function DevPage() {
   const tabs = [
@@ -50,6 +51,8 @@ export default function DevPage() {
     "two",
     "three",
   ]);
+
+  const [paragraphInputValue, setParagraphInputValue] = useState<string>("");
 
   return (
     <>
@@ -222,6 +225,39 @@ export default function DevPage() {
             />
           </FormInputWrapper>
         </div>
+        <FormInputWrapper
+          required={true}
+          title="Title"
+          state="error"
+          errorString="This is an error string!"
+          description="Maximum size: 67MB"
+        >
+          <Dropdown
+            options={["Part-time", "Full-time", "Internship"]}
+            currentIndex={errorDropdownIndex}
+            onChange={onErrorDropdownChange}
+          />
+        </FormInputWrapper>
+        <FormInputWrapper
+          title="Enter your password lil bro"
+          state="error"
+          errorString="u got it wrong haha"
+        >
+          <Input
+            type="password"
+            placeholder="Enter Password"
+            id="password-input"
+            icon="lock"
+            showPasswordToggle
+          />
+        </FormInputWrapper>
+
+        <FormInputWrapper title="Description">
+          <ParagraphInput
+            value={paragraphInputValue}
+            onChange={setParagraphInputValue}
+          ></ParagraphInput>
+        </FormInputWrapper>
       </div>
       <div className="page-title-text">page-title-text</div>
       <div className="components-text">components-text</div>
