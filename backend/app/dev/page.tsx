@@ -11,6 +11,7 @@ import { Video, MessageCircle } from "lucide-react";
 import Tabs from "@/components/Tabs";
 import FilterBar from "@/components/FilterBar";
 import TopicTag from "@/components/TopicTag";
+import ParagraphInput from "@/components/ParagraphInput";
 
 export default function DevPage() {
   const tabs = [
@@ -66,6 +67,14 @@ export default function DevPage() {
   const onErrorDropdownChange = (index: number) => {
     setErrorDropdownIndex(index);
   };
+
+  const [selectedOptions, setSelectedOptions] = useState([
+    "one",
+    "two",
+    "three",
+  ]);
+
+  const [paragraphInputValue, setParagraphInputValue] = useState<string>("");
 
   return (
     <>
@@ -167,6 +176,26 @@ export default function DevPage() {
             currentIndex={errorDropdownIndex}
             onChange={onErrorDropdownChange}
           />
+        </FormInputWrapper>
+        <FormInputWrapper
+          title="Enter your password lil bro"
+          state="error"
+          errorString="u got it wrong haha"
+        >
+          <Input
+            type="password"
+            placeholder="Enter Password"
+            id="password-input"
+            icon="lock"
+            showPasswordToggle
+          />
+        </FormInputWrapper>
+
+        <FormInputWrapper title="Description">
+          <ParagraphInput
+            value={paragraphInputValue}
+            onChange={setParagraphInputValue}
+          ></ParagraphInput>
         </FormInputWrapper>
       </div>
       <div className="page-title-text">page-title-text</div>
