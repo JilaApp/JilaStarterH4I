@@ -77,3 +77,20 @@
     transition: background-color 5000s ease-in-out 0s;
   }
 }
+
+.border-dashed-custom {
+  border-style: dashed;
+  border-width: 1px;
+  border-color: var(--color-gray-300);
+  border-radius: 10px;
+
+  /* 👇 control dash pattern: dash length 6px, gap 4px */
+  border-image: repeating-linear-gradient(
+      to right,
+      var(--color-gray-300) 0,
+      var(--color-gray-300) 6px,
+      transparent 6px,
+      transparent 10px
+    )
+    1;
+}
