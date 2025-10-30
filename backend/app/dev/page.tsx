@@ -10,6 +10,7 @@ import Dropdown from "@/components/Dropdown";
 import { Video, MessageCircle } from "lucide-react";
 import Tabs from "@/components/Tabs";
 import FilterBar from "@/components/FilterBar";
+import TopicTag from "@/components/TopicTag";
 
 export default function DevPage() {
   const tabs = [
@@ -31,6 +32,12 @@ export default function DevPage() {
   const [textError, setTextError] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
+
+  const [selectedOptions, setSelectedOptions] = useState([
+    "one",
+    "two",
+    "three",
+  ]);
 
   const isValidEmail = (email: string): boolean => {
     const emailRegex =
