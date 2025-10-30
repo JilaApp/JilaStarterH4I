@@ -1,3 +1,4 @@
+import { XIcon } from "lucide-react";
 import Button from "./Button";
 
 export default function FilterBar({
@@ -20,7 +21,7 @@ export default function FilterBar({
   };
 
   return (
-    <div className="flex gap-x-3">
+    <div className="flex gap-x-2">
       {options.map((option) => {
         return (
           <div key={option}>
@@ -35,6 +36,13 @@ export default function FilterBar({
               onClick={() => {
                 handleClick(option);
               }}
+              icon={
+                selectedOptions.includes(option) ? (
+                  <XIcon color="white" size="20px" />
+                ) : (
+                  <></>
+                )
+              }
             ></Button>
           </div>
         );
