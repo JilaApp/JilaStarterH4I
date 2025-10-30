@@ -2,8 +2,9 @@
 import { useState } from "react";
 import Button from "@/components/Button";
 import Notification from "@/components/Notification";
-import Input from "@/components/Input";
-import TopicTag from "@/components/TopicTag";
+import FormInputWrapper from "@/components/FormInputWrapper";
+import FormText from "@/components/FormTextWrapper";
+import { TextInput, EmailInput, PasswordInput } from "@/components/Input";
 import Sidebar from "@/components/Sidebar";
 import Dropdown from "@/components/Dropdown";
 import FormInputWrapper from "@/components/FormInputWrapper";
@@ -12,6 +13,7 @@ import { Video, MessageCircle } from "lucide-react";
 import Tabs from "@/components/Tabs";
 import FilterBar from "@/components/FilterBar";
 import ParagraphInput from "@/components/ParagraphInput";
+import TopicTag from "@/components/TopicTag";
 
 export default function DevPage() {
   const tabs = [
@@ -30,13 +32,9 @@ export default function DevPage() {
   const [dropdownIndex, setDropdownIndex] = useState<number>();
   const [errorDropdownIndex, setErrorDropdownIndex] = useState<number>();
 
-  const onDropdownChange = (index: number) => {
-    setDropdownIndex(index);
-  };
-
-  const onErrorDropdownChange = (index: number) => {
-    setErrorDropdownIndex(index);
-  };
+  const [textError, setTextError] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
 
   const myOptions = [
     { name: "1" },
@@ -53,6 +51,34 @@ export default function DevPage() {
   ]);
 
   const [paragraphInputValue, setParagraphInputValue] = useState<string>("");
+
+  const isValidEmail = (email: string): boolean => {
+    const emailRegex =
+      /^[A-Za-z0-9]+([._-]?[A-Za-z0-9]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}$/;
+    return emailRegex.test(email);
+  };
+
+  const validateEmail = (value: string): string | null => {
+    if (!isValidEmail(value)) {
+      return "Please enter a valid email address";
+    }
+    return null;
+  };
+
+  const validatePassword = (value: string): string | null => {
+    if (value.length < 8) {
+      return "Password must be at least 6 characters";
+    }
+    return null;
+  };
+
+  const onDropdownChange = (index: number) => {
+    setDropdownIndex(index);
+  };
+
+  const onErrorDropdownChange = (index: number) => {
+    setErrorDropdownIndex(index);
+  };
 
   return (
     <>
@@ -73,38 +99,46 @@ export default function DevPage() {
           setSelectedOptions={setSelectedOptions}
         />
         <div className="flex flex-col gap-y-[20px] pl-[20px] pr-[20px] pt-[20px] pb-[20px]">
-          <Input
-            type="email"
-            id="email-input"
-            placeholder="Enter Email"
-            icon="mail"
-            state="error"
-          />
+          <FormInputWrapper
+            title="Text Input"
+            required
+            state={textError ? "error" : "normal"}
+            errorString={textError}
+          >
+            <FormText required onErrorChange={setTextError}>
+              <TextInput id="text-input" />
+            </FormText>
+          </FormInputWrapper>
 
-          <Input type="email" id="email-disabled-input" disabled />
+          <FormInputWrapper
+            title="Email Input"
+            required
+            state={emailError ? "error" : "normal"}
+            errorString={emailError}
+          >
+            <FormText
+              required
+              validate={validateEmail}
+              onErrorChange={setEmailError}
+            >
+              <EmailInput id="email-input" />
+            </FormText>
+          </FormInputWrapper>
 
-          <Input
-            type="password"
-            placeholder="Enter Password"
-            id="password-input"
-            icon="lock"
-            showPasswordToggle
-          />
-
-          <Input
-            type="password"
-            placeholder="Enter Password"
-            id="password-disabled-input"
-            icon="lock"
-            disabled
-          />
-          <Input
-            type="password"
-            placeholder="Enter Password"
-            id="password-disabled-input"
-            icon="lock"
-            disabled
-          />
+          <FormInputWrapper
+            title="Password Input"
+            required
+            state={passwordError ? "error" : "normal"}
+            errorString={passwordError}
+          >
+            <FormText
+              required
+              validate={validatePassword}
+              onErrorChange={setPasswordError}
+            >
+              <PasswordInput id="password-input" />
+            </FormText>
+          </FormInputWrapper>
         </div>
         <TopicTag variant="Career" />
         <TopicTag variant="Legal" />
@@ -116,7 +150,7 @@ export default function DevPage() {
         <TopicTag variant="Emergencia" />
         <TopicTag variant="Transportation" />
         <FormInputWrapper
-          required={true}
+          required
           title="Title"
           description="Maximum size: 67MB"
         >
@@ -141,7 +175,7 @@ export default function DevPage() {
         </FormInputWrapper>
 
         <FormInputWrapper
-          required={true}
+          required
           title="Title"
           state="error"
           errorString="This is an error string!"
@@ -158,13 +192,7 @@ export default function DevPage() {
           state="error"
           errorString="u got it wrong haha"
         >
-          <Input
-            type="password"
-            placeholder="Enter Password"
-            id="password-input"
-            icon="lock"
-            showPasswordToggle
-          />
+          <PasswordInput placeholder="Enter Password" id="password-input" />
         </FormInputWrapper>
 
         <FormInputWrapper title="Description">
