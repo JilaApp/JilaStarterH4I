@@ -7,6 +7,7 @@ import FormText from "@/components/FormTextWrapper";
 import { TextInput, EmailInput, PasswordInput } from "@/components/Input";
 import Sidebar from "@/components/Sidebar";
 import Dropdown from "@/components/Dropdown";
+import RadioButtonGroup from "@/components/RadioButtonGroup";
 import { Video, MessageCircle } from "lucide-react";
 import Tabs from "@/components/Tabs";
 import FilterBar from "@/components/FilterBar";
@@ -33,6 +34,14 @@ export default function DevPage() {
   const [textError, setTextError] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
+
+  const myOptions = [
+    { name: "1" },
+    { name: "2", disabled: true },
+    { name: "6" },
+    { name: "7" },
+  ];
+  const [selected, setSelected] = useState(["6", "7"]);
 
   const [selectedOptions, setSelectedOptions] = useState([
     "one",
@@ -72,6 +81,12 @@ export default function DevPage() {
 
   return (
     <>
+      <RadioButtonGroup
+        options={myOptions}
+        selectedOptions={selected}
+        setSelectedOptions={setSelected}
+      />
+      <p className="mt-4">Selected: {selected.join(", ")}</p>
       <div className="flex flex-col gap-3 px-5">
         <Notification
           message="We’ve resent the link to your email!"
