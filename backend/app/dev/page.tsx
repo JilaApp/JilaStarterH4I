@@ -8,7 +8,6 @@ import Sidebar from "@/components/Sidebar";
 import Dropdown from "@/components/Dropdown";
 import FormInputWrapper from "@/components/FormInputWrapper";
 import RadioButtonGroup from "@/components/RadioButtonGroup";
-import { Radio } from "lucide-react";
 import { Video, MessageCircle } from "lucide-react";
 import Tabs from "@/components/Tabs";
 import FilterBar from "@/components/FilterBar";
@@ -38,15 +37,6 @@ export default function DevPage() {
   const onErrorDropdownChange = (index: number) => {
     setErrorDropdownIndex(index);
   };
-
-  type ButtonData = {
-    clickedOnDefault: boolean;
-    name: string;
-    disabled: boolean;
-  };
-
-  const [disabled, setDisabled] = useState(false);
-  const [clickedOndefault, setClickedOnDefault] = useState(true);
 
   const myOptions = [
     { name: "1" },
