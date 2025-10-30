@@ -2,10 +2,11 @@
 import { useState } from "react";
 import Button from "@/components/Button";
 import Notification from "@/components/Notification";
-import Input from "@/components/Input";
+import FormInputWrapper from "@/components/FormInputWrapper";
+import FormText from "@/components/FormTextWrapper";
+import { TextInput, EmailInput, PasswordInput } from "@/components/Input";
 import Sidebar from "@/components/Sidebar";
 import Dropdown from "@/components/Dropdown";
-import FormInputWrapper from "@/components/FormInputWrapper";
 import { Video, MessageCircle } from "lucide-react";
 import Tabs from "@/components/Tabs";
 
@@ -26,81 +27,27 @@ export default function DevPage() {
   const [dropdownIndex, setDropdownIndex] = useState<number>();
   const [errorDropdownIndex, setErrorDropdownIndex] = useState<number>();
 
-  const [textValue, setTextValue] = useState("");
-  const [emailValue, setEmailValue] = useState("");
-  const [passwordValue, setPasswordValue] = useState("");
-  const [textError, setTextError] = useState(false);
-  const [emailError, setEmailError] = useState(false);
-  const [passwordError, setPasswordError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
-  const [isFocused, setIsFocused] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
+  const [textError, setTextError] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
 
   const isValidEmail = (email: string): boolean => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const emailRegex = /^[A-Za-z0-9]+([._-]?[A-Za-z0-9]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}$/;
     return emailRegex.test(email);
   };
 
-  const handleTextChange = (value: string) => {
-    setTextValue(value);
-    if (textError) {
-      setTextError(false);
-      setErrorMessage("");
+  const validateEmail = (value: string): string | null => {
+    if (!isValidEmail(value)) {
+      return "Please enter a valid email address";
     }
+    return null;
   };
 
-  const handleEmailChange = (value: string) => {
-    setEmailValue(value);
-    if (emailError) {
-      setEmailError(false);
-      setErrorMessage("");
+  const validatePassword = (value: string): string | null => {
+    if (value.length < 6) {
+      return "Password must be at least 6 characters";
     }
-  };
-
-  const handlePasswordChange = (value: string) => {
-    setPasswordValue(value);
-    if (passwordError) {
-      setPasswordError(false);
-      setErrorMessage("");
-    }
-  };
-
-  const handleTextBlur = () => {
-    setIsFocused(false);
-    if (!textValue.trim()) {
-      setTextError(true);
-      setErrorMessage("This field is required");
-    }
-  };
-
-  const handleEmailBlur = () => {
-    setIsFocused(false);
-    if (!emailValue.trim()) {
-      setEmailError(true);
-      setErrorMessage("This field is required");
-    } else if (!isValidEmail(emailValue)) {
-      setEmailError(true);
-      setErrorMessage("Please enter a valid email address");
-    }
-  };
-
-  const handlePasswordBlur = () => {
-    setIsFocused(false);
-    if (!passwordValue.trim()) {
-      setPasswordError(true);
-      setErrorMessage("This field is required");
-    } else if (passwordValue.length < 6) {
-      setPasswordError(true);
-      setErrorMessage("Password must be at least 6 characters");
-    }
-  };
-
-  const handleFocus = () => {
-    setIsFocused(true);
-  };
-
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
+    return null;
   };
 
   const onDropdownChange = (index: number) => {
@@ -110,69 +57,61 @@ export default function DevPage() {
   const onErrorDropdownChange = (index: number) => {
     setErrorDropdownIndex(index);
   };
+
   return (
     <>
       <div className="flex flex-col gap-3 px-5">
         <Notification
-          message="We've resent the link to your email!"
+          message="We’ve resent the link to your email!"
           onClose={() => {}}
         />
         <div className="flex flex-col gap-y-[20px] pl-[20px] pr-[20px] pt-[20px] pb-[20px]">
           <FormInputWrapper
             title="Text Input"
-            required={true}
+            required
             state={textError ? "error" : "normal"}
-            errorString={errorMessage}
+            errorString={textError}
           >
-            <TextInput
-              value={textValue}
-              onChange={handleTextChange}
-              onFocus={handleFocus}
-              onBlur={handleTextBlur}
-              isFocused={isFocused}
-              state={textError ? "error" : "normal"}
-              id="text-input"
-            />
+            <FormText
+              required
+              onErrorChange={setTextError}
+            >
+              <TextInput id="text-input" />
+            </FormText>
           </FormInputWrapper>
 
           <FormInputWrapper
             title="Email Input"
-            required={true}
+            required
             state={emailError ? "error" : "normal"}
-            errorString={errorMessage}
+            errorString={emailError}
           >
-            <EmailInput
-              value={emailValue}
-              onChange={handleEmailChange}
-              onFocus={handleFocus}
-              onBlur={handleEmailBlur}
-              isFocused={isFocused}
-              state={emailError ? "error" : "normal"}
-              id="email-input"
-            />
+            <FormText
+              required
+              validate={validateEmail}
+              onErrorChange={setEmailError}
+            >
+              <EmailInput id="email-input" />
+            </FormText>
           </FormInputWrapper>
 
           <FormInputWrapper
             title="Password Input"
-            required={true}
+            required
             state={passwordError ? "error" : "normal"}
-            errorString={errorMessage}
+            errorString={passwordError}
           >
-            <PasswordInput
-              value={passwordValue}
-              onChange={handlePasswordChange}
-              onFocus={handleFocus}
-              onBlur={handlePasswordBlur}
-              isFocused={isFocused}
-              state={passwordError ? "error" : "normal"}
-              showPassword={showPassword}
-              onTogglePassword={togglePasswordVisibility}
-              id="password-input"
-            />
+            <FormText
+              required
+              validate={validatePassword}
+              onErrorChange={setPasswordError}
+            >
+              <PasswordInput id="password-input" />
+            </FormText>
           </FormInputWrapper>
         </div>
         <FormInputWrapper
-          required={true}
+          required
           title="Title"
           description="Maximum size: 67MB"
         >
@@ -197,7 +136,7 @@ export default function DevPage() {
         </FormInputWrapper>
 
         <FormInputWrapper
-          required={true}
+          required
           title="Title"
           state="error"
           errorString="This is an error string!"
