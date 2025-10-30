@@ -73,6 +73,7 @@
     -webkit-box-shadow: 0 0 0 1000px white inset !important;
     box-shadow: 0 0 0 1000px white inset !important;
     -webkit-text-fill-color: inherit !important;
+    border-radius: 10px !important;
     transition: background-color 5000s ease-in-out 0s;
   }
 }
