@@ -8,8 +8,23 @@ import Dropdown from "@/components/Dropdown";
 import FormInputWrapper from "@/components/FormInputWrapper";
 import RadioButton from "@/components/RadioButtons";
 import { Radio } from "lucide-react";
+import { Video, MessageCircle } from "lucide-react";
+import Tabs from "@/components/Tabs";
 
 export default function DevPage() {
+  const tabs = [
+    {
+      header: { logo: <Video />, text: "Video Resources" },
+      content: <p>Hello</p>,
+    },
+    {
+      header: { logo: <MessageCircle />, text: "Social Services" },
+      content: <p>Bye</p>,
+    },
+  ];
+  // This starts on index 1 (second tab)
+  const [currentTabIndex, setCurrentTabIndex] = useState(1);
+
   const [dropdownIndex, setDropdownIndex] = useState<number>();
   const [errorDropdownIndex, setErrorDropdownIndex] = useState<number>();
 
@@ -20,9 +35,42 @@ export default function DevPage() {
   const onErrorDropdownChange = (index: number) => {
     setErrorDropdownIndex(index);
   };
+
+  type ButtonData = {
+    clickedOnDefault: boolean,
+    name: string,
+    disabled: boolean,
+  };
+
+  const [disabled, setDisabled] = useState(false);
+  const [clickedOndefault, setClickedOnDefault] = useState(true);
+
+const my_array: ButtonData[] = [
+    {
+      clickedOnDefault: true, // This one will be selected by default
+      name: "Spanish",
+      disabled: false,
+    },
+    {
+      clickedOnDefault: false,
+      name: "French",
+      disabled: false,
+    },
+    {
+      clickedOnDefault: true, // This one will also be selected by default
+      name: "German",
+      disabled: false,
+    },
+    {
+      clickedOnDefault: false,
+      name: "Japanese",
+      disabled: true, // This one will be disabled
+    },
+  ];
+
   return (
     <>
-      <RadioButton name="Spanish" />
+      <RadioButton data={my_array} />
       <div className="flex flex-col gap-3 px-5">
         <Notification
           message="We’ve resent the link to your email!"
@@ -135,6 +183,12 @@ export default function DevPage() {
       <div className="bg-gray-300">bg-gray-300</div>
       <div className="bg-gray-200">bg-gray-200</div>
       <Button text="Sign In" onClick={() => console.log("Hello!")} />
+
+      <Tabs
+        tabs={tabs}
+        activeIndex={currentTabIndex}
+        onTabChange={setCurrentTabIndex}
+      />
     </>
   );
 }
