@@ -3,6 +3,7 @@ import { useState } from "react";
 import Button from "@/components/Button";
 import Notification from "@/components/Notification";
 import Input from "@/components/Input";
+import TopicTag from "@/components/TopicTag";
 import Sidebar from "@/components/Sidebar";
 import Dropdown from "@/components/Dropdown";
 import FormInputWrapper from "@/components/FormInputWrapper";
@@ -10,6 +11,8 @@ import RadioButton from "@/components/RadioButtons";
 import { Radio } from "lucide-react";
 import { Video, MessageCircle } from "lucide-react";
 import Tabs from "@/components/Tabs";
+import FilterBar from "@/components/FilterBar";
+import ParagraphInput from "@/components/ParagraphInput";
 
 export default function DevPage() {
   const tabs = [
@@ -67,6 +70,13 @@ export default function DevPage() {
       disabled: true, // This one will be disabled
     },
   ];
+  const [selectedOptions, setSelectedOptions] = useState([
+    "one",
+    "two",
+    "three",
+  ]);
+
+  const [paragraphInputValue, setParagraphInputValue] = useState<string>("");
 
   return (
     <>
@@ -75,6 +85,11 @@ export default function DevPage() {
         <Notification
           message="We’ve resent the link to your email!"
           onClose={() => {}}
+        />
+        <FilterBar
+          options={["one", "two", "three"]}
+          selectedOptions={selectedOptions}
+          setSelectedOptions={setSelectedOptions}
         />
         <div className="flex flex-col gap-y-[20px] pl-[20px] pr-[20px] pt-[20px] pb-[20px]">
           <Input
@@ -102,7 +117,23 @@ export default function DevPage() {
             icon="lock"
             disabled
           />
+          <Input
+            type="password"
+            placeholder="Enter Password"
+            id="password-disabled-input"
+            icon="lock"
+            disabled
+          />
         </div>
+        <TopicTag variant="Career" />
+        <TopicTag variant="Legal" />
+        <TopicTag variant="Medical" />
+        <TopicTag variant="Transport" />
+        <TopicTag variant="Other" />
+        <TopicTag variant="Shelters" />
+        <TopicTag variant="Food" />
+        <TopicTag variant="Emergencia" />
+        <TopicTag variant="Transportation" />
         <FormInputWrapper
           required={true}
           title="Title"
@@ -153,6 +184,13 @@ export default function DevPage() {
             icon="lock"
             showPasswordToggle
           />
+        </FormInputWrapper>
+
+        <FormInputWrapper title="Description">
+          <ParagraphInput
+            value={paragraphInputValue}
+            onChange={setParagraphInputValue}
+          ></ParagraphInput>
         </FormInputWrapper>
       </div>
       <div className="page-title-text">page-title-text</div>
