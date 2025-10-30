@@ -14,6 +14,8 @@ import FilterBar from "@/components/FilterBar";
 import ParagraphInput from "@/components/ParagraphInput";
 import TopicTag from "@/components/TopicTag";
 import Header from "@/components/Header";
+import FileUpload from "@/components/FileUpload";
+import FileUploadWrapper from "@/components/FileUploadWrapper";
 
 export default function DevPage() {
   const tabs = [
@@ -116,7 +118,7 @@ export default function DevPage() {
           <FormInputWrapper
             title="Text Input"
             required
-            state={textError ? "error" : "normal"}
+            state={textError ? "error" : "default"}
             errorString={textError}
           >
             <FormText required onErrorChange={setTextError}>
@@ -127,7 +129,7 @@ export default function DevPage() {
           <FormInputWrapper
             title="Email Input"
             required
-            state={emailError ? "error" : "normal"}
+            state={emailError ? "error" : "default"}
             errorString={emailError}
           >
             <FormText
@@ -142,7 +144,7 @@ export default function DevPage() {
           <FormInputWrapper
             title="Password Input"
             required
-            state={passwordError ? "error" : "normal"}
+            state={passwordError ? "error" : "default"}
             errorString={passwordError}
           >
             <FormText
@@ -225,19 +227,6 @@ export default function DevPage() {
               options={["Part-time", "Full-time", "Internship"]}
               currentIndex={errorDropdownIndex}
               onChange={onErrorDropdownChange}
-            />
-          </FormInputWrapper>
-          <FormInputWrapper
-            title="Enter your password lil bro"
-            state="error"
-            errorString="u got it wrong haha"
-          >
-            <Input
-              type="password"
-              placeholder="Enter Password"
-              id="password-input"
-              icon="lock"
-              showPasswordToggle
             />
           </FormInputWrapper>
 
