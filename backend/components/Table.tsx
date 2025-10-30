@@ -9,8 +9,8 @@ interface TableProps {
 }
 
 // TODOs
-// styling for individual items
-// add actions column with edit/delete
+// add actions column with edit/delete functions
+// add link functionality
 
 
 export default function Table({data} : TableProps){
@@ -40,10 +40,11 @@ export default function Table({data} : TableProps){
     return (
         <table className="bg-white-400 rounded-3xl m-20 border-collapse">
             <thead>
-                <tr className="border-b-2 border-gray-400">
+                <tr className="border-b-2 border-gray-300">
                     {columnHeaders.map((header, index) => (
-                        <th key={index} className={index === 0 ? "pl-10 pr-10text-left" : "pl-10 pr-10 p-3 text-left"}>{header}</th>
+                        <th key={index} className={index === 0 ? "pl-10 pr-10text-left text-gray-300" : "pl-10 pr-10 p-3 text-left text-gray-300"}>{header}</th>
                     ))}
+                    <th className="pl-10 pr-10 p-3 text-left text-gray-300">Actions</th>
                 </tr>
             </thead>
             <tbody className="font-medium">
@@ -62,10 +63,15 @@ export default function Table({data} : TableProps){
                         </label>
                     </td>
                     {columnHeaders.slice(1).map((key, cellIndex) => (
-                        <td key={cellIndex} className={`pl-10 pr-10 p-4 ${row[key][1]}`}>
-                            {row[key][0]}
+                    typeof row[key] === "object" && React.isValidElement(row[key]) ? (
+                        <td key={cellIndex} className="">{row[key]}</td>
+                    ) : (
+                        <td key={cellIndex} className={`pl-10 pr-10 p-6 ${row[key]?.[1] ?? ''}`}>
+                            {row[key]?.[0] ?? ''}
                         </td>
+                    )
                     ))}
+
                 </tr>
                 ))}
             </tbody>
