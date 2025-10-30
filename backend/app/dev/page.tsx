@@ -9,6 +9,7 @@ import Sidebar from "@/components/Sidebar";
 import Dropdown from "@/components/Dropdown";
 import { Video, MessageCircle } from "lucide-react";
 import Tabs from "@/components/Tabs";
+import FilterBar from "@/components/FilterBar";
 
 export default function DevPage() {
   const tabs = [
@@ -66,6 +67,11 @@ export default function DevPage() {
           message="We’ve resent the link to your email!"
           onClose={() => {}}
         />
+        <FilterBar
+          options={["one", "two", "three"]}
+          selectedOptions={selectedOptions}
+          setSelectedOptions={setSelectedOptions}
+        />
         <div className="flex flex-col gap-y-[20px] pl-[20px] pr-[20px] pt-[20px] pb-[20px]">
           <FormInputWrapper
             title="Text Input"
@@ -108,6 +114,15 @@ export default function DevPage() {
             </FormText>
           </FormInputWrapper>
         </div>
+        <TopicTag variant="Career" />
+        <TopicTag variant="Legal" />
+        <TopicTag variant="Medical" />
+        <TopicTag variant="Transport" />
+        <TopicTag variant="Other" />
+        <TopicTag variant="Shelters" />
+        <TopicTag variant="Food" />
+        <TopicTag variant="Emergencia" />
+        <TopicTag variant="Transportation" />
         <FormInputWrapper
           required
           title="Title"

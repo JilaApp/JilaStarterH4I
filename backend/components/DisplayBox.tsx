@@ -8,7 +8,7 @@ interface DisplayBoxProps {
 
 export default function DisplayBox({ children }: DisplayBoxProps) {
   return (
-    <div className="w-[593px] bg-white rounded-[16px] drop-shadow-[0_0px_80px_var(--shadow-jila-10)]">
+    <div className="relative w-[593px] bg-white rounded-[16px] drop-shadow-[0_0px_80px_var(--shadow-jila-10)]">
       <div className="rounded-[16px] bg-white p-[75px] shadow-[0_-4px_80px_var(--shadow-jila-10)]">
         {children}
       </div>
