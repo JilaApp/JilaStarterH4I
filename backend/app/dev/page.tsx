@@ -45,7 +45,7 @@ export default function DevPage() {
   };
 
   const validatePassword = (value: string): string | null => {
-    if (value.length < 6) {
+    if (value.length < 8) {
       return "Password must be at least 6 characters";
     }
     return null;
