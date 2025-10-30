@@ -71,10 +71,11 @@
 
   /* 👇 control dash pattern: dash length 6px, gap 4px */
   border-image: repeating-linear-gradient(
-    to right,
-    var(--color-gray-300) 0,
-    var(--color-gray-300) 6px,
-    transparent 6px,
-    transparent 10px
-  ) 1;
+      to right,
+      var(--color-gray-300) 0,
+      var(--color-gray-300) 6px,
+      transparent 6px,
+      transparent 10px
+    )
+    1;
 }
