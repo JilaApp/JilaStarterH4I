@@ -1,61 +1,129 @@
 "use client";
+import { useState } from "react";
+import Button from "@/components/Button";
 import Notification from "@/components/Notification";
-import DisplayBox from "@/components/DisplayBox";
-import PageBackground from "@/components/PageBackground";
-
-function DisplayBoxInnerContent() {
-  return (
-    <div className="text-center">
-      <h1 className="text-2xl font-semibold mb-2">Welcome back!</h1>
-      <p className="text-gray-600 mb-6">
-        Enter your details to get signed into your admin account
-      </p>
-
-      <form className="flex flex-col gap-3">
-        <input
-          type="email"
-          placeholder="Enter email"
-          className="w-full rounded-md border border-gray-300 p-3"
-        />
-        <input
-          type="password"
-          placeholder="Enter password"
-          className="w-full rounded-md border border-gray-300 p-3"
-        />
-        <a href="#" className="text-sm text-jila-400 hover:underline">
-          Forgot your password?
-        </a>
-        <button className="w-full rounded-md bg-jila-400 text-white p-3 hover:bg-rose-900">
-          Sign in
-        </button>
-      </form>
-    </div>
-  );
-}
+import Input from "@/components/Input";
+import Sidebar from "@/components/Sidebar";
+import Dropdown from "@/components/Dropdown";
+import FormInputWrapper from "@/components/FormInputWrapper";
+import { Video, MessageCircle } from "lucide-react";
+import Tabs from "@/components/Tabs";
 
 export default function DevPage() {
+  const tabs = [
+    {
+      header: { logo: <Video />, text: "Video Resources" },
+      content: <p>Hello</p>,
+    },
+    {
+      header: { logo: <MessageCircle />, text: "Social Services" },
+      content: <p>Bye</p>,
+    },
+  ];
+  // This starts on index 1 (second tab)
+  const [currentTabIndex, setCurrentTabIndex] = useState(1);
+
+  const [dropdownIndex, setDropdownIndex] = useState<number>();
+  const [errorDropdownIndex, setErrorDropdownIndex] = useState<number>();
+
+  const onDropdownChange = (index: number) => {
+    setDropdownIndex(index);
+  };
+
+  const onErrorDropdownChange = (index: number) => {
+    setErrorDropdownIndex(index);
+  };
   return (
-    <div>
-      <div className="flex flex-col gap-20 p-10">
+    <>
+      <div className="flex flex-col gap-3 px-5">
         <Notification
           message="We’ve resent the link to your email!"
           onClose={() => {}}
         />
-        <DisplayBox>
-          <DisplayBoxInnerContent />
-        </DisplayBox>
-        <PageBackground>
-          <DisplayBox>
-            <DisplayBoxInnerContent />
-          </DisplayBox>
-        </PageBackground>
+        <div className="flex flex-col gap-y-[20px] pl-[20px] pr-[20px] pt-[20px] pb-[20px]">
+          <Input
+            type="email"
+            id="email-input"
+            placeholder="Enter Email"
+            icon="mail"
+            state="error"
+          />
+
+          <Input type="email" id="email-disabled-input" disabled />
+
+          <Input
+            type="password"
+            placeholder="Enter Password"
+            id="password-input"
+            icon="lock"
+            showPasswordToggle
+          />
+
+          <Input
+            type="password"
+            placeholder="Enter Password"
+            id="password-disabled-input"
+            icon="lock"
+            disabled
+          />
+        </div>
+        <FormInputWrapper
+          required={true}
+          title="Title"
+          description="Maximum size: 67MB"
+        >
+          <Dropdown
+            options={[
+              "Part-time",
+              "Full-time",
+              "Internship",
+              "Part-time",
+              "Full-time",
+              "Internship",
+              "Part-time",
+              "Full-time",
+              "Internship",
+              "Part-time",
+              "Full-time",
+              "Internship",
+            ]}
+            currentIndex={dropdownIndex}
+            onChange={onDropdownChange}
+          />
+        </FormInputWrapper>
+
+        <FormInputWrapper
+          required={true}
+          title="Title"
+          state="error"
+          errorString="This is an error string!"
+          description="Maximum size: 67MB"
+        >
+          <Dropdown
+            options={["Part-time", "Full-time", "Internship"]}
+            currentIndex={errorDropdownIndex}
+            onChange={onErrorDropdownChange}
+          />
+        </FormInputWrapper>
+        <FormInputWrapper
+          title="Enter your password lil bro"
+          state="error"
+          errorString="u got it wrong haha"
+        >
+          <Input
+            type="password"
+            placeholder="Enter Password"
+            id="password-input"
+            icon="lock"
+            showPasswordToggle
+          />
+        </FormInputWrapper>
       </div>
       <div className="page-title-text">page-title-text</div>
       <div className="components-text">components-text</div>
       <div className="link-text">link-text</div>
       <div className="body1-desktop-semi-text">body1-desktop-semi-text</div>
       <div className="body1-desktop-bold-text">body1-desktop-bold-text</div>
-
       <div className="bg-cream-300">bg-cream-300</div>
       <div className="bg-jila-400">
         <div className="text-white">bg-jila-400</div>
@@ -78,6 +146,13 @@ export default function DevPage() {
       <div className="bg-gray-400">bg-gray-400</div>
       <div className="bg-gray-300">bg-gray-300</div>
       <div className="bg-gray-200">bg-gray-200</div>
-    </div>
+      <Button text="Sign In" onClick={() => console.log("Hello!")} />
+
+      <Tabs
+        tabs={tabs}
+        activeIndex={currentTabIndex}
+        onTabChange={setCurrentTabIndex}
+      />
+    </>
   );
 }
