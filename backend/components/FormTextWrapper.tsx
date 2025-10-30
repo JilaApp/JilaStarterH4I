@@ -44,7 +44,7 @@ export default function FormTextWrapper({
 
   const handleBlur = (_e?: React.FocusEvent<HTMLInputElement>) => {
     let newError = "";
-    
+
     if (required && !value.trim()) {
       newError = "This field is required";
     } else if (validate) {
@@ -68,5 +68,3 @@ export default function FormTextWrapper({
     ...children.props,
   });
 }
-
-

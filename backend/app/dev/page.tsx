@@ -32,7 +32,8 @@ export default function DevPage() {
   const [passwordError, setPasswordError] = useState("");
 
   const isValidEmail = (email: string): boolean => {
-    const emailRegex = /^[A-Za-z0-9]+([._-]?[A-Za-z0-9]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}$/;
+    const emailRegex =
+      /^[A-Za-z0-9]+([._-]?[A-Za-z0-9]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}$/;
     return emailRegex.test(email);
   };
 
@@ -72,10 +73,7 @@ export default function DevPage() {
             state={textError ? "error" : "normal"}
             errorString={textError}
           >
-            <FormText
-              required
-              onErrorChange={setTextError}
-            >
+            <FormText required onErrorChange={setTextError}>
               <TextInput id="text-input" />
             </FormText>
           </FormInputWrapper>
