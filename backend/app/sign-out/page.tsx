@@ -25,7 +25,6 @@ export default function SignOutPage() {
       await signOut();
       router.push("/sign-in");
     } catch (error) {
-      console.error("Sign out error:", error);
       setIsSigningOut(false);
     }
   };
