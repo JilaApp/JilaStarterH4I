@@ -1,41 +1,80 @@
 "use client";
+import { useState } from "react";
 import Button from "@/components/Button";
 import Notification from "@/components/Notification";
 import Input from "@/components/Input";
 import TopicTag from "@/components/TopicTag";
+import Sidebar from "@/components/Sidebar";
+import Dropdown from "@/components/Dropdown";
+import FormInputWrapper from "@/components/FormInputWrapper";
+import { Video, MessageCircle } from "lucide-react";
+import Tabs from "@/components/Tabs";
 
 export default function DevPage() {
+  const tabs = [
+    {
+      header: { logo: <Video />, text: "Video Resources" },
+      content: <p>Hello</p>,
+    },
+    {
+      header: { logo: <MessageCircle />, text: "Social Services" },
+      content: <p>Bye</p>,
+    },
+  ];
+  // This starts on index 1 (second tab)
+  const [currentTabIndex, setCurrentTabIndex] = useState(1);
+
+  const [dropdownIndex, setDropdownIndex] = useState<number>();
+  const [errorDropdownIndex, setErrorDropdownIndex] = useState<number>();
+
+  const onDropdownChange = (index: number) => {
+    setDropdownIndex(index);
+  };
+
+  const onErrorDropdownChange = (index: number) => {
+    setErrorDropdownIndex(index);
+  };
   return (
-    <div>
-      <Notification
-        message="We’ve resent the link to your email!"
-        onClose={() => {}}
-      />
-      <div className="flex flex-col gap-y-[20px] pl-[20px] pr-[20px] pt-[20px] pb-[20px]">
-        <Input
-          type="email"
-          id="email-input"
-          placeholder="Enter Email"
-          icon="mail"
+    <>
+      <div className="flex flex-col gap-3 px-5">
+        <Notification
+          message="We’ve resent the link to your email!"
+          onClose={() => {}}
         />
+        <div className="flex flex-col gap-y-[20px] pl-[20px] pr-[20px] pt-[20px] pb-[20px]">
+          <Input
+            type="email"
+            id="email-input"
+            placeholder="Enter Email"
+            icon="mail"
+            state="error"
+          />
 
-        <Input type="email" id="email-disabled-input" disabled />
+          <Input type="email" id="email-disabled-input" disabled />
 
-        <Input
-          type="password"
-          placeholder="Enter Password"
-          id="password-input"
-          icon="lock"
-          showPasswordToggle
-        />
+          <Input
+            type="password"
+            placeholder="Enter Password"
+            id="password-input"
+            icon="lock"
+            showPasswordToggle
+          />
 
-        <Input
-          type="password"
-          placeholder="Enter Password"
-          id="password-disabled-input"
-          icon="lock"
-          disabled
-        />
+          <Input
+            type="password"
+            placeholder="Enter Password"
+            id="password-disabled-input"
+            icon="lock"
+            disabled
+          />
+          <Input
+            type="password"
+            placeholder="Enter Password"
+            id="password-disabled-input"
+            icon="lock"
+            disabled
+          />
+        </div>
         <TopicTag variant="Career" />
         <TopicTag variant="Legal" />
         <TopicTag variant="Medical" />
@@ -45,6 +84,57 @@ export default function DevPage() {
         <TopicTag variant="Food" />
         <TopicTag variant="Emergencia" />
         <TopicTag variant="Transportation" />
+        <FormInputWrapper
+          required={true}
+          title="Title"
+          description="Maximum size: 67MB"
+        >
+          <Dropdown
+            options={[
+              "Part-time",
+              "Full-time",
+              "Internship",
+              "Part-time",
+              "Full-time",
+              "Internship",
+              "Part-time",
+              "Full-time",
+              "Internship",
+              "Part-time",
+              "Full-time",
+              "Internship",
+            ]}
+            currentIndex={dropdownIndex}
+            onChange={onDropdownChange}
+          />
+        </FormInputWrapper>
+
+        <FormInputWrapper
+          required={true}
+          title="Title"
+          state="error"
+          errorString="This is an error string!"
+          description="Maximum size: 67MB"
+        >
+          <Dropdown
+            options={["Part-time", "Full-time", "Internship"]}
+            currentIndex={errorDropdownIndex}
+            onChange={onErrorDropdownChange}
+          />
+        </FormInputWrapper>
+        <FormInputWrapper
+          title="Enter your password lil bro"
+          state="error"
+          errorString="u got it wrong haha"
+        >
+          <Input
+            type="password"
+            placeholder="Enter Password"
+            id="password-input"
+            icon="lock"
+            showPasswordToggle
+          />
+        </FormInputWrapper>
       </div>
       <div className="page-title-text">page-title-text</div>
       <div className="components-text">components-text</div>
@@ -73,8 +163,13 @@ export default function DevPage() {
       <div className="bg-gray-400">bg-gray-400</div>
       <div className="bg-gray-300">bg-gray-300</div>
       <div className="bg-gray-200">bg-gray-200</div>
-
       <Button text="Sign In" onClick={() => console.log("Hello!")} />
-    </div>
+
+      <Tabs
+        tabs={tabs}
+        activeIndex={currentTabIndex}
+        onTabChange={setCurrentTabIndex}
+      />
+    </>
   );
 }
