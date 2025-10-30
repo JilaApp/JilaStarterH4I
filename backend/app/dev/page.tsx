@@ -7,7 +7,7 @@ import TopicTag from "@/components/TopicTag";
 import Sidebar from "@/components/Sidebar";
 import Dropdown from "@/components/Dropdown";
 import FormInputWrapper from "@/components/FormInputWrapper";
-import RadioButton from "@/components/RadioButtons";
+import RadioButtonGroup from "@/components/RadioButtonGroup";
 import { Radio } from "lucide-react";
 import { Video, MessageCircle } from "lucide-react";
 import Tabs from "@/components/Tabs";
@@ -48,28 +48,14 @@ export default function DevPage() {
   const [disabled, setDisabled] = useState(false);
   const [clickedOndefault, setClickedOnDefault] = useState(true);
 
-  const my_array: ButtonData[] = [
-    {
-      clickedOnDefault: true, // This one will be selected by default
-      name: "Spanish",
-      disabled: false,
-    },
-    {
-      clickedOnDefault: false,
-      name: "French",
-      disabled: false,
-    },
-    {
-      clickedOnDefault: true, // This one will also be selected by default
-      name: "German",
-      disabled: false,
-    },
-    {
-      clickedOnDefault: false,
-      name: "Japanese",
-      disabled: true, // This one will be disabled
-    },
+  const myOptions = [
+    { name: "1" },
+    { name: "2", disabled: true },
+    { name: "6" },
+    { name: "7" },
   ];
+  const [selected, setSelected] = useState(["6", "7"]);
+
   const [selectedOptions, setSelectedOptions] = useState([
     "one",
     "two",
@@ -80,7 +66,12 @@ export default function DevPage() {
 
   return (
     <>
-      <RadioButton data={my_array} />
+      <RadioButtonGroup
+        options={myOptions}
+        selectedOptions={selected}
+        setSelectedOptions={setSelected}
+      />
+      <p className="mt-4">Selected: {selected.join(", ")}</p>
       <div className="flex flex-col gap-3 px-5">
         <Notification
           message="We’ve resent the link to your email!"
