@@ -37,10 +37,8 @@ export default function FilterBar({
                 handleClick(option);
               }}
               icon={
-                selectedOptions.includes(option) ? (
+                selectedOptions.includes(option) && (
                   <XIcon color="white" size="20px" />
-                ) : (
-                  <></>
                 )
               }
             ></Button>

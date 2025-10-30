@@ -10,7 +10,7 @@ interface ButtonProps {
 
 export default function Button({
   text,
-  icon = <div />,
+  icon = null,
   defaultClassName,
   hoverClassName,
   onClick,
