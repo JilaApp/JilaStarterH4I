@@ -3,6 +3,7 @@ import { useState } from "react";
 import Button from "@/components/Button";
 import Notification from "@/components/Notification";
 import Input from "@/components/Input";
+import TopicTag from "@/components/TopicTag";
 import Sidebar from "@/components/Sidebar";
 import Dropdown from "@/components/Dropdown";
 import FormInputWrapper from "@/components/FormInputWrapper";
@@ -79,7 +80,23 @@ export default function DevPage() {
             icon="lock"
             disabled
           />
+          <Input
+            type="password"
+            placeholder="Enter Password"
+            id="password-disabled-input"
+            icon="lock"
+            disabled
+          />
         </div>
+        <TopicTag variant="Career" />
+        <TopicTag variant="Legal" />
+        <TopicTag variant="Medical" />
+        <TopicTag variant="Transport" />
+        <TopicTag variant="Other" />
+        <TopicTag variant="Shelters" />
+        <TopicTag variant="Food" />
+        <TopicTag variant="Emergencia" />
+        <TopicTag variant="Transportation" />
         <FormInputWrapper
           required={true}
           title="Title"
