@@ -5,6 +5,7 @@ import Notification from "@/components/Notification";
 import Input from "@/components/Input";
 import Dropdown from "@/components/Dropdown";
 import FormInputWrapper from "@/components/FormInputWrapper";
+import Table from "@/components/Table";
 
 export default function DevPage() {
   const [dropdownIndex, setDropdownIndex] = useState<number>();
@@ -17,6 +18,13 @@ export default function DevPage() {
   const onErrorDropdownChange = (index: number) => {
     setErrorDropdownIndex(index);
   };
+
+  const tableData = [
+    { Title: 'C-U at Home', Topic: ["Food", ""], "Phone number": ['217-403-6150', 'font-normal'], Link: ["hack4impact.com", "text-jila-400"] },
+    { Title: 'Daily Bread Soup Kitchen', Topic: ["Transport", ""], "Phone number": ['217-403-6150', 'font-normal'], Link: ["google.com", "text-jila-400"] },
+    { Title: 'C-U at Home', Topic: ["Health", ""], "Phone number": ['217-403-6150', 'font-normal'], Link: ["canva.com", "text-jila-400"] },
+  ];
+
   return (
     <>
       <div className="flex flex-col gap-3 px-5">
@@ -131,6 +139,7 @@ export default function DevPage() {
       <div className="bg-gray-300">bg-gray-300</div>
       <div className="bg-gray-200">bg-gray-200</div>
       <Button text="Sign In" onClick={() => console.log("Hello!")} />
+      <Table data={tableData} />
     </>
   );
 }
