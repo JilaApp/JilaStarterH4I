@@ -7,7 +7,6 @@ import FormText from "@/components/FormTextWrapper";
 import { TextInput, EmailInput, PasswordInput } from "@/components/Input";
 import Sidebar from "@/components/Sidebar";
 import Dropdown from "@/components/Dropdown";
-import FormInputWrapper from "@/components/FormInputWrapper";
 import RadioButtonGroup from "@/components/RadioButtonGroup";
 import { Video, MessageCircle } from "lucide-react";
 import Tabs from "@/components/Tabs";
