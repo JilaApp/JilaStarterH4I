@@ -5,6 +5,7 @@ import Notification from "@/components/Notification";
 import Input from "@/components/Input";
 import Dropdown from "@/components/Dropdown";
 import FormInputWrapper from "@/components/FormInputWrapper";
+import FileUpload from "@/components/FileUpload";
 
 export default function DevPage() {
   const [dropdownIndex, setDropdownIndex] = useState<number>();
@@ -17,6 +18,11 @@ export default function DevPage() {
   const onErrorDropdownChange = (index: number) => {
     setErrorDropdownIndex(index);
   };
+
+  const uploadedFile = {
+    fileName: "sixty-seven.zip",
+    fileSizeMB: 67,
+  };
   return (
     <>
       <div className="flex flex-col gap-3 px-5">
@@ -24,84 +30,138 @@ export default function DevPage() {
           message="We’ve resent the link to your email!"
           onClose={() => {}}
         />
-        <div className="flex flex-col gap-y-[20px] pl-[20px] pr-[20px] pt-[20px] pb-[20px]">
-          <Input
-            type="email"
-            id="email-input"
-            placeholder="Enter Email"
-            icon="mail"
+        {/*form inputs!*/}
+        <div className="flex flex-col g-2 bg-[#F2F2F2] rounded-[10px] p-[30px]">
+          <div className="flex flex-col gap-y-[20px] pl-[20px] pr-[20px] pt-[20px] pb-[20px]">
+            <Input
+              type="email"
+              id="email-input"
+              placeholder="Enter Email"
+              icon="mail"
+              state="error"
+            />
+
+            <Input type="email" id="email-disabled-input" disabled />
+
+            <Input
+              type="password"
+              placeholder="Enter Password"
+              id="password-input"
+              icon="lock"
+              showPasswordToggle
+            />
+
+            <Input
+              type="password"
+              placeholder="Enter Password"
+              id="password-disabled-input"
+              icon="lock"
+              disabled
+            />
+          </div>
+          <FormInputWrapper
+            required={true}
+            title="Title"
+            description="Maximum size: 67MB"
+          >
+            <Dropdown
+              options={[
+                "Part-time",
+                "Full-time",
+                "Internship",
+                "Part-time",
+                "Full-time",
+                "Internship",
+                "Part-time",
+                "Full-time",
+                "Internship",
+                "Part-time",
+                "Full-time",
+                "Internship",
+              ]}
+              currentIndex={dropdownIndex}
+              onChange={onDropdownChange}
+            />
+          </FormInputWrapper>
+
+          <FormInputWrapper
+            required={true}
+            title="Title"
             state="error"
-          />
+            errorString="This is an error string!"
+            description="Maximum size: 67MB"
+          >
+            <Dropdown
+              options={["Part-time", "Full-time", "Internship"]}
+              currentIndex={errorDropdownIndex}
+              onChange={onErrorDropdownChange}
+            />
+          </FormInputWrapper>
+          <FormInputWrapper
+            title="Enter your password lil bro"
+            state="error"
+            errorString="u got it wrong haha"
+          >
+            <Input
+              type="password"
+              placeholder="Enter Password"
+              id="password-input"
+              icon="lock"
+              showPasswordToggle
+            />
+          </FormInputWrapper>
 
-          <Input type="email" id="email-disabled-input" disabled />
+          <FormInputWrapper
+            title="Upload file"
+            description="Maximum size: 67MB"
+            state="default"
+          >
+            <FileUpload
+              onClickUpload={() => {}}
+              onDelete={() => {}}
+              extendedText="Must be exactly 67MB!"
+            />
+          </FormInputWrapper>
 
-          <Input
-            type="password"
-            placeholder="Enter Password"
-            id="password-input"
-            icon="lock"
-            showPasswordToggle
-          />
+          <FormInputWrapper
+            title="Upload file"
+            description="Maximum size: 67MB"
+            state="pending"
+          >
+            <FileUpload
+              onClickUpload={() => {}}
+              onDelete={() => {}}
+              extendedText="Must be exactly 67MB!"
+            />
+          </FormInputWrapper>
 
-          <Input
-            type="password"
-            placeholder="Enter Password"
-            id="password-disabled-input"
-            icon="lock"
-            disabled
-          />
+          <FormInputWrapper
+            title="Upload file"
+            description="Maximum size: 67MB"
+            state="complete"
+          >
+            <FileUpload
+              onClickUpload={() => {}}
+              onDelete={() => {}}
+              uploadedFile={uploadedFile}
+              extendedText="Must be exactly 67MB!"
+            />
+          </FormInputWrapper>
+
+          <FormInputWrapper
+            title="Upload file"
+            description="Maximum size: 67MB"
+            state="error"
+          >
+            <FileUpload
+              onClickUpload={() => {}}
+              onDelete={() => {}}
+              uploadedFile={uploadedFile}
+              extendedText="Must be exactly 67MB!"
+              errorText="File too large. Max size 67MB"
+            />
+          </FormInputWrapper>
         </div>
-        <FormInputWrapper
-          required={true}
-          title="Title"
-          description="Maximum size: 67MB"
-        >
-          <Dropdown
-            options={[
-              "Part-time",
-              "Full-time",
-              "Internship",
-              "Part-time",
-              "Full-time",
-              "Internship",
-              "Part-time",
-              "Full-time",
-              "Internship",
-              "Part-time",
-              "Full-time",
-              "Internship",
-            ]}
-            currentIndex={dropdownIndex}
-            onChange={onDropdownChange}
-          />
-        </FormInputWrapper>
-
-        <FormInputWrapper
-          required={true}
-          title="Title"
-          state="error"
-          errorString="This is an error string!"
-          description="Maximum size: 67MB"
-        >
-          <Dropdown
-            options={["Part-time", "Full-time", "Internship"]}
-            currentIndex={errorDropdownIndex}
-            onChange={onErrorDropdownChange}
-          />
-        </FormInputWrapper>
-        <FormInputWrapper
-          title="Enter your password lil bro"
-          state="error"
-          errorString="u got it wrong haha"
-        >
-          <Input
-            type="password"
-            placeholder="Enter Password"
-            id="password-input"
-            icon="lock"
-            showPasswordToggle
-          />
-        </FormInputWrapper>
       </div>
       <div className="page-title-text">page-title-text</div>
       <div className="components-text">components-text</div>

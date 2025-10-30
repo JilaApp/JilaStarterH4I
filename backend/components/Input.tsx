@@ -11,7 +11,7 @@ interface InputProps {
   showPasswordToggle?: boolean;
   placeholder?: string;
   id?: string;
-  state?: "normal" | "error";
+  state?: "default" | "error";
 }
 
 export default function Input({
@@ -22,7 +22,7 @@ export default function Input({
   showPasswordToggle = true,
   placeholder = "Enter Email",
   id,
-  state,
+  state = "default",
 }: InputProps) {
   const [input, setInput] = useState("");
   const [isFocused, setIsFocused] = useState(false);
@@ -110,7 +110,7 @@ export default function Input({
         "border-gray-300 bg-gray-200 text-gray-300": disabled,
         "border-jila-400 bg-white text-gray-300": !disabled && isFocused,
         "border-gray-300 bg-white text-gray-300": !disabled && !isFocused,
-      },
+      }
     );
   };
 
