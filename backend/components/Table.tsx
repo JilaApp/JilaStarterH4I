@@ -7,8 +7,8 @@ interface DataRowItem {
 
 interface TableProps {
   data: DataRowItem[];
-  edit_func: (event: React.MouseEvent) => void;
-  delete_func: (event: React.MouseEvent) => void;
+  edit_func: (index : number) => void;
+  delete_func: (index: number) => void;
 }
 
 export default function Table({ data, edit_func, delete_func }: TableProps) {
@@ -39,8 +39,8 @@ export default function Table({ data, edit_func, delete_func }: TableProps) {
               key={index}
               className={
                 index === 0
-                  ? "pl-10 pr-10text-left text-gray-300"
-                  : "pl-10 pr-10 p-3 text-left text-gray-300"
+                  ? "pl-20 text-left text-gray-300"
+                  : "pl-6 pr-20 p-4 text-left text-gray-300"
               }
             >
               {header}
@@ -68,13 +68,13 @@ export default function Table({ data, edit_func, delete_func }: TableProps) {
             {/* displays rest of columns */}
             {columnHeaders.slice(1).map((key, cellIndex) =>
               typeof row[key] === "object" && React.isValidElement(row[key]) ? (
-                <td key={cellIndex} className="">
+                <td key={cellIndex} className="pl-6">
                   {row[key]}
                 </td>
               ) : (
                 <td
                   key={cellIndex}
-                  className={`pl-10 pr-10 p-6 ${Array.isArray(row[key]) ? row[key][1] : ""}`}
+                  className={`p-6 pl-6 pr-6 ${Array.isArray(row[key]) ? row[key][1] : ""}`}
                 >
                   {Array.isArray(row[key]) ? row[key][0] : ""}
                 </td>
@@ -104,7 +104,7 @@ export default function Table({ data, edit_func, delete_func }: TableProps) {
 
                   <button
                     onClick={(e) => {
-                      edit_func(e);
+                      edit_func(index);
                       setOpenMenu(null);
                     }}
                     className="block w-full text-left px-4 py-2 hover:bg-gray-300 cursor-pointer rounded-md"
@@ -113,7 +113,7 @@ export default function Table({ data, edit_func, delete_func }: TableProps) {
                   </button>
                   <button
                     onClick={(e) => {
-                      delete_func(e);
+                      delete_func(index);
                       setOpenMenu(null);
                     }}
                     className="block w-full text-left px-4 py-2 hover:bg-gray-300 cursor-pointer rounded-md"

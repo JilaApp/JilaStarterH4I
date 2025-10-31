@@ -43,19 +43,19 @@ export default function DevPage() {
       Title: "C-U at Home",
       Topic: <TopicTag variant="Food" />,
       "Phone number": ["217-403-6150", "font-normal"],
-      Link: <a className="text-jila-400" href="https://leetcode.com/" target="_blank">leetcode.com/</a>,
+      Link: <a className="text-jila-400" href="https://leetcode.com/" target="_blank">leetcode.com</a>,
     },
     {
       Title: "MTD Bus System",
       Topic: <TopicTag variant="Transport" />,
       "Phone number": ["217-403-6150", "font-normal"],
-      Link: <a className="text-jila-400" href="https://www.buzzfeed.com/" target="_blank">buzzfeed.com/</a>,
+      Link: <a className="text-jila-400" href="https://www.buzzfeed.com/" target="_blank">buzzfeed.com</a>,
     },
     {
       Title: "Carle Hospital",
       Topic: <TopicTag variant="Medical" />,
       "Phone number": ["217-403-6150", "font-normal"],
-      Link: <a className="text-jila-400" href="https://carle.org/" target="_blank">carle.org/</a>,
+      Link: <a className="text-jila-400" href="https://carle.org/" target="_blank">carle.org</a>,
     },
   ];
   const [selectedOptions, setSelectedOptions] = useState([
@@ -210,8 +210,8 @@ export default function DevPage() {
       <Button text="Sign In" onClick={() => console.log("Hello!")} />
       <Table
         data={tableData}
-        edit_func={() => console.log("Editting")}
-        delete_func={() => console.log("Deleting")}
+        edit_func={(index : number) => console.log("Editting", index)}
+        delete_func={(index: number) => console.log("Deleting", index)}
       />
 
       <Tabs
