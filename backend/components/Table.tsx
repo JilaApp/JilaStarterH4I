@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
 import { MoreVertical } from "lucide-react";
-import Image from "next/image";
 
 export interface DataRow {
   id: number | string;
@@ -129,7 +128,7 @@ export default function Table<T extends DataRow>({
                   className="absolute right-12 mt-1 w-28 bg-white rounded-lg shadow-[0_8px_16px_rgba(0,0,0,0.2)] z-10"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  <Image
+                  <img
                     src="/table-menu-tail.svg"
                     alt="tail"
                     style={{

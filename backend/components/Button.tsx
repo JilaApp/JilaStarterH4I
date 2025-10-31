@@ -1,5 +1,8 @@
+import { ReactNode } from "react";
+
 interface ButtonProps {
   text: string;
+  icon?: ReactNode;
   defaultClassName?: string;
   hoverClassName?: string;
   onClick?: (event: React.MouseEvent) => void;
@@ -7,6 +10,7 @@ interface ButtonProps {
 
 export default function Button({
   text,
+  icon = null,
   defaultClassName,
   hoverClassName,
   onClick,
@@ -21,7 +25,10 @@ export default function Button({
         hoverClassName
       }
     >
-      {text}
+      <div className="flex justify-center items-center gap-3 w-full">
+        {text}
+        {icon}
+      </div>
     </button>
   );
 }
