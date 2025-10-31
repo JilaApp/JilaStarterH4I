@@ -51,7 +51,7 @@ export default function Table({ data, edit_func, delete_func }: TableProps) {
       </thead>
       <tbody className="font-medium">
         {data.map((row, index) => (
-          <tr key={index}>
+          <tr key={index} className="bg-white-400 hover:bg-gray-300 cursor-pointer">
             <td className="pl-10 pr-10 p-4 font-semibold">
               {/* displays checkbox and 1st column */}
               <label>
