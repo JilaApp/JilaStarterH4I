@@ -109,19 +109,37 @@ export default function Table({
                   className="absolute right-12 mt-1 w-28 bg-white rounded-lg shadow-[0_8px_16px_rgba(0,0,0,0.2)] z-10"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  <div
+
+                  <img
+                    src="/table-menu-tail.svg"
+                    alt="tail"
+                    style={{
+                      position: "absolute",
+                      top: "-50px",
+                      right: "-34px",       // negative moves it further right past the container
+                      width: "100px",
+                      height: "100px",
+                      transformOrigin: "center",
+                      display: "block",
+                      pointerEvents: "none",
+                    }}
+                  />
+
+
+
+                  {/* <div
                     className="absolute left-20 -top-3 w-0 h-0
                                     border-l-10 border-l-transparent
                                     border-r-10 border-r-transparent
                                     border-b-12 border-b-white"
-                  ></div>
+                  ></div> */}
 
                   <button
                     onClick={(e) => {
                       edit_func(index);
                       setOpenMenu(null);
                     }}
-                    className="block w-full text-left px-4 py-2 hover:bg-gray-300 cursor-pointer rounded-md"
+                    className="block w-full text-left px-4 py-2 hover:text-gray-300 cursor-pointer rounded-md"
                   >
                     Edit
                   </button>
@@ -130,7 +148,7 @@ export default function Table({
                       delete_func(index);
                       setOpenMenu(null);
                     }}
-                    className="block w-full text-left px-4 py-2 hover:bg-gray-300 cursor-pointer rounded-md"
+                    className="block w-full text-left px-4 py-2 hover:text-gray-300 cursor-pointer rounded-md"
                   >
                     Delete
                   </button>
