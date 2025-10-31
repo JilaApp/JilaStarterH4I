@@ -12,10 +12,19 @@ import { Video, MessageCircle } from "lucide-react";
 import Tabs from "@/components/Tabs";
 import FilterBar from "@/components/FilterBar";
 import ParagraphInput from "@/components/ParagraphInput";
-import TopicTag from "@/components/TopicTag";
+import TopicTag, { TopicVariant } from "@/components/TopicTag";
 import Header from "@/components/Header";
 import FileUpload from "@/components/FileUpload";
 import FileUploadWrapper from "@/components/FileUploadWrapper";
+import Table, { ColumnDefinition, DataRow } from "@/components/Table";
+
+interface ServiceData extends DataRow {
+  id: number | string;
+  title: string;
+  topic: string;
+  phoneNumber: string;
+  link: string;
+}
 
 export default function DevPage() {
   const tabs = [
@@ -51,6 +60,79 @@ export default function DevPage() {
   const uploadedFile = {
     fileName: "sixty-seven.zip",
     fileSizeMB: 67,
+  };
+
+  const tableData: ServiceData[] = [
+    {
+      id: 1,
+      title: "C-U at Home",
+      topic: "Food",
+      phoneNumber: "217-403-6150",
+      link: "https://leetcode.com/",
+    },
+    {
+      id: "mtd-bus-system-2",
+      title: "MTD Bus System",
+      topic: "Transport",
+      phoneNumber: "217-403-6150",
+      link: "https://www.buzzfeed.com/",
+    },
+    {
+      id: 3,
+      title: "Carle Hospital",
+      topic: "Medical",
+      phoneNumber: "217-403-6150",
+      link: "https://carle.org/",
+    },
+  ];
+
+  const columns: ColumnDefinition<ServiceData>[] = [
+    {
+      header: "Title",
+      accessorKey: "title",
+    },
+    {
+      header: "Topic",
+      accessorKey: "topic",
+      cell: (value) => <TopicTag variant={value as TopicVariant} />,
+    },
+    {
+      header: "Phone number",
+      accessorKey: "phoneNumber",
+    },
+    {
+      header: "Link",
+      accessorKey: "link",
+      cell: (value) => (
+        <a
+          className="text-jila-400"
+          href={String(value)}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {new URL(String(value)).hostname}
+        </a>
+      ),
+    },
+  ];
+
+  const getDataItemById = (id: number | string) =>
+    tableData.find((item) => item.id === id);
+
+  const handleRowClick = (id: number | string) => {
+    const item = getDataItemById(id);
+    console.log("Row Clicked:", item);
+  };
+
+  const handleEdit = (id: number | string) => {
+    const item = getDataItemById(id);
+    console.log("Editing:", item);
+  };
+
+  const handleDelete = (id: number | string) => {
+    const item = getDataItemById(id);
+    console.log("Deleting:", item);
   };
 
   const [selectedOptions, setSelectedOptions] = useState([
@@ -348,6 +430,13 @@ export default function DevPage() {
       <div className="bg-gray-300">bg-gray-300</div>
       <div className="bg-gray-200">bg-gray-200</div>
       <Button text="Sign In" onClick={() => console.log("Hello!")} />
+      <Table
+        data={tableData}
+        columns={columns}
+        handleEdit={handleEdit}
+        handleDelete={handleDelete}
+        handleRowClick={handleRowClick}
+      />
 
       <Tabs
         tabs={tabs}
