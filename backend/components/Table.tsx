@@ -1,31 +1,57 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { MoreVertical } from "lucide-react";
+import Image from "next/image";
 
-interface DataRowItem {
-  [key: string]: [string | number, string] | React.ReactNode;
+export interface DataRow {
+  id: number | string;
+  [key: string]: unknown;
 }
 
-interface TableProps {
-  data: DataRowItem[];
-  edit_func: (index: number) => void;
-  delete_func: (index: number) => void;
-  handle_row_click: (
-    column_headers: string[],
-    data_row: DataRowItem,
-    id: number,
-  ) => void;
+export interface ColumnDefinition<
+  T extends DataRow,
+  K extends keyof T = keyof T,
+> {
+  header: string;
+  accessorKey: K;
+  cell?: (value: T[K]) => React.ReactNode;
 }
 
-export default function Table({
+interface TableProps<T extends DataRow> {
+  data: T[];
+  columns: ColumnDefinition<T>[];
+  handleEdit: (id: T["id"]) => void;
+  handleDelete: (id: T["id"]) => void;
+  handleRowClick: (id: T["id"]) => void;
+}
+
+export default function Table<T extends DataRow>({
   data,
-  edit_func,
-  delete_func,
-  handle_row_click,
-}: TableProps) {
-  const [selectedRows, setSelectedRows] = useState<any[]>([]);
-  const [openMenu, setOpenMenu] = useState<number | null>(null);
+  columns,
+  handleEdit,
+  handleDelete,
+  handleRowClick,
+}: TableProps<T>) {
+  const [selectedRows, setSelectedRows] = useState<(number | string)[]>([]);
+  const [openMenu, setOpenMenu] = useState<number | string | null>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
 
-  const handleCheckboxChange = (id: number) => {
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setOpenMenu(null);
+      }
+    };
+
+    if (openMenu !== null) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [openMenu]);
+
+  const handleCheckboxChange = (id: number | string) => {
     setSelectedRows((prevSelectedRows) => {
       if (prevSelectedRows.includes(id)) {
         console.log("Unselected," + id);
@@ -37,14 +63,11 @@ export default function Table({
     });
   };
 
-  const columnHeaders = Object.keys(data[0]);
-
   return (
     <table className="bg-white-400 rounded-3xl m-20 border-collapse">
-      {/* headers */}
       <thead>
         <tr className="border-b-2 border-gray-300">
-          {columnHeaders.map((header, index) => (
+          {columns.map((col, index) => (
             <th
               key={index}
               className={
@@ -53,63 +76,60 @@ export default function Table({
                   : "pl-6 pr-20 p-4 text-left text-gray-300"
               }
             >
-              {header}
+              {col.header}
             </th>
           ))}
           <th className="pl-10 pr-10 p-3 text-left text-gray-300">Actions</th>
         </tr>
       </thead>
       <tbody className="font-medium">
-        {data.map((row, index) => (
+        {data.map((row) => (
           <tr
-            key={index}
-            onClick={() => handle_row_click(columnHeaders, row, index)}
+            key={row.id}
+            onClick={() => handleRowClick(row.id)}
             className="bg-white-400 hover:bg-gray-300 cursor-pointer"
           >
-            <td className="pl-10 pr-10 p-4 font-semibold">
-              {/* displays checkbox and 1st column */}
-              <label>
-                <input
-                  id={`${index}`}
-                  type="checkbox"
-                  checked={selectedRows.includes(index)}
-                  onChange={() => handleCheckboxChange(index)}
-                  className="w-4 h-4 mr-6"
-                />
-                {row[columnHeaders[0]]}
-              </label>
-            </td>
-            {/* displays rest of columns */}
-            {columnHeaders.slice(1).map((key, cellIndex) =>
-              typeof row[key] === "object" && React.isValidElement(row[key]) ? (
-                <td key={cellIndex} className="pl-6">
-                  {row[key]}
-                </td>
-              ) : (
+            {columns.map((col, cellIndex) => {
+              const value = row[col.accessorKey];
+              return (
                 <td
                   key={cellIndex}
-                  className={`p-6 pl-6 pr-6 ${Array.isArray(row[key]) ? row[key][1] : ""}`}
+                  className={
+                    cellIndex === 0 ? "pl-10 pr-10 p-4 font-semibold" : "pl-6"
+                  }
                 >
-                  {Array.isArray(row[key]) ? row[key][0] : ""}
+                  {cellIndex === 0 && (
+                    <input
+                      type="checkbox"
+                      checked={selectedRows.includes(row.id)}
+                      onClick={(e) => e.stopPropagation()}
+                      onChange={() => handleCheckboxChange(row.id)}
+                      className="w-4 h-4 mr-6 align-middle"
+                    />
+                  )}
+                  <span className="align-middle">
+                    {col.cell ? col.cell(value) : String(value)}
+                  </span>
                 </td>
-              ),
-            )}
-            {/* actions column w kebab menu */}
+              );
+            })}
             <td className="p-3 relative text-center">
               <button
-                onClick={() => setOpenMenu(openMenu === index ? null : index)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setOpenMenu(openMenu === row.id ? null : row.id);
+                }}
                 className="p-2 rounded-full hover:bg-gray-300 hover:cursor-pointer"
               >
                 <MoreVertical size={18} />
               </button>
-
-              {/* when menu is open */}
-              {openMenu === index && (
+              {openMenu === row.id && (
                 <div
+                  ref={menuRef} // Attach the ref here
                   className="absolute right-12 mt-1 w-28 bg-white rounded-lg shadow-[0_8px_16px_rgba(0,0,0,0.2)] z-10"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  <img
+                  <Image
                     src="/table-menu-tail.svg"
                     alt="tail"
                     style={{
@@ -123,17 +143,9 @@ export default function Table({
                       pointerEvents: "none",
                     }}
                   />
-
-                  {/* <div
-                    className="absolute left-20 -top-3 w-0 h-0
-                                    border-l-10 border-l-transparent
-                                    border-r-10 border-r-transparent
-                                    border-b-12 border-b-white"
-                  ></div> */}
-
                   <button
-                    onClick={(e) => {
-                      edit_func(index);
+                    onClick={() => {
+                      handleEdit(row.id);
                       setOpenMenu(null);
                     }}
                     className="block w-full text-left px-4 py-2 hover:text-gray-300 cursor-pointer rounded-md"
@@ -141,8 +153,8 @@ export default function Table({
                     Edit
                   </button>
                   <button
-                    onClick={(e) => {
-                      delete_func(index);
+                    onClick={() => {
+                      handleDelete(row.id);
                       setOpenMenu(null);
                     }}
                     className="block w-full text-left px-4 py-2 hover:text-gray-300 cursor-pointer rounded-md"

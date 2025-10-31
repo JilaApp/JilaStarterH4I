@@ -3,18 +3,22 @@ import { useState } from "react";
 import Button from "@/components/Button";
 import Notification from "@/components/Notification";
 import Input from "@/components/Input";
-import TopicTag from "@/components/TopicTag";
+import TopicTag, { TopicVariant } from "@/components/TopicTag";
 import Sidebar from "@/components/Sidebar";
 import Dropdown from "@/components/Dropdown";
 import FormInputWrapper from "@/components/FormInputWrapper";
-import Table from "@/components/Table";
+import Table, { ColumnDefinition, DataRow } from "@/components/Table";
 import { Video, MessageCircle } from "lucide-react";
 import Tabs from "@/components/Tabs";
 import FilterBar from "@/components/FilterBar";
 import ParagraphInput from "@/components/ParagraphInput";
 
-interface DataRowItem {
-  [key: string]: [string | number, string] | React.ReactNode;
+interface ServiceData extends DataRow {
+  id: number | string;
+  title: string;
+  topic: string;
+  phoneNumber: string;
+  link: string;
 }
 
 export default function DevPage() {
@@ -42,46 +46,79 @@ export default function DevPage() {
     setErrorDropdownIndex(index);
   };
 
-  const tableData = [
+  const tableData: ServiceData[] = [
     {
-      Title: "C-U at Home",
-      Topic: <TopicTag variant="Food" />,
-      "Phone number": ["217-403-6150", "font-normal"],
-      Link: (
-        <a
-          className="text-jila-400"
-          href="https://leetcode.com/"
-          target="_blank"
-        >
-          leetcode.com
-        </a>
-      ),
+      id: 1,
+      title: "C-U at Home",
+      topic: "Food",
+      phoneNumber: "217-403-6150",
+      link: "https://leetcode.com/",
     },
     {
-      Title: "MTD Bus System",
-      Topic: <TopicTag variant="Transport" />,
-      "Phone number": ["217-403-6150", "font-normal"],
-      Link: (
-        <a
-          className="text-jila-400"
-          href="https://www.buzzfeed.com/"
-          target="_blank"
-        >
-          buzzfeed.com
-        </a>
-      ),
+      id: "mtd-bus-system-2",
+      title: "MTD Bus System",
+      topic: "Transport",
+      phoneNumber: "217-403-6150",
+      link: "https://www.buzzfeed.com/",
     },
     {
-      Title: "Carle Hospital",
-      Topic: <TopicTag variant="Medical" />,
-      "Phone number": ["217-403-6150", "font-normal"],
-      Link: (
-        <a className="text-jila-400" href="https://carle.org/" target="_blank">
-          carle.org
+      id: 3,
+      title: "Carle Hospital",
+      topic: "Medical",
+      phoneNumber: "217-403-6150",
+      link: "https://carle.org/",
+    },
+  ];
+
+  const columns: ColumnDefinition<ServiceData>[] = [
+    {
+      header: "Title",
+      accessorKey: "title",
+    },
+    {
+      header: "Topic",
+      accessorKey: "topic",
+      cell: (value) => <TopicTag variant={value as TopicVariant} />,
+    },
+    {
+      header: "Phone number",
+      accessorKey: "phoneNumber",
+    },
+    {
+      header: "Link",
+      accessorKey: "link",
+      cell: (value) => (
+        <a
+          className="text-jila-400"
+          href={String(value)}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {new URL(String(value)).hostname}
         </a>
       ),
     },
   ];
+
+  const getDataItemById = (id: number | string) =>
+    tableData.find((item) => item.id === id);
+
+  const handleRowClick = (id: number | string) => {
+    const item = getDataItemById(id);
+    console.log("Row Clicked:", item);
+  };
+
+  const handleEdit = (id: number | string) => {
+    const item = getDataItemById(id);
+    console.log("Editing:", item);
+  };
+
+  const handleDelete = (id: number | string) => {
+    const item = getDataItemById(id);
+    console.log("Deleting:", item);
+  };
+
   const [selectedOptions, setSelectedOptions] = useState([
     "one",
     "two",
@@ -89,20 +126,6 @@ export default function DevPage() {
   ]);
 
   const [paragraphInputValue, setParagraphInputValue] = useState<string>("");
-
-  function handleRowClick(
-    column_headers: string[],
-    data_row: DataRowItem,
-    id: number,
-  ) {
-    let toPrint: string = "AT INDEX " + id + "\n";
-
-    for (let i = 0; i < column_headers.length; i++) {
-      toPrint += column_headers[i] + ": " + data_row[column_headers[i]] + "\n";
-    }
-    console.log(data_row);
-    console.log(toPrint);
-  }
 
   return (
     <>
@@ -248,9 +271,10 @@ export default function DevPage() {
       <Button text="Sign In" onClick={() => console.log("Hello!")} />
       <Table
         data={tableData}
-        edit_func={(index: number) => console.log("Editting", index)}
-        delete_func={(index: number) => console.log("Deleting", index)}
-        handle_row_click={handleRowClick}
+        columns={columns}
+        handleEdit={handleEdit}
+        handleDelete={handleDelete}
+        handleRowClick={handleRowClick}
       />
 
       <Tabs

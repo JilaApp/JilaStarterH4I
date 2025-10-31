@@ -10,7 +10,7 @@ const topicColors = {
   Transportation: "#BDD0E2",
 };
 
-type TopicVariant = keyof typeof topicColors;
+export type TopicVariant = keyof typeof topicColors;
 
 interface TopicTagProps {
   variant: TopicVariant;
