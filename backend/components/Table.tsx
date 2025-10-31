@@ -125,7 +125,7 @@ export default function Table<T extends DataRow>({
               </button>
               {openMenu === row.id && (
                 <div
-                  ref={menuRef} // Attach the ref here
+                  ref={menuRef}
                   className="absolute right-12 mt-1 w-28 bg-white rounded-lg shadow-[0_8px_16px_rgba(0,0,0,0.2)] z-10"
                   onClick={(e) => e.stopPropagation()}
                 >
