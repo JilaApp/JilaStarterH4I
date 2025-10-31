@@ -16,7 +16,7 @@ import TopicTag from "@/components/TopicTag";
 import Header from "@/components/Header";
 import FileUpload from "@/components/FileUpload";
 import FileUploadWrapper from "@/components/FileUploadWrapper";
-import DeleteModal from "@/components/DeleteModal"; 
+import DeleteModal from "@/components/DeleteModal";
 
 export default function DevPage() {
   const tabs = [
@@ -90,10 +90,10 @@ export default function DevPage() {
     setErrorDropdownIndex(index);
   };
 
-  const [isModalOpen, setIsModalOpen] = useState(false); 
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleDelete = () => {
-    setIsModalOpen(false); 
+    setIsModalOpen(false);
   };
   return (
     <>
@@ -117,7 +117,7 @@ export default function DevPage() {
         onClose={() => setIsModalOpen(false)}
         onConfirm={handleDelete}
       />
-  
+
       <RadioButtonGroup
         options={myOptions}
         selectedOptions={selected}
