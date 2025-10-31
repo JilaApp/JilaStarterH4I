@@ -13,6 +13,10 @@ import Tabs from "@/components/Tabs";
 import FilterBar from "@/components/FilterBar";
 import ParagraphInput from "@/components/ParagraphInput";
 
+interface DataRowItem {
+  [key: string]: [string | number, string] | React.ReactNode;
+}
+
 export default function DevPage() {
   const tabs = [
     {
@@ -43,19 +47,39 @@ export default function DevPage() {
       Title: "C-U at Home",
       Topic: <TopicTag variant="Food" />,
       "Phone number": ["217-403-6150", "font-normal"],
-      Link: <a className="text-jila-400" href="https://leetcode.com/" target="_blank">leetcode.com</a>,
+      Link: (
+        <a
+          className="text-jila-400"
+          href="https://leetcode.com/"
+          target="_blank"
+        >
+          leetcode.com
+        </a>
+      ),
     },
     {
       Title: "MTD Bus System",
       Topic: <TopicTag variant="Transport" />,
       "Phone number": ["217-403-6150", "font-normal"],
-      Link: <a className="text-jila-400" href="https://www.buzzfeed.com/" target="_blank">buzzfeed.com</a>,
+      Link: (
+        <a
+          className="text-jila-400"
+          href="https://www.buzzfeed.com/"
+          target="_blank"
+        >
+          buzzfeed.com
+        </a>
+      ),
     },
     {
       Title: "Carle Hospital",
       Topic: <TopicTag variant="Medical" />,
       "Phone number": ["217-403-6150", "font-normal"],
-      Link: <a className="text-jila-400" href="https://carle.org/" target="_blank">carle.org</a>,
+      Link: (
+        <a className="text-jila-400" href="https://carle.org/" target="_blank">
+          carle.org
+        </a>
+      ),
     },
   ];
   const [selectedOptions, setSelectedOptions] = useState([
@@ -65,6 +89,20 @@ export default function DevPage() {
   ]);
 
   const [paragraphInputValue, setParagraphInputValue] = useState<string>("");
+
+  function handleRowClick(
+    column_headers: string[],
+    data_row: DataRowItem,
+    id: number,
+  ) {
+    let toPrint: string = "AT INDEX " + id + "\n";
+
+    for (let i = 0; i < column_headers.length; i++) {
+      toPrint += column_headers[i] + ": " + data_row[column_headers[i]] + "\n";
+    }
+    console.log(data_row);
+    console.log(toPrint);
+  }
 
   return (
     <>
@@ -210,8 +248,9 @@ export default function DevPage() {
       <Button text="Sign In" onClick={() => console.log("Hello!")} />
       <Table
         data={tableData}
-        edit_func={(index : number) => console.log("Editting", index)}
+        edit_func={(index: number) => console.log("Editting", index)}
         delete_func={(index: number) => console.log("Deleting", index)}
+        handle_row_click={handleRowClick}
       />
 
       <Tabs

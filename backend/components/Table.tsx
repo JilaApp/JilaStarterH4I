@@ -7,11 +7,21 @@ interface DataRowItem {
 
 interface TableProps {
   data: DataRowItem[];
-  edit_func: (index : number) => void;
+  edit_func: (index: number) => void;
   delete_func: (index: number) => void;
+  handle_row_click: (
+    column_headers: string[],
+    data_row: DataRowItem,
+    id: number,
+  ) => void;
 }
 
-export default function Table({ data, edit_func, delete_func }: TableProps) {
+export default function Table({
+  data,
+  edit_func,
+  delete_func,
+  handle_row_click,
+}: TableProps) {
   const [selectedRows, setSelectedRows] = useState<any[]>([]);
   const [openMenu, setOpenMenu] = useState<number | null>(null);
 
@@ -51,7 +61,11 @@ export default function Table({ data, edit_func, delete_func }: TableProps) {
       </thead>
       <tbody className="font-medium">
         {data.map((row, index) => (
-          <tr key={index} className="bg-white-400 hover:bg-gray-300 cursor-pointer">
+          <tr
+            key={index}
+            onClick={() => handle_row_click(columnHeaders, row, index)}
+            className="bg-white-400 hover:bg-gray-300 cursor-pointer"
+          >
             <td className="pl-10 pr-10 p-4 font-semibold">
               {/* displays checkbox and 1st column */}
               <label>
