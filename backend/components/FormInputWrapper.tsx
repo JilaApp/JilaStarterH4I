@@ -5,7 +5,7 @@ interface FormInputWrapperProps {
   title: string;
   required?: boolean;
   children: React.ReactNode;
-  state?: "normal" | "error";
+  state?: "default" | "error" | "pending" | "complete";
   errorString?: string;
   description?: string;
 }
@@ -14,7 +14,7 @@ export default function FormInputWrapper({
   title,
   required = false,
   children,
-  state = "normal",
+  state = "default",
   errorString = "This field is required",
   description,
 }: FormInputWrapperProps) {

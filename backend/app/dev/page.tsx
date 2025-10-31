@@ -7,11 +7,15 @@ import FormText from "@/components/FormTextWrapper";
 import { TextInput, EmailInput, PasswordInput } from "@/components/Input";
 import Sidebar from "@/components/Sidebar";
 import Dropdown from "@/components/Dropdown";
+import RadioButtonGroup from "@/components/RadioButtonGroup";
 import { Video, MessageCircle } from "lucide-react";
 import Tabs from "@/components/Tabs";
 import FilterBar from "@/components/FilterBar";
 import ParagraphInput from "@/components/ParagraphInput";
 import TopicTag from "@/components/TopicTag";
+import Header from "@/components/Header";
+import FileUpload from "@/components/FileUpload";
+import FileUploadWrapper from "@/components/FileUploadWrapper";
 
 export default function DevPage() {
   const tabs = [
@@ -33,6 +37,21 @@ export default function DevPage() {
   const [textError, setTextError] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
+
+  const myOptions = [
+    { name: "1" },
+    { name: "2", disabled: true },
+    { name: "6" },
+    { name: "7" },
+  ];
+  const [selected, setSelected] = useState(["6", "7"]);
+
+  const [file, setFile] = useState<File>();
+
+  const uploadedFile = {
+    fileName: "sixty-seven.zip",
+    fileSizeMB: 67,
+  };
 
   const [selectedOptions, setSelectedOptions] = useState([
     "one",
@@ -72,6 +91,19 @@ export default function DevPage() {
 
   return (
     <>
+      <div className="bg-[#FFFBF3]">
+        <Header
+          name="Sophia Kim"
+          organization="Hack4Impact"
+          title="Data Collection + Analytics"
+        />
+      </div>
+      <RadioButtonGroup
+        options={myOptions}
+        selectedOptions={selected}
+        setSelectedOptions={setSelected}
+      />
+      <p className="mt-4">Selected: {selected.join(", ")}</p>
       <div className="flex flex-col gap-3 px-5">
         <Notification
           message="We’ve resent the link to your email!"
@@ -86,7 +118,17 @@ export default function DevPage() {
           <FormInputWrapper
             title="Text Input"
             required
-            state={textError ? "error" : "normal"}
+            state={textError ? "error" : "default"}
+            errorString={textError}
+          >
+            <FormText required onErrorChange={setTextError}>
+              <TextInput id="text-input" />
+            </FormText>
+          </FormInputWrapper>
+          <FormInputWrapper
+            title="Text Input"
+            required
+            state={textError ? "error" : "default"}
             errorString={textError}
           >
             <FormText required onErrorChange={setTextError}>
@@ -97,7 +139,21 @@ export default function DevPage() {
           <FormInputWrapper
             title="Email Input"
             required
-            state={emailError ? "error" : "normal"}
+            state={emailError ? "error" : "default"}
+            errorString={emailError}
+          >
+            <FormText
+              required
+              validate={validateEmail}
+              onErrorChange={setEmailError}
+            >
+              <EmailInput id="email-input" />
+            </FormText>
+          </FormInputWrapper>
+          <FormInputWrapper
+            title="Email Input"
+            required
+            state={emailError ? "error" : "default"}
             errorString={emailError}
           >
             <FormText
@@ -112,7 +168,21 @@ export default function DevPage() {
           <FormInputWrapper
             title="Password Input"
             required
-            state={passwordError ? "error" : "normal"}
+            state={passwordError ? "error" : "default"}
+            errorString={passwordError}
+          >
+            <FormText
+              required
+              validate={validatePassword}
+              onErrorChange={setPasswordError}
+            >
+              <PasswordInput id="password-input" />
+            </FormText>
+          </FormInputWrapper>
+          <FormInputWrapper
+            title="Password Input"
+            required
+            state={passwordError ? "error" : "default"}
             errorString={passwordError}
           >
             <FormText
@@ -158,6 +228,108 @@ export default function DevPage() {
           />
         </FormInputWrapper>
 
+        <div className="flex flex-col p-5 bg-[#F2F2F2]">
+          <FormInputWrapper
+            required={true}
+            title="Title"
+            description="Maximum size: 67MB"
+          >
+            <Dropdown
+              options={[
+                "Part-time",
+                "Full-time",
+                "Internship",
+                "Part-time",
+                "Full-time",
+                "Internship",
+                "Part-time",
+                "Full-time",
+                "Internship",
+                "Part-time",
+                "Full-time",
+                "Internship",
+              ]}
+              currentIndex={dropdownIndex}
+              onChange={onDropdownChange}
+            />
+          </FormInputWrapper>
+
+          <FormInputWrapper
+            required={true}
+            title="Title"
+            state="error"
+            errorString="This is an error string!"
+            description="Maximum size: 67MB"
+          >
+            <Dropdown
+              options={["Part-time", "Full-time", "Internship"]}
+              currentIndex={errorDropdownIndex}
+              onChange={onErrorDropdownChange}
+            />
+          </FormInputWrapper>
+
+          <FormInputWrapper
+            title="Upload file"
+            description="Maximum size: 67MB"
+            state="default"
+          >
+            <FileUpload
+              onFileSelect={setFile}
+              onDelete={() => {}}
+              extendedText="Must be exactly 67MB!"
+            />
+          </FormInputWrapper>
+
+          <FormInputWrapper
+            title="Upload file"
+            description="Maximum size: 67MB"
+            state="pending"
+          >
+            <FileUpload
+              onDelete={() => {}}
+              extendedText="Must be exactly 67MB!"
+            />
+          </FormInputWrapper>
+
+          <FormInputWrapper
+            title="Upload file"
+            description="Maximum size: 67MB"
+            state="complete"
+          >
+            <FileUpload
+              onDelete={() => {}}
+              uploadedFile={uploadedFile}
+              extendedText="Must be exactly 67MB!"
+            />
+          </FormInputWrapper>
+
+          <FormInputWrapper
+            title="Upload file"
+            description="Maximum size: 67MB"
+            state="error"
+          >
+            <FileUpload
+              onDelete={() => {}}
+              uploadedFile={uploadedFile}
+              extendedText="Must be exactly 67MB!"
+              errorText="File too large. Max size 67MB"
+            />
+          </FormInputWrapper>
+
+          <FormInputWrapper
+            title="Upload file"
+            description="Maximum size: 67MB"
+          >
+            <FileUploadWrapper
+              onUpload={(file: File) => {
+                setFile(file);
+              }}
+              onDelete={() => {
+                setFile(undefined);
+              }}
+            />
+          </FormInputWrapper>
+        </div>
         <FormInputWrapper
           required
           title="Title"
