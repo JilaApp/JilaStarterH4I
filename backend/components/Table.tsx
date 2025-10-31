@@ -109,14 +109,13 @@ export default function Table({
                   className="absolute right-12 mt-1 w-28 bg-white rounded-lg shadow-[0_8px_16px_rgba(0,0,0,0.2)] z-10"
                   onClick={(e) => e.stopPropagation()}
                 >
-
                   <img
                     src="/table-menu-tail.svg"
                     alt="tail"
                     style={{
                       position: "absolute",
                       top: "-50px",
-                      right: "-34px",       // negative moves it further right past the container
+                      right: "-34px",
                       width: "100px",
                       height: "100px",
                       transformOrigin: "center",
@@ -124,8 +123,6 @@ export default function Table({
                       pointerEvents: "none",
                     }}
                   />
-
-
 
                   {/* <div
                     className="absolute left-20 -top-3 w-0 h-0
