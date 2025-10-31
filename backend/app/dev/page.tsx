@@ -16,6 +16,7 @@ import TopicTag from "@/components/TopicTag";
 import Header from "@/components/Header";
 import FileUpload from "@/components/FileUpload";
 import FileUploadWrapper from "@/components/FileUploadWrapper";
+import DeleteModal from "@/components/DeleteModal"; 
 
 export default function DevPage() {
   const tabs = [
@@ -89,6 +90,11 @@ export default function DevPage() {
     setErrorDropdownIndex(index);
   };
 
+  const [isModalOpen, setIsModalOpen] = useState(false); 
+
+  const handleDelete = () => {
+    setIsModalOpen(false); 
+  };
   return (
     <>
       <div className="bg-[#FFFBF3]">
@@ -98,6 +104,20 @@ export default function DevPage() {
           title="Data Collection + Analytics"
         />
       </div>
+
+      <button
+        onClick={() => setIsModalOpen(true)}
+        className="w-[100px] h-[50px] bg-jila-400 text-white rounded-[10px] components-text"
+      >
+        Delete
+      </button>
+
+      <DeleteModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onConfirm={handleDelete}
+      />
+  
       <RadioButtonGroup
         options={myOptions}
         selectedOptions={selected}
