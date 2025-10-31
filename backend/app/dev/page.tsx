@@ -43,19 +43,19 @@ export default function DevPage() {
       Title: "C-U at Home",
       Topic: <TopicTag variant="Food" />,
       "Phone number": ["217-403-6150", "font-normal"],
-      Link: ["hack4impact.com", "text-jila-400"],
+      Link: <a className="text-jila-400" href="https://leetcode.com/" target="_blank">leetcode.com/</a>,
     },
     {
-      Title: "Daily Bread Soup Kitchen",
+      Title: "MTD Bus System",
       Topic: <TopicTag variant="Transport" />,
       "Phone number": ["217-403-6150", "font-normal"],
-      Link: ["google.com", "text-jila-400"],
+      Link: <a className="text-jila-400" href="https://www.buzzfeed.com/" target="_blank">buzzfeed.com/</a>,
     },
     {
-      Title: "C-U at Home",
+      Title: "Carle Hospital",
       Topic: <TopicTag variant="Medical" />,
       "Phone number": ["217-403-6150", "font-normal"],
-      Link: ["canva.com", "text-jila-400"],
+      Link: <a className="text-jila-400" href="https://carle.org/" target="_blank">carle.org/</a>,
     },
   ];
   const [selectedOptions, setSelectedOptions] = useState([
