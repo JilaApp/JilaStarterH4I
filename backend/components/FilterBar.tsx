@@ -27,7 +27,7 @@ export default function FilterBar({
           <div key={option}>
             <Button
               defaultClassName={
-                "w-[100px] !p-0 !h-10 " +
+                "w-[100px] !p-0 !h-10" +
                 (selectedOptions.includes(option)
                   ? "bg-jila-400 hover:!bg-jila-400"
                   : "!bg-white-400 hover:!bg-white-400 !text-gray-300")

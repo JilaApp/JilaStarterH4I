@@ -39,10 +39,10 @@ export default function HeaderDropdown({
             onClick={() => fillerSignOut()}
             className="flex items-center bg-white-400 hover:bg-[#F8F8F8] rounded-[10px] gap-[10px] h-[48px] w-full px-[10px]"
           >
-            <div>
+            <div className="text-error-400">
               <LogOut />
             </div>
-            <span>Sign Out</span>
+            <span className="text-error-400">Sign Out</span>
           </button>
         </div>
       )}
