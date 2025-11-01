@@ -8,6 +8,7 @@ import Button from "@/components/Button";
 import DisplayBox from "@/components/DisplayBox";
 import FormText, { validatePassword } from "@/components/FormTextWrapper";
 import FormInputWrapper from "@/components/FormInputWrapper";
+import PageBackground from "@/components/PageBackground";
 
 export default function InviteSignUpPage() {
   const { isLoaded, signUp, setActive } = useSignUp();
@@ -162,110 +163,112 @@ export default function InviteSignUpPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-cream-300 p-4">
-      <DisplayBox>
-        {!emailApproved ? (
-          <div className="flex flex-col gap-y-7 justify-center items-center">
-            <h1 className="body1-desktop-text text-4xl font-bold">
-              Welcome to JILA!
-            </h1>
-            <p className="body1-desktop-text text-xl text-center font-light">
-              We&apos;ve approved the following email for creating your admin
-              account
-            </p>
-            <div>
-              <FormText value={email}>
-                <EmailInput
-                  id="email-input"
-                  disabled
-                  placeholder="Loading from invitation..."
-                />
-              </FormText>
-            </div>
-            {error && (
-              <div className="rounded-lg bg-error-200 p-4 text-error-400">
-                {error}
-              </div>
-            )}
-            <div className="flex flex-col w-full">
-              <label className="components-text text-type-400 mb-2 block">
-                Have an account?{" "}
-                <a href="/sign-in" className="text-jila-400">
-                  Sign in
-                </a>
-              </label>
-              <Button
-                text="Sign up"
-                type="button"
-                defaultClassName="w-full"
-                disabled={isLoading}
-                onClick={() => {
-                  setEmailApproved(true);
-                }}
-              />
-            </div>
-          </div>
-        ) : (
-          <div className="flex flex-col gap-y-8">
-            <form
-              onSubmit={handleSubmit}
-              className="flex flex-col gap-y-6 items-center justify-center"
-            >
+    <PageBackground>
+      <div className="flex min-h-screen items-center justify-center bg-cream-300 p-4">
+        <DisplayBox>
+          {!emailApproved ? (
+            <div className="flex flex-col gap-y-7 justify-center items-center">
               <h1 className="body1-desktop-text text-4xl font-bold">
-                Set up your password
+                Welcome to JILA!
               </h1>
               <p className="body1-desktop-text text-xl text-center font-light">
-                Create a secure password for your account
+                We&apos;ve approved the following email for creating your admin
+                account
               </p>
-              <div className="flex flex-col gap-y-2">
-                <FormInputWrapper
-                  title="Password"
-                  required
-                  state={passwordError ? "error" : "default"}
-                  errorString={passwordError}
-                >
-                  <FormText
-                    required
-                    validate={validatePassword}
-                    onErrorChange={setPasswordError}
-                    error={passwordError}
-                    value={password}
-                    onValueChange={setPassword}
-                  >
-                    <PasswordInput id="password-input" />
-                  </FormText>
-                </FormInputWrapper>
-                <FormInputWrapper
-                  title="Confirm Password"
-                  required
-                  state={passwordError ? "error" : "default"}
-                  errorString={passwordError}
-                >
-                  <FormText
-                    required
-                    validate={validatePassword}
-                    value={confirmPassword}
-                    onValueChange={setConfirmPassword}
-                  >
-                    <PasswordInput id="password-input" />
-                  </FormText>
-                </FormInputWrapper>
+              <div>
+                <FormText value={email}>
+                  <EmailInput
+                    id="email-input"
+                    disabled
+                    placeholder="Loading from invitation..."
+                  />
+                </FormText>
               </div>
               {error && (
                 <div className="rounded-lg bg-error-200 p-4 text-error-400">
                   {error}
                 </div>
               )}
-              <Button
-                text="Sign up"
-                type="submit"
-                defaultClassName="w-full"
-                disabled={isLoading}
-              />
-            </form>
-          </div>
-        )}
-      </DisplayBox>
-    </div>
+              <div className="flex flex-col w-full">
+                <label className="components-text text-type-400 mb-2 block">
+                  Have an account?{" "}
+                  <a href="/sign-in" className="text-jila-400">
+                    Sign in
+                  </a>
+                </label>
+                <Button
+                  text="Sign up"
+                  type="button"
+                  defaultClassName="w-full"
+                  disabled={isLoading}
+                  onClick={() => {
+                    setEmailApproved(true);
+                  }}
+                />
+              </div>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-y-8">
+              <form
+                onSubmit={handleSubmit}
+                className="flex flex-col gap-y-6 items-center justify-center"
+              >
+                <h1 className="body1-desktop-text text-4xl font-bold">
+                  Set up your password
+                </h1>
+                <p className="body1-desktop-text text-xl text-center font-light">
+                  Create a secure password for your account
+                </p>
+                <div className="flex flex-col gap-y-2">
+                  <FormInputWrapper
+                    title="Password"
+                    required
+                    state={passwordError ? "error" : "default"}
+                    errorString={passwordError}
+                  >
+                    <FormText
+                      required
+                      validate={validatePassword}
+                      onErrorChange={setPasswordError}
+                      error={passwordError}
+                      value={password}
+                      onValueChange={setPassword}
+                    >
+                      <PasswordInput id="password-input" />
+                    </FormText>
+                  </FormInputWrapper>
+                  <FormInputWrapper
+                    title="Confirm Password"
+                    required
+                    state={passwordError ? "error" : "default"}
+                    errorString={passwordError}
+                  >
+                    <FormText
+                      required
+                      validate={validatePassword}
+                      value={confirmPassword}
+                      onValueChange={setConfirmPassword}
+                    >
+                      <PasswordInput id="password-input" />
+                    </FormText>
+                  </FormInputWrapper>
+                </div>
+                {error && (
+                  <div className="rounded-lg bg-error-200 p-4 text-error-400">
+                    {error}
+                  </div>
+                )}
+                <Button
+                  text="Sign up"
+                  type="submit"
+                  defaultClassName="w-full"
+                  disabled={isLoading}
+                />
+              </form>
+            </div>
+          )}
+        </DisplayBox>
+      </div>
+    </PageBackground>
   );
 }

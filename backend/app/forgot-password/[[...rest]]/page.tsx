@@ -12,6 +12,7 @@ import FormText, {
   validatePassword,
 } from "@/components/FormTextWrapper";
 import FormInputWrapper from "@/components/FormInputWrapper";
+import PageBackground from "@/components/PageBackground";
 
 export default function ForgotPasswordPage() {
   const { isLoaded, signIn } = useSignIn();
@@ -131,138 +132,140 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-cream-300 p-4">
-      {showNotification && (
-        <div className="fixed top-5 z-50">
-          <Notification
-            message={successMessage}
-            onClose={() => setShowNotification(false)}
-          />
-        </div>
-      )}
-
-      <DisplayBox>
-        <div className="flex flex-col gap-y-8">
-          <div className="flex flex-col items-center justify-center">
-            <h1 className="body1-desktop-text text-4xl font-bold mb-8">
-              {step === "request" ? "Forgot Password?" : "Check your email!"}
-            </h1>
-            <p className="body1-desktop-text text-type-400 text-center">
-              {step === "request"
-                ? "Don't worry! Enter your account's email and we'll send you a reset code."
-                : `Enter the code sent to ${email} and your new password.`}
-            </p>
+    <PageBackground>
+      <div className="flex flex-col items-center justify-center min-h-screen bg-cream-300 p-4">
+        {showNotification && (
+          <div className="fixed top-5 z-50">
+            <Notification
+              message={successMessage}
+              onClose={() => setShowNotification(false)}
+            />
           </div>
+        )}
 
-          {step === "request" ? (
-            <form
-              onSubmit={handleRequestReset}
-              className="flex flex-col gap-y-5"
-            >
-              <FormInputWrapper
-                title="Email"
-                required
-                state={emailError ? "error" : "default"}
-                errorString={emailError}
+        <DisplayBox>
+          <div className="flex flex-col gap-y-8">
+            <div className="flex flex-col items-center justify-center">
+              <h1 className="body1-desktop-text text-4xl font-bold mb-8">
+                {step === "request" ? "Forgot Password?" : "Check your email!"}
+              </h1>
+              <p className="body1-desktop-text text-type-400 text-center">
+                {step === "request"
+                  ? "Don't worry! Enter your account's email and we'll send you a reset code."
+                  : `Enter the code sent to ${email} and your new password.`}
+              </p>
+            </div>
+
+            {step === "request" ? (
+              <form
+                onSubmit={handleRequestReset}
+                className="flex flex-col gap-y-5"
               >
-                <FormText
+                <FormInputWrapper
+                  title="Email"
                   required
-                  validate={validateEmail}
-                  error={emailError}
-                  onErrorChange={setEmailError}
-                  value={email}
-                  onValueChange={setEmail}
+                  state={emailError ? "error" : "default"}
+                  errorString={emailError}
                 >
-                  <EmailInput id="email-input" />
-                </FormText>
-              </FormInputWrapper>
+                  <FormText
+                    required
+                    validate={validateEmail}
+                    error={emailError}
+                    onErrorChange={setEmailError}
+                    value={email}
+                    onValueChange={setEmail}
+                  >
+                    <EmailInput id="email-input" />
+                  </FormText>
+                </FormInputWrapper>
 
-              {error && <div className="text-error-400 text-sm">{error}</div>}
+                {error && <div className="text-error-400 text-sm">{error}</div>}
 
-              <Button
-                text={loading ? "Sending..." : "Send Reset Code"}
-                type="submit"
-                defaultClassName={
-                  loading ? "opacity-50 cursor-not-allowed w-full" : "w-full"
-                }
-                disabled={loading}
-              />
-
-              <div className="text-center">
-                <Link
-                  href="/sign-in"
-                  className="link-text text-jila-400 hover:underline"
-                >
-                  Back to Sign In
-                </Link>
-              </div>
-            </form>
-          ) : (
-            <form
-              onSubmit={handleResetPassword}
-              className="flex flex-col gap-y-5"
-            >
-              <div>
-                <label className="components-text text-type-400 mb-2 block">
-                  Reset Code
-                </label>
-                <TextInput
-                  id="code"
-                  placeholder="Enter 6-digit code"
-                  value={code}
-                  onChange={setCode}
-                />
-              </div>
-
-              <FormInputWrapper
-                title="New Password"
-                required
-                state={passwordError ? "error" : "default"}
-                errorString={passwordError}
-              >
-                <FormText
-                  required
-                  validate={validatePassword}
-                  onErrorChange={setPasswordError}
-                  error={passwordError}
-                  value={password}
-                  onValueChange={setPassword}
-                >
-                  <PasswordInput id="password-input" />
-                </FormText>
-              </FormInputWrapper>
-
-              {error && <div className="text-error-400 text-sm">{error}</div>}
-
-              <Button
-                text={loading ? "Resetting..." : "Reset Password"}
-                type="submit"
-                defaultClassName={
-                  loading ? "opacity-50 cursor-not-allowed w-full" : "w-full"
-                }
-                disabled={loading}
-              />
-
-              <div className="flex flex-col items-center gap-2">
-                <button
-                  type="button"
-                  onClick={handleResendCode}
-                  className="link-text text-jila-400 hover:underline"
+                <Button
+                  text={loading ? "Sending..." : "Send Reset Code"}
+                  type="submit"
+                  defaultClassName={
+                    loading ? "opacity-50 cursor-not-allowed w-full" : "w-full"
+                  }
                   disabled={loading}
+                />
+
+                <div className="text-center">
+                  <Link
+                    href="/sign-in"
+                    className="link-text text-jila-400 hover:underline"
+                  >
+                    Back to Sign In
+                  </Link>
+                </div>
+              </form>
+            ) : (
+              <form
+                onSubmit={handleResetPassword}
+                className="flex flex-col gap-y-5"
+              >
+                <div>
+                  <label className="components-text text-type-400 mb-2 block">
+                    Reset Code
+                  </label>
+                  <TextInput
+                    id="code"
+                    placeholder="Enter 6-digit code"
+                    value={code}
+                    onChange={setCode}
+                  />
+                </div>
+
+                <FormInputWrapper
+                  title="New Password"
+                  required
+                  state={passwordError ? "error" : "default"}
+                  errorString={passwordError}
                 >
-                  Resend Code
-                </button>
-                <Link
-                  href="/sign-in"
-                  className="link-text text-gray-400 hover:underline"
-                >
-                  Back to Sign In
-                </Link>
-              </div>
-            </form>
-          )}
-        </div>
-      </DisplayBox>
-    </div>
+                  <FormText
+                    required
+                    validate={validatePassword}
+                    onErrorChange={setPasswordError}
+                    error={passwordError}
+                    value={password}
+                    onValueChange={setPassword}
+                  >
+                    <PasswordInput id="password-input" />
+                  </FormText>
+                </FormInputWrapper>
+
+                {error && <div className="text-error-400 text-sm">{error}</div>}
+
+                <Button
+                  text={loading ? "Resetting..." : "Reset Password"}
+                  type="submit"
+                  defaultClassName={
+                    loading ? "opacity-50 cursor-not-allowed w-full" : "w-full"
+                  }
+                  disabled={loading}
+                />
+
+                <div className="flex flex-col items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={handleResendCode}
+                    className="link-text text-jila-400 hover:underline"
+                    disabled={loading}
+                  >
+                    Resend Code
+                  </button>
+                  <Link
+                    href="/sign-in"
+                    className="link-text text-gray-400 hover:underline"
+                  >
+                    Back to Sign In
+                  </Link>
+                </div>
+              </form>
+            )}
+          </div>
+        </DisplayBox>
+      </div>
+    </PageBackground>
   );
 }

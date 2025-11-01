@@ -13,6 +13,7 @@ import FormText, {
 } from "@/components/FormTextWrapper";
 
 import FormInputWrapper from "@/components/FormInputWrapper";
+import PageBackground from "@/components/PageBackground";
 
 export default function SignInPage() {
   const { isLoaded, signIn, setActive } = useSignIn();
@@ -117,82 +118,84 @@ export default function SignInPage() {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-cream-300">
-      <DisplayBox>
-        <div className="flex flex-col gap-y-8">
-          <form
-            onSubmit={handleSignIn}
-            className="flex flex-col gap-y-6 items-center justify-center"
-          >
-            <h1 className="body1-desktop-text text-4xl font-bold">
-              Welcome back!
-            </h1>
-            <p className="body1-desktop-text text-xl text-center font-light">
-              Enter your details to get signed into your admin account
-            </p>
-            <div className="flex flex-col gap-y-2">
-              <FormInputWrapper
-                title="Email"
-                required
-                state={emailError ? "error" : "default"}
-                errorString={emailError}
-              >
-                <FormText
+    <PageBackground>
+      <div className="flex items-center justify-center min-h-screen bg-cream-300">
+        <DisplayBox>
+          <div className="flex flex-col gap-y-8">
+            <form
+              onSubmit={handleSignIn}
+              className="flex flex-col gap-y-6 items-center justify-center"
+            >
+              <h1 className="body1-desktop-text text-4xl font-bold">
+                Welcome back!
+              </h1>
+              <p className="body1-desktop-text text-xl text-center font-light">
+                Enter your details to get signed into your admin account
+              </p>
+              <div className="flex flex-col gap-y-2">
+                <FormInputWrapper
+                  title="Email"
                   required
-                  validate={validateEmail}
-                  error={emailError}
-                  onErrorChange={setEmailError}
-                  value={email}
-                  onValueChange={setEmail}
+                  state={emailError ? "error" : "default"}
+                  errorString={emailError}
                 >
-                  <EmailInput id="email-input" />
-                </FormText>
-              </FormInputWrapper>
+                  <FormText
+                    required
+                    validate={validateEmail}
+                    error={emailError}
+                    onErrorChange={setEmailError}
+                    value={email}
+                    onValueChange={setEmail}
+                  >
+                    <EmailInput id="email-input" />
+                  </FormText>
+                </FormInputWrapper>
 
-              <FormInputWrapper
-                title="Password"
-                required
-                state={passwordError ? "error" : "default"}
-                errorString={passwordError}
-              >
-                <FormText
+                <FormInputWrapper
+                  title="Password"
                   required
-                  validate={validatePassword}
-                  onErrorChange={setPasswordError}
-                  error={passwordError}
-                  value={password}
-                  onValueChange={setPassword}
+                  state={passwordError ? "error" : "default"}
+                  errorString={passwordError}
                 >
-                  <PasswordInput id="password-input" />
-                </FormText>
-              </FormInputWrapper>
-            </div>
-            {error && (
-              <div className="rounded-lg bg-error-200 p-4 text-error-400">
-                {error}
+                  <FormText
+                    required
+                    validate={validatePassword}
+                    onErrorChange={setPasswordError}
+                    error={passwordError}
+                    value={password}
+                    onValueChange={setPassword}
+                  >
+                    <PasswordInput id="password-input" />
+                  </FormText>
+                </FormInputWrapper>
               </div>
-            )}
-            <div className="w-full flex flex-col gap-y-2">
-              <div>
-                <Link
-                  href="/forgot-password"
-                  className="link-text text-jila-400 hover:underline mb-3"
-                >
-                  Forgot your password?
-                </Link>
+              {error && (
+                <div className="rounded-lg bg-error-200 p-4 text-error-400">
+                  {error}
+                </div>
+              )}
+              <div className="w-full flex flex-col gap-y-2">
+                <div>
+                  <Link
+                    href="/forgot-password"
+                    className="link-text text-jila-400 hover:underline mb-3"
+                  >
+                    Forgot your password?
+                  </Link>
+                </div>
+                <Button
+                  text={loading ? "Signing in..." : "Sign In"}
+                  onClick={handleSignIn}
+                  defaultClassName={
+                    loading ? "opacity-50 cursor-not-allowed w-full" : "w-full"
+                  }
+                  disabled={loading}
+                />
               </div>
-              <Button
-                text={loading ? "Signing in..." : "Sign In"}
-                onClick={handleSignIn}
-                defaultClassName={
-                  loading ? "opacity-50 cursor-not-allowed w-full" : "w-full"
-                }
-                disabled={loading}
-              />
-            </div>
-          </form>
-        </div>
-      </DisplayBox>
-    </div>
+            </form>
+          </div>
+        </DisplayBox>
+      </div>
+    </PageBackground>
   );
 }
