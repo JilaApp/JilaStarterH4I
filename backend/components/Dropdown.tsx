@@ -7,6 +7,7 @@ interface DropdownProps {
   onChange: (value: number) => void;
   placeholder?: string;
   state?: "default" | "error";
+  disabled?: boolean;
 }
 
 export default function Dropdown({
@@ -15,6 +16,7 @@ export default function Dropdown({
   onChange,
   placeholder = "Choose the most applicable",
   state = "default",
+  disabled = false,
 }: DropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -39,8 +41,8 @@ export default function Dropdown({
   return (
     <div className="relative inline-block w-full" ref={dropdownRef}>
       <button
-        onClick={() => setIsOpen((prev) => !prev)}
-        className={`w-full h-[60px] border-[1px] ${state == "default" ? "border-gray-300" : "border-[var(--color-error-400)] shadow-[0_0_0_3px_#FFA8A8]"} rounded-[10px] px-[16px] py-[10px] bg-white text-left flex justify-between items-center font-[500] cursor-pointer ${
+        onClick={() => !disabled && setIsOpen((prev) => !prev)}
+        className={`w-full h-[60px] border-[1px] ${state == "default" ? "border-gray-300" : "border-[var(--color-error-400)] shadow-[0_0_0_3px_#FFA8A8]"} rounded-[10px] px-[16px] py-[10px] ${disabled ? "bg-gray-200 cursor-not-allowed" : "bg-white cursor-pointer"} text-left flex justify-between items-center font-[500] ${
           currentIndex !== undefined ? "text-black" : "text-gray-300"
         }`}
       >

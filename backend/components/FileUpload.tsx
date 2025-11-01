@@ -96,7 +96,9 @@ export default function FileUpload({
 
   return (
     <div className="flex flex-col gap-[11px]">
-      <span className={`flex text-[var(--color-gray-300)] font-[300] leading-none mt-[2px] ${extendedTextClassName}`}>
+      <span
+        className={`flex text-[var(--color-gray-300)] font-[300] leading-none mt-[2px] ${extendedTextClassName}`}
+      >
         {extendedText}
       </span>
       <input

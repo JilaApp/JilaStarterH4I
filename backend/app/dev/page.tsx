@@ -18,7 +18,7 @@ import FileUpload from "@/components/FileUpload";
 import FileUploadWrapper from "@/components/FileUploadWrapper";
 import DeleteModal from "@/components/DeleteModal";
 import Table, { ColumnDefinition, DataRow } from "@/components/Table";
-import VideoDetailModal from "@/components/VideoEditModal";
+import VideoEditModal from "@/components/VideoEditModal";
 
 interface ServiceData extends DataRow {
   id: number | string;
@@ -175,6 +175,7 @@ export default function DevPage() {
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
 
   const [idToDelete, setIdToDelete] = useState<number | null>(null);
 
@@ -185,6 +186,14 @@ export default function DevPage() {
 
   const handleEditClick = (id: number) => {
     setIsEditModalOpen(true);
+  };
+
+  const handleViewClick = (id: number) => {
+    setIsViewModalOpen(true);
+  };
+
+  const handleSaveClick = (id: number) => {
+    setIsEditModalOpen(false);
   };
 
   const handleConfirmDelete = () => {
@@ -208,28 +217,35 @@ export default function DevPage() {
         />
       </div>
 
-      <Button
-        text="Delete"
-        // Instead of 67 this would pull from the row id
-        onClick={() => handleDeleteClick(67)}
-      />
+      <div className="flex gap-[10px]">
+        <Button
+          text="Delete"
+          // Instead of 67 this would pull from the row id
+          onClick={() => handleDeleteClick(67)}
+        />
 
-      <DeleteModal
-        isOpen={isDeleteModalOpen}
-        onClose={handleDeleteModalClose}
-        onConfirm={handleConfirmDelete}
-      />
+        <DeleteModal
+          isOpen={isDeleteModalOpen}
+          onClose={handleDeleteModalClose}
+          onConfirm={handleConfirmDelete}
+        />
 
-      <Button
-        text="Edit Video"
-        onClick={() => handleEditClick(68)}
-      >
-      </Button>
+        <Button text="Edit Video" onClick={() => handleEditClick(68)}></Button>
 
-      <VideoDetailModal 
-        isOpen={isEditModalOpen}
-        onClose={() => setIsEditModalOpen(false)}
-      />
+        <VideoEditModal
+          isOpen={isEditModalOpen}
+          onClose={() => setIsEditModalOpen(false)}
+          onSave={() => handleSaveClick(68)}
+        />
+
+        <Button text="View Video" onClick={() => handleViewClick(69)}></Button>
+
+        <VideoEditModal
+          isOpen={isViewModalOpen}
+          onClose={() => setIsViewModalOpen(false)}
+          isEditing={false}
+        />
+      </div>
 
       <RadioButtonGroup
         options={myOptions}
