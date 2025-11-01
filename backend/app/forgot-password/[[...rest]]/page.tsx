@@ -78,7 +78,7 @@ export default function ForgotPasswordPage() {
       console.error("Password reset request error:", err);
       setEmailError(
         err.errors?.[0]?.message ||
-          "Failed to send reset code. Please check your email address."
+          "Failed to send reset code. Please check your email address.",
       );
     } finally {
       setLoading(false);
@@ -107,7 +107,7 @@ export default function ForgotPasswordPage() {
 
       if (result.status === "complete") {
         setSuccessMessage(
-          "Password reset successful! Redirecting to dashboard"
+          "Password reset successful! Redirecting to dashboard",
         );
         setShowNotification(true);
 
@@ -118,7 +118,7 @@ export default function ForgotPasswordPage() {
       }
     } catch (err: any) {
       setError(
-        err.errors?.[0]?.message || "Invalid code or failed to reset password."
+        err.errors?.[0]?.message || "Invalid code or failed to reset password.",
       );
       if (error === "is incorrect") setError("Reset code is incorrect");
     } finally {

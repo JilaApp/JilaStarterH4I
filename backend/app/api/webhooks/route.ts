@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
         if (!email) {
           return NextResponse.json(
             { error: "Email required for admin" },
-            { status: 400 }
+            { status: 400 },
           );
         }
 
@@ -57,7 +57,7 @@ export async function POST(req: NextRequest) {
         if (!communityOrg || !language) {
           return NextResponse.json(
             { error: "Community org and language required" },
-            { status: 400 }
+            { status: 400 },
           );
         }
 
@@ -84,7 +84,7 @@ export async function POST(req: NextRequest) {
         // Edge case: user has neither email nor username
         return NextResponse.json(
           { error: "Invalid user data" },
-          { status: 400 }
+          { status: 400 },
         );
       }
     }
@@ -132,12 +132,12 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(
       { message: "Webhook processed successfully" },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (err) {
     return NextResponse.json(
       { error: "Error processing webhook" },
-      { status: 400 }
+      { status: 400 },
     );
   }
 }
