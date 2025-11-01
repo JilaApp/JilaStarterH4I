@@ -206,9 +206,7 @@ export default function DevPage() {
         text="Delete"
         // Instead of 67 this would pull from the row id
         onClick={() => handleDeleteClick(67)}
-      >
-        Delete
-      </Button>
+      />
 
       <DeleteModal
         isOpen={isModalOpen}
