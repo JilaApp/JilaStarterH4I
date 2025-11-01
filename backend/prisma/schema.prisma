@@ -11,12 +11,23 @@ datasource db {
   directUrl = env("JILA_BACKEND_POSTGRES_URL") // uses a direct connection
 }
 
-model Users {
-  id        Int      @id @default(autoincrement())
-  name      String
-  email     String   @unique
-  image     String
-  createdAt DateTime @default(now())
+model AdminUser {
+  id           String   @id @default(cuid())
+  clerkId      String   @unique
+  email        String   @unique
+  communityOrg String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model AppUser {
+  id           String   @id @default(cuid())
+  clerkId      String   @unique
+  username     String   @unique
+  communityOrg String
+  language     String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
 
 model Videos {

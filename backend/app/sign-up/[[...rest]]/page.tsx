@@ -1,5 +1,254 @@
-import { SignUp } from "@clerk/nextjs";
+"use client";
 
-export default function SignUpPage() {
-  return <SignUp />;
+import { useEffect, useState } from "react";
+import { useSignUp, useUser } from "@clerk/nextjs";
+import { useSearchParams, useRouter } from "next/navigation";
+import { EmailInput, PasswordInput } from "@/components/Input";
+import Button from "@/components/Button";
+import DisplayBox from "@/components/DisplayBox";
+import FormText, { validatePassword } from "@/components/FormTextWrapper";
+import FormInputWrapper from "@/components/FormInputWrapper";
+import PageBackground from "@/components/PageBackground";
+import { trpc } from "@/lib/trpc";
+
+export default function InviteSignUpPage() {
+  const { isLoaded, signUp, setActive } = useSignUp();
+  const { user } = useUser();
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const finalizeSignUpMutation = trpc.user.finalizeSignUp.useMutation();
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [confirmPasswordError, setConfirmPasswordError] = useState("");
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [emailApproved, setEmailApproved] = useState(false);
+  const [isTicketProcessed, setIsTicketProcessed] = useState(false);
+
+  useEffect(() => {
+    if (isLoaded && user && user.publicMetadata?.userType === "admin") {
+      router.push("/dashboard");
+    }
+  }, [isLoaded, user, router]);
+
+  useEffect(() => {
+    if (!isLoaded || isTicketProcessed) {
+      return;
+    }
+
+    const ticket = searchParams.get("__clerk_ticket");
+
+    if (!ticket) {
+      setError(
+        "Invitation ticket is missing. Please use the link provided in your email.",
+      );
+      return;
+    }
+
+    const createSignUpFromTicket = async () => {
+      try {
+        const createdSignUp = await signUp.create({
+          strategy: "ticket",
+          ticket: ticket,
+        });
+
+        if (
+          createdSignUp.status === "missing_requirements" &&
+          createdSignUp.emailAddress
+        ) {
+          setEmail(createdSignUp.emailAddress);
+        }
+      } catch (err: any) {
+        setError(
+          err.errors?.[0]?.longMessage ||
+            "This invitation is invalid or has expired.",
+        );
+      } finally {
+        setIsTicketProcessed(true);
+      }
+    };
+
+    createSignUpFromTicket();
+  }, [isLoaded, searchParams, signUp, isTicketProcessed]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!isLoaded || !signUp) {
+      return setError(
+        "The sign-up component is not ready. Please refresh the page.",
+      );
+    }
+
+    setError("");
+    setPasswordError("");
+    setConfirmPasswordError("");
+
+    if (password.length < 8) {
+      setPasswordError("Password must be at least 8 characters long.");
+      return;
+    }
+    if (password !== confirmPassword) {
+      setConfirmPasswordError("Passwords do not match.");
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const result = await signUp.update({
+        password,
+      });
+
+      if (result.status === "complete") {
+        await setActive({ session: result.createdSessionId });
+
+        await finalizeSignUpMutation.mutateAsync();
+
+        router.push("/dashboard");
+      } else {
+        setError("Could not complete your sign up. Please try again.");
+      }
+    } catch (err: any) {
+      const errorMessage =
+        err.errors?.[0]?.longMessage ||
+        err.message ||
+        "An unexpected error occurred during sign up.";
+      setError(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const getButtonText = () => {
+    if (finalizeSignUpMutation.isPending) return "Finalizing setup...";
+    if (isLoading) return "Creating Account...";
+    return "Sign Up";
+  };
+
+  return (
+    <PageBackground>
+      <div className="flex min-h-screen items-center justify-center bg-cream-300 p-4">
+        <DisplayBox>
+          {!emailApproved ? (
+            <div className="flex flex-col gap-y-7 justify-center items-center">
+              <h1 className="body1-desktop-text text-4xl font-bold">
+                Welcome to JILA!
+              </h1>
+              <p className="body1-desktop-text text-xl text-center font-light">
+                We&apos;ve approved the following email for creating your admin
+                account
+              </p>
+              <div>
+                <FormText value={email}>
+                  <EmailInput
+                    id="email-input"
+                    name="email"
+                    disabled
+                    placeholder="Loading from invitation..."
+                  />
+                </FormText>
+              </div>
+              {error && (
+                <div className="rounded-lg bg-error-200 p-4 text-error-400">
+                  {error}
+                </div>
+              )}
+              <div className="flex flex-col w-full">
+                <label className="components-text text-type-400 mb-2 block">
+                  Have an account?{" "}
+                  <a href="/sign-in" className="text-jila-400">
+                    Sign in
+                  </a>
+                </label>
+                <Button
+                  text="Sign up"
+                  type="button"
+                  defaultClassName="w-full"
+                  onClick={() => {
+                    setEmailApproved(true);
+                  }}
+                />
+              </div>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-y-8">
+              <form
+                onSubmit={handleSubmit}
+                className="flex flex-col gap-y-6 items-center justify-center"
+                autoComplete="off"
+              >
+                <h1 className="body1-desktop-text text-4xl font-bold">
+                  Set up your password
+                </h1>
+                <p className="body1-desktop-text text-xl text-center font-light">
+                  Create a secure password for your account
+                </p>
+                <div className="flex flex-col gap-y-2">
+                  <FormInputWrapper
+                    title="Password"
+                    required
+                    state={passwordError ? "error" : "default"}
+                    errorString={passwordError}
+                  >
+                    <FormText
+                      required
+                      validate={validatePassword}
+                      onErrorChange={setPasswordError}
+                      error={passwordError}
+                      value={password}
+                      onValueChange={setPassword}
+                    >
+                      <PasswordInput
+                        id="password-input"
+                        name="password"
+                        autoComplete="new-password"
+                      />
+                    </FormText>
+                  </FormInputWrapper>
+                  <FormInputWrapper
+                    title="Confirm Password"
+                    required
+                    state={confirmPasswordError ? "error" : "default"}
+                    errorString={confirmPasswordError}
+                  >
+                    <FormText
+                      required
+                      validate={(value) =>
+                        value === password ? "" : "Passwords do not match."
+                      }
+                      value={confirmPassword}
+                      error={confirmPasswordError}
+                      onErrorChange={setConfirmPasswordError}
+                      onValueChange={setConfirmPassword}
+                    >
+                      <PasswordInput
+                        id="confirm-password-input"
+                        name="confirmPassword"
+                        autoComplete="new-password"
+                      />
+                    </FormText>
+                  </FormInputWrapper>
+                </div>
+                {error && (
+                  <div className="rounded-lg bg-error-200 p-4 text-error-400">
+                    {error}
+                  </div>
+                )}
+                <Button
+                  text={getButtonText()}
+                  type="submit"
+                  defaultClassName="w-full"
+                  disabled={isLoading || finalizeSignUpMutation.isPending}
+                />
+              </form>
+            </div>
+          )}
+        </DisplayBox>
+      </div>
+    </PageBackground>
+  );
 }
