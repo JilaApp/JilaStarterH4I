@@ -173,11 +173,29 @@ export default function DevPage() {
     setErrorDropdownIndex(index);
   };
 
-  const [isDModalOpen, setIsDModalOpen] = useState(false);
-  const [isVModalOpen, setIsVModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
+  const [idToDelete, setIdToDelete] = useState<number | null>(null);
+
+  const handleDeleteClick = (id: number) => {
+    setIdToDelete(id);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleEditClick = (id: number) => {
+    setIsEditModalOpen(true);
+  };
 
   const handleConfirmDelete = () => {
-    setIsDModalOpen(false);
+    setIsDeleteModalOpen(false);
+    console.log("Delete confirmed for", idToDelete);
+    setIdToDelete(null);
+  };
+
+  const handleDeleteModalClose = () => {
+    setIsDeleteModalOpen(false);
+    setIdToDelete(null);
   };
 
   return (
@@ -190,29 +208,27 @@ export default function DevPage() {
         />
       </div>
 
-      <button
-        onClick={() => setIsDModalOpen(true)}
-        className="w-[100px] h-[50px] bg-jila-400 text-white rounded-[10px] components-text"
-      >
-        Delete
-      </button>
+      <Button
+        text="Delete"
+        // Instead of 67 this would pull from the row id
+        onClick={() => handleDeleteClick(67)}
+      />
 
       <DeleteModal
-        isOpen={isDModalOpen}
-        onClose={() => setIsDModalOpen(false)}
+        isOpen={isDeleteModalOpen}
+        onClose={handleDeleteModalClose}
         onConfirm={handleConfirmDelete}
       />
 
-      <button
-        onClick={() => setIsVModalOpen(true)}
-        className="w-[100px] h-[50px] bg-jila-400 text-white rounded-[10px] components-text"
+      <Button
+        text="Edit Video"
+        onClick={() => handleEditClick(68)}
       >
-        VideoDetail
-      </button>
+      </Button>
 
       <VideoDetailModal 
-        isOpen={isVModalOpen}
-        onClose={() => setIsVModalOpen(false)}
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
       />
 
       <RadioButtonGroup

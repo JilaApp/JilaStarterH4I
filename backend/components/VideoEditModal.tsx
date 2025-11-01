@@ -49,7 +49,7 @@ export default function VideoEditModal({
         </div>
 
         <div className="flex gap-[13.62px] mt-[10px]">
-          <div className="flex-1">
+          <div className="flex-1 w-[316px] h-[46.13px]">
             <FormInputWrapper
               title="Resource title (English)"
               titleClassName="body1-desktop-text text-[15px]"
@@ -94,7 +94,7 @@ export default function VideoEditModal({
           </FormInputWrapper>
         </div>
 
-        <div className="flex mt-[10]">
+        <div className="flex mt-[10px]">
           <FormInputWrapper
             required
             title="Title"
@@ -132,6 +132,20 @@ export default function VideoEditModal({
         <div className="flex mt-[10px]">
           <FormInputWrapper
             title="Description (English)"
+            titleClassName="body1-desktop-text text-[15px]"
+            required
+            state={videoLinkError ? "error" : "default"}
+            errorString={videoLinkError}
+          >
+            <FormText required onErrorChange={setVideoLinkError}>
+              <TextInput id="video-input" className="[315px] h-[46px]" />
+            </FormText>
+          </FormInputWrapper>
+        </div>
+
+        <div className="flex mt-[10px]">
+          <FormInputWrapper
+            title="Description (Q'anjob'al)"
             titleClassName="body1-desktop-text text-[15px]"
             required
             state={videoLinkError ? "error" : "default"}
