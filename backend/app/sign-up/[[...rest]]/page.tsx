@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useSignUp } from "@clerk/nextjs";
+import { useSignUp, useUser } from "@clerk/nextjs";
 import { useSearchParams, useRouter } from "next/navigation";
 import { EmailInput, PasswordInput } from "@/components/Input";
 import Button from "@/components/Button";
@@ -13,6 +13,7 @@ import { trpc } from "@/lib/trpc";
 
 export default function InviteSignUpPage() {
   const { isLoaded, signUp, setActive } = useSignUp();
+  const { user } = useUser();
   const searchParams = useSearchParams();
   const router = useRouter();
   const finalizeSignUpMutation = trpc.user.finalizeSignUp.useMutation();
@@ -26,6 +27,12 @@ export default function InviteSignUpPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [emailApproved, setEmailApproved] = useState(false);
   const [isTicketProcessed, setIsTicketProcessed] = useState(false);
+
+  useEffect(() => {
+    if (isLoaded && user && user.publicMetadata?.userType === "admin") {
+      router.push("/dashboard");
+    }
+  }, [isLoaded, user, router]);
 
   useEffect(() => {
     if (!isLoaded || isTicketProcessed) {
