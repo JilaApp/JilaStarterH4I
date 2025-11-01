@@ -21,10 +21,7 @@ export default function Sidebar({ activeButton, setActiveButton }: InputProps) {
 
   return (
     <div className="relative h-screen">
-      {/* Background for bottom-right rounded corner visibility */}
       <div className="absolute inset-0 bg-cream-300 z-0"></div>
-      
-      {/* Main Sidebar */}
       <div className="h-screen w-[196px] bg-[linear-gradient(348deg,_#7E0601_51.81%,_#E8965B_130.16%)] rounded-br-[60px] relative z-10">
         <Image
           className="w-[150px] h-[90px] absolute left-[16px] top-[22px]"

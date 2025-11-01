@@ -43,9 +43,7 @@ export default function Tabs({ tabs, activeIndex, onTabChange }: TabsProps) {
           </button>
         ))}
       </div>
-      <div className="p-6 pt-5 flex-1 overflow-auto">
-        {activeTab.content}
-      </div>
+      <div className="p-6 pt-5 flex-1 overflow-auto ">{activeTab.content}</div>
     </div>
   );
 }

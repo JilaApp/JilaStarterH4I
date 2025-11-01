@@ -31,7 +31,7 @@ export default function DashboardDev() {
     "Medical",
     "Transport",
   ]);
-  const [currentTabIndex, setCurrentTabIndex] = useState(1);
+  const [currentTabIndex, setCurrentTabIndex] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
 
   const videoResourcesData: VideoResourceData[] = [
@@ -117,6 +117,13 @@ export default function DashboardDev() {
     },
     {
       id: "ride-bus-4",
+      title: "How to Ride the Bus",
+      topic: "Transport",
+      phoneNumber: "2:44",
+      link: "https://www.google.com/",
+    },
+    {
+      id: "ride-bus-5",
       title: "How to Ride the Bus",
       topic: "Transport",
       phoneNumber: "2:44",
@@ -249,14 +256,12 @@ export default function DashboardDev() {
 
   return (
     <div className="flex h-screen overflow-hidden bg-[linear-gradient(348deg,_#7E0601_51.81%,_#E8965B_130.16%)]">
-      {/* Fixed Sidebar */}
+      {/* Sidebar */}
       <div className="fixed left-0 top-0 h-screen z-50">
         <Sidebar activeButton="dashboard" setActiveButton={() => {}} />
       </div>
-
-      {/* Main Content Area - rounded top-left to reveal red background */}
       <div className="flex-1 ml-[196px] flex flex-col bg-cream-300 rounded-tl-[60px] overflow-hidden">
-        {/* Header - aligned with tabs */}
+        {/* Header */}
         <div className="flex-shrink-0 px-10 mt-6">
           <Header
             name="Sophia Kim"
@@ -265,7 +270,7 @@ export default function DashboardDev() {
           />
         </div>
 
-        {/* Filter Bar - flexible width buttons */}
+        {/* Filter Bar */}
         <div className="flex-shrink-0 px-10 mt-6">
           <div className="flex items-center gap-3">
             {["Career", "Legal", "Medical", "Transport"].map((option) => (
@@ -295,11 +300,9 @@ export default function DashboardDev() {
           </div>
         </div>
 
-        {/* Tabs and Table Container - gray background for tabs, white for table */}
         <div className="flex-1 px-10 py-6 overflow-hidden flex flex-col min-h-0">
           <div className="bg-[#F5F5F5] rounded-[20px] shadow-lg flex flex-col flex-1 overflow-hidden min-h-0">
-            {/* Tab Headers and Search - gray background */}
-            <div className="flex-shrink-0 flex items-center justify-between px-8 pt-6 pb-4">
+            <div className="flex-shrink-0 flex items-center justify-between px-6 pt-4 pb-3">
               <div className="flex gap-8">
                 {tabs.map((tab, index) => (
                   <button
@@ -319,7 +322,7 @@ export default function DashboardDev() {
                 ))}
               </div>
 
-              {/* Search Bar - wider */}
+              {/* Search Bar */}
               <div className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg w-96 bg-white">
                 <Search size={20} className="text-gray-400" />
                 <input
@@ -332,17 +335,14 @@ export default function DashboardDev() {
               </div>
             </div>
 
-            {/* Table Content - white background, only this scrolls */}
-            <div className="flex-1 overflow-hidden bg-white rounded-b-[20px] min-h-0">
-              <div className="h-full overflow-auto px-8 py-6">
-                <Table
-                  data={currentTab.data}
-                  columns={currentTab.columns}
-                  handleEdit={currentTab.onEdit}
-                  handleDelete={currentTab.onDelete}
-                  handleRowClick={currentTab.onRowClick}
-                />
-              </div>
+            <div className="flex-1 overflow-auto bg-[#F5F5F5]">
+              <Table
+                data={currentTab.data}
+                columns={currentTab.columns}
+                handleEdit={currentTab.onEdit}
+                handleDelete={currentTab.onDelete}
+                handleRowClick={currentTab.onRowClick}
+              />
             </div>
           </div>
         </div>
