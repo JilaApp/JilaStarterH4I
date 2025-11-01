@@ -6,6 +6,7 @@ import { TextInput } from "@/components/Input";
 import FileUpload from "@/components/FileUpload";
 import Dropdown from "@/components/Dropdown";
 import Button from "@/components/Button";
+import ParagraphInput from "./ParagraphInput";
 
 interface VideoEditModal {
   isOpen: boolean;
@@ -23,7 +24,9 @@ export default function VideoEditModal({
   const [qanjobalError, setQanjobalError] = useState("");
   const [videoLinkError, setVideoLinkError] = useState("");
 
-  const uploadedFile = {
+  const [uploadState, setUploadState] = useState("complete");
+
+  let uploadedFile = {
     fileName: "sixty-seven.zip",
     fileSizeMB: 67,
   };
@@ -44,7 +47,7 @@ export default function VideoEditModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[rgb(83,83,83,0.19)]">
+    <div className="fixed y-40 inset-0 z-50 flex items-center justify-center bg-[rgb(83,83,83,0.19)]">
       <div className="relative flex flex-col bg-white rounded-[10px] w-[698px] h-[830px] p-[26.48px]">
         <div className="flex justify-between items-center mb-[20px]">
           <div className="components-text">
@@ -55,7 +58,7 @@ export default function VideoEditModal({
           </button>
         </div>
 
-        <div className="overflow-y-auto flex-1 pl-2 pr-2">
+        <div className="overflow-y-auto flex-1 pl-4 pr-4">
           <div className="flex gap-[13.62px] mb-[10px]">
             <div className="flex-1">
               <FormInputWrapper
@@ -98,14 +101,15 @@ export default function VideoEditModal({
             <FormInputWrapper
               title="Upload file"
               titleClassName="body1-desktop-text text-[15px]"
-              state="complete"
-              // state={uploadState}
+              // state="complete"
+              state={uploadState}
             >
               <FileUpload
-                onDelete={() => {}}
-                extendedText="Upload file extended text"
                 extendedTextClassName="body1-desktop-text text-[15px]"
                 uploadedFile={uploadedFile}
+                onDelete={() => setUploadState("default")}
+                onFileSelect={() => set}
+                editable={isEditing}
               />
             </FormInputWrapper>
           </div>
@@ -113,7 +117,7 @@ export default function VideoEditModal({
           <div className="flex mt-[10px]">
             <FormInputWrapper
               required
-              title="Title"
+              title="Topic"
               titleClassName="body1-desktop-text text-[15px]"
               state={dropdownError ? "error" : "default"}
               errorString={dropdownError}
@@ -153,7 +157,7 @@ export default function VideoEditModal({
             </FormInputWrapper>
           </div>
 
-          {isEditing && (
+          {false && (
             <div className="flex items-center gap-2 mt-[10px] body1-desktop-text text-[15px] text-jila-400 cursor-pointer">
               <Plus className="w-[18px] h-[18px]" />
               Add another video
@@ -167,9 +171,9 @@ export default function VideoEditModal({
               state="default"
             >
               <FormText>
-                <TextInput
-                  id="description-e"
-                  className="w-[630x] h-[64px]"
+                <ParagraphInput
+                  value=""
+                  onChange={() => {}}
                   disabled={!isEditing}
                 />
               </FormText>
@@ -183,9 +187,9 @@ export default function VideoEditModal({
               state="default"
             >
               <FormText>
-                <TextInput
-                  id="description-q"
-                  className="w-[630px] h-[64px]"
+                <ParagraphInput
+                  value=""
+                  onChange={() => {}}
                   disabled={!isEditing}
                 />
               </FormText>

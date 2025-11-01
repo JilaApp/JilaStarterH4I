@@ -11,6 +11,7 @@ interface FileUploadProps {
   onDelete: () => void;
   state?: "default" | "pending" | "complete" | "error";
   uploadedFile?: UploadedFile;
+  editable?: boolean;
   extendedText?: string;
   errorText?: string;
   extendedTextClassName?: string;
@@ -20,6 +21,7 @@ export default function FileUpload({
   onFileSelect = (file: File) => {},
   onDelete,
   state = "default",
+  editable = true,
   uploadedFile,
   extendedText = "",
   errorText = "",
@@ -107,17 +109,18 @@ export default function FileUpload({
         className="hidden"
         onChange={handleFileChange}
       />
-      <div
-        onClick={state === "default" ? handleClickUpload : undefined}
-        className={`
+      {editable && (
+        <div
+          onClick={state === "default" ? handleClickUpload : undefined}
+          className={`
     flex justify-center items-center w-full h-[122px] 
     rounded-[10px]
     ${state === "default" ? "cursor-pointer hover:bg-[var(--color-cream-300)]" : ""}
     ${state === "error" ? "bg-[#FFF3F3]" : "bg-white"}
   `}
-        style={{
-          backgroundImage: `url("data:image/svg+xml,${encodeURIComponent(
-            `<svg width='100%' height='100%' xmlns='http://www.w3.org/2000/svg'>
+          style={{
+            backgroundImage: `url("data:image/svg+xml,${encodeURIComponent(
+              `<svg width='100%' height='100%' xmlns='http://www.w3.org/2000/svg'>
         <rect 
           width='100%' 
           height='100%' 
@@ -129,12 +132,13 @@ export default function FileUpload({
           stroke-dashoffset='0' 
           stroke-linecap='square'
         />
-      </svg>`,
-          )}")`,
-        }}
-      >
-        {renderContent()}
-      </div>
+      </svg>`
+            )}")`,
+          }}
+        >
+          {renderContent()}
+        </div>
+      )}
       {state == "complete" && (
         <div className="flex items-center rounded-[10px] px-[10px] py-[8px] bg-white">
           <div className="flex gap-[17px] items-center w-full">
@@ -150,6 +154,7 @@ export default function FileUpload({
             <X
               className="flex ml-auto cursor-pointer"
               onClick={() => {
+                console.log("??");
                 if (fileInputRef.current) {
                   fileInputRef.current.value = "";
                 }
