@@ -13,6 +13,7 @@ interface FileUploadProps {
   uploadedFile?: UploadedFile;
   extendedText?: string;
   errorText?: string;
+  extendedTextClassName?: string;
 }
 
 export default function FileUpload({
@@ -22,6 +23,7 @@ export default function FileUpload({
   uploadedFile,
   extendedText = "",
   errorText = "",
+  extendedTextClassName = "",
 }: FileUploadProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -94,7 +96,7 @@ export default function FileUpload({
 
   return (
     <div className="flex flex-col gap-[11px]">
-      <span className="flex text-[var(--color-gray-300)] font-[300] leading-none mt-[2px]">
+      <span className={`flex text-[var(--color-gray-300)] font-[300] leading-none mt-[2px] ${extendedTextClassName}`}>
         {extendedText}
       </span>
       <input

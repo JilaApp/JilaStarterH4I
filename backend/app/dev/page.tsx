@@ -18,6 +18,7 @@ import FileUpload from "@/components/FileUpload";
 import FileUploadWrapper from "@/components/FileUploadWrapper";
 import DeleteModal from "@/components/DeleteModal";
 import Table, { ColumnDefinition, DataRow } from "@/components/Table";
+import VideoDetailModal from "@/components/VideoEditModal";
 
 interface ServiceData extends DataRow {
   id: number | string;
@@ -172,10 +173,11 @@ export default function DevPage() {
     setErrorDropdownIndex(index);
   };
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDModalOpen, setIsDModalOpen] = useState(false);
+  const [isVModalOpen, setIsVModalOpen] = useState(false);
 
   const handleConfirmDelete = () => {
-    setIsModalOpen(false);
+    setIsDModalOpen(false);
   };
 
   return (
@@ -189,16 +191,28 @@ export default function DevPage() {
       </div>
 
       <button
-        onClick={() => setIsModalOpen(true)}
+        onClick={() => setIsDModalOpen(true)}
         className="w-[100px] h-[50px] bg-jila-400 text-white rounded-[10px] components-text"
       >
         Delete
       </button>
 
       <DeleteModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        isOpen={isDModalOpen}
+        onClose={() => setIsDModalOpen(false)}
         onConfirm={handleConfirmDelete}
+      />
+
+      <button
+        onClick={() => setIsVModalOpen(true)}
+        className="w-[100px] h-[50px] bg-jila-400 text-white rounded-[10px] components-text"
+      >
+        VideoDetail
+      </button>
+
+      <VideoDetailModal 
+        isOpen={isVModalOpen}
+        onClose={() => setIsVModalOpen(false)}
       />
 
       <RadioButtonGroup
