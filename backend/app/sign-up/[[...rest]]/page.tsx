@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useSignUp, useUser } from "@clerk/nextjs";
+import { useSignUp } from "@clerk/nextjs";
 import { useSearchParams, useRouter } from "next/navigation";
 import { EmailInput, PasswordInput } from "@/components/Input";
 import Button from "@/components/Button";
@@ -9,12 +9,13 @@ import DisplayBox from "@/components/DisplayBox";
 import FormText, { validatePassword } from "@/components/FormTextWrapper";
 import FormInputWrapper from "@/components/FormInputWrapper";
 import PageBackground from "@/components/PageBackground";
+import { trpc } from "@/lib/trpc";
 
 export default function InviteSignUpPage() {
   const { isLoaded, signUp, setActive } = useSignUp();
-  const { user } = useUser();
   const searchParams = useSearchParams();
   const router = useRouter();
+  const finalizeSignUpMutation = trpc.user.finalizeSignUp.useMutation();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -23,15 +24,8 @@ export default function InviteSignUpPage() {
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [isFinalizing, setIsFinalizing] = useState(false);
   const [emailApproved, setEmailApproved] = useState(false);
   const [isTicketProcessed, setIsTicketProcessed] = useState(false);
-
-  useEffect(() => {
-    if (user && user.publicMetadata?.userType === "admin") {
-      router.push("/dashboard");
-    }
-  }, [user, router]);
 
   useEffect(() => {
     if (!isLoaded || isTicketProcessed) {
@@ -104,23 +98,26 @@ export default function InviteSignUpPage() {
 
       if (result.status === "complete") {
         await setActive({ session: result.createdSessionId });
-        setIsLoading(false);
-        setIsFinalizing(true);
+
+        await finalizeSignUpMutation.mutateAsync();
+
+        router.push("/dashboard");
       } else {
         setError("Could not complete your sign up. Please try again.");
-        setIsLoading(false);
       }
     } catch (err: any) {
-      setError(
+      const errorMessage =
         err.errors?.[0]?.longMessage ||
-          "An unexpected error occurred during sign up.",
-      );
+        err.message ||
+        "An unexpected error occurred during sign up.";
+      setError(errorMessage);
+    } finally {
       setIsLoading(false);
     }
   };
 
   const getButtonText = () => {
-    if (isFinalizing) return "Finalizing setup...";
+    if (finalizeSignUpMutation.isPending) return "Finalizing setup...";
     if (isLoading) return "Creating Account...";
     return "Sign Up";
   };
@@ -144,7 +141,7 @@ export default function InviteSignUpPage() {
                     id="email-input"
                     name="email"
                     disabled
-                    placeholder="Loading..."
+                    placeholder="Loading from invitation..."
                   />
                 </FormText>
               </div>
@@ -238,7 +235,7 @@ export default function InviteSignUpPage() {
                   text={getButtonText()}
                   type="submit"
                   defaultClassName="w-full"
-                  disabled={isLoading || isFinalizing}
+                  disabled={isLoading || finalizeSignUpMutation.isPending}
                 />
               </form>
             </div>
