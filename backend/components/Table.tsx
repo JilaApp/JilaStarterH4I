@@ -63,7 +63,7 @@ export default function Table<T extends DataRow>({
   };
 
   return (
-    <table className="bg-white-400 rounded-3xl m-20 border-collapse">
+    <table className="bg-white-400 rounded-3xl border-collapse w-full">
       <thead>
         <tr className="border-b-2 border-gray-300">
           {columns.map((col, index) => (
@@ -86,7 +86,7 @@ export default function Table<T extends DataRow>({
           <tr
             key={row.id}
             onClick={() => handleRowClick(row.id)}
-            className="bg-white-400 hover:bg-gray-300 cursor-pointer"
+            className="bg-white-400 hover:bg-gray-300 cursor-pointer rounded-xl"
           >
             {columns.map((col, cellIndex) => {
               const value = row[col.accessorKey];
