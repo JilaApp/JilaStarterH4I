@@ -7,6 +7,7 @@ export interface CommonInputProps {
   onBlur?: (event: FocusEvent<HTMLInputElement>) => void;
   placeholder?: string;
   id?: string;
+  name?: string;
   state?: "normal" | "error";
   value?: string;
   className?: string;
@@ -16,4 +17,5 @@ export interface BaseInputProps extends CommonInputProps {
   type?: string;
   icon?: ReactNode;
   rightElement?: ReactNode;
+  autoComplete?: string;
 }
