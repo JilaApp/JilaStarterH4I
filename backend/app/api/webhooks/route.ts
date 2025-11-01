@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
         if (!email) {
           return NextResponse.json(
             { error: "Email required for admin" },
-            { status: 400 },
+            { status: 400 }
           );
         }
 
@@ -51,21 +51,13 @@ export async function POST(req: NextRequest) {
         // This is an app user (regular signup from mobile)
         const username = data.username;
 
-        // Type guard: we know username is not null here because of hasUsername check
-        if (!username) {
-          return NextResponse.json(
-            { error: "Username required for app user" },
-            { status: 400 },
-          );
-        }
-
         const communityOrg = data.unsafe_metadata?.communityOrg as string;
         const language = data.unsafe_metadata?.language as string;
 
         if (!communityOrg || !language) {
           return NextResponse.json(
             { error: "Community org and language required" },
-            { status: 400 },
+            { status: 400 }
           );
         }
 
@@ -80,7 +72,7 @@ export async function POST(req: NextRequest) {
           await prisma.appUser.create({
             data: {
               clerkId: data.id,
-              username: username, // TypeScript now knows this is not null
+              username: username!,
               communityOrg: communityOrg,
               language: language,
             },
@@ -92,7 +84,7 @@ export async function POST(req: NextRequest) {
         // Edge case: user has neither email nor username
         return NextResponse.json(
           { error: "Invalid user data" },
-          { status: 400 },
+          { status: 400 }
         );
       }
     }
@@ -140,12 +132,12 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(
       { message: "Webhook processed successfully" },
-      { status: 200 },
+      { status: 200 }
     );
   } catch (err) {
     return NextResponse.json(
       { error: "Error processing webhook" },
-      { status: 400 },
+      { status: 400 }
     );
   }
 }
