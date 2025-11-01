@@ -64,7 +64,7 @@ export default function FormTextWrapper({
     value,
     onChange: handleChange,
     onBlur: handleBlur,
-    state: error ? ("error" as const) : ("normal" as const),
+    state: error ? ("error" as const) : ("default" as const),
     ...children.props,
   });
 }

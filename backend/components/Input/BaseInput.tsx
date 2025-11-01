@@ -7,7 +7,7 @@ export function BaseInput({
   disabled = false,
   placeholder = "Enter text",
   id,
-  state = "normal",
+  state = "default",
   value,
   onChange,
   onFocus,
@@ -43,7 +43,7 @@ export function BaseInput({
         "border-gray-300 bg-white":
           !disabled && !isFocused && state !== "error",
       },
-      className,
+      className
     );
   };
 
@@ -53,7 +53,7 @@ export function BaseInput({
       {
         "cursor-not-allowed text-gray-400": disabled,
         "text-gray-400": !isFocused && value,
-      },
+      }
     );
   };
 

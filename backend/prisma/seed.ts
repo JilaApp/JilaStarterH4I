@@ -1,6 +1,11 @@
+import fs from "fs";
 import prisma from "../lib/prisma";
+import path from "path";
 
 async function main() {
+  const audioPath = path.join(__dirname, "audio", "sample.mp3"); // your audio file
+  const audioBuffer = fs.readFileSync(audioPath);
+  const audioBytes = new Uint8Array(audioBuffer); // Prisma Bytes
   const response = await Promise.all([
     prisma.users.upsert({
       where: { email: "rauchg@vercel.com" },
@@ -36,33 +41,30 @@ async function main() {
       where: { url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ" },
       update: {},
       create: {
-        title: "A great video",
-        category: "PROFESSIONAL_DEVELOPMENT",
-        source: "YOUTUBE",
-        length: 6767,
+        titleEnglish: "A great video",
+        titleQanjobal: "sigma",
+        audioFile: audioBytes,
+        topic: "TRANSPORT",
         url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         uploadDate: new Date("2025-06-07T12:00:00Z"),
-        description:
+        descriptionEnglish:
           "An introduction to the intricacies of american culture. a delightful viewing for the entire family.",
-        likes: 100000,
-        dislikes: 0,
-        language: "English",
+        descriptionQanjobal: "lol",
       },
     }),
     prisma.videos.upsert({
       where: { url: "https://www.youtube.com/watch?v=VLeEX489tXE" },
       update: {},
       create: {
-        title: "some jila intro or something",
-        category: "TRANSPORTATION",
-        source: "YOUTUBE",
-        length: 101,
-        url: "https://www.youtube.com/watch?v=VLeEX489tXE",
+        titleEnglish: "Another great video",
+        titleQanjobal: "sigma",
+        audioFile: audioBytes,
+        topic: "TRANSPORT",
+        url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         uploadDate: new Date("2025-06-07T12:00:00Z"),
-        description: "a demonstration of the app thats really cool",
-        likes: 5,
-        dislikes: 0,
-        language: "Qʼanjobʼal",
+        descriptionEnglish:
+          "An introduction to the intricacies of american culture. a delightful viewing for the entire family.",
+        descriptionQanjobal: "lol",
       },
     }),
   ]);

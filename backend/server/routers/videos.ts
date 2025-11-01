@@ -1,22 +1,23 @@
 import { router, publicProcedure } from "../trpc";
 import { z } from "zod";
-import { VideoCategory, VideoSource } from "@prisma/client";
+import { VideoTopic } from "@prisma/client";
 import prisma from "@/lib/prisma";
 import { TRPCError } from "@trpc/server";
 
 const addVideoInput = z.object({
-  title: z.string(),
-  category: z.enum(VideoCategory),
-  source: z.enum(VideoSource),
-  length: z.number().int(),
+  titleEnglish: z.string(),
+  titleQanjobal: z.string(),
+  audioFile: z.file(),
+  topic: z.enum(VideoTopic),
   url: z.string(),
-  description: z.string(),
-  language: z.string(),
+  descriptionEnglish: z.string(),
+  descriptionQanjobal: z.string(),
 });
 
 type AddVideoInput = z.infer<typeof addVideoInput>;
 
 async function addVideo(input: AddVideoInput) {
+  console.log(input);
   const existing = await prisma.videos.findUnique({
     where: { url: input.url },
     select: { id: true },
@@ -29,18 +30,19 @@ async function addVideo(input: AddVideoInput) {
     });
   }
 
+  const arrayBuffer = await input.audioFile.arrayBuffer();
+  const audioBytes = new Uint8Array(arrayBuffer);
+
   await prisma.videos.create({
     data: {
-      title: input.title,
-      category: input.category,
-      source: input.source,
-      length: input.length,
+      titleEnglish: input.titleEnglish,
+      titleQanjobal: input.titleQanjobal,
+      audioFile: audioBytes,
+      topic: input.topic,
       url: input.url,
       uploadDate: new Date(),
-      description: input.description,
-      likes: 0,
-      dislikes: 0,
-      language: input.language,
+      descriptionEnglish: input.descriptionEnglish,
+      descriptionQanjobal: input.descriptionQanjobal,
     },
   });
 }

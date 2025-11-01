@@ -2,14 +2,14 @@ import React from "react";
 
 interface ParagraphInputProps {
   placeholder?: string;
-  value: string;
-  onChange: (val: string) => void;
+  value?: string;
+  onChange?: (val: string) => void;
 }
 
 export default function ParagraphInput({
   placeholder = "Add a description",
-  value,
-  onChange,
+  value = "",
+  onChange = (val: string) => {},
 }: ParagraphInputProps) {
   return (
     <div className="flex flex-col w-full">
