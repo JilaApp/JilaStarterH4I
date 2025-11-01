@@ -174,8 +174,22 @@ export default function DevPage() {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const [idToDelete, setIdToDelete] = useState<number | null>(null);
+
+  const handleDeleteClick = (id: number) => {
+    setIdToDelete(id);
+    setIsModalOpen(true);
+  };
+
   const handleConfirmDelete = () => {
     setIsModalOpen(false);
+    console.log("Delete confirmed for", idToDelete);
+    setIdToDelete(null);
+  };
+
+  const handleDeleteModalClose = () => {
+    setIsModalOpen(false);
+    setIdToDelete(null);
   };
 
   return (
@@ -188,16 +202,17 @@ export default function DevPage() {
         />
       </div>
 
-      <button
-        onClick={() => setIsModalOpen(true)}
-        className="w-[100px] h-[50px] bg-jila-400 text-white rounded-[10px] components-text"
+      <Button
+        text="Delete"
+        // Instead of 67 this would pull from the row id
+        onClick={() => handleDeleteClick(67)}
       >
         Delete
-      </button>
+      </Button>
 
       <DeleteModal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={handleDeleteModalClose}
         onConfirm={handleConfirmDelete}
       />
 
