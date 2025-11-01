@@ -90,7 +90,7 @@ export default function VideoUploadForm() {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body,
-          }
+          },
         );
 
         if (!response.ok) throw new Error("Upload failed");

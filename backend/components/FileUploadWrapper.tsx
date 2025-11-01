@@ -16,7 +16,7 @@ export default function FileUploadWrapper({
     "default" | "pending" | "complete" | "error"
   >("default");
   const [uploadedFile, setUploadedFile] = useState<UploadedFile | undefined>(
-    undefined
+    undefined,
   );
   const [errorText, setErrorText] = useState<string>("");
 
