@@ -3,7 +3,10 @@ import { useState } from "react";
 import Button from "@/components/Button";
 import Notification from "@/components/Notification";
 import FormInputWrapper from "@/components/FormInputWrapper";
-import FormText from "@/components/FormTextWrapper";
+import FormText, {
+  validateEmail,
+  validatePassword,
+} from "@/components/FormTextWrapper";
 import { TextInput, EmailInput, PasswordInput } from "@/components/Input";
 import Sidebar from "@/components/Sidebar";
 import Dropdown from "@/components/Dropdown";
@@ -142,26 +145,6 @@ export default function DevPage() {
   ]);
 
   const [paragraphInputValue, setParagraphInputValue] = useState<string>("");
-
-  const isValidEmail = (email: string): boolean => {
-    const emailRegex =
-      /^[A-Za-z0-9]+([._-]?[A-Za-z0-9]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}$/;
-    return emailRegex.test(email);
-  };
-
-  const validateEmail = (value: string): string | null => {
-    if (!isValidEmail(value)) {
-      return "Please enter a valid email address";
-    }
-    return null;
-  };
-
-  const validatePassword = (value: string): string | null => {
-    if (value.length < 8) {
-      return "Password must be at least 6 characters";
-    }
-    return null;
-  };
 
   const onDropdownChange = (index: number) => {
     setDropdownIndex(index);

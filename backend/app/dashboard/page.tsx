@@ -3,7 +3,7 @@
 import { useUser, useClerk } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { Button } from "@/components/Button";
+import Button from "@/components/Button";
 import Link from "next/link";
 import AuthWrapper from "../AuthWrapper";
 

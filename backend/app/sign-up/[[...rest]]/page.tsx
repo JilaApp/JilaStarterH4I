@@ -3,9 +3,11 @@
 import { useEffect, useState } from "react";
 import { useSignUp, useUser } from "@clerk/nextjs";
 import { useSearchParams, useRouter } from "next/navigation";
-import Input from "@/components/Input";
+import { EmailInput, PasswordInput } from "@/components/Input";
 import Button from "@/components/Button";
 import DisplayBox from "@/components/DisplayBox";
+import FormText, { validatePassword } from "@/components/FormTextWrapper";
+import FormInputWrapper from "@/components/FormInputWrapper";
 
 export default function InviteSignUpPage() {
   const { isLoaded, signUp, setActive } = useSignUp();
@@ -15,6 +17,7 @@ export default function InviteSignUpPage() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [passwordError, setPasswordError] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -42,7 +45,7 @@ export default function InviteSignUpPage() {
         clearInterval(checkMetadata);
         if (!user.publicMetadata?.userType) {
           setError(
-            "Account setup is taking longer than expected. Please refresh the page.",
+            "Account setup is taking longer than expected. Please refresh the page."
           );
           setIsWaitingForWebhook(false);
         }
@@ -64,7 +67,7 @@ export default function InviteSignUpPage() {
 
     if (!ticket) {
       setError(
-        "Invitation ticket is missing. Please use the link provided in your email.",
+        "Invitation ticket is missing. Please use the link provided in your email."
       );
       return;
     }
@@ -85,7 +88,7 @@ export default function InviteSignUpPage() {
       } catch (err: any) {
         setError(
           err.errors?.[0]?.longMessage ||
-            "This invitation is invalid or has expired.",
+            "This invitation is invalid or has expired."
         );
       } finally {
         setIsTicketProcessed(true);
@@ -100,7 +103,7 @@ export default function InviteSignUpPage() {
 
     if (!isLoaded || !signUp) {
       return setError(
-        "The sign-up component is not ready. Please refresh the page.",
+        "The sign-up component is not ready. Please refresh the page."
       );
     }
 
@@ -132,7 +135,7 @@ export default function InviteSignUpPage() {
     } catch (err: any) {
       setError(
         err.errors?.[0]?.longMessage ||
-          "An unexpected error occurred during sign up.",
+          "An unexpected error occurred during sign up."
       );
       setIsLoading(false);
     }
@@ -171,13 +174,13 @@ export default function InviteSignUpPage() {
               account
             </p>
             <div>
-              <Input
-                type="email"
-                id="email-input"
-                value={email}
-                disabled
-                placeholder="Loading from invitation..."
-              />
+              <FormText value={email}>
+                <EmailInput
+                  id="email-input"
+                  disabled
+                  placeholder="Loading from invitation..."
+                />
+              </FormText>
             </div>
             {error && (
               <div className="rounded-lg bg-error-200 p-4 text-error-400">
@@ -215,26 +218,44 @@ export default function InviteSignUpPage() {
                 Create a secure password for your account
               </p>
               <div className="flex flex-col gap-y-2">
-                <Input
-                  type="password"
-                  id="password-input"
-                  placeholder="Enter password"
-                  icon="lock"
-                  showPasswordToggle
-                  value={password}
-                  onChange={setPassword}
-                />
-
-                <Input
-                  type="password"
-                  id="confirm-password-input"
-                  placeholder="Confirm your password"
-                  icon="lock"
-                  showPasswordToggle
-                  value={confirmPassword}
-                  onChange={setConfirmPassword}
-                />
+                <FormInputWrapper
+                  title="Password"
+                  required
+                  state={passwordError ? "error" : "default"}
+                  errorString={passwordError}
+                >
+                  <FormText
+                    required
+                    validate={validatePassword}
+                    onErrorChange={setPasswordError}
+                    error={passwordError}
+                    value={password}
+                    onValueChange={setPassword}
+                  >
+                    <PasswordInput id="password-input" />
+                  </FormText>
+                </FormInputWrapper>
+                <FormInputWrapper
+                  title="Confirm Password"
+                  required
+                  state={passwordError ? "error" : "default"}
+                  errorString={passwordError}
+                >
+                  <FormText
+                    required
+                    validate={validatePassword}
+                    value={confirmPassword}
+                    onValueChange={setConfirmPassword}
+                  >
+                    <PasswordInput id="password-input" />
+                  </FormText>
+                </FormInputWrapper>
               </div>
+              {error && (
+                <div className="rounded-lg bg-error-200 p-4 text-error-400">
+                  {error}
+                </div>
+              )}
               <Button
                 text="Sign up"
                 type="submit"

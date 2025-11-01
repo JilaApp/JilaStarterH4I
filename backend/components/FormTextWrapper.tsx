@@ -1,6 +1,26 @@
 "use client";
 import { useState, ReactElement, cloneElement } from "react";
 
+const isValidEmail = (email: string): boolean => {
+  const emailRegex =
+    /^[A-Za-z0-9]+([._-]?[A-Za-z0-9]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}$/;
+  return emailRegex.test(email);
+};
+
+export const validateEmail = (value: string): string | null => {
+  if (!isValidEmail(value)) {
+    return "Please enter a valid email address";
+  }
+  return null;
+};
+
+export const validatePassword = (value: string): string | null => {
+  if (value.length < 8) {
+    return "Password must be at least 6 characters";
+  }
+  return null;
+};
+
 interface FormTextWrapperProps {
   required?: boolean;
   validate?: (value: string) => string | null;

@@ -2,11 +2,16 @@
 
 import { useSignIn } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
-import Input from "@/components/Input";
+import { EmailInput, PasswordInput, TextInput } from "@/components/Input";
 import Button from "@/components/Button";
 import DisplayBox from "@/components/DisplayBox";
 import Notification from "@/components/Notification";
 import Link from "next/link";
+import FormText, {
+  validateEmail,
+  validatePassword,
+} from "@/components/FormTextWrapper";
+import FormInputWrapper from "@/components/FormInputWrapper";
 
 export default function ForgotPasswordPage() {
   const { isLoaded, signIn } = useSignIn();
@@ -15,6 +20,8 @@ export default function ForgotPasswordPage() {
   const [password, setPassword] = useState("");
   const [code, setCode] = useState("");
   const [error, setError] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const [showNotification, setShowNotification] = useState(false);
@@ -53,7 +60,7 @@ export default function ForgotPasswordPage() {
       console.error("Password reset request error:", err);
       setError(
         err.errors?.[0]?.message ||
-          "Failed to send reset code. Please check your email address.",
+          "Failed to send reset code. Please check your email address."
       );
     } finally {
       setLoading(false);
@@ -82,7 +89,7 @@ export default function ForgotPasswordPage() {
 
       if (result.status === "complete") {
         setSuccessMessage(
-          "Password reset successful! Redirecting to dashboard",
+          "Password reset successful! Redirecting to dashboard"
         );
         setShowNotification(true);
 
@@ -94,7 +101,7 @@ export default function ForgotPasswordPage() {
     } catch (err: any) {
       console.error("Password reset error:", err);
       setError(
-        err.errors?.[0]?.message || "Invalid code or failed to reset password.",
+        err.errors?.[0]?.message || "Invalid code or failed to reset password."
       );
     } finally {
       setLoading(false);
@@ -152,14 +159,23 @@ export default function ForgotPasswordPage() {
               onSubmit={handleRequestReset}
               className="flex flex-col gap-y-5"
             >
-              <Input
-                type="email"
-                id="email"
-                placeholder="Enter Email"
-                icon="mail"
-                value={email}
-                onChange={setEmail}
-              />
+              <FormInputWrapper
+                title="Email"
+                required
+                state={emailError ? "error" : "default"}
+                errorString={emailError}
+              >
+                <FormText
+                  required
+                  validate={validateEmail}
+                  error={emailError}
+                  onErrorChange={setEmailError}
+                  value={email}
+                  onValueChange={setEmail}
+                >
+                  <EmailInput id="email-input" />
+                </FormText>
+              </FormInputWrapper>
 
               {error && <div className="text-error-400 text-sm">{error}</div>}
 
@@ -190,8 +206,7 @@ export default function ForgotPasswordPage() {
                 <label className="components-text text-type-400 mb-2 block">
                   Reset Code
                 </label>
-                <Input
-                  type="email"
+                <TextInput
                   id="code"
                   placeholder="Enter 6-digit code"
                   value={code}
@@ -199,20 +214,23 @@ export default function ForgotPasswordPage() {
                 />
               </div>
 
-              <div>
-                <label className="components-text text-type-400 mb-2 block">
-                  New Password
-                </label>
-                <Input
-                  type="password"
-                  id="password"
-                  placeholder="Enter new password"
-                  icon="lock"
-                  showPasswordToggle
+              <FormInputWrapper
+                title="New Password"
+                required
+                state={passwordError ? "error" : "default"}
+                errorString={passwordError}
+              >
+                <FormText
+                  required
+                  validate={validatePassword}
+                  onErrorChange={setPasswordError}
+                  error={passwordError}
                   value={password}
-                  onChange={setPassword}
-                />
-              </div>
+                  onValueChange={setPassword}
+                >
+                  <PasswordInput id="password-input" />
+                </FormText>
+              </FormInputWrapper>
 
               {error && <div className="text-error-400 text-sm">{error}</div>}
 

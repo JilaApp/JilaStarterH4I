@@ -3,10 +3,16 @@
 import { useSignIn, useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
-import Input from "@/components/Input";
+import { EmailInput, PasswordInput } from "@/components/Input";
 import Button from "@/components/Button";
 import DisplayBox from "@/components/DisplayBox";
 import Link from "next/link";
+import FormText, {
+  validateEmail,
+  validatePassword,
+} from "@/components/FormTextWrapper";
+
+import FormInputWrapper from "@/components/FormInputWrapper";
 
 export default function SignInPage() {
   const { isLoaded, signIn, setActive } = useSignIn();
@@ -14,6 +20,8 @@ export default function SignInPage() {
   const router = useRouter();
 
   const [email, setEmail] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -123,24 +131,47 @@ export default function SignInPage() {
               Enter your details to get signed into your admin account
             </p>
             <div className="flex flex-col gap-y-2">
-              <Input
-                type="email"
-                id="email"
-                placeholder="Enter Email"
-                icon="mail"
-                value={email}
-                onChange={setEmail}
-              />
-              <Input
-                type="password"
-                id="password-input"
-                placeholder="Enter password"
-                icon="lock"
-                showPasswordToggle
-                value={password}
-                onChange={setPassword}
-              />
+              <FormInputWrapper
+                title="Email"
+                required
+                state={emailError ? "error" : "default"}
+                errorString={emailError}
+              >
+                <FormText
+                  required
+                  validate={validateEmail}
+                  error={emailError}
+                  onErrorChange={setEmailError}
+                  value={email}
+                  onValueChange={setEmail}
+                >
+                  <EmailInput id="email-input" />
+                </FormText>
+              </FormInputWrapper>
+
+              <FormInputWrapper
+                title="Password"
+                required
+                state={passwordError ? "error" : "default"}
+                errorString={passwordError}
+              >
+                <FormText
+                  required
+                  validate={validatePassword}
+                  onErrorChange={setPasswordError}
+                  error={passwordError}
+                  value={password}
+                  onValueChange={setPassword}
+                >
+                  <PasswordInput id="password-input" />
+                </FormText>
+              </FormInputWrapper>
             </div>
+            {error && (
+              <div className="rounded-lg bg-error-200 p-4 text-error-400">
+                {error}
+              </div>
+            )}
             <div className="w-full flex flex-col gap-y-2">
               <div>
                 <Link
