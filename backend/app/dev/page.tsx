@@ -16,6 +16,7 @@ import TopicTag from "@/components/TopicTag";
 import Header from "@/components/Header";
 import FileUpload from "@/components/FileUpload";
 import FileUploadWrapper from "@/components/FileUploadWrapper";
+import SocialService from "@/components/SocialServiceForm";
 
 export default function DevPage() {
   const tabs = [
@@ -91,6 +92,7 @@ export default function DevPage() {
 
   return (
     <>
+      <SocialService />
       <div className="bg-[#FFFBF3]">
         <Header
           name="Sophia Kim"
