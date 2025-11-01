@@ -14,6 +14,7 @@ import FormText, {
 
 import FormInputWrapper from "@/components/FormInputWrapper";
 import PageBackground from "@/components/PageBackground";
+import { Ban } from "lucide-react";
 
 export default function SignInPage() {
   const { isLoaded, signIn, setActive } = useSignIn();
@@ -35,6 +36,7 @@ export default function SignInPage() {
 
       if (userType === "admin") {
         router.push("/dashboard");
+        return;
       } else if (userType) {
         // Has userType but not admin
         setError("This account does not have admin access.");
@@ -51,6 +53,7 @@ export default function SignInPage() {
         if (userType === "admin") {
           clearInterval(checkMetadata);
           router.push("/dashboard");
+          return;
         } else if (userType) {
           // Has userType but not admin
           clearInterval(checkMetadata);
@@ -80,7 +83,15 @@ export default function SignInPage() {
 
     if (!isLoaded) return;
 
+    const em = validateEmail(email) || "";
+    const p = validatePassword(password) || "";
     setError("");
+    if (em != "" || p != "") {
+      setEmailError(em);
+      setPasswordError(p);
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -96,26 +107,10 @@ export default function SignInPage() {
         setIsWaitingForMetadata(true);
       }
     } catch (err: any) {
-      setError(err.errors?.[0]?.message || "Invalid email or password");
+      setError("Invalid email or password");
       setLoading(false);
     }
   };
-
-  if (isWaitingForMetadata) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-cream-300">
-        <DisplayBox>
-          <div className="flex flex-col gap-y-8 items-center">
-            <h1 className="page-title-text text-jila-400">Signing In</h1>
-            <div className="flex flex-col items-center gap-4">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-jila-400"></div>
-              <p className="body1-desktop-text text-type-400">Please wait...</p>
-            </div>
-          </div>
-        </DisplayBox>
-      </div>
-    );
-  }
 
   return (
     <PageBackground>
@@ -170,8 +165,11 @@ export default function SignInPage() {
                 </FormInputWrapper>
               </div>
               {error && (
-                <div className="rounded-lg bg-error-200 p-4 text-error-400">
-                  {error}
+                <div className="!rounded-lg !mt-0 bg-error-200 w-full flex items-center gap-[3px] p-[14px] text-[var(--color-error-400)] text-[18px]">
+                  <div className="flex items-center justify-center ">
+                    <Ban width={"20px"} height={"20px"} />
+                  </div>
+                  <span className="font-[500]">{error}</span>
                 </div>
               )}
               <div className="w-full flex flex-col gap-y-2">

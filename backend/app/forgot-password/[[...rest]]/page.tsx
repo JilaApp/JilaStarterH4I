@@ -1,6 +1,6 @@
 "use client";
 
-import { useSignIn } from "@clerk/nextjs";
+import { useSignIn, useUser } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
 import { EmailInput, PasswordInput, TextInput } from "@/components/Input";
 import Button from "@/components/Button";
@@ -13,9 +13,13 @@ import FormText, {
 } from "@/components/FormTextWrapper";
 import FormInputWrapper from "@/components/FormInputWrapper";
 import PageBackground from "@/components/PageBackground";
+import { router } from "@/server/trpc";
+import { useRouter } from "next/navigation";
 
 export default function ForgotPasswordPage() {
   const { isLoaded, signIn } = useSignIn();
+  const { user } = useUser();
+  const router = useRouter();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -36,16 +40,29 @@ export default function ForgotPasswordPage() {
     }
   }, [showNotification]);
 
+  useEffect(() => {
+    if (user && user.publicMetadata.userType === "admin") {
+      router.push("/dashboard");
+      return;
+    }
+  }, [router, user]);
+
   // Step 1: Request password reset
   // Step 2: Verify code and reset password
   const [step, setStep] = useState<"request" | "reset">("request");
+
+  const resetErrorStates = () => {
+    setError("");
+    setEmailError("");
+    setPasswordError("");
+  };
 
   const handleRequestReset = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!isLoaded) return;
 
-    setError("");
+    resetErrorStates();
     setLoading(true);
 
     try {
@@ -59,7 +76,7 @@ export default function ForgotPasswordPage() {
       setStep("reset");
     } catch (err: any) {
       console.error("Password reset request error:", err);
-      setError(
+      setEmailError(
         err.errors?.[0]?.message ||
           "Failed to send reset code. Please check your email address."
       );
@@ -74,11 +91,11 @@ export default function ForgotPasswordPage() {
     if (!isLoaded) return;
 
     if (password.length < 8) {
-      setError("Password must be at least 8 characters long.");
+      setPasswordError("Password must be at least 8 characters long.");
       return;
     }
 
-    setError("");
+    resetErrorStates();
     setLoading(true);
 
     try {
@@ -100,10 +117,10 @@ export default function ForgotPasswordPage() {
         }, 2000);
       }
     } catch (err: any) {
-      console.error("Password reset error:", err);
       setError(
         err.errors?.[0]?.message || "Invalid code or failed to reset password."
       );
+      if (error === "is incorrect") setError("Reset code is incorrect");
     } finally {
       setLoading(false);
     }
@@ -179,8 +196,6 @@ export default function ForgotPasswordPage() {
                   </FormText>
                 </FormInputWrapper>
 
-                {error && <div className="text-error-400 text-sm">{error}</div>}
-
                 <Button
                   text={loading ? "Sending..." : "Send Reset Code"}
                   type="submit"
@@ -205,15 +220,22 @@ export default function ForgotPasswordPage() {
                 className="flex flex-col gap-y-5"
               >
                 <div>
-                  <label className="components-text text-type-400 mb-2 block">
-                    Reset Code
-                  </label>
-                  <TextInput
-                    id="code"
-                    placeholder="Enter 6-digit code"
-                    value={code}
-                    onChange={setCode}
-                  />
+                  <FormInputWrapper
+                    title="Reset Code"
+                    required
+                    state={error ? "error" : "default"}
+                    errorString={error}
+                  >
+                    <FormText
+                      required
+                      onErrorChange={setError}
+                      error={error}
+                      value={code}
+                      onValueChange={setCode}
+                    >
+                      <TextInput id="code" placeholder="Enter 6-digit code" />
+                    </FormText>
+                  </FormInputWrapper>
                 </div>
 
                 <FormInputWrapper
@@ -233,8 +255,6 @@ export default function ForgotPasswordPage() {
                     <PasswordInput id="password-input" />
                   </FormText>
                 </FormInputWrapper>
-
-                {error && <div className="text-error-400 text-sm">{error}</div>}
 
                 <Button
                   text={loading ? "Resetting..." : "Reset Password"}
