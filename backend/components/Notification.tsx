@@ -13,8 +13,8 @@ export default function Notification({ message, onClose }: NotificationProps) {
       </div>
       <span>{message}</span>
 
-      <button onClick={onClose}>
-        <X size={12} />
+      <button onClick={onClose} className="cursor-pointer">
+        <X size={20} />
       </button>
     </div>
   );

@@ -66,31 +66,43 @@ export default function VideoUploadForm() {
       return;
     }
 
-    const formData = new FormData();
-    formData.append("resourceTitleEnglish", resourceTitleEnglish);
-    formData.append("resourceTitleQanjobal", resourceTitleQanjobal);
-    formData.append("topic", topicDropdownOptions[topicDropdownIndex ?? 0]);
-    formData.append("videoLink", videoLink);
-    formData.append("descriptionEnglish", descriptionEnglish);
-    formData.append("descriptionQanjobl", descriptionQanjobl);
-    if (audioFile) formData.append("audioFile", audioFile);
+    const reader = new FileReader();
+    reader.onload = async () => {
+      console.log("asdfasdf");
+      const base64Audio = reader.result?.toString().split(",")[1]; // remove `data:audio/...;base64,` prefix
 
-    try {
-      const response = await fetch(
-        "http://localhost:3000/api/trpc/videos.addVideo",
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
+      const body = JSON.stringify({
+        titleEnglish: resourceTitleEnglish,
+        titleQanjobal: resourceTitleQanjobal,
+        audioFile: base64Audio, // 👈 encoded string
+        topic: topicDropdownOptions[topicDropdownIndex ?? 0].toUpperCase(),
+        url: videoLink,
+        descriptionEnglish,
+        descriptionQanjobal: descriptionQanjobl,
+      });
 
-      if (!response.ok) throw new Error("Upload failed");
+      console.log("submitting", body);
 
-      setNotification("Video submitted successfully!");
-    } catch (err) {
-      console.error(err);
-      setNotification("Error submitting video.");
-    }
+      try {
+        const response = await fetch(
+          "http://localhost:3000/api/trpc/videos.addVideo",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body,
+          }
+        );
+
+        if (!response.ok) throw new Error("Upload failed");
+
+        setNotification("Video submitted successfully!");
+      } catch (err) {
+        console.error(err);
+        setNotification("Error submitting video.");
+      }
+    };
+
+    reader.readAsDataURL(audioFile);
   };
 
   return (
@@ -178,7 +190,7 @@ export default function VideoUploadForm() {
         <Button text="Submit video" onClick={submitForm} />
       </div>
       {notification && (
-        <div className="absolute top-4 right-4">
+        <div className="absolute top-10 left-1/2 transform -translate-x-1/2 z-50">
           {/* TODO: add fade in/out animation */}
           <Notification
             message={notification}

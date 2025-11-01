@@ -1,13 +1,15 @@
+import fs from "fs";
 import { router, publicProcedure } from "../trpc";
 import { z } from "zod";
 import { VideoTopic } from "@prisma/client";
 import prisma from "@/lib/prisma";
 import { TRPCError } from "@trpc/server";
+import path from "path";
 
 const addVideoInput = z.object({
   titleEnglish: z.string(),
   titleQanjobal: z.string(),
-  audioFile: z.file(),
+  audioFile: z.string(),
   topic: z.enum(VideoTopic),
   url: z.string(),
   descriptionEnglish: z.string(),
@@ -16,37 +18,39 @@ const addVideoInput = z.object({
 
 type AddVideoInput = z.infer<typeof addVideoInput>;
 
-async function addVideo(input: AddVideoInput) {
-  console.log(input);
-  const existing = await prisma.videos.findUnique({
-    where: { url: input.url },
-    select: { id: true },
-  });
-
-  if (existing) {
-    throw new TRPCError({
-      code: "CONFLICT",
-      message: `Video with url ${input.url} already exists`,
+export async function addVideo(input: AddVideoInput) {
+  try {
+    const existing = await prisma.videos.findUnique({
+      where: { url: input.url },
+      select: { id: true },
     });
+
+    if (existing) {
+      throw new TRPCError({
+        code: "CONFLICT",
+        message: `Video with url ${input.url} already exists`,
+      });
+    }
+
+    const buffer = Buffer.from(input.audioFile, "base64");
+    const audioBytes = new Uint8Array(buffer);
+
+    await prisma.videos.create({
+      data: {
+        titleEnglish: input.titleEnglish,
+        titleQanjobal: input.titleQanjobal,
+        audioFile: audioBytes,
+        topic: input.topic,
+        url: input.url,
+        uploadDate: new Date(),
+        descriptionEnglish: input.descriptionEnglish,
+        descriptionQanjobal: input.descriptionQanjobal,
+      },
+    });
+  } catch (err: any) {
+    throw err;
   }
-
-  const arrayBuffer = await input.audioFile.arrayBuffer();
-  const audioBytes = new Uint8Array(arrayBuffer);
-
-  await prisma.videos.create({
-    data: {
-      titleEnglish: input.titleEnglish,
-      titleQanjobal: input.titleQanjobal,
-      audioFile: audioBytes,
-      topic: input.topic,
-      url: input.url,
-      uploadDate: new Date(),
-      descriptionEnglish: input.descriptionEnglish,
-      descriptionQanjobal: input.descriptionQanjobal,
-    },
-  });
 }
-
 const removeVideoInput = z.object({
   id: z.number().int(),
 });
