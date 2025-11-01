@@ -111,9 +111,8 @@ export default function ForgotPasswordPage() {
         );
         setShowNotification(true);
 
-        // Redirect after 2 seconds
         setTimeout(() => {
-          window.location.href = "/dashboard";
+          router.push("/dashboard");
         }, 2000);
       }
     } catch (err: any) {
@@ -192,7 +191,7 @@ export default function ForgotPasswordPage() {
                     value={email}
                     onValueChange={setEmail}
                   >
-                    <EmailInput id="email-input" />
+                    <EmailInput id="email-input" name="email" />
                   </FormText>
                 </FormInputWrapper>
 
@@ -218,6 +217,7 @@ export default function ForgotPasswordPage() {
               <form
                 onSubmit={handleResetPassword}
                 className="flex flex-col gap-y-5"
+                autoComplete="off"
               >
                 <div>
                   <FormInputWrapper
@@ -233,7 +233,11 @@ export default function ForgotPasswordPage() {
                       value={code}
                       onValueChange={setCode}
                     >
-                      <TextInput id="code" placeholder="Enter 6-digit code" />
+                      <TextInput
+                        id="code"
+                        name="code"
+                        placeholder="Enter 6-digit code"
+                      />
                     </FormText>
                   </FormInputWrapper>
                 </div>
@@ -252,7 +256,11 @@ export default function ForgotPasswordPage() {
                     value={password}
                     onValueChange={setPassword}
                   >
-                    <PasswordInput id="password-input" />
+                    <PasswordInput
+                      id="new-password"
+                      name="new-password"
+                      autoComplete="new-password"
+                    />
                   </FormText>
                 </FormInputWrapper>
 
