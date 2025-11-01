@@ -20,44 +20,18 @@ export default function InviteSignUpPage() {
   const [password, setPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [confirmPasswordError, setConfirmPasswordError] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [isWaitingForWebhook, setIsWaitingForWebhook] = useState(false);
-
+  const [isFinalizing, setIsFinalizing] = useState(false);
   const [emailApproved, setEmailApproved] = useState(false);
-
-  // New state to prevent re-running the ticket creation
   const [isTicketProcessed, setIsTicketProcessed] = useState(false);
 
-  // Check if webhook has completed by polling user metadata
   useEffect(() => {
-    if (isWaitingForWebhook && user) {
-      const checkMetadata = setInterval(() => {
-        const userType = user.publicMetadata?.userType;
-
-        if (userType === "admin") {
-          clearInterval(checkMetadata);
-          router.push("/dashboard");
-        }
-      }, 500); // Check every 500ms
-
-      // Timeout after 30 seconds
-      const timeout = setTimeout(() => {
-        clearInterval(checkMetadata);
-        if (!user.publicMetadata?.userType) {
-          setError(
-            "Account setup is taking longer than expected. Please refresh the page."
-          );
-          setIsWaitingForWebhook(false);
-        }
-      }, 30000);
-
-      return () => {
-        clearInterval(checkMetadata);
-        clearTimeout(timeout);
-      };
+    if (user && user.publicMetadata?.userType === "admin") {
+      router.push("/dashboard");
     }
-  }, [isWaitingForWebhook, user, router]);
+  }, [user, router]);
 
   useEffect(() => {
     if (!isLoaded || isTicketProcessed) {
@@ -68,7 +42,7 @@ export default function InviteSignUpPage() {
 
     if (!ticket) {
       setError(
-        "Invitation ticket is missing. Please use the link provided in your email."
+        "Invitation ticket is missing. Please use the link provided in your email.",
       );
       return;
     }
@@ -89,7 +63,7 @@ export default function InviteSignUpPage() {
       } catch (err: any) {
         setError(
           err.errors?.[0]?.longMessage ||
-            "This invitation is invalid or has expired."
+            "This invitation is invalid or has expired.",
         );
       } finally {
         setIsTicketProcessed(true);
@@ -104,16 +78,21 @@ export default function InviteSignUpPage() {
 
     if (!isLoaded || !signUp) {
       return setError(
-        "The sign-up component is not ready. Please refresh the page."
+        "The sign-up component is not ready. Please refresh the page.",
       );
     }
 
     setError("");
-    if (password !== confirmPassword) {
-      return setError("Passwords do not match.");
-    }
+    setPasswordError("");
+    setConfirmPasswordError("");
+
     if (password.length < 8) {
-      return setError("Password must be at least 8 characters long.");
+      setPasswordError("Password must be at least 8 characters long.");
+      return;
+    }
+    if (password !== confirmPassword) {
+      setConfirmPasswordError("Passwords do not match.");
+      return;
     }
 
     setIsLoading(true);
@@ -125,10 +104,8 @@ export default function InviteSignUpPage() {
 
       if (result.status === "complete") {
         await setActive({ session: result.createdSessionId });
-
-        // Now wait for webhook to complete
         setIsLoading(false);
-        setIsWaitingForWebhook(true);
+        setIsFinalizing(true);
       } else {
         setError("Could not complete your sign up. Please try again.");
         setIsLoading(false);
@@ -136,31 +113,17 @@ export default function InviteSignUpPage() {
     } catch (err: any) {
       setError(
         err.errors?.[0]?.longMessage ||
-          "An unexpected error occurred during sign up."
+          "An unexpected error occurred during sign up.",
       );
       setIsLoading(false);
     }
   };
 
-  if (isWaitingForWebhook) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-cream-300 p-4">
-        <DisplayBox>
-          <div className="flex flex-col gap-y-8 items-center">
-            <h1 className="page-title-text text-jila-400 text-center">
-              Setting Up Your Account
-            </h1>
-            <div className="flex flex-col items-center gap-4">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-jila-400"></div>
-              <p className="body1-desktop-text text-type-400 text-center">
-                Please wait while we finalize your account...
-              </p>
-            </div>
-          </div>
-        </DisplayBox>
-      </div>
-    );
-  }
+  const getButtonText = () => {
+    if (isFinalizing) return "Finalizing setup...";
+    if (isLoading) return "Creating Account...";
+    return "Sign Up";
+  };
 
   return (
     <PageBackground>
@@ -179,8 +142,9 @@ export default function InviteSignUpPage() {
                 <FormText value={email}>
                   <EmailInput
                     id="email-input"
+                    name="email"
                     disabled
-                    placeholder="Loading from invitation..."
+                    placeholder="Loading..."
                   />
                 </FormText>
               </div>
@@ -200,7 +164,6 @@ export default function InviteSignUpPage() {
                   text="Sign up"
                   type="button"
                   defaultClassName="w-full"
-                  disabled={isLoading}
                   onClick={() => {
                     setEmailApproved(true);
                   }}
@@ -212,6 +175,7 @@ export default function InviteSignUpPage() {
               <form
                 onSubmit={handleSubmit}
                 className="flex flex-col gap-y-6 items-center justify-center"
+                autoComplete="off"
               >
                 <h1 className="body1-desktop-text text-4xl font-bold">
                   Set up your password
@@ -234,31 +198,47 @@ export default function InviteSignUpPage() {
                       value={password}
                       onValueChange={setPassword}
                     >
-                      <PasswordInput id="password-input" />
+                      <PasswordInput
+                        id="password-input"
+                        name="password"
+                        autoComplete="new-password"
+                      />
                     </FormText>
                   </FormInputWrapper>
                   <FormInputWrapper
                     title="Confirm Password"
                     required
-                    state={error ? "error" : "default"}
-                    errorString={error}
+                    state={confirmPasswordError ? "error" : "default"}
+                    errorString={confirmPasswordError}
                   >
                     <FormText
                       required
-                      validate={validatePassword}
+                      validate={(value) =>
+                        value === password ? "" : "Passwords do not match."
+                      }
                       value={confirmPassword}
-                      error={error}
+                      error={confirmPasswordError}
+                      onErrorChange={setConfirmPasswordError}
                       onValueChange={setConfirmPassword}
                     >
-                      <PasswordInput id="password-input" />
+                      <PasswordInput
+                        id="confirm-password-input"
+                        name="confirmPassword"
+                        autoComplete="new-password"
+                      />
                     </FormText>
                   </FormInputWrapper>
                 </div>
+                {error && (
+                  <div className="rounded-lg bg-error-200 p-4 text-error-400">
+                    {error}
+                  </div>
+                )}
                 <Button
-                  text="Sign up"
+                  text={getButtonText()}
                   type="submit"
                   defaultClassName="w-full"
-                  disabled={isLoading}
+                  disabled={isLoading || isFinalizing}
                 />
               </form>
             </div>
