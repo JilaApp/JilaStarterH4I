@@ -3,7 +3,10 @@ import { useState } from "react";
 import Button from "@/components/Button";
 import Notification from "@/components/Notification";
 import FormInputWrapper from "@/components/FormInputWrapper";
-import FormText from "@/components/FormTextWrapper";
+import FormText, {
+  validateEmail,
+  validatePassword,
+} from "@/components/FormTextWrapper";
 import { TextInput, EmailInput, PasswordInput } from "@/components/Input";
 import Sidebar from "@/components/Sidebar";
 import Dropdown from "@/components/Dropdown";
@@ -16,6 +19,7 @@ import TopicTag, { TopicVariant } from "@/components/TopicTag";
 import Header from "@/components/Header";
 import FileUpload from "@/components/FileUpload";
 import FileUploadWrapper from "@/components/FileUploadWrapper";
+import DeleteModal from "@/components/DeleteModal";
 import Table, { ColumnDefinition, DataRow } from "@/components/Table";
 import VideoUploadForm from "@/components/VideoUploadForm";
 
@@ -144,32 +148,32 @@ export default function DevPage() {
 
   const [paragraphInputValue, setParagraphInputValue] = useState<string>("");
 
-  const isValidEmail = (email: string): boolean => {
-    const emailRegex =
-      /^[A-Za-z0-9]+([._-]?[A-Za-z0-9]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}$/;
-    return emailRegex.test(email);
-  };
-
-  const validateEmail = (value: string): string | null => {
-    if (!isValidEmail(value)) {
-      return "Please enter a valid email address";
-    }
-    return null;
-  };
-
-  const validatePassword = (value: string): string | null => {
-    if (value.length < 8) {
-      return "Password must be at least 6 characters";
-    }
-    return null;
-  };
-
   const onDropdownChange = (index: number) => {
     setDropdownIndex(index);
   };
 
   const onErrorDropdownChange = (index: number) => {
     setErrorDropdownIndex(index);
+  };
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [idToDelete, setIdToDelete] = useState<number | null>(null);
+
+  const handleDeleteClick = (id: number) => {
+    setIdToDelete(id);
+    setIsModalOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    setIsModalOpen(false);
+    console.log("Delete confirmed for", idToDelete);
+    setIdToDelete(null);
+  };
+
+  const handleDeleteModalClose = () => {
+    setIsModalOpen(false);
+    setIdToDelete(null);
   };
 
   return (
@@ -184,6 +188,19 @@ export default function DevPage() {
           title="Data Collection + Analytics"
         />
       </div>
+
+      <Button
+        text="Delete"
+        // Instead of 67 this would pull from the row id
+        onClick={() => handleDeleteClick(67)}
+      />
+
+      <DeleteModal
+        isOpen={isModalOpen}
+        onClose={handleDeleteModalClose}
+        onConfirm={handleConfirmDelete}
+      />
+
       <RadioButtonGroup
         options={myOptions}
         selectedOptions={selected}
@@ -211,6 +228,16 @@ export default function DevPage() {
               <TextInput id="text-input" />
             </FormText>
           </FormInputWrapper>
+          <FormInputWrapper
+            title="Text Input"
+            required
+            state={textError ? "error" : "default"}
+            errorString={textError}
+          >
+            <FormText required onErrorChange={setTextError}>
+              <TextInput id="text-input" />
+            </FormText>
+          </FormInputWrapper>
 
           <FormInputWrapper
             title="Email Input"
@@ -226,7 +253,35 @@ export default function DevPage() {
               <EmailInput id="email-input" />
             </FormText>
           </FormInputWrapper>
+          <FormInputWrapper
+            title="Email Input"
+            required
+            state={emailError ? "error" : "default"}
+            errorString={emailError}
+          >
+            <FormText
+              required
+              validate={validateEmail}
+              onErrorChange={setEmailError}
+            >
+              <EmailInput id="email-input" />
+            </FormText>
+          </FormInputWrapper>
 
+          <FormInputWrapper
+            title="Password Input"
+            required
+            state={passwordError ? "error" : "default"}
+            errorString={passwordError}
+          >
+            <FormText
+              required
+              validate={validatePassword}
+              onErrorChange={setPasswordError}
+            >
+              <PasswordInput id="password-input" />
+            </FormText>
+          </FormInputWrapper>
           <FormInputWrapper
             title="Password Input"
             required

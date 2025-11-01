@@ -9,6 +9,7 @@ export interface CommonInputProps {
   placeholder?: string;
   id?: string;
   state?: FormInputState;
+  name?: string;
   value?: string;
   className?: string;
 }
@@ -17,4 +18,5 @@ export interface BaseInputProps extends CommonInputProps {
   type?: string;
   icon?: ReactNode;
   rightElement?: ReactNode;
+  autoComplete?: string;
 }

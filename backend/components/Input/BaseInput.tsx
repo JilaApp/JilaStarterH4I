@@ -8,6 +8,7 @@ export function BaseInput({
   placeholder = "Enter text",
   id,
   state = "default",
+  name,
   value,
   onChange,
   onFocus,
@@ -15,6 +16,7 @@ export function BaseInput({
   icon,
   rightElement,
   className = "",
+  autoComplete,
 }: BaseInputProps) {
   const [isFocused, setIsFocused] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -43,7 +45,7 @@ export function BaseInput({
         "border-gray-300 bg-white":
           !disabled && !isFocused && state !== "error",
       },
-      className,
+      className
     );
   };
 
@@ -53,7 +55,7 @@ export function BaseInput({
       {
         "cursor-not-allowed text-gray-400": disabled,
         "text-gray-400": !isFocused && value,
-      },
+      }
     );
   };
 
@@ -85,6 +87,7 @@ export function BaseInput({
       <input
         ref={inputRef}
         id={id}
+        name={name || id}
         className={getInputClasses()}
         type={type}
         value={value}
@@ -94,6 +97,7 @@ export function BaseInput({
         onBlur={handleBlur}
         disabled={disabled}
         aria-invalid={state === "error"}
+        autoComplete={autoComplete}
       />
       {rightElement && <div className="flex items-center">{rightElement}</div>}
     </label>
