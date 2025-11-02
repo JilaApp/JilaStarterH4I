@@ -72,14 +72,14 @@ export default function Table<T extends DataRow>({
                 key={index}
                 className={
                   index === 0
-                    ? "pl-20 text-left text-gray-300"
-                    : "pl-6 pr-20 p-4 text-left text-gray-300"
+                    ? "pl-16 pr-6 p-4 text-left text-gray-300"
+                    : "px-6 p-4 text-left text-gray-300"
                 }
               >
                 {col.header}
               </th>
             ))}
-            <th className="pl-5 pr-5 p-3 text-left text-gray-300">Actions</th>
+            <th className="px-6 p-4 text-left text-gray-300">Actions</th>
           </tr>
         </thead>
         <tbody className="font-medium">
@@ -95,7 +95,9 @@ export default function Table<T extends DataRow>({
                   <td
                     key={cellIndex}
                     className={
-                      cellIndex === 0 ? "pl-5 pr-5 p-4 font-semibold" : "pl-6"
+                      cellIndex === 0
+                        ? "pl-5 pr-6 p-4 font-semibold"
+                        : "px-6 p-4"
                     }
                   >
                     {cellIndex === 0 && (
@@ -113,7 +115,7 @@ export default function Table<T extends DataRow>({
                   </td>
                 );
               })}
-              <td className="p-3 relative text-center">
+              <td className="px-6 p-4 relative text-center">
                 <button
                   onClick={(e) => {
                     e.stopPropagation();

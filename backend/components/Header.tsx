@@ -5,9 +5,15 @@ interface InputProps {
   title: string;
   name: string;
   organization: string;
+  onSignOut: () => void;
 }
 
-export default function Header({ title, name, organization }: InputProps) {
+export default function Header({
+  title,
+  name,
+  organization,
+  onSignOut,
+}: InputProps) {
   return (
     <div className="flex text-type-400 flex-row h-[80px] items-center justify-between">
       <div className="font-semibold text-[24px] whitespace-nowrap">{title}</div>
@@ -17,7 +23,11 @@ export default function Header({ title, name, organization }: InputProps) {
           <Bell />
         </div>
 
-        <HeaderDropdown name={name} organization={organization} />
+        <HeaderDropdown
+          name={name}
+          organization={organization}
+          onSignOut={onSignOut}
+        />
       </div>
     </div>
   );
