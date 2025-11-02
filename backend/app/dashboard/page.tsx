@@ -87,7 +87,7 @@ export default function DashboardDev() {
       link: video.url,
     })) || [];
 
-  const socialServicesDataFormatted: SocialServiceData[] =
+  const socialServicesData: SocialServiceData[] =
     socialServicesData?.map((service) => ({
       id: service.id,
       title: service.title,
@@ -156,19 +156,17 @@ export default function DashboardDev() {
     {
       header: "Link",
       accessorKey: "link",
-      cell: (value) => {
-        return (
-          <a
-            className="text-jila-400"
-            href={String(value)}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {String(value)}
-          </a>
-        );
-      },
+      cell: (value) => (
+        <a
+          className="text-jila-400"
+          href={String(value)}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {String(value)}
+        </a>
+      )
     },
   ];
 
@@ -215,7 +213,7 @@ export default function DashboardDev() {
         </div>
       ) : (
         <Table
-          data={socialServicesDataFormatted}
+          data={socialServicesData}
           columns={socialColumns}
           handleEdit={handleSocialEdit}
           handleDelete={handleSocialDelete}
