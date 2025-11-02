@@ -62,8 +62,8 @@ export default function VideoEditModal({
   const updateVideoMutation = trpc.videos.updateVideo.useMutation();
 
   useEffect(() => {
-    // CONSOLE LOG ADDED HERE
     console.log("VideoEditModal: Received videoData prop:", videoData);
+    console.log("VideoEditModal: audioFilename from videoData:", videoData?.audioFilename);
 
     if (isOpen && videoData) {
       setEnglishTitle(videoData.titleEnglish || "");
@@ -81,14 +81,23 @@ export default function VideoEditModal({
       setSelectedFile(undefined);
       setClearExistingFile(false);
 
+      // Set displayed file immediately
       if (videoData.audioFilename) {
+        console.log("VideoEditModal: Setting displayedFile to:", {
+          fileName: videoData.audioFilename,
+          fileSizeMB: 0,
+        });
         setDisplayedFile({
           fileName: videoData.audioFilename,
           fileSizeMB: 0,
         });
       } else {
+        console.log("VideoEditModal: No audioFilename, setting displayedFile to undefined");
         setDisplayedFile(undefined);
       }
+    } else if (!isOpen) {
+      // Reset state when modal closes
+      setDisplayedFile(undefined);
     }
   }, [isOpen, videoData]);
 
@@ -188,6 +197,9 @@ export default function VideoEditModal({
 
   const saveButtonUI = getSaveButtonUI();
   const uploadState = displayedFile ? "complete" : "default";
+  
+  console.log("VideoEditModal render: displayedFile =", displayedFile);
+  console.log("VideoEditModal render: uploadState =", uploadState);
 
   return (
     <div className="fixed y-40 inset-0 z-50 flex items-center justify-center bg-[rgb(83,83,83,0.19)]">
@@ -246,9 +258,9 @@ export default function VideoEditModal({
             <FormInputWrapper
               title="Upload file"
               titleClassName="body1-desktop-text text-[15px]"
+              state={uploadState}
             >
               <FileUpload
-                state={uploadState}
                 uploadedFile={displayedFile}
                 onFileSelect={handleFileSelect}
                 onDelete={handleDeleteFile}
