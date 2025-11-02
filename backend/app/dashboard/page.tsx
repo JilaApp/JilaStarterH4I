@@ -166,7 +166,7 @@ export default function DashboardDev() {
         >
           {String(value)}
         </a>
-      )
+      ),
     },
   ];
 
