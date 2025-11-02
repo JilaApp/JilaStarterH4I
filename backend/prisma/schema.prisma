@@ -31,15 +31,16 @@ model AppUser {
 }
 
 model Videos {
-  id                  Int        @id @default(autoincrement())
+  id                  Int      @id @default(autoincrement())
   titleEnglish        String
   titleQanjobal       String
-  audioFile           Bytes
+  audioFile           Bytes?
+  audioFilename       String?
   topic               VideoTopic
-  url                 String     @unique
+  url                 String   @unique
   uploadDate          DateTime
-  descriptionEnglish  String
-  descriptionQanjobal String
+  descriptionEnglish  String?
+  descriptionQanjobal String?
 }
 
 model SocialServices {

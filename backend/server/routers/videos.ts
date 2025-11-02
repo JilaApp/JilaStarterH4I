@@ -8,6 +8,7 @@ const addVideoInput = z.object({
   titleEnglish: z.string(),
   titleQanjobal: z.string(),
   audioFile: z.string(),
+  audioFilename: z.string(),
   topic: z.nativeEnum(VideoTopic),
   url: z.string(),
   descriptionEnglish: z.string(),
@@ -38,6 +39,7 @@ export async function addVideo(input: AddVideoInput) {
         titleEnglish: input.titleEnglish,
         titleQanjobal: input.titleQanjobal,
         audioFile: audioBytes,
+        audioFilename: input.audioFilename,
         topic: input.topic,
         url: input.url,
         uploadDate: new Date(),
@@ -83,12 +85,14 @@ const updateVideoInput = z.object({
   url: z.string().optional(),
   descriptionEnglish: z.string().optional(),
   descriptionQanjobal: z.string().optional(),
+  audioFile: z.string().optional(),
+  audioFilename: z.string().optional(),
 });
 
 type UpdateVideoInput = z.infer<typeof updateVideoInput>;
 
 async function updateVideo(input: UpdateVideoInput) {
-  const { id, ...dataToUpdate } = input;
+  const { id, audioFile, audioFilename, ...rest } = input;
   const existing = await prisma.videos.findUnique({
     where: { id },
   });
@@ -98,6 +102,19 @@ async function updateVideo(input: UpdateVideoInput) {
       code: "NOT_FOUND",
       message: `Video with id ${id} does not exist`,
     });
+  }
+
+  const dataToUpdate: any = { ...rest };
+
+  if (audioFile !== undefined) {
+    if (audioFile === "") {
+      dataToUpdate.audioFile = null;
+      dataToUpdate.audioFilename = null;
+    } else {
+      const buffer = Buffer.from(audioFile, "base64");
+      dataToUpdate.audioFile = new Uint8Array(buffer);
+      dataToUpdate.audioFilename = audioFilename;
+    }
   }
 
   return await prisma.videos.update({

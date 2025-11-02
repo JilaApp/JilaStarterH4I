@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Video, MessageCircle } from "lucide-react";
 import { useUser, useClerk } from "@clerk/nextjs";
 
@@ -19,7 +19,10 @@ import VideoEditModal from "@/components/VideoEditModal";
 
 type FullVideoType = NonNullable<
   ReturnType<typeof trpc.videos.getAllVideos.useQuery>["data"]
->[0];
+>[0] & {
+  audioFilename: string | null;
+  audioFile: { type: "Buffer"; data: number[] } | null;
+};
 
 interface VideoResourceData extends DataRow {
   id: number | string;
@@ -89,23 +92,61 @@ export default function DashboardDev() {
     }
   }, [activeView, refetchVideos, refetchSocialServices]);
 
-  const videoResourcesData: VideoResourceData[] =
-    videosData?.map((video) => ({
-      id: video.id,
-      title: video.titleEnglish,
-      topic: topicMap[video.topic] || "Other",
-      phoneNumber: "N/A",
-      link: video.url,
-    })) || [];
+  const videoResourcesData: VideoResourceData[] = useMemo(
+    () =>
+      videosData
+        ?.map((video) => ({
+          id: video.id,
+          title: video.titleEnglish,
+          topic: topicMap[video.topic] || "Other",
+          phoneNumber: "N/A",
+          link: video.url,
+        }))
+        .sort((a, b) => a.title.localeCompare(b.title)) || [],
+    [videosData],
+  );
 
-  const socialServicesResourcesData: SocialServiceData[] =
-    socialServicesData?.map((service) => ({
-      id: service.id,
-      title: service.title,
-      topic: topicMap[service.category] || "Other",
-      phoneNumber: service.phone_number,
-      link: service.url || "N/A",
-    })) || [];
+  const socialServicesResourcesData: SocialServiceData[] = useMemo(
+    () =>
+      socialServicesData
+        ?.map((service) => ({
+          id: service.id,
+          title: service.title,
+          topic: topicMap[service.category] || "Other",
+          phoneNumber: service.phone_number,
+          link: service.url || "N/A",
+        }))
+        .sort((a, b) => a.title.localeCompare(b.title)) || [],
+    [socialServicesData],
+  );
+
+  const filteredVideoData = useMemo(
+    () =>
+      videoResourcesData
+        .filter(
+          (item) =>
+            selectedFilters.length === 0 ||
+            selectedFilters.includes(item.topic),
+        )
+        .filter((item) =>
+          item.title.toLowerCase().includes(searchQuery.toLowerCase()),
+        ),
+    [videoResourcesData, selectedFilters, searchQuery],
+  );
+
+  const filteredSocialServicesData = useMemo(
+    () =>
+      socialServicesResourcesData
+        .filter(
+          (item) =>
+            selectedFilters.length === 0 ||
+            selectedFilters.includes(item.topic),
+        )
+        .filter((item) =>
+          item.title.toLowerCase().includes(searchQuery.toLowerCase()),
+        ),
+    [socialServicesResourcesData, selectedFilters, searchQuery],
+  );
 
   const videoColumns: ColumnDefinition<VideoResourceData>[] = [
     { header: "Title", accessorKey: "title" },
@@ -135,7 +176,12 @@ export default function DashboardDev() {
   const handleVideoRowClick = (id: number | string) => {
     const video = videosData?.find((v) => v.id === id);
     if (video) {
-      setSelectedVideo(video);
+      // CONSOLE LOG ADDED HERE
+      console.log(
+        "Dashboard: Setting video data for modal (View Mode):",
+        video,
+      );
+      setSelectedVideo(video as FullVideoType);
       setIsEditingMode(false);
       setIsModalOpen(true);
     }
@@ -144,7 +190,12 @@ export default function DashboardDev() {
   const handleVideoEdit = (id: number | string) => {
     const video = videosData?.find((v) => v.id === id);
     if (video) {
-      setSelectedVideo(video);
+      // CONSOLE LOG ADDED HERE
+      console.log(
+        "Dashboard: Setting video data for modal (Edit Mode):",
+        video,
+      );
+      setSelectedVideo(video as FullVideoType);
       setIsEditingMode(true);
       setIsModalOpen(true);
     }
@@ -200,7 +251,7 @@ export default function DashboardDev() {
         </div>
       ) : (
         <Table
-          data={videoResourcesData}
+          data={filteredVideoData}
           columns={videoColumns}
           handleEdit={handleVideoEdit}
           handleDelete={handleVideoDelete}
@@ -216,7 +267,7 @@ export default function DashboardDev() {
         </div>
       ) : (
         <Table
-          data={socialServicesResourcesData}
+          data={filteredSocialServicesData}
           columns={socialColumns}
           handleEdit={handleSocialEdit}
           handleDelete={handleSocialDelete}

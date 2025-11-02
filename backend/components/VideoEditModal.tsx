@@ -22,6 +22,7 @@ interface VideoData {
   url: string;
   descriptionEnglish: string | null;
   descriptionQanjobal: string | null;
+  audioFilename: string | null;
 }
 
 interface VideoEditModalProps {
@@ -52,12 +53,18 @@ export default function VideoEditModal({
   const [videoLinkError, setVideoLinkError] = useState("");
   const [dropdownError, setDropdownError] = useState("");
 
-  const [uploadState, setUploadState] = useState("complete");
-  const uploadedFile = { fileName: "sixty-seven.zip", fileSizeMB: 67 };
+  const [selectedFile, setSelectedFile] = useState<File | undefined>();
+  const [displayedFile, setDisplayedFile] = useState<
+    { fileName: string; fileSizeMB: number } | undefined
+  >();
+  const [clearExistingFile, setClearExistingFile] = useState(false);
 
   const updateVideoMutation = trpc.videos.updateVideo.useMutation();
 
   useEffect(() => {
+    // CONSOLE LOG ADDED HERE
+    console.log("VideoEditModal: Received videoData prop:", videoData);
+
     if (isOpen && videoData) {
       setEnglishTitle(videoData.titleEnglish || "");
       setQanjobalTitle(videoData.titleQanjobal || "");
@@ -70,6 +77,18 @@ export default function VideoEditModal({
       );
       setDropdownIndex(topicIndex !== -1 ? topicIndex : undefined);
       setSaveStatus("idle");
+
+      setSelectedFile(undefined);
+      setClearExistingFile(false);
+
+      if (videoData.audioFilename) {
+        setDisplayedFile({
+          fileName: videoData.audioFilename,
+          fileSizeMB: 0,
+        });
+      } else {
+        setDisplayedFile(undefined);
+      }
     }
   }, [isOpen, videoData]);
 
@@ -77,33 +96,74 @@ export default function VideoEditModal({
     document.body.style.overflow = isOpen ? "hidden" : "auto";
   }, [isOpen]);
 
+  const handleFileSelect = (file: File) => {
+    setSelectedFile(file);
+    setDisplayedFile({
+      fileName: file.name,
+      fileSizeMB: Math.round((file.size / 1_000_000) * 100) / 100,
+    });
+    setClearExistingFile(false);
+  };
+
+  const handleDeleteFile = () => {
+    setSelectedFile(undefined);
+    setDisplayedFile(undefined);
+    setClearExistingFile(true);
+  };
+
   const handleSave = async () => {
     if (!videoData) return;
     setSaveStatus("saving");
 
-    try {
-      await updateVideoMutation.mutateAsync({
-        id: videoData.id as number,
-        titleEnglish: englishTitle,
-        titleQanjobal: qanjobalTitle,
-        url: videoLink,
-        descriptionEnglish: englishDescription,
-        descriptionQanjobal: qanjobalDescription,
-        topic:
-          dropdownIndex !== undefined
-            ? (TOPIC_OPTIONS[dropdownIndex] as VideoTopic)
-            : undefined,
-      });
+    const mutationPayload: Parameters<
+      typeof updateVideoMutation.mutateAsync
+    >[0] = {
+      id: videoData.id as number,
+      titleEnglish: englishTitle,
+      titleQanjobal: qanjobalTitle,
+      url: videoLink,
+      descriptionEnglish: englishDescription,
+      descriptionQanjobal: qanjobalDescription,
+      topic:
+        dropdownIndex !== undefined
+          ? (TOPIC_OPTIONS[dropdownIndex] as VideoTopic)
+          : undefined,
+    };
 
-      setSaveStatus("success");
-      onUpdateComplete();
-      onClose();
-    } catch (error) {
-      console.error("Failed to update video:", error);
-      setSaveStatus("error");
-      setTimeout(() => {
-        setSaveStatus("idle");
-      }, 2000);
+    const executeMutation = async (
+      payload: typeof mutationPayload,
+    ): Promise<void> => {
+      try {
+        await updateVideoMutation.mutateAsync(payload);
+        setSaveStatus("success");
+        onUpdateComplete();
+        onClose();
+      } catch (error) {
+        console.error("Failed to update video:", error);
+        setSaveStatus("error");
+        setTimeout(() => {
+          setSaveStatus("idle");
+        }, 2000);
+      }
+    };
+
+    if (selectedFile) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        mutationPayload.audioFile = reader.result?.toString().split(",")[1];
+        mutationPayload.audioFilename = selectedFile.name;
+        executeMutation(mutationPayload);
+      };
+      reader.onerror = (error) => {
+        console.error("FileReader error:", error);
+        setSaveStatus("error");
+      };
+      reader.readAsDataURL(selectedFile);
+    } else if (clearExistingFile) {
+      mutationPayload.audioFile = "";
+      executeMutation(mutationPayload);
+    } else {
+      executeMutation(mutationPayload);
     }
   };
 
@@ -127,6 +187,7 @@ export default function VideoEditModal({
   if (!isOpen) return null;
 
   const saveButtonUI = getSaveButtonUI();
+  const uploadState = displayedFile ? "complete" : "default";
 
   return (
     <div className="fixed y-40 inset-0 z-50 flex items-center justify-center bg-[rgb(83,83,83,0.19)]">
@@ -185,13 +246,12 @@ export default function VideoEditModal({
             <FormInputWrapper
               title="Upload file"
               titleClassName="body1-desktop-text text-[15px]"
-              state={uploadState}
             >
               <FileUpload
-                extendedTextClassName="body1-desktop-text text-[15px]"
-                uploadedFile={uploadedFile}
-                onDelete={() => setUploadState("default")}
-                onFileSelect={() => {}}
+                state={uploadState}
+                uploadedFile={displayedFile}
+                onFileSelect={handleFileSelect}
+                onDelete={handleDeleteFile}
                 editable={isEditing}
               />
             </FormInputWrapper>
