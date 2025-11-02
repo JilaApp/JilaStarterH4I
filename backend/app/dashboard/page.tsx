@@ -16,6 +16,7 @@ import SocialServiceForm from "@/components/SocialServiceForm";
 import AuthWrapper from "../AuthWrapper";
 import { trpc } from "@/lib/trpc";
 import VideoEditModal from "@/components/VideoEditModal";
+import DeleteModal from "@/components/DeleteModal";
 import { Videos } from "@prisma/client";
 
 type FullVideoType = Videos;
@@ -64,6 +65,11 @@ export default function DashboardDev() {
     null,
   );
 
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [videoToDeleteId, setVideoToDeleteId] = useState<
+    string | number | null
+  >(null);
+
   const {
     data: videosData,
     isLoading: videosLoading,
@@ -79,6 +85,16 @@ export default function DashboardDev() {
   } = trpc.socialServices.getAllSocialServices.useQuery(undefined, {
     refetchOnMount: "always",
     refetchOnWindowFocus: false,
+  });
+
+  const deleteVideoMutation = trpc.videos.removeVideo.useMutation({
+    onSuccess: () => {
+      refetchVideos();
+    },
+    onError: (error) => {
+      console.error("Failed to delete video:", error);
+      alert(`Error: ${error.message}`);
+    },
   });
 
   useEffect(() => {
@@ -188,7 +204,21 @@ export default function DashboardDev() {
   };
 
   const handleVideoDelete = (id: number | string) => {
-    console.log("Deleting Video:", id);
+    setVideoToDeleteId(id);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (videoToDeleteId !== null) {
+      deleteVideoMutation.mutate({ id: videoToDeleteId });
+    }
+    setIsDeleteModalOpen(false);
+    setVideoToDeleteId(null);
+  };
+
+  const handleCloseDeleteModal = () => {
+    setIsDeleteModalOpen(false);
+    setVideoToDeleteId(null);
   };
 
   const socialColumns: ColumnDefinition<SocialServiceData>[] = [
@@ -367,6 +397,11 @@ export default function DashboardDev() {
         onUpdateComplete={refetchVideos}
         isEditing={isEditingMode}
         videoData={selectedVideo}
+      />
+      <DeleteModal
+        isOpen={isDeleteModalOpen}
+        onClose={handleCloseDeleteModal}
+        onConfirm={handleConfirmDelete}
       />
     </AuthWrapper>
   );
