@@ -87,7 +87,7 @@ export default function DashboardDev() {
       link: video.url,
     })) || [];
 
-  const socialServicesData: SocialServiceData[] =
+  const socialServicesResourcesData: SocialServiceData[] =
     socialServicesData?.map((service) => ({
       id: service.id,
       title: service.title,
@@ -213,7 +213,7 @@ export default function DashboardDev() {
         </div>
       ) : (
         <Table
-          data={socialServicesData}
+          data={socialServicesResourcesData}
           columns={socialColumns}
           handleEdit={handleSocialEdit}
           handleDelete={handleSocialDelete}
