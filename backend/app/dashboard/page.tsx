@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Video, MessageCircle } from "lucide-react";
 import { useUser, useClerk } from "@clerk/nextjs";
 
@@ -12,7 +12,9 @@ import FilterBar from "@/components/FilterBar";
 import SearchBar from "@/components/SearchBar";
 import Tabs from "@/components/Tabs";
 import VideoUploadForm from "@/components/VideoUploadForm";
+import SocialServiceForm from "@/components/SocialServiceForm";
 import AuthWrapper from "../AuthWrapper";
+import { trpc } from "@/lib/trpc";
 
 interface VideoResourceData extends DataRow {
   id: number | string;
@@ -30,6 +32,19 @@ interface SocialServiceData extends DataRow {
   link: string;
 }
 
+const topicMap: { [key: string]: TopicVariant } = {
+  TRANSPORT: "Transport",
+  TRANSPORTATION: "Transportation",
+  LEGAL: "Legal",
+  MEDICAL: "Medical",
+  CAREER: "Career",
+  EDUCATION: "Other",
+  OTHER: "Other",
+  EMERGENCIA: "Emergencia",
+  SHELTERS: "Shelters",
+  FOOD: "Food",
+};
+
 export default function DashboardDev() {
   const { user } = useUser();
   const { signOut } = useClerk();
@@ -39,95 +54,47 @@ export default function DashboardDev() {
   const [currentTabIndex, setCurrentTabIndex] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const videoResourcesData: VideoResourceData[] = [
-    {
-      id: "loans",
-      title: "How to Take Out a Loan",
-      topic: "Legal",
-      phoneNumber: "217-403-6150",
-      link: "https://www.google.com/",
-    },
-    {
-      id: "use-bus-system",
-      title: "How to Use the Bus System",
-      topic: "Transport",
-      phoneNumber: "217-403-6150",
-      link: "https://www.mtd.com/",
-    },
-    {
-      id: "driver-license",
-      title: "How to Get a Driver's License",
-      topic: "Transport",
-      phoneNumber: "217-403-6150",
-      link: "https://mckinley.illinois.edu/",
-    },
-    {
-      id: "health-insurance",
-      title: "How to Get Health Insurance",
-      topic: "Medical",
-      phoneNumber: "217-403-6150",
-      link: "https://www.safe.com/",
-    },
-  ];
+  const {
+    data: videosData,
+    isLoading: videosLoading,
+    refetch: refetchVideos,
+  } = trpc.videos.getAllVideos.useQuery(undefined, {
+    refetchOnMount: "always",
+    refetchOnWindowFocus: false,
+  });
+  const {
+    data: socialServicesData,
+    isLoading: socialServicesLoading,
+    refetch: refetchSocialServices,
+  } = trpc.socialServices.getAllSocialServices.useQuery(undefined, {
+    refetchOnMount: "always",
+    refetchOnWindowFocus: false,
+  });
 
-  const socialServicesData: SocialServiceData[] = [
-    {
-      id: "strides-shelter",
-      title: "Strides Low Barrier Shelter",
-      topic: "Food",
-      phoneNumber: "217-403-6150",
-      link: "https://www.google.com/",
-    },
-    {
-      id: "cu-at-home",
-      title: "C-U at Home",
-      topic: "Food",
-      phoneNumber: "217-819-4569",
-      link: "https://www.google.com/",
-    },
-    {
-      id: "emergency-shelter",
-      title: "Emergency Shelter for Families",
-      topic: "Transport",
-      phoneNumber: "217-328-3313",
-      link: "https://www.google.com/",
-    },
-    {
-      id: "daily-bread",
-      title: "Daily Bread Soup Kitchen",
-      topic: "Transport",
-      phoneNumber: "217-369-9344",
-      link: "https://www.google.com/",
-    },
-    {
-      id: "ride-bus-1",
-      title: "How to Ride the Bus",
-      topic: "Transport",
-      phoneNumber: "2:44",
-      link: "https://www.google.com/",
-    },
-    {
-      id: "ride-bus-2",
-      title: "How to Ride the Bus",
-      topic: "Transport",
-      phoneNumber: "2:44",
-      link: "https://www.google.com/",
-    },
-    {
-      id: "ride-bus-3",
-      title: "How to Ride the Bus",
-      topic: "Transport",
-      phoneNumber: "2:44",
-      link: "https://www.google.com/",
-    },
-    {
-      id: "ride-bus-4",
-      title: "How to Ride the Bus",
-      topic: "Transport",
-      phoneNumber: "2:44",
-      link: "https://www.google.com/",
-    },
-  ];
+  useEffect(() => {
+    if (activeView === "dashboard") {
+      refetchVideos();
+      refetchSocialServices();
+    }
+  }, [activeView]);
+
+  const videoResourcesData: VideoResourceData[] =
+    videosData?.map((video) => ({
+      id: video.id,
+      title: video.titleEnglish,
+      topic: topicMap[video.topic] || "Other",
+      phoneNumber: "N/A",
+      link: video.url,
+    })) || [];
+
+  const socialServicesResourcesData: SocialServiceData[] =
+    socialServicesData?.map((service) => ({
+      id: service.id,
+      title: service.title,
+      topic: topicMap[service.category] || "Other",
+      phoneNumber: service.phone_number,
+      link: service.url || "N/A",
+    })) || [];
 
   const videoColumns: ColumnDefinition<VideoResourceData>[] = [
     {
@@ -154,7 +121,7 @@ export default function DashboardDev() {
           rel="noopener noreferrer"
           onClick={(e) => e.stopPropagation()}
         >
-          {new URL(String(value)).hostname}
+          {String(value)}
         </a>
       ),
     },
@@ -197,7 +164,7 @@ export default function DashboardDev() {
           rel="noopener noreferrer"
           onClick={(e) => e.stopPropagation()}
         >
-          {new URL(String(value)).hostname}
+          {String(value)}
         </a>
       ),
     },
@@ -221,7 +188,11 @@ export default function DashboardDev() {
         logo: <Video size={20} />,
         text: "Video resources",
       },
-      content: (
+      content: videosLoading ? (
+        <div className="flex items-center justify-center h-full">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-jila-400"></div>
+        </div>
+      ) : (
         <Table
           data={videoResourcesData}
           columns={videoColumns}
@@ -236,9 +207,13 @@ export default function DashboardDev() {
         logo: <MessageCircle size={20} />,
         text: "Social services",
       },
-      content: (
+      content: socialServicesLoading ? (
+        <div className="flex items-center justify-center h-full">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-jila-400"></div>
+        </div>
+      ) : (
         <Table
-          data={socialServicesData}
+          data={socialServicesResourcesData}
           columns={socialColumns}
           handleEdit={handleSocialEdit}
           handleDelete={handleSocialDelete}
@@ -261,12 +236,7 @@ export default function DashboardDev() {
         logo: <MessageCircle size={20} />,
         text: "Social services upload",
       },
-      content: (
-        <div>
-          <span>Eepy</span>
-          <VideoUploadForm />
-        </div>
-      ),
+      content: <SocialServiceForm />,
     },
   ];
 

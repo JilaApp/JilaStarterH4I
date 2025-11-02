@@ -1,4 +1,4 @@
-import { TextInput, EmailInput, PasswordInput } from "@/components/Input";
+import { TextInput } from "@/components/Input";
 import FileUploadWrapper from "@/components/FileUploadWrapper";
 import ParagraphInput from "@/components/ParagraphInput";
 import FormInputWrapper from "@/components/FormInputWrapper";
@@ -7,6 +7,8 @@ import { FormInputState } from "@/components/FormInputWrapper";
 import Dropdown from "@/components/Dropdown";
 import Button from "@/components/Button";
 import Notification from "@/components/Notification";
+import { trpc } from "@/lib/trpc";
+import { VideoTopic } from "@prisma/client";
 
 export default function VideoUploadForm() {
   const [resourceTitleEnglish, setResourceTitleEnglish] = useState<string>("");
@@ -17,7 +19,6 @@ export default function VideoUploadForm() {
     useState<string>("");
   const [resourceTitleQanjobalState, setResourceTitleQanjobalState] =
     useState<FormInputState>("default");
-  const [resourceTitleError, setResourceTitleError] = useState<string>("");
 
   const [audioFile, setAudioFile] = useState<File>();
   const [audioFileState, setAudioFileState] =
@@ -44,65 +45,73 @@ export default function VideoUploadForm() {
 
   const [notification, setNotification] = useState<string | null>(null);
 
+  const addVideoMutation = trpc.videos.addVideo.useMutation();
+
   const submitForm = async () => {
+    let hasError = false;
+
     if (!resourceTitleEnglish) {
       setResourceTitleEnglishState("error");
+      hasError = true;
     }
     if (!resourceTitleQanjobal) {
       setResourceTitleQanjobalState("error");
+      hasError = true;
     }
     if (!audioFile) {
       setAudioFileState("error");
+      hasError = true;
+    }
+    if (topicDropdownIndex === undefined) {
+      setTopicDropdownState("error");
+      hasError = true;
     }
     if (!videoLink) {
       setVideoLinkState("error");
+      hasError = true;
     }
-    if (
-      !resourceTitleEnglish ||
-      !resourceTitleQanjobal ||
-      !audioFile ||
-      !videoLink
-    ) {
+    if (hasError) {
       return;
     }
 
     const reader = new FileReader();
     reader.onload = async () => {
-      console.log("asdfasdf");
-      const base64Audio = reader.result?.toString().split(",")[1]; // remove `data:audio/...;base64,` prefix
-
-      const body = JSON.stringify({
-        titleEnglish: resourceTitleEnglish,
-        titleQanjobal: resourceTitleQanjobal,
-        audioFile: base64Audio, // 👈 encoded string
-        topic: topicDropdownOptions[topicDropdownIndex ?? 0].toUpperCase(),
-        url: videoLink,
-        descriptionEnglish,
-        descriptionQanjobal: descriptionQanjobl,
-      });
-
-      console.log("submitting", body);
+      const base64Audio = reader.result?.toString().split(",")[1];
 
       try {
-        const response = await fetch(
-          "http://localhost:3000/api/trpc/videos.addVideo",
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body,
-          },
-        );
-
-        if (!response.ok) throw new Error("Upload failed");
+        await addVideoMutation.mutateAsync({
+          titleEnglish: resourceTitleEnglish,
+          titleQanjobal: resourceTitleQanjobal,
+          audioFile: base64Audio!,
+          topic: topicDropdownOptions[
+            topicDropdownIndex!
+          ].toUpperCase() as VideoTopic,
+          url: videoLink,
+          descriptionEnglish,
+          descriptionQanjobal: descriptionQanjobl,
+        });
 
         setNotification("Video submitted successfully!");
+
+        setResourceTitleEnglish("");
+        setResourceTitleQanjobal("");
+        setAudioFile(undefined);
+        setTopicDropdownIndex(undefined);
+        setVideoLink("");
+        setDescriptionEnglish("");
+        setDescriptionQanjobl("");
       } catch (err) {
         console.error(err);
         setNotification("Error submitting video.");
       }
     };
 
-    reader.readAsDataURL(audioFile);
+    reader.readAsDataURL(audioFile!);
+  };
+
+  const getButtonText = () => {
+    if (addVideoMutation.isPending) return "Submitting...";
+    return "Submit video";
   };
 
   return (
@@ -122,7 +131,7 @@ export default function VideoUploadForm() {
         </FormInputWrapper>
 
         <FormInputWrapper
-          title="Resource title (Q’anjob’al)"
+          title="Resource title (Q'anjob'al)"
           state={resourceTitleQanjobalState}
           setState={setResourceTitleQanjobalState}
           value={resourceTitleQanjobal}
@@ -134,7 +143,7 @@ export default function VideoUploadForm() {
         </FormInputWrapper>
       </div>
       <FormInputWrapper
-        title="Title audio file (Q’anjob’al)"
+        title="Title audio file (Q'anjob'al)"
         description="Maximum size: 30MB"
         state={audioFileState}
         setState={setAudioFileState}
@@ -147,7 +156,7 @@ export default function VideoUploadForm() {
           onDelete={() => {
             setAudioFile(undefined);
           }}
-          extendedText="Upload an audio recording of the resource title in Q’anjob’al"
+          extendedText="Upload an audio recording of the resource title in Q'anjob'al"
         />
       </FormInputWrapper>
       <FormInputWrapper
@@ -156,6 +165,7 @@ export default function VideoUploadForm() {
         setState={setTopicDropdownState}
         value={topicDropdownIndex}
         onChange={setTopicDropdownIndex}
+        defaultClassName="max-w-[450px]"
         required
       >
         <Dropdown options={topicDropdownOptions} />
@@ -166,9 +176,10 @@ export default function VideoUploadForm() {
         setState={setVideoLinkState}
         value={videoLink}
         onChange={setVideoLink}
+        defaultClassName="max-w-[918px]"
         required
       >
-        <TextInput onChange={setVideoLink} value={videoLink} />
+        <TextInput />
       </FormInputWrapper>
       <FormInputWrapper
         title="Description (English)"
@@ -179,7 +190,7 @@ export default function VideoUploadForm() {
         <ParagraphInput />
       </FormInputWrapper>
       <FormInputWrapper
-        title="Description (Q’anjob’al)"
+        title="Description (Q'anjob'al)"
         defaultClassName="max-w-[918px]"
         value={descriptionQanjobl}
         onChange={setDescriptionQanjobl}
@@ -187,11 +198,17 @@ export default function VideoUploadForm() {
         <ParagraphInput />
       </FormInputWrapper>
       <div className="flex justify-end">
-        <Button text="Submit video" onClick={submitForm} />
+        <Button
+          text={getButtonText()}
+          onClick={submitForm}
+          disabled={addVideoMutation.isPending}
+          defaultClassName={
+            addVideoMutation.isPending ? "opacity-50 cursor-not-allowed" : ""
+          }
+        />
       </div>
       {notification && (
-        <div className="absolute top-10 left-1/2 transform -translate-x-1/2 z-50">
-          {/* TODO: add fade in/out animation */}
+        <div className="fixed top-10 left-1/2 transform -translate-x-1/2 z-[9999]">
           <Notification
             message={notification}
             onClose={() => setNotification(null)}

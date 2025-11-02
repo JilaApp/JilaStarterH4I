@@ -1,16 +1,14 @@
-import fs from "fs";
 import { router, publicProcedure } from "../trpc";
 import { z } from "zod";
 import { VideoTopic } from "@prisma/client";
 import prisma from "@/lib/prisma";
 import { TRPCError } from "@trpc/server";
-import path from "path";
 
 const addVideoInput = z.object({
   titleEnglish: z.string(),
   titleQanjobal: z.string(),
   audioFile: z.string(),
-  topic: z.enum(VideoTopic),
+  topic: z.nativeEnum(VideoTopic),
   url: z.string(),
   descriptionEnglish: z.string(),
   descriptionQanjobal: z.string(),
@@ -51,6 +49,7 @@ export async function addVideo(input: AddVideoInput) {
     throw err;
   }
 }
+
 const removeVideoInput = z.object({
   id: z.number().int(),
 });

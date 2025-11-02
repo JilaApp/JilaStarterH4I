@@ -33,9 +33,9 @@ export default function Tabs({
 
   return (
     <div
-      className={`relative bg-[#F5F5F5] rounded-[20px] shadow-lg flex flex-col flex-1 overflow-hidden min-h-0 ${containerClassName}`}
+      className={`relative bg-[#F5F5F5] rounded-[20px] shadow-lg flex flex-col h-full overflow-hidden ${containerClassName}`}
     >
-      <div className="flex flex-row items-center justify-between pr-4">
+      <div className="flex flex-row items-center justify-between pr-4 flex-shrink-0">
         <div className="relative z-0 flex-shrink-0 flex items-center justify-between px-6 pt-4">
           <div className="flex gap-8">
             {tabs.map((tab, index) => (
@@ -63,7 +63,7 @@ export default function Tabs({
         {rightElement && <div>{rightElement}</div>}
       </div>
 
-      <div className="relative z-10 flex-1 overflow-auto bg-[#F5F5F5] mt-[-5px]">
+      <div className="relative z-10 flex-1 overflow-auto bg-[#F5F5F5] mt-[-5px] flex flex-col">
         {activeTab.content}
       </div>
     </div>
