@@ -162,10 +162,7 @@ export default function SignUpScreen() {
                 Community Organization
               </Text>
               <View className="border border-gray-300 rounded-lg">
-                <Picker
-                  selectedValue={communityOrg}
-                  onChange={setCommunityOrg}
-                >
+                <Picker selectedValue={communityOrg} onChange={setCommunityOrg} >
                   {COMMUNITY_ORGS.map((org) => (
                     <Picker.Item key={org} label={org} value={org} />
                   ))}
