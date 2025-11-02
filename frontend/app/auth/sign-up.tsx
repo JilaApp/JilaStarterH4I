@@ -164,7 +164,7 @@ export default function SignUpScreen() {
               <View className="border border-gray-300 rounded-lg">
                 <Picker
                   selectedValue={communityOrg}
-                  onValueChange={setCommunityOrg}
+                  onChange={setCommunityOrg}
                 >
                   {COMMUNITY_ORGS.map((org) => (
                     <Picker.Item key={org} label={org} value={org} />
@@ -178,7 +178,7 @@ export default function SignUpScreen() {
                 Language
               </Text>
               <View className="border border-gray-300 rounded-lg">
-                <Picker selectedValue={language} onValueChange={setLanguage}>
+                <Picker selectedValue={language} onChange={setLanguage}>
                   {LANGUAGES.map((lang) => (
                     <Picker.Item key={lang} label={lang} value={lang} />
                   ))}

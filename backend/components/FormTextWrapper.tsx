@@ -28,7 +28,7 @@ interface FormTextWrapperProps {
   error?: string;
   initialValue?: string;
   children: ReactElement;
-  onValueChange?: (value: string) => void;
+  onChange?: (value: string) => void;
   onErrorChange?: (error: string) => void;
 }
 
@@ -39,7 +39,7 @@ export default function FormTextWrapper({
   error: controlledError,
   initialValue = "",
   children,
-  onValueChange,
+  onChange,
   onErrorChange,
 }: FormTextWrapperProps) {
   const [internalValue, setInternalValue] = useState(initialValue);
@@ -52,7 +52,7 @@ export default function FormTextWrapper({
     if (controlledValue === undefined) {
       setInternalValue(newValue);
     }
-    onValueChange?.(newValue);
+    onChange?.(newValue);
 
     if (error) {
       if (controlledError === undefined) {

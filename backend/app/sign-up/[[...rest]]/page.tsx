@@ -200,7 +200,7 @@ export default function InviteSignUpPage() {
                       onErrorChange={setPasswordError}
                       error={passwordError}
                       value={password}
-                      onValueChange={setPassword}
+                      onChange={setPassword}
                     >
                       <PasswordInput
                         id="password-input"
@@ -223,7 +223,7 @@ export default function InviteSignUpPage() {
                       value={confirmPassword}
                       error={confirmPasswordError}
                       onErrorChange={setConfirmPasswordError}
-                      onValueChange={setConfirmPassword}
+                      onChange={setConfirmPassword}
                     >
                       <PasswordInput
                         id="confirm-password-input"

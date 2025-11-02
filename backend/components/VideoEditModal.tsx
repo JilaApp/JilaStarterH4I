@@ -96,10 +96,8 @@ export default function VideoEditModal({
       });
 
       setSaveStatus("success");
-      setTimeout(() => {
-        onUpdateComplete();
-        onClose();
-      }, 1500);
+      onUpdateComplete();
+      onClose();
     } catch (error) {
       console.error("Failed to update video:", error);
       setSaveStatus("error");

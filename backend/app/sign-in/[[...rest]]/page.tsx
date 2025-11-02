@@ -140,7 +140,7 @@ export default function SignInPage() {
                     error={emailError}
                     onErrorChange={setEmailError}
                     value={email}
-                    onValueChange={setEmail}
+                    onChange={setEmail}
                   >
                     <EmailInput id="email-input" />
                   </FormText>
@@ -158,7 +158,7 @@ export default function SignInPage() {
                     onErrorChange={setPasswordError}
                     error={passwordError}
                     value={password}
-                    onValueChange={setPassword}
+                    onChange={setPassword}
                   >
                     <PasswordInput id="password-input" />
                   </FormText>
