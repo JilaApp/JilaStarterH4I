@@ -101,7 +101,6 @@ export default function VideoEditModal({
             <FormInputWrapper
               title="Upload file"
               titleClassName="body1-desktop-text text-[15px]"
-              // state="complete"
               state={uploadState}
             >
               <FileUpload

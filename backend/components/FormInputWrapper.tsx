@@ -12,12 +12,9 @@ interface FormInputWrapperProps<T> {
   defaultClassName?: string;
   errorString?: string;
   description?: string;
-<<<<<<< HEAD
   titleClassName?: string;
-=======
   value?: T;
   onChange?: (val: T) => void;
->>>>>>> f5d7264d4fc4a51203fca215aac597d7979d1be2
 }
 
 export default function FormInputWrapper<T>({
@@ -29,15 +26,9 @@ export default function FormInputWrapper<T>({
   errorString = "This field is required",
   defaultClassName = "",
   description,
-<<<<<<< HEAD
   titleClassName = "",
-}: FormInputWrapperProps) {
-  const childWithState = React.isValidElement(children)
-    ? React.cloneElement(children, { state })
-    : children;
-=======
   value,
-  onChange = (val: T) => {},
+  onChange = () => {},
 }: FormInputWrapperProps<T>) {
   const handleChange = (val: T) => {
     onChange(val);
@@ -52,12 +43,11 @@ export default function FormInputWrapper<T>({
     childWithState = React.cloneElement(children, {
       value,
       onChange: handleChange,
-      state: state,
+      state,
     });
   } else {
     childWithState = children;
   }
->>>>>>> f5d7264d4fc4a51203fca215aac597d7979d1be2
 
   return (
     <div
@@ -67,7 +57,9 @@ export default function FormInputWrapper<T>({
         <span className={titleClassName}>{title}</span>
         {required && <span className="text-[var(--color-error-400)]">*</span>}
       </div>
+
       {childWithState}
+
       {state === "error" && (
         <div className="flex items-center gap-[3px] pt-[8px] text-[var(--color-error-400)] text-[18px]">
           <div className="flex items-center justify-center ">
@@ -76,6 +68,7 @@ export default function FormInputWrapper<T>({
           <span className="font-[500]">{errorString}</span>
         </div>
       )}
+
       {description && (
         <div className="flex items-center text-[18px] text-[var(--color-gray-400)] font-[300] pt-[8px]">
           {description}

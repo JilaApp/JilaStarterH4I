@@ -113,23 +113,27 @@ export default function FileUpload({
         <div
           onClick={state === "default" ? handleClickUpload : undefined}
           className={`
-    flex justify-center items-center w-full h-[122px] 
+    flex justify-center items-center w-full h-[122px]
     rounded-[10px]
-    ${state === "default" ? "cursor-pointer hover:bg-[var(--color-cream-300)]" : ""}
+    ${
+      state === "default"
+        ? "cursor-pointer hover:bg-[var(--color-cream-300)]"
+        : ""
+    }
     ${state === "error" ? "bg-[#FFF3F3]" : "bg-white"}
   `}
           style={{
             backgroundImage: `url("data:image/svg+xml,${encodeURIComponent(
               `<svg width='100%' height='100%' xmlns='http://www.w3.org/2000/svg'>
-        <rect 
-          width='100%' 
-          height='100%' 
-          fill='none' 
-          rx='10' ry='10' 
-          stroke='${state === "error" ? "#E31F1F" : "#CDCDCD"}' 
-          stroke-width='3' 
-          stroke-dasharray='6,14' 
-          stroke-dashoffset='0' 
+        <rect
+          width='100%'
+          height='100%'
+          fill='none'
+          rx='10' ry='10'
+          stroke='${state === "error" ? "#E31F1F" : "#CDCDCD"}'
+          stroke-width='3'
+          stroke-dasharray='6,14'
+          stroke-dashoffset='0'
           stroke-linecap='square'
         />
       </svg>`,
@@ -151,16 +155,18 @@ export default function FileUpload({
                 {uploadedFile && uploadedFile.fileSizeMB} MB
               </span>
             </div>
-            <X
-              className="flex ml-auto cursor-pointer"
-              onClick={() => {
-                console.log("??");
-                if (fileInputRef.current) {
-                  fileInputRef.current.value = "";
-                }
-                onDelete();
-              }}
-            />
+            {editable && (
+              <X
+                className="flex ml-auto cursor-pointer"
+                onClick={() => {
+                  console.log("??");
+                  if (fileInputRef.current) {
+                    fileInputRef.current.value = "";
+                  }
+                  onDelete();
+                }}
+              />
+            )}
           </div>
         </div>
       )}
