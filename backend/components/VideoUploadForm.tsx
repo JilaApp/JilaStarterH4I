@@ -83,6 +83,7 @@ export default function VideoUploadForm() {
           titleEnglish: resourceTitleEnglish,
           titleQanjobal: resourceTitleQanjobal,
           audioFile: base64Audio!,
+          audioFilename: audioFile!.name, // Add this line
           topic: topicDropdownOptions[
             topicDropdownIndex!
           ].toUpperCase() as VideoTopic,

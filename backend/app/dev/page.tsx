@@ -21,6 +21,7 @@ import FileUpload from "@/components/FileUpload";
 import FileUploadWrapper from "@/components/FileUploadWrapper";
 import DeleteModal from "@/components/DeleteModal";
 import Table, { ColumnDefinition, DataRow } from "@/components/Table";
+import VideoEditModal from "@/components/VideoEditModal";
 import VideoUploadForm from "@/components/VideoUploadForm";
 import SocialServiceForm from "@/components/SocialServiceForm";
 
@@ -157,23 +158,37 @@ export default function DevPage() {
     setErrorDropdownIndex(index);
   };
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
 
   const [idToDelete, setIdToDelete] = useState<number | null>(null);
 
   const handleDeleteClick = (id: number) => {
     setIdToDelete(id);
-    setIsModalOpen(true);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleEditClick = (id: number) => {
+    setIsEditModalOpen(true);
+  };
+
+  const handleViewClick = (id: number) => {
+    setIsViewModalOpen(true);
+  };
+
+  const handleSaveClick = (id: number) => {
+    setIsEditModalOpen(false);
   };
 
   const handleConfirmDelete = () => {
-    setIsModalOpen(false);
+    setIsDeleteModalOpen(false);
     console.log("Delete confirmed for", idToDelete);
     setIdToDelete(null);
   };
 
   const handleDeleteModalClose = () => {
-    setIsModalOpen(false);
+    setIsDeleteModalOpen(false);
     setIdToDelete(null);
   };
 
@@ -194,17 +209,35 @@ export default function DevPage() {
         />
       </div>
 
-      <Button
-        text="Delete"
-        // Instead of 67 this would pull from the row id
-        onClick={() => handleDeleteClick(67)}
-      />
+      <div className="flex gap-[10px]">
+        <Button
+          text="Delete"
+          // Instead of 67 this would pull from the row id
+          onClick={() => handleDeleteClick(67)}
+        />
 
-      <DeleteModal
-        isOpen={isModalOpen}
-        onClose={handleDeleteModalClose}
-        onConfirm={handleConfirmDelete}
-      />
+        <DeleteModal
+          isOpen={isDeleteModalOpen}
+          onClose={handleDeleteModalClose}
+          onConfirm={handleConfirmDelete}
+        />
+
+        <Button text="Edit Video" onClick={() => handleEditClick(68)}></Button>
+
+        <VideoEditModal
+          isOpen={isEditModalOpen}
+          onClose={() => setIsEditModalOpen(false)}
+          videoData={null}
+        />
+
+        <Button text="View Video" onClick={() => handleViewClick(69)}></Button>
+
+        <VideoEditModal
+          isOpen={isViewModalOpen}
+          onClose={() => setIsViewModalOpen(false)}
+          isEditing={false}
+        />
+      </div>
 
       <RadioButtonGroup
         options={myOptions}

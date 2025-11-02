@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Video, MessageCircle } from "lucide-react";
 import { useUser, useClerk } from "@clerk/nextjs";
 
@@ -15,6 +15,10 @@ import VideoUploadForm from "@/components/VideoUploadForm";
 import SocialServiceForm from "@/components/SocialServiceForm";
 import AuthWrapper from "../AuthWrapper";
 import { trpc } from "@/lib/trpc";
+import VideoEditModal from "@/components/VideoEditModal";
+import { Videos } from "@prisma/client";
+
+type FullVideoType = Videos;
 
 interface VideoResourceData extends DataRow {
   id: number | string;
@@ -54,6 +58,12 @@ export default function DashboardDev() {
   const [currentTabIndex, setCurrentTabIndex] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditingMode, setIsEditingMode] = useState(false);
+  const [selectedVideo, setSelectedVideo] = useState<FullVideoType | null>(
+    null,
+  );
+
   const {
     data: videosData,
     isLoading: videosLoading,
@@ -76,40 +86,72 @@ export default function DashboardDev() {
       refetchVideos();
       refetchSocialServices();
     }
-  }, [activeView]);
+  }, [activeView, refetchVideos, refetchSocialServices]);
 
-  const videoResourcesData: VideoResourceData[] =
-    videosData?.map((video) => ({
-      id: video.id,
-      title: video.titleEnglish,
-      topic: topicMap[video.topic] || "Other",
-      phoneNumber: "N/A",
-      link: video.url,
-    })) || [];
+  const videoResourcesData: VideoResourceData[] = useMemo(
+    () =>
+      videosData
+        ?.map((video) => ({
+          id: video.id,
+          title: video.titleEnglish,
+          topic: topicMap[video.topic] || "Other",
+          phoneNumber: "N/A",
+          link: video.url,
+        }))
+        .sort((a, b) => a.title.localeCompare(b.title)) || [],
+    [videosData],
+  );
 
-  const socialServicesResourcesData: SocialServiceData[] =
-    socialServicesData?.map((service) => ({
-      id: service.id,
-      title: service.title,
-      topic: topicMap[service.category] || "Other",
-      phoneNumber: service.phone_number,
-      link: service.url || "N/A",
-    })) || [];
+  const socialServicesResourcesData: SocialServiceData[] = useMemo(
+    () =>
+      socialServicesData
+        ?.map((service) => ({
+          id: service.id,
+          title: service.title,
+          topic: topicMap[service.category] || "Other",
+          phoneNumber: service.phone_number,
+          link: service.url || "N/A",
+        }))
+        .sort((a, b) => a.title.localeCompare(b.title)) || [],
+    [socialServicesData],
+  );
+
+  const filteredVideoData = useMemo(
+    () =>
+      videoResourcesData
+        .filter(
+          (item) =>
+            selectedFilters.length === 0 ||
+            selectedFilters.includes(item.topic),
+        )
+        .filter((item) =>
+          item.title.toLowerCase().includes(searchQuery.toLowerCase()),
+        ),
+    [videoResourcesData, selectedFilters, searchQuery],
+  );
+
+  const filteredSocialServicesData = useMemo(
+    () =>
+      socialServicesResourcesData
+        .filter(
+          (item) =>
+            selectedFilters.length === 0 ||
+            selectedFilters.includes(item.topic),
+        )
+        .filter((item) =>
+          item.title.toLowerCase().includes(searchQuery.toLowerCase()),
+        ),
+    [socialServicesResourcesData, selectedFilters, searchQuery],
+  );
 
   const videoColumns: ColumnDefinition<VideoResourceData>[] = [
-    {
-      header: "Title",
-      accessorKey: "title",
-    },
+    { header: "Title", accessorKey: "title" },
     {
       header: "Topic",
       accessorKey: "topic",
       cell: (value) => <TopicTag variant={value as TopicVariant} />,
     },
-    {
-      header: "Phone number",
-      accessorKey: "phoneNumber",
-    },
+    { header: "Phone number", accessorKey: "phoneNumber" },
     {
       header: "Link",
       accessorKey: "link",
@@ -128,11 +170,21 @@ export default function DashboardDev() {
   ];
 
   const handleVideoRowClick = (id: number | string) => {
-    console.log("Video Row Clicked:", id);
+    const video = videosData?.find((v) => v.id === id);
+    if (video) {
+      setSelectedVideo(video as FullVideoType);
+      setIsEditingMode(false);
+      setIsModalOpen(true);
+    }
   };
 
   const handleVideoEdit = (id: number | string) => {
-    console.log("Editing Video:", id);
+    const video = videosData?.find((v) => v.id === id);
+    if (video) {
+      setSelectedVideo(video as FullVideoType);
+      setIsEditingMode(true);
+      setIsModalOpen(true);
+    }
   };
 
   const handleVideoDelete = (id: number | string) => {
@@ -140,19 +192,13 @@ export default function DashboardDev() {
   };
 
   const socialColumns: ColumnDefinition<SocialServiceData>[] = [
-    {
-      header: "Title",
-      accessorKey: "title",
-    },
+    { header: "Title", accessorKey: "title" },
     {
       header: "Topic",
       accessorKey: "topic",
       cell: (value) => <TopicTag variant={value as TopicVariant} />,
     },
-    {
-      header: "Phone number",
-      accessorKey: "phoneNumber",
-    },
+    { header: "Phone number", accessorKey: "phoneNumber" },
     {
       header: "Link",
       accessorKey: "link",
@@ -184,17 +230,14 @@ export default function DashboardDev() {
 
   const dashboardTabs = [
     {
-      header: {
-        logo: <Video size={20} />,
-        text: "Video resources",
-      },
+      header: { logo: <Video size={20} />, text: "Video resources" },
       content: videosLoading ? (
         <div className="flex items-center justify-center h-full">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-jila-400"></div>
         </div>
       ) : (
         <Table
-          data={videoResourcesData}
+          data={filteredVideoData}
           columns={videoColumns}
           handleEdit={handleVideoEdit}
           handleDelete={handleVideoDelete}
@@ -203,17 +246,14 @@ export default function DashboardDev() {
       ),
     },
     {
-      header: {
-        logo: <MessageCircle size={20} />,
-        text: "Social services",
-      },
+      header: { logo: <MessageCircle size={20} />, text: "Social services" },
       content: socialServicesLoading ? (
         <div className="flex items-center justify-center h-full">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-jila-400"></div>
         </div>
       ) : (
         <Table
-          data={socialServicesResourcesData}
+          data={filteredSocialServicesData}
           columns={socialColumns}
           handleEdit={handleSocialEdit}
           handleDelete={handleSocialDelete}
@@ -225,10 +265,7 @@ export default function DashboardDev() {
 
   const uploadTabs = [
     {
-      header: {
-        logo: <Video size={20} />,
-        text: "Video upload",
-      },
+      header: { logo: <Video size={20} />, text: "Video upload" },
       content: <VideoUploadForm />,
     },
     {
@@ -267,7 +304,6 @@ export default function DashboardDev() {
                 setSelectedOptions={setSelectedFilters}
               />
             </div>
-
             <div className="flex-1 px-10 py-6 overflow-hidden flex flex-col min-h-0 mb-7">
               <Tabs
                 tabs={dashboardTabs}
@@ -313,7 +349,6 @@ export default function DashboardDev() {
         <div className="fixed left-0 top-0 h-screen z-50">
           <Sidebar activeButton={activeView} setActiveButton={setActiveView} />
         </div>
-
         <div className="flex-1 ml-[196px] flex flex-col bg-cream-300 rounded-tl-[60px] overflow-hidden">
           <div className="flex-shrink-0 px-10 mt-6">
             <Header
@@ -323,10 +358,16 @@ export default function DashboardDev() {
               onSignOut={() => signOut({ redirectUrl: "/sign-in" })}
             />
           </div>
-
           {renderContent()}
         </div>
       </div>
+      <VideoEditModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onUpdateComplete={refetchVideos}
+        isEditing={isEditingMode}
+        videoData={selectedVideo}
+      />
     </AuthWrapper>
   );
 }

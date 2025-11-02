@@ -11,17 +11,21 @@ interface FileUploadProps {
   onDelete: () => void;
   state?: "default" | "pending" | "complete" | "error";
   uploadedFile?: UploadedFile;
+  editable?: boolean;
   extendedText?: string;
   errorText?: string;
+  extendedTextClassName?: string;
 }
 
 export default function FileUpload({
   onFileSelect = (file: File) => {},
   onDelete,
   state = "default",
+  editable = true,
   uploadedFile,
   extendedText = "",
   errorText = "",
+  extendedTextClassName = "",
 }: FileUploadProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -94,7 +98,9 @@ export default function FileUpload({
 
   return (
     <div className="flex flex-col gap-[11px]">
-      <span className="flex text-[var(--color-gray-300)] font-[300] leading-none mt-[2px]">
+      <span
+        className={`flex text-[var(--color-gray-300)] font-[300] leading-none mt-[2px] ${extendedTextClassName}`}
+      >
         {extendedText}
       </span>
       <input
@@ -103,34 +109,40 @@ export default function FileUpload({
         className="hidden"
         onChange={handleFileChange}
       />
-      <div
-        onClick={state === "default" ? handleClickUpload : undefined}
-        className={`
-    flex justify-center items-center w-full h-[122px] 
+      {editable && (
+        <div
+          onClick={state === "default" ? handleClickUpload : undefined}
+          className={`
+    flex justify-center items-center w-full h-[122px]
     rounded-[10px]
-    ${state === "default" ? "cursor-pointer hover:bg-[var(--color-cream-300)]" : ""}
+    ${
+      state === "default"
+        ? "cursor-pointer hover:bg-[var(--color-cream-300)]"
+        : ""
+    }
     ${state === "error" ? "bg-[#FFF3F3]" : "bg-white"}
   `}
-        style={{
-          backgroundImage: `url("data:image/svg+xml,${encodeURIComponent(
-            `<svg width='100%' height='100%' xmlns='http://www.w3.org/2000/svg'>
-        <rect 
-          width='100%' 
-          height='100%' 
-          fill='none' 
-          rx='10' ry='10' 
-          stroke='${state === "error" ? "#E31F1F" : "#CDCDCD"}' 
-          stroke-width='3' 
-          stroke-dasharray='6,14' 
-          stroke-dashoffset='0' 
+          style={{
+            backgroundImage: `url("data:image/svg+xml,${encodeURIComponent(
+              `<svg width='100%' height='100%' xmlns='http://www.w3.org/2000/svg'>
+        <rect
+          width='100%'
+          height='100%'
+          fill='none'
+          rx='10' ry='10'
+          stroke='${state === "error" ? "#E31F1F" : "#CDCDCD"}'
+          stroke-width='3'
+          stroke-dasharray='6,14'
+          stroke-dashoffset='0'
           stroke-linecap='square'
         />
       </svg>`,
-          )}")`,
-        }}
-      >
-        {renderContent()}
-      </div>
+            )}")`,
+          }}
+        >
+          {renderContent()}
+        </div>
+      )}
       {state == "complete" && (
         <div className="flex items-center rounded-[10px] px-[10px] py-[8px] bg-white">
           <div className="flex gap-[17px] items-center w-full">
@@ -143,15 +155,17 @@ export default function FileUpload({
                 {uploadedFile && uploadedFile.fileSizeMB} MB
               </span>
             </div>
-            <X
-              className="flex ml-auto cursor-pointer"
-              onClick={() => {
-                if (fileInputRef.current) {
-                  fileInputRef.current.value = "";
-                }
-                onDelete();
-              }}
-            />
+            {editable && (
+              <X
+                className="flex ml-auto cursor-pointer"
+                onClick={() => {
+                  if (fileInputRef.current) {
+                    fileInputRef.current.value = "";
+                  }
+                  onDelete();
+                }}
+              />
+            )}
           </div>
         </div>
       )}

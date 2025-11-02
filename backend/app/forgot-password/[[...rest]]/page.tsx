@@ -189,7 +189,7 @@ export default function ForgotPasswordPage() {
                     error={emailError}
                     onErrorChange={setEmailError}
                     value={email}
-                    onValueChange={setEmail}
+                    onChange={setEmail}
                   >
                     <EmailInput id="email-input" name="email" />
                   </FormText>
@@ -231,7 +231,7 @@ export default function ForgotPasswordPage() {
                       onErrorChange={setError}
                       error={error}
                       value={code}
-                      onValueChange={setCode}
+                      onChange={setCode}
                     >
                       <TextInput
                         id="code"
@@ -254,7 +254,7 @@ export default function ForgotPasswordPage() {
                     onErrorChange={setPasswordError}
                     error={passwordError}
                     value={password}
-                    onValueChange={setPassword}
+                    onChange={setPassword}
                   >
                     <PasswordInput
                       id="new-password"

@@ -27,6 +27,7 @@ export default function FormInputWrapper<T>({
   description,
   value,
   onChange = (val: T) => {},
+  ...rest
 }: FormInputWrapperProps<T>) {
   const handleChange = (val: T) => {
     onChange(val);
@@ -39,9 +40,11 @@ export default function FormInputWrapper<T>({
 
   if (React.isValidElement(children)) {
     childWithState = React.cloneElement(children, {
+      ...children.props,
       value,
       onChange: handleChange,
-      state: state,
+      state,
+      ...rest,
     });
   } else {
     childWithState = children;
