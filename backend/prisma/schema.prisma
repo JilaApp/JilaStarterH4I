@@ -31,42 +31,33 @@ model AppUser {
 }
 
 model Videos {
-  id          Int           @id @default(autoincrement())
-  title       String
-  category    VideoCategory
-  source      VideoSource
-  length      Int // Seconds
-  url         String        @unique
-  uploadDate  DateTime
-  description String
-  likes       Int
-  dislikes    Int
-  language    String
+  id                  Int        @id @default(autoincrement())
+  titleEnglish        String
+  titleQanjobal       String
+  audioFile           Bytes
+  topic               VideoTopic
+  url                 String     @unique
+  uploadDate          DateTime
+  descriptionEnglish  String
+  descriptionQanjobal String
 }
 
 model SocialServices {
-  id            Int            @id @default(autoincrement())
-  title         String
-  category      SocialServiceCategory
-  phone_number  String         @unique @db.VarChar(20)
-  address       String?
-  description   String?
-  url           String?        @unique
+  id           Int                   @id @default(autoincrement())
+  title        String
+  category     SocialServiceCategory
+  phone_number String                @unique @db.VarChar(20)
+  address      String?
+  description  String?
+  url          String?               @unique
 }
 
-
-enum VideoSource {
-  YOUTUBE
-  GOOGLE_DRIVE
-  INSTAGRAM
-  TIK_TOK
-}
-
-enum VideoCategory {
-  PROFESSIONAL_DEVELOPMENT
-  MEDICAL
-  TRANSPORTATION
+enum VideoTopic {
+  TRANSPORT
   LEGAL
+  MEDICAL
+  CAREER
+  EDUCATION
   OTHER
 }
 

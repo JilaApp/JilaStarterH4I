@@ -1,4 +1,5 @@
 import { ReactNode, FocusEvent, ChangeEvent } from "react";
+import { FormInputState } from "../FormInputWrapper";
 
 export interface CommonInputProps {
   disabled?: boolean;
@@ -7,8 +8,8 @@ export interface CommonInputProps {
   onBlur?: (event: FocusEvent<HTMLInputElement>) => void;
   placeholder?: string;
   id?: string;
+  state?: FormInputState;
   name?: string;
-  state?: "normal" | "error";
   value?: string;
   className?: string;
 }

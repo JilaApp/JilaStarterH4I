@@ -33,32 +33,37 @@ export default function Tabs({
 
   return (
     <div
-      className={`bg-[#F5F5F5] rounded-[20px] shadow-lg flex flex-col flex-1 overflow-hidden min-h-0 ${containerClassName}`}
+      className={`relative bg-[#F5F5F5] rounded-[20px] shadow-lg flex flex-col flex-1 overflow-hidden min-h-0 ${containerClassName}`}
     >
-      <div className="flex-shrink-0 flex items-center justify-between px-6 pt-4 pb-3">
-        <div className="flex gap-8">
-          {tabs.map((tab, index) => (
-            <button
-              key={index}
-              onClick={() => onTabChange(index)}
-              className={`flex items-center gap-2 pb-2 border-b-[3px] transition-colors ${
-                activeIndex === index
-                  ? "border-jila-400 text-type-400"
-                  : "border-transparent text-gray-400 hover:text-gray-500"
-              }`}
-            >
-              {tab.header.logo}
-              <span className="body2-desktop-text font-semibold whitespace-nowrap">
-                {tab.header.text}
-              </span>
-            </button>
-          ))}
-        </div>
+      <div className="flex flex-row items-center justify-between pr-4">
+        <div className="relative z-0 flex-shrink-0 flex items-center justify-between px-6 pt-4">
+          <div className="flex gap-8">
+            {tabs.map((tab, index) => (
+              <button
+                key={index}
+                onClick={() => onTabChange(index)}
+                className={`relative flex items-center gap-2 pt-2 pb-6 transition-colors ${
+                  activeIndex === index
+                    ? "text-type-400"
+                    : "text-gray-400 hover:text-gray-500"
+                }`}
+              >
+                {tab.header.logo}
+                <span className="body2-desktop-text font-semibold whitespace-nowrap">
+                  {tab.header.text}
+                </span>
 
+                {activeIndex === index && (
+                  <div className="absolute bottom-0 left-0 right-0 h-[10px] bg-jila-400 rounded-full" />
+                )}
+              </button>
+            ))}
+          </div>
+        </div>
         {rightElement && <div>{rightElement}</div>}
       </div>
 
-      <div className="flex-1 overflow-auto bg-[#F5F5F5]">
+      <div className="relative z-10 flex-1 overflow-auto bg-[#F5F5F5] mt-[-5px]">
         {activeTab.content}
       </div>
     </div>

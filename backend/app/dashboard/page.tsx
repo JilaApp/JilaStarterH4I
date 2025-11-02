@@ -11,6 +11,7 @@ import TopicTag, { TopicVariant } from "@/components/TopicTag";
 import FilterBar from "@/components/FilterBar";
 import SearchBar from "@/components/SearchBar";
 import Tabs from "@/components/Tabs";
+import VideoUploadForm from "@/components/VideoUploadForm";
 import AuthWrapper from "../AuthWrapper";
 
 interface VideoResourceData extends DataRow {
@@ -33,6 +34,7 @@ export default function DashboardDev() {
   const { user } = useUser();
   const { signOut } = useClerk();
 
+  const [activeView, setActiveView] = useState<string>("dashboard");
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
   const [currentTabIndex, setCurrentTabIndex] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
@@ -213,7 +215,7 @@ export default function DashboardDev() {
     console.log("Deleting Social Service:", id);
   };
 
-  const tabs = [
+  const dashboardTabs = [
     {
       header: {
         logo: <Video size={20} />,
@@ -246,11 +248,100 @@ export default function DashboardDev() {
     },
   ];
 
+  const uploadTabs = [
+    {
+      header: {
+        logo: <Video size={20} />,
+        text: "Video upload",
+      },
+      content: <VideoUploadForm />,
+    },
+    {
+      header: {
+        logo: <MessageCircle size={20} />,
+        text: "Social services upload",
+      },
+      content: (
+        <div>
+          <span>Eepy</span>
+          <VideoUploadForm />
+        </div>
+      ),
+    },
+  ];
+
+  const getPageTitle = () => {
+    switch (activeView) {
+      case "dashboard":
+        return "Your JILA! Dashboard";
+      case "upload":
+        return "Upload";
+      case "jobs":
+        return "Job board management";
+      case "metrics":
+        return "Metrics";
+      default:
+        return "Your JILA! Dashboard";
+    }
+  };
+
+  const renderContent = () => {
+    switch (activeView) {
+      case "dashboard":
+        return (
+          <>
+            <div className="flex-shrink-0 px-10 mt-6">
+              <FilterBar
+                options={["Career", "Legal", "Medical", "Transport"]}
+                selectedOptions={selectedFilters}
+                setSelectedOptions={setSelectedFilters}
+              />
+            </div>
+
+            <div className="flex-1 px-10 py-6 overflow-hidden flex flex-col min-h-0 mb-7">
+              <Tabs
+                tabs={dashboardTabs}
+                activeIndex={currentTabIndex}
+                onTabChange={setCurrentTabIndex}
+                rightElement={
+                  <SearchBar value={searchQuery} onChange={setSearchQuery} />
+                }
+              />
+            </div>
+          </>
+        );
+      case "upload":
+        return (
+          <div className="flex-1 px-10 py-6 overflow-hidden flex flex-col min-h-0 mb-7">
+            <Tabs
+              tabs={uploadTabs}
+              activeIndex={currentTabIndex}
+              onTabChange={setCurrentTabIndex}
+            />
+          </div>
+        );
+      case "jobs":
+        return (
+          <div className="flex-1 px-10 py-6">
+            <p>jobs</p>
+          </div>
+        );
+      case "metrics":
+        return (
+          <div className="flex-1 px-10 py-6">
+            <p>metrics</p>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
     <AuthWrapper>
       <div className="flex h-screen overflow-hidden bg-[linear-gradient(348deg,_#7E0601_51.81%,_#E8965B_130.16%)]">
         <div className="fixed left-0 top-0 h-screen z-50">
-          <Sidebar activeButton="dashboard" setActiveButton={() => {}} />
+          <Sidebar activeButton={activeView} setActiveButton={setActiveView} />
         </div>
 
         <div className="flex-1 ml-[196px] flex flex-col bg-cream-300 rounded-tl-[60px] overflow-hidden">
@@ -258,29 +349,12 @@ export default function DashboardDev() {
             <Header
               name={user?.emailAddresses[0]?.emailAddress || "User"}
               organization="Hack4Impact"
-              title="Your JILA! Dashboard"
+              title={getPageTitle()}
               onSignOut={() => signOut({ redirectUrl: "/sign-in" })}
             />
           </div>
 
-          <div className="flex-shrink-0 px-10 mt-6">
-            <FilterBar
-              options={["Career", "Legal", "Medical", "Transport"]}
-              selectedOptions={selectedFilters}
-              setSelectedOptions={setSelectedFilters}
-            />
-          </div>
-
-          <div className="flex-1 px-10 py-6 overflow-hidden flex flex-col min-h-0 mb-7">
-            <Tabs
-              tabs={tabs}
-              activeIndex={currentTabIndex}
-              onTabChange={setCurrentTabIndex}
-              rightElement={
-                <SearchBar value={searchQuery} onChange={setSearchQuery} />
-              }
-            />
-          </div>
+          {renderContent()}
         </div>
       </div>
     </AuthWrapper>

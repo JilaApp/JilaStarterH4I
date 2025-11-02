@@ -3,8 +3,8 @@ import TempJilaLogo from "@/assets/jila-white.svg";
 import { LayoutDashboard, Settings } from "lucide-react";
 
 interface InputProps {
-  activeButton: string | null;
-  setActiveButton: (id: string | null) => void;
+  activeButton: string;
+  setActiveButton: (id: string) => void;
 }
 
 export default function Sidebar({ activeButton, setActiveButton }: InputProps) {
@@ -48,7 +48,7 @@ export default function Sidebar({ activeButton, setActiveButton }: InputProps) {
                 )}
 
                 <button
-                  onClick={() => setActiveButton(clicked ? null : id)}
+                  onClick={() => setActiveButton(id)}
                   className={`relative flex flex-row items-center gap-[16px] h-[44px] ml-[3px] w-[178px] pl-[16px] z-30 ${
                     clicked
                       ? "text-type-400 bg-[linear-gradient(90deg,#D4928F_0%,rgba(224,140,150,0.30)_100%)] rounded-[10px]"
