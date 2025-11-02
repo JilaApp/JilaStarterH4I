@@ -36,6 +36,7 @@ model Videos {
   titleQanjobal       String
   audioFile           Bytes?
   audioFilename       String?
+  audioFileSize       Int?
   topic               VideoTopic
   url                 String   @unique
   uploadDate          DateTime

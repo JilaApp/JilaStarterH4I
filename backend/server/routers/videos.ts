@@ -9,6 +9,7 @@ const addVideoInput = z.object({
   titleQanjobal: z.string(),
   audioFile: z.string(),
   audioFilename: z.string(),
+  audioFileSize: z.number(),
   topic: z.nativeEnum(VideoTopic),
   url: z.string(),
   descriptionEnglish: z.string(),
@@ -40,6 +41,7 @@ export async function addVideo(input: AddVideoInput) {
         titleQanjobal: input.titleQanjobal,
         audioFile: audioBytes,
         audioFilename: input.audioFilename,
+        audioFileSize: input.audioFileSize,
         topic: input.topic,
         url: input.url,
         uploadDate: new Date(),
@@ -97,12 +99,13 @@ const updateVideoInput = z.object({
   descriptionQanjobal: z.string().optional(),
   audioFile: z.string().optional(),
   audioFilename: z.string().optional(),
+  audioFileSize: z.number().optional(),
 });
 
 type UpdateVideoInput = z.infer<typeof updateVideoInput>;
 
 async function updateVideo(input: UpdateVideoInput) {
-  const { id, audioFile, audioFilename, ...rest } = input;
+  const { id, audioFile, audioFilename, audioFileSize, ...rest } = input;
   const existing = await prisma.videos.findUnique({
     where: { id },
   });
@@ -120,10 +123,12 @@ async function updateVideo(input: UpdateVideoInput) {
     if (audioFile === "") {
       dataToUpdate.audioFile = null;
       dataToUpdate.audioFilename = null;
+      dataToUpdate.audioFileSize = null;
     } else {
       const buffer = Buffer.from(audioFile, "base64");
       dataToUpdate.audioFile = new Uint8Array(buffer);
       dataToUpdate.audioFilename = audioFilename;
+      dataToUpdate.audioFileSize = audioFileSize;
     }
   }
 
