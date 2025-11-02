@@ -2,9 +2,6 @@ import React, { useState, useRef, useEffect } from "react";
 import { MoreVertical } from "lucide-react";
 import type { DataRow, ColumnDefinition } from "@/lib/types";
 
-// Re-export for backward compatibility
-export type { DataRow, ColumnDefinition };
-
 interface TableProps<T extends DataRow> {
   data: T[];
   columns: ColumnDefinition<T>[];

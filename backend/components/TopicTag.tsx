@@ -1,9 +1,6 @@
 import { TOPIC_COLORS } from "@/lib/constants";
 import type { TopicVariant } from "@/lib/types";
 
-// Re-export for backward compatibility
-export type { TopicVariant };
-
 interface TopicTagProps {
   variant: TopicVariant;
 }

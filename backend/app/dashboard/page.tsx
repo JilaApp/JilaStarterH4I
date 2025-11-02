@@ -6,8 +6,10 @@ import { useUser, useClerk } from "@clerk/nextjs";
 
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
-import Table, { ColumnDefinition, DataRow } from "@/components/Table";
-import TopicTag, { TopicVariant } from "@/components/TopicTag";
+import Table from "@/components/Table";
+import { ColumnDefinition, DataRow } from "@/lib/types";
+import TopicTag from "@/components/TopicTag";
+import type { TopicVariant } from "@/lib/types";
 import FilterBar from "@/components/FilterBar";
 import SearchBar from "@/components/SearchBar";
 import Tabs from "@/components/Tabs";
