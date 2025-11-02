@@ -317,9 +317,6 @@ export default function DashboardDev() {
               tabs={uploadTabs}
               activeIndex={currentTabIndex}
               onTabChange={setCurrentTabIndex}
-              rightElement={
-                <SearchBar value={searchQuery} onChange={setSearchQuery} />
-              }
             />
           </div>
         );
