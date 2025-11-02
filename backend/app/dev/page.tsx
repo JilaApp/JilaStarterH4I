@@ -186,6 +186,7 @@ export default function DevPage() {
           name="Sophia Kim"
           organization="Hack4Impact"
           title="Data Collection + Analytics"
+          onSignOut={() => console.log("Sign out...")}
         />
       </div>
 
