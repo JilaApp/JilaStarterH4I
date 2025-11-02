@@ -1,50 +1,56 @@
+import fs from "fs";
 import { router, publicProcedure } from "../trpc";
 import { z } from "zod";
-import { VideoCategory, VideoSource } from "@prisma/client";
+import { VideoTopic } from "@prisma/client";
 import prisma from "@/lib/prisma";
 import { TRPCError } from "@trpc/server";
+import path from "path";
 
 const addVideoInput = z.object({
-  title: z.string(),
-  category: z.enum(VideoCategory),
-  source: z.enum(VideoSource),
-  length: z.number().int(),
+  titleEnglish: z.string(),
+  titleQanjobal: z.string(),
+  audioFile: z.string(),
+  topic: z.enum(VideoTopic),
   url: z.string(),
-  description: z.string(),
-  language: z.string(),
+  descriptionEnglish: z.string(),
+  descriptionQanjobal: z.string(),
 });
 
 type AddVideoInput = z.infer<typeof addVideoInput>;
 
-async function addVideo(input: AddVideoInput) {
-  const existing = await prisma.videos.findUnique({
-    where: { url: input.url },
-    select: { id: true },
-  });
-
-  if (existing) {
-    throw new TRPCError({
-      code: "CONFLICT",
-      message: `Video with url ${input.url} already exists`,
+export async function addVideo(input: AddVideoInput) {
+  try {
+    const existing = await prisma.videos.findUnique({
+      where: { url: input.url },
+      select: { id: true },
     });
+
+    if (existing) {
+      throw new TRPCError({
+        code: "CONFLICT",
+        message: `Video with url ${input.url} already exists`,
+      });
+    }
+
+    const buffer = Buffer.from(input.audioFile, "base64");
+    const audioBytes = new Uint8Array(buffer);
+
+    await prisma.videos.create({
+      data: {
+        titleEnglish: input.titleEnglish,
+        titleQanjobal: input.titleQanjobal,
+        audioFile: audioBytes,
+        topic: input.topic,
+        url: input.url,
+        uploadDate: new Date(),
+        descriptionEnglish: input.descriptionEnglish,
+        descriptionQanjobal: input.descriptionQanjobal,
+      },
+    });
+  } catch (err: any) {
+    throw err;
   }
-
-  await prisma.videos.create({
-    data: {
-      title: input.title,
-      category: input.category,
-      source: input.source,
-      length: input.length,
-      url: input.url,
-      uploadDate: new Date(),
-      description: input.description,
-      likes: 0,
-      dislikes: 0,
-      language: input.language,
-    },
-  });
 }
-
 const removeVideoInput = z.object({
   id: z.number().int(),
 });

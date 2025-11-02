@@ -3,7 +3,10 @@ import { useState } from "react";
 import Button from "@/components/Button";
 import Notification from "@/components/Notification";
 import FormInputWrapper from "@/components/FormInputWrapper";
-import FormText from "@/components/FormTextWrapper";
+import FormText, {
+  validateEmail,
+  validatePassword,
+} from "@/components/FormTextWrapper";
 import { TextInput, EmailInput, PasswordInput } from "@/components/Input";
 import Sidebar from "@/components/Sidebar";
 import Dropdown from "@/components/Dropdown";
@@ -12,11 +15,21 @@ import { Video, MessageCircle } from "lucide-react";
 import Tabs from "@/components/Tabs";
 import FilterBar from "@/components/FilterBar";
 import ParagraphInput from "@/components/ParagraphInput";
-import TopicTag from "@/components/TopicTag";
+import TopicTag, { TopicVariant } from "@/components/TopicTag";
 import Header from "@/components/Header";
 import FileUpload from "@/components/FileUpload";
 import FileUploadWrapper from "@/components/FileUploadWrapper";
-import SocialService from "@/components/SocialServiceForm";
+import DeleteModal from "@/components/DeleteModal";
+import Table, { ColumnDefinition, DataRow } from "@/components/Table";
+import VideoUploadForm from "@/components/VideoUploadForm";
+
+interface ServiceData extends DataRow {
+  id: number | string;
+  title: string;
+  topic: string;
+  phoneNumber: string;
+  link: string;
+}
 
 export default function DevPage() {
   const tabs = [
@@ -54,6 +67,79 @@ export default function DevPage() {
     fileSizeMB: 67,
   };
 
+  const tableData: ServiceData[] = [
+    {
+      id: 1,
+      title: "C-U at Home",
+      topic: "Food",
+      phoneNumber: "217-403-6150",
+      link: "https://leetcode.com/",
+    },
+    {
+      id: "mtd-bus-system-2",
+      title: "MTD Bus System",
+      topic: "Transport",
+      phoneNumber: "217-403-6150",
+      link: "https://www.buzzfeed.com/",
+    },
+    {
+      id: 3,
+      title: "Carle Hospital",
+      topic: "Medical",
+      phoneNumber: "217-403-6150",
+      link: "https://carle.org/",
+    },
+  ];
+
+  const columns: ColumnDefinition<ServiceData>[] = [
+    {
+      header: "Title",
+      accessorKey: "title",
+    },
+    {
+      header: "Topic",
+      accessorKey: "topic",
+      cell: (value) => <TopicTag variant={value as TopicVariant} />,
+    },
+    {
+      header: "Phone number",
+      accessorKey: "phoneNumber",
+    },
+    {
+      header: "Link",
+      accessorKey: "link",
+      cell: (value) => (
+        <a
+          className="text-jila-400"
+          href={String(value)}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {new URL(String(value)).hostname}
+        </a>
+      ),
+    },
+  ];
+
+  const getDataItemById = (id: number | string) =>
+    tableData.find((item) => item.id === id);
+
+  const handleRowClick = (id: number | string) => {
+    const item = getDataItemById(id);
+    console.log("Row Clicked:", item);
+  };
+
+  const handleEdit = (id: number | string) => {
+    const item = getDataItemById(id);
+    console.log("Editing:", item);
+  };
+
+  const handleDelete = (id: number | string) => {
+    const item = getDataItemById(id);
+    console.log("Deleting:", item);
+  };
+
   const [selectedOptions, setSelectedOptions] = useState([
     "one",
     "two",
@@ -61,26 +147,6 @@ export default function DevPage() {
   ]);
 
   const [paragraphInputValue, setParagraphInputValue] = useState<string>("");
-
-  const isValidEmail = (email: string): boolean => {
-    const emailRegex =
-      /^[A-Za-z0-9]+([._-]?[A-Za-z0-9]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}$/;
-    return emailRegex.test(email);
-  };
-
-  const validateEmail = (value: string): string | null => {
-    if (!isValidEmail(value)) {
-      return "Please enter a valid email address";
-    }
-    return null;
-  };
-
-  const validatePassword = (value: string): string | null => {
-    if (value.length < 8) {
-      return "Password must be at least 6 characters";
-    }
-    return null;
-  };
 
   const onDropdownChange = (index: number) => {
     setDropdownIndex(index);
@@ -90,16 +156,52 @@ export default function DevPage() {
     setErrorDropdownIndex(index);
   };
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [idToDelete, setIdToDelete] = useState<number | null>(null);
+
+  const handleDeleteClick = (id: number) => {
+    setIdToDelete(id);
+    setIsModalOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    setIsModalOpen(false);
+    console.log("Delete confirmed for", idToDelete);
+    setIdToDelete(null);
+  };
+
+  const handleDeleteModalClose = () => {
+    setIsModalOpen(false);
+    setIdToDelete(null);
+  };
+
   return (
     <>
-      <SocialService />
+      <div className="bg-[#FFFBF3] p-[24px]">
+        <VideoUploadForm />
+      </div>
       <div className="bg-[#FFFBF3]">
         <Header
           name="Sophia Kim"
           organization="Hack4Impact"
           title="Data Collection + Analytics"
+          onSignOut={() => console.log("Sign out...")}
         />
       </div>
+
+      <Button
+        text="Delete"
+        // Instead of 67 this would pull from the row id
+        onClick={() => handleDeleteClick(67)}
+      />
+
+      <DeleteModal
+        isOpen={isModalOpen}
+        onClose={handleDeleteModalClose}
+        onConfirm={handleConfirmDelete}
+      />
+
       <RadioButtonGroup
         options={myOptions}
         selectedOptions={selected}
@@ -127,6 +229,16 @@ export default function DevPage() {
               <TextInput id="text-input" />
             </FormText>
           </FormInputWrapper>
+          <FormInputWrapper
+            title="Text Input"
+            required
+            state={textError ? "error" : "default"}
+            errorString={textError}
+          >
+            <FormText required onErrorChange={setTextError}>
+              <TextInput id="text-input" />
+            </FormText>
+          </FormInputWrapper>
 
           <FormInputWrapper
             title="Email Input"
@@ -142,7 +254,35 @@ export default function DevPage() {
               <EmailInput id="email-input" />
             </FormText>
           </FormInputWrapper>
+          <FormInputWrapper
+            title="Email Input"
+            required
+            state={emailError ? "error" : "default"}
+            errorString={emailError}
+          >
+            <FormText
+              required
+              validate={validateEmail}
+              onErrorChange={setEmailError}
+            >
+              <EmailInput id="email-input" />
+            </FormText>
+          </FormInputWrapper>
 
+          <FormInputWrapper
+            title="Password Input"
+            required
+            state={passwordError ? "error" : "default"}
+            errorString={passwordError}
+          >
+            <FormText
+              required
+              validate={validatePassword}
+              onErrorChange={setPasswordError}
+            >
+              <PasswordInput id="password-input" />
+            </FormText>
+          </FormInputWrapper>
           <FormInputWrapper
             title="Password Input"
             required
@@ -187,7 +327,7 @@ export default function DevPage() {
               "Full-time",
               "Internship",
             ]}
-            currentIndex={dropdownIndex}
+            value={dropdownIndex}
             onChange={onDropdownChange}
           />
         </FormInputWrapper>
@@ -213,7 +353,7 @@ export default function DevPage() {
                 "Full-time",
                 "Internship",
               ]}
-              currentIndex={dropdownIndex}
+              value={dropdownIndex}
               onChange={onDropdownChange}
             />
           </FormInputWrapper>
@@ -227,7 +367,7 @@ export default function DevPage() {
           >
             <Dropdown
               options={["Part-time", "Full-time", "Internship"]}
-              currentIndex={errorDropdownIndex}
+              value={errorDropdownIndex}
               onChange={onErrorDropdownChange}
             />
           </FormInputWrapper>
@@ -285,7 +425,7 @@ export default function DevPage() {
             description="Maximum size: 67MB"
           >
             <FileUploadWrapper
-              onUpload={(file: File) => {
+              onChange={(file: File) => {
                 setFile(file);
               }}
               onDelete={() => {
@@ -303,7 +443,7 @@ export default function DevPage() {
         >
           <Dropdown
             options={["Part-time", "Full-time", "Internship"]}
-            currentIndex={errorDropdownIndex}
+            value={errorDropdownIndex}
             onChange={onErrorDropdownChange}
           />
         </FormInputWrapper>
@@ -350,6 +490,13 @@ export default function DevPage() {
       <div className="bg-gray-300">bg-gray-300</div>
       <div className="bg-gray-200">bg-gray-200</div>
       <Button text="Sign In" onClick={() => console.log("Hello!")} />
+      <Table
+        data={tableData}
+        columns={columns}
+        handleEdit={handleEdit}
+        handleDelete={handleDelete}
+        handleRowClick={handleRowClick}
+      />
 
       <Tabs
         tabs={tabs}

@@ -2,13 +2,15 @@ import { useState } from "react";
 import FileUpload, { UploadedFile } from "@/components/FileUpload";
 
 interface FileUploadWrapperProps {
-  onUpload: (file: File) => void;
+  onChange?: (file: File) => void;
   onDelete: () => void;
+  extendedText?: string;
 }
 
 export default function FileUploadWrapper({
-  onUpload,
+  onChange = (file: File) => {},
   onDelete,
+  extendedText = "",
 }: FileUploadWrapperProps) {
   const [state, setState] = useState<
     "default" | "pending" | "complete" | "error"
@@ -19,11 +21,10 @@ export default function FileUploadWrapper({
   const [errorText, setErrorText] = useState<string>("");
 
   const handleFileSelect = async (file: File) => {
-    console.log("hadnling!");
     setState("pending");
     setErrorText("");
     try {
-      await onUpload(file);
+      await onChange(file);
       setUploadedFile({
         fileName: file.name,
         fileSizeMB: Math.round((file.size / 1_000_000) * 100) / 100,
@@ -48,6 +49,7 @@ export default function FileUploadWrapper({
       errorText={errorText}
       onFileSelect={handleFileSelect}
       onDelete={handleDelete}
+      extendedText={extendedText}
     />
   );
 }
