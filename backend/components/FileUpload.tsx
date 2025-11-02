@@ -132,7 +132,7 @@ export default function FileUpload({
           stroke-dashoffset='0' 
           stroke-linecap='square'
         />
-      </svg>`
+      </svg>`,
             )}")`,
           }}
         >

@@ -6,8 +6,9 @@ import { inputVariants } from "./variants";
 
 export function PasswordInput({
   placeholder = inputVariants.password.placeholder,
+  autoComplete = "current-password",
   ...props
-}: CommonInputProps) {
+}: CommonInputProps & { autoComplete?: string }) {
   const [showPassword, setShowPassword] = useState(false);
   const { icon: Icon } = inputVariants.password;
 
@@ -31,6 +32,7 @@ export function PasswordInput({
           {showPassword ? <Eye size={20} /> : <EyeOff size={20} />}
         </button>
       }
+      autoComplete={autoComplete}
       {...props}
     />
   );

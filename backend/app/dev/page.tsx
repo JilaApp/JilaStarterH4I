@@ -3,7 +3,10 @@ import { useState } from "react";
 import Button from "@/components/Button";
 import Notification from "@/components/Notification";
 import FormInputWrapper from "@/components/FormInputWrapper";
-import FormText from "@/components/FormTextWrapper";
+import FormText, {
+  validateEmail,
+  validatePassword,
+} from "@/components/FormTextWrapper";
 import { TextInput, EmailInput, PasswordInput } from "@/components/Input";
 import Sidebar from "@/components/Sidebar";
 import Dropdown from "@/components/Dropdown";
@@ -19,6 +22,8 @@ import FileUploadWrapper from "@/components/FileUploadWrapper";
 import DeleteModal from "@/components/DeleteModal";
 import Table, { ColumnDefinition, DataRow } from "@/components/Table";
 import VideoEditModal from "@/components/VideoEditModal";
+import VideoUploadForm from "@/components/VideoUploadForm";
+import SocialServiceForm from "@/components/SocialServiceForm";
 
 interface ServiceData extends DataRow {
   id: number | string;
@@ -145,26 +150,6 @@ export default function DevPage() {
 
   const [paragraphInputValue, setParagraphInputValue] = useState<string>("");
 
-  const isValidEmail = (email: string): boolean => {
-    const emailRegex =
-      /^[A-Za-z0-9]+([._-]?[A-Za-z0-9]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}$/;
-    return emailRegex.test(email);
-  };
-
-  const validateEmail = (value: string): string | null => {
-    if (!isValidEmail(value)) {
-      return "Please enter a valid email address";
-    }
-    return null;
-  };
-
-  const validatePassword = (value: string): string | null => {
-    if (value.length < 8) {
-      return "Password must be at least 6 characters";
-    }
-    return null;
-  };
-
   const onDropdownChange = (index: number) => {
     setDropdownIndex(index);
   };
@@ -209,11 +194,18 @@ export default function DevPage() {
 
   return (
     <>
+      <div className="bg-[#FFFBF3] p-[24px]">
+        <SocialServiceForm />
+      </div>
+      <div className="bg-[#FFFBF3] p-[24px]">
+        <VideoUploadForm />
+      </div>
       <div className="bg-[#FFFBF3]">
         <Header
           name="Sophia Kim"
           organization="Hack4Impact"
           title="Data Collection + Analytics"
+          onSignOut={() => console.log("Sign out...")}
         />
       </div>
 
@@ -372,7 +364,7 @@ export default function DevPage() {
               "Full-time",
               "Internship",
             ]}
-            currentIndex={dropdownIndex}
+            value={dropdownIndex}
             onChange={onDropdownChange}
           />
         </FormInputWrapper>
@@ -398,7 +390,7 @@ export default function DevPage() {
                 "Full-time",
                 "Internship",
               ]}
-              currentIndex={dropdownIndex}
+              value={dropdownIndex}
               onChange={onDropdownChange}
             />
           </FormInputWrapper>
@@ -412,7 +404,7 @@ export default function DevPage() {
           >
             <Dropdown
               options={["Part-time", "Full-time", "Internship"]}
-              currentIndex={errorDropdownIndex}
+              value={errorDropdownIndex}
               onChange={onErrorDropdownChange}
             />
           </FormInputWrapper>
@@ -470,7 +462,7 @@ export default function DevPage() {
             description="Maximum size: 67MB"
           >
             <FileUploadWrapper
-              onUpload={(file: File) => {
+              onChange={(file: File) => {
                 setFile(file);
               }}
               onDelete={() => {
@@ -488,7 +480,7 @@ export default function DevPage() {
         >
           <Dropdown
             options={["Part-time", "Full-time", "Internship"]}
-            currentIndex={errorDropdownIndex}
+            value={errorDropdownIndex}
             onChange={onErrorDropdownChange}
           />
         </FormInputWrapper>

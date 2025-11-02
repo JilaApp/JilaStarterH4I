@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ButtonHTMLAttributes, DetailedHTMLProps, ReactNode } from "react";
 import { twMerge } from "tailwind-merge";
 
 interface ButtonProps {
@@ -15,7 +15,12 @@ export default function Button({
   defaultClassName,
   hoverClassName,
   onClick,
-}: ButtonProps) {
+  ...buttonProps
+}: ButtonProps &
+  DetailedHTMLProps<
+    ButtonHTMLAttributes<HTMLButtonElement>,
+    HTMLButtonElement
+  >) {
   return (
     <button
       onClick={onClick}
@@ -24,6 +29,7 @@ export default function Button({
         defaultClassName,
         hoverClassName,
       )}
+      {...buttonProps}
     >
       <div className="flex justify-center items-center gap-3 w-full">
         {text}

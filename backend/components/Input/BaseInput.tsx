@@ -7,7 +7,8 @@ export function BaseInput({
   disabled = false,
   placeholder = "Enter text",
   id,
-  state = "normal",
+  state = "default",
+  name,
   value,
   onChange,
   onFocus,
@@ -15,6 +16,7 @@ export function BaseInput({
   icon,
   rightElement,
   className = "",
+  autoComplete,
 }: BaseInputProps) {
   const [isFocused, setIsFocused] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -87,6 +89,7 @@ export function BaseInput({
       <input
         ref={inputRef}
         id={id}
+        name={name || id}
         className={getInputClasses()}
         type={type}
         value={value}
@@ -96,6 +99,7 @@ export function BaseInput({
         onBlur={handleBlur}
         disabled={disabled}
         aria-invalid={state === "error"}
+        autoComplete={autoComplete}
       />
       {rightElement && <div className="flex items-center">{rightElement}</div>}
     </label>

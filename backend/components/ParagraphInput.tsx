@@ -3,15 +3,15 @@ import React from "react";
 
 interface ParagraphInputProps {
   placeholder?: string;
-  value: string;
-  onChange: (val: string) => void;
+  value?: string;
+  onChange?: (val: string) => void;
   disabled?: boolean;
 }
 
 export default function ParagraphInput({
   placeholder = "Add a description",
-  value,
-  onChange,
+  value = "",
+  onChange = (val: string) => {},
   disabled = false,
 }: ParagraphInputProps) {
   return (
@@ -24,7 +24,7 @@ export default function ParagraphInput({
           text-[18px] leading-[22px]
         placeholder:text-[var(--color-gray-300)] placeholder:font-[500]
         focus:border-[var(--color-jila-400)] `,
-          disabled && "border-gray-300 bg-gray-200"
+          disabled && "border-gray-300 bg-gray-200 cursor-not-allowed",
         )}
         placeholder={placeholder}
         value={value}

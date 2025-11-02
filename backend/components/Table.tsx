@@ -32,7 +32,12 @@ export default function Table<T extends DataRow>({
 }: TableProps<T>) {
   const [selectedRows, setSelectedRows] = useState<(number | string)[]>([]);
   const [openMenu, setOpenMenu] = useState<number | string | null>(null);
+  const [menuPosition, setMenuPosition] = useState<{
+    top: number;
+    left: number;
+  } | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
+  const buttonRefs = useRef<Map<number | string, HTMLButtonElement>>(new Map());
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -63,109 +68,127 @@ export default function Table<T extends DataRow>({
   };
 
   return (
-    <table className="bg-white-400 rounded-3xl m-20 border-collapse">
-      <thead>
-        <tr className="border-b-2 border-gray-300">
-          {columns.map((col, index) => (
-            <th
-              key={index}
-              className={
-                index === 0
-                  ? "pl-20 text-left text-gray-300"
-                  : "pl-6 pr-20 p-4 text-left text-gray-300"
-              }
-            >
-              {col.header}
-            </th>
-          ))}
-          <th className="pl-10 pr-10 p-3 text-left text-gray-300">Actions</th>
-        </tr>
-      </thead>
-      <tbody className="font-medium">
-        {data.map((row) => (
-          <tr
-            key={row.id}
-            onClick={() => handleRowClick(row.id)}
-            className="bg-white-400 hover:bg-gray-300 cursor-pointer"
-          >
-            {columns.map((col, cellIndex) => {
-              const value = row[col.accessorKey];
-              return (
-                <td
-                  key={cellIndex}
+    <div className="flex flex-col h-full rounded-t-[20px] overflow-hidden">
+      <div className="overflow-auto flex-1">
+        <table className="bg-white-400 border-collapse w-full">
+          <thead className="sticky top-0 bg-white-400 z-10">
+            <tr className="border-b-2 border-gray-300">
+              {columns.map((col, index) => (
+                <th
+                  key={index}
                   className={
-                    cellIndex === 0 ? "pl-10 pr-10 p-4 font-semibold" : "pl-6"
+                    index === 0
+                      ? "pl-16 pr-6 p-4 text-left text-gray-300"
+                      : "px-6 p-4 text-left text-gray-300"
                   }
                 >
-                  {cellIndex === 0 && (
-                    <input
-                      type="checkbox"
-                      checked={selectedRows.includes(row.id)}
-                      onClick={(e) => e.stopPropagation()}
-                      onChange={() => handleCheckboxChange(row.id)}
-                      className="w-4 h-4 mr-6 align-middle"
-                    />
-                  )}
-                  <span className="align-middle">
-                    {col.cell ? col.cell(value) : String(value)}
-                  </span>
-                </td>
-              );
-            })}
-            <td className="p-3 relative text-center">
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setOpenMenu(openMenu === row.id ? null : row.id);
-                }}
-                className="p-2 rounded-full hover:bg-gray-300 hover:cursor-pointer"
+                  {col.header}
+                </th>
+              ))}
+              <th className="px-6 p-4 text-left text-gray-300">Actions</th>
+            </tr>
+          </thead>
+          <tbody className="font-medium">
+            {data.map((row) => (
+              <tr
+                key={row.id}
+                onClick={() => handleRowClick(row.id)}
+                className="bg-white-400 hover:bg-gray-200 cursor-pointer"
               >
-                <MoreVertical size={18} />
-              </button>
-              {openMenu === row.id && (
-                <div
-                  ref={menuRef}
-                  className="absolute right-12 mt-1 w-28 bg-white rounded-lg shadow-[0_8px_16px_rgba(0,0,0,0.2)] z-10"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <img
-                    src="/table-menu-tail.svg"
-                    alt="tail"
-                    style={{
-                      position: "absolute",
-                      top: "-50px",
-                      right: "-34px",
-                      width: "100px",
-                      height: "100px",
-                      transformOrigin: "center",
-                      display: "block",
-                      pointerEvents: "none",
-                    }}
-                  />
+                {columns.map((col, cellIndex) => {
+                  const value = row[col.accessorKey];
+                  return (
+                    <td
+                      key={cellIndex}
+                      className={
+                        cellIndex === 0
+                          ? "pl-5 pr-6 p-4 font-semibold"
+                          : "px-6 p-4"
+                      }
+                    >
+                      {cellIndex === 0 && (
+                        <input
+                          type="checkbox"
+                          checked={selectedRows.includes(row.id)}
+                          onClick={(e) => e.stopPropagation()}
+                          onChange={() => handleCheckboxChange(row.id)}
+                          className="w-4 h-4 mr-6 align-middle"
+                        />
+                      )}
+                      <span className="align-middle">
+                        {col.cell ? col.cell(value) : String(value)}
+                      </span>
+                    </td>
+                  );
+                })}
+                <td className="px-6 p-4 relative text-center">
                   <button
-                    onClick={() => {
-                      handleEdit(row.id);
-                      setOpenMenu(null);
+                    ref={(el) => {
+                      if (el) buttonRefs.current.set(row.id, el);
                     }}
-                    className="block w-full text-left px-4 py-2 hover:text-gray-300 cursor-pointer rounded-md"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => {
-                      handleDelete(row.id);
-                      setOpenMenu(null);
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      const rect = e.currentTarget.getBoundingClientRect();
+                      setMenuPosition({
+                        top: rect.bottom + 5,
+                        left: rect.right - 110,
+                      });
+                      setOpenMenu(openMenu === row.id ? null : row.id);
                     }}
-                    className="block w-full text-left px-4 py-2 hover:text-gray-300 cursor-pointer rounded-md"
+                    className="p-2 rounded-full hover:bg-gray-300 hover:cursor-pointer"
                   >
-                    Delete
+                    <MoreVertical size={18} />
                   </button>
-                </div>
-              )}
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
+                  {openMenu === row.id && menuPosition && (
+                    <div
+                      ref={menuRef}
+                      className="fixed w-28 bg-white rounded-lg shadow-[0_8px_16px_rgba(0,0,0,0.2)] z-[100]"
+                      onClick={(e) => e.stopPropagation()}
+                      style={{
+                        top: `${menuPosition.top}px`,
+                        left: `${menuPosition.left}px`,
+                      }}
+                    >
+                      <img
+                        src="/table-menu-tail.svg"
+                        alt="tail"
+                        style={{
+                          position: "absolute",
+                          top: "-50px",
+                          right: "-34px",
+                          width: "100px",
+                          height: "100px",
+                          transformOrigin: "center",
+                          display: "block",
+                          pointerEvents: "none",
+                        }}
+                      />
+                      <button
+                        onClick={() => {
+                          handleEdit(row.id);
+                          setOpenMenu(null);
+                        }}
+                        className="block w-full text-left px-4 py-2 hover:text-gray-300 cursor-pointer rounded-md"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => {
+                          handleDelete(row.id);
+                          setOpenMenu(null);
+                        }}
+                        className="block w-full text-left px-4 py-2 hover:text-gray-300 cursor-pointer rounded-md"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
   );
 }

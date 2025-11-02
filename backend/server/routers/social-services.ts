@@ -4,14 +4,10 @@ import { SocialServiceCategory } from "@prisma/client";
 import prisma from "@/lib/prisma";
 import { TRPCError } from "@trpc/server";
 
-// ADDING
 const addSocialServiceInput = z.object({
-  // mandatory
   title: z.string(),
-  category: z.enum(SocialServiceCategory),
+  category: z.nativeEnum(SocialServiceCategory),
   phone_number: z.string(),
-
-  // optional
   address: z.string().optional(),
   description: z.string().optional(),
   url: z.string().optional(),
@@ -44,7 +40,6 @@ async function addSocialService(input: AddSocialServiceInput) {
   });
 }
 
-// REMOVING
 const removeSocialServiceInput = z.object({
   id: z.number().int(),
 });
@@ -70,11 +65,10 @@ async function removeSocialService(input: RemoveSocialServiceInput) {
   });
 }
 
-// EDITING
 const editSocialServiceInput = z.object({
   id: z.number().int(),
   title: z.string().optional(),
-  category: z.enum(SocialServiceCategory).optional(),
+  category: z.nativeEnum(SocialServiceCategory).optional(),
   phone_number: z.string().optional(),
   address: z.string().optional(),
   description: z.string().optional(),
@@ -104,7 +98,6 @@ async function editSocialService(input: EditSocialServiceInput) {
     url: input.url,
   };
 
-  // used to filter out undefined properties from input
   const data = Object.fromEntries(
     Object.entries(removing_undefined_vals).filter(
       ([_, value]) => value !== undefined,
@@ -119,13 +112,11 @@ async function editSocialService(input: EditSocialServiceInput) {
   });
 }
 
-// GET ALL
 async function getAllSocialServices() {
   const services = await prisma.socialServices.findMany();
   return services;
 }
 
-// ROUTER EXPORT
 export const socialServicesRouter = router({
   addSocialService: publicProcedure
     .input(addSocialServiceInput)
