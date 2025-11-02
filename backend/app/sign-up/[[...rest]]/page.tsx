@@ -149,6 +149,7 @@ export default function InviteSignUpPage() {
                     name="email"
                     disabled
                     placeholder="Loading from invitation..."
+                    className="w-[450px] h-[60px]"
                   />
                 </FormText>
               </div>
@@ -193,19 +194,20 @@ export default function InviteSignUpPage() {
                     required
                     state={passwordError ? "error" : "default"}
                     errorString={passwordError}
+                    value={password}
+                    onChange={setPassword}
                   >
                     <FormText
                       required
                       validate={validatePassword}
                       onErrorChange={setPasswordError}
                       error={passwordError}
-                      value={password}
-                      onChange={setPassword}
                     >
                       <PasswordInput
                         id="password-input"
                         name="password"
                         autoComplete="new-password"
+                        className="w-[450px] h-[60px]"
                       />
                     </FormText>
                   </FormInputWrapper>
@@ -214,21 +216,22 @@ export default function InviteSignUpPage() {
                     required
                     state={confirmPasswordError ? "error" : "default"}
                     errorString={confirmPasswordError}
+                    value={confirmPassword}
+                    onChange={setConfirmPassword}
                   >
                     <FormText
                       required
                       validate={(value) =>
                         value === password ? "" : "Passwords do not match."
                       }
-                      value={confirmPassword}
                       error={confirmPasswordError}
                       onErrorChange={setConfirmPasswordError}
-                      onChange={setConfirmPassword}
                     >
                       <PasswordInput
                         id="confirm-password-input"
                         name="confirmPassword"
                         autoComplete="new-password"
+                        className="w-[450px] h-[60px]"
                       />
                     </FormText>
                   </FormInputWrapper>

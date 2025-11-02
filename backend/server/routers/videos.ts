@@ -9,6 +9,7 @@ const addVideoInput = z.object({
   titleQanjobal: z.string(),
   audioFile: z.string(),
   audioFilename: z.string(),
+  audioFileSize: z.number(),
   topic: z.nativeEnum(VideoTopic),
   url: z.string(),
   descriptionEnglish: z.string(),
@@ -40,6 +41,7 @@ export async function addVideo(input: AddVideoInput) {
         titleQanjobal: input.titleQanjobal,
         audioFile: audioBytes,
         audioFilename: input.audioFilename,
+        audioFileSize: input.audioFileSize,
         topic: input.topic,
         url: input.url,
         uploadDate: new Date(),
@@ -53,26 +55,36 @@ export async function addVideo(input: AddVideoInput) {
 }
 
 const removeVideoInput = z.object({
-  id: z.number().int(),
+  id: z.union([z.string(), z.number()]),
 });
 
 type RemoveVideoInput = z.infer<typeof removeVideoInput>;
 
 async function removeVideo(input: RemoveVideoInput) {
+  const numericId =
+    typeof input.id === "string" ? parseInt(input.id, 10) : input.id;
+
+  if (isNaN(numericId)) {
+    throw new TRPCError({
+      code: "BAD_REQUEST",
+      message: `Invalid video ID provided: ${input.id}`,
+    });
+  }
+
   const existing = await prisma.videos.findUnique({
-    where: { id: input.id },
+    where: { id: numericId },
   });
 
   if (!existing) {
     throw new TRPCError({
       code: "NOT_FOUND",
-      message: `Video with id ${input.id} does not exist`,
+      message: `Video with id ${numericId} does not exist`,
     });
   }
 
   await prisma.videos.delete({
     where: {
-      id: input.id,
+      id: numericId,
     },
   });
 }
@@ -87,12 +99,13 @@ const updateVideoInput = z.object({
   descriptionQanjobal: z.string().optional(),
   audioFile: z.string().optional(),
   audioFilename: z.string().optional(),
+  audioFileSize: z.number().optional(),
 });
 
 type UpdateVideoInput = z.infer<typeof updateVideoInput>;
 
 async function updateVideo(input: UpdateVideoInput) {
-  const { id, audioFile, audioFilename, ...rest } = input;
+  const { id, audioFile, audioFilename, audioFileSize, ...rest } = input;
   const existing = await prisma.videos.findUnique({
     where: { id },
   });
@@ -110,10 +123,12 @@ async function updateVideo(input: UpdateVideoInput) {
     if (audioFile === "") {
       dataToUpdate.audioFile = null;
       dataToUpdate.audioFilename = null;
+      dataToUpdate.audioFileSize = null;
     } else {
       const buffer = Buffer.from(audioFile, "base64");
       dataToUpdate.audioFile = new Uint8Array(buffer);
       dataToUpdate.audioFilename = audioFilename;
+      dataToUpdate.audioFileSize = audioFileSize;
     }
   }
 

@@ -23,6 +23,7 @@ interface VideoData {
   descriptionEnglish: string | null;
   descriptionQanjobal: string | null;
   audioFilename: string | null;
+  audioFileSize: number | null;
 }
 
 interface VideoEditModalProps {
@@ -78,10 +79,11 @@ export default function VideoEditModal({
       setSelectedFile(undefined);
       setClearExistingFile(false);
 
-      if (videoData.audioFilename) {
+      if (videoData.audioFilename && videoData.audioFileSize) {
         setDisplayedFile({
           fileName: videoData.audioFilename,
-          fileSizeMB: 0,
+          fileSizeMB:
+            Math.round((videoData.audioFileSize / 1_000_000) * 100) / 100,
         });
       } else {
         setDisplayedFile(undefined);
@@ -152,6 +154,7 @@ export default function VideoEditModal({
       reader.onload = () => {
         mutationPayload.audioFile = reader.result?.toString().split(",")[1];
         mutationPayload.audioFilename = selectedFile.name;
+        mutationPayload.audioFileSize = selectedFile.size;
         executeMutation(mutationPayload);
       };
       reader.onerror = (error) => {
