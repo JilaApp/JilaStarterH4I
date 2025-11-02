@@ -22,6 +22,7 @@ import FileUploadWrapper from "@/components/FileUploadWrapper";
 import DeleteModal from "@/components/DeleteModal";
 import Table, { ColumnDefinition, DataRow } from "@/components/Table";
 import VideoUploadForm from "@/components/VideoUploadForm";
+import SocialServiceForm from "@/components/SocialServiceForm";
 
 interface ServiceData extends DataRow {
   id: number | string;
@@ -178,6 +179,9 @@ export default function DevPage() {
 
   return (
     <>
+      <div className="bg-[#FFFBF3] p-[24px]">
+        <SocialServiceForm />
+      </div>
       <div className="bg-[#FFFBF3] p-[24px]">
         <VideoUploadForm />
       </div>

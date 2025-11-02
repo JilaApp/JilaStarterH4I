@@ -5,7 +5,7 @@ import FormText from "@/components/FormTextWrapper";
 import FileUploadWrapper from "./FileUploadWrapper";
 import Dropdown from "./Dropdown";
 
-export default function SocialService() {
+export default function SocialServiceForm() {
   const [englishTitleError, setEnglishTitleError] = useState("");
   const [qanjobalTitleError, setQanjobalTitleError] = useState("");
   const [titleFile, setTitleFile] = useState<File>();
