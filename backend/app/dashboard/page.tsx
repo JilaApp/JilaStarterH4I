@@ -19,7 +19,7 @@ import VideoEditModal from "@/components/VideoEditModal";
 import DeleteModal from "@/components/DeleteModal";
 import { Videos } from "@prisma/client";
 
-type FullVideoType = Videos;
+type FullVideoType = Omit<Videos, "audioFile">;
 
 interface VideoResourceData extends DataRow {
   id: number | string;
@@ -188,7 +188,10 @@ export default function DashboardDev() {
   const handleVideoRowClick = (id: number | string) => {
     const video = videosData?.find((v) => v.id === id);
     if (video) {
-      setSelectedVideo(video as FullVideoType);
+      setSelectedVideo({
+        ...video,
+        uploadDate: new Date(video.uploadDate),
+      });
       setIsEditingMode(false);
       setIsModalOpen(true);
     }
@@ -197,7 +200,10 @@ export default function DashboardDev() {
   const handleVideoEdit = (id: number | string) => {
     const video = videosData?.find((v) => v.id === id);
     if (video) {
-      setSelectedVideo(video as FullVideoType);
+      setSelectedVideo({
+        ...video,
+        uploadDate: new Date(video.uploadDate),
+      });
       setIsEditingMode(true);
       setIsModalOpen(true);
     }

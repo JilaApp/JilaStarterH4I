@@ -139,7 +139,20 @@ async function updateVideo(input: UpdateVideoInput) {
 }
 
 async function getAllVideos() {
-  const videos = await prisma.videos.findMany();
+  const videos = await prisma.videos.findMany({
+    select: {
+      id: true,
+      titleEnglish: true,
+      titleQanjobal: true,
+      topic: true,
+      url: true,
+      uploadDate: true,
+      descriptionEnglish: true,
+      descriptionQanjobal: true,
+      audioFilename: true,
+      audioFileSize: true,
+    },
+  });
   return videos;
 }
 
