@@ -106,7 +106,7 @@ export default function VideoUploadForm() {
   };
 
   return (
-    <div className="flex flex-col gap-[26px] py-[30px] px-[35px] rounded-[24px] bg-white shadow-[0_4px_80px_0_rgba(109,15,0,0.10)]">
+    <div className="flex flex-col gap-[26px] py-[30px] px-[35px] rounded-[24px] bg-white">
       <div className="h-[60px] font-[500] text-[24px]">Add new video</div>
       <div className="flex flex-row gap-[18px]">
         <FormInputWrapper
