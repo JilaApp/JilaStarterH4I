@@ -66,7 +66,7 @@ export default function VideoEditModal({
       setQanjobalDescription(videoData.descriptionQanjobal || "");
       const topicIndex = TOPIC_OPTIONS.findIndex(
         (option) =>
-          option.toUpperCase() === (videoData.topic || "").toUpperCase()
+          option.toUpperCase() === (videoData.topic || "").toUpperCase(),
       );
       setDropdownIndex(topicIndex !== -1 ? topicIndex : undefined);
       setSaveStatus("idle");
@@ -116,7 +116,11 @@ export default function VideoEditModal({
       case "success":
         return { text: "Saved!", disabled: true, className: "bg-green-500" };
       case "error":
-        return { text: "Error! Try Again", disabled: false, className: "bg-red-500" };
+        return {
+          text: "Error! Try Again",
+          disabled: false,
+          className: "bg-red-500",
+        };
       default:
         return { text: "Save", disabled: false, className: "" };
     }
@@ -222,11 +226,7 @@ export default function VideoEditModal({
               onChange={setVideoLink}
             >
               <FormText required onErrorChange={setVideoLinkError}>
-                <TextInput
-                  id="video-input"
-                  className="w-[315px] h-[46px]"
-                  disabled={!isEditing}
-                />
+                <TextInput id="video-input w-full" disabled={!isEditing} />
               </FormText>
             </FormInputWrapper>
           </div>

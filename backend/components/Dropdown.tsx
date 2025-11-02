@@ -38,7 +38,7 @@ export default function Dropdown({
   }, []);
 
   return (
-    <div className="relative inline-block max-w-[450px]" ref={dropdownRef}>
+    <div className="relative inline-block" ref={dropdownRef}>
       <button
         onClick={() => !disabled && setIsOpen((prev) => !prev)}
         className={`w-full h-[60px] border-[1px] ${

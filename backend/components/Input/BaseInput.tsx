@@ -40,7 +40,7 @@ export function BaseInput({
       "group flex items-center border-[1px] rounded-[10px] pr-[18px]",
       {
         "h-[60px]": className.length === 0, // Only apply default height if no className is provided
-        "w-[450px]": className.length === 0, // Only apply default width if no className is provided
+        "w-full": className.length === 0, // Only apply default width if no className is provided
         "border-gray-300 bg-gray-200": disabled,
         "border-error-400 bg-white": !disabled && state === "error",
         "border-jila-400 bg-white": !disabled && isFocused && state !== "error",

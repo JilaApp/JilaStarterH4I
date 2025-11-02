@@ -62,7 +62,7 @@ export default function DashboardDev() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditingMode, setIsEditingMode] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState<FullVideoType | null>(
-    null
+    null,
   );
 
   const {
@@ -232,18 +232,26 @@ export default function DashboardDev() {
       content: <VideoUploadForm />,
     },
     {
-      header: { logo: <MessageCircle size={20} />, text: "Social services upload" },
+      header: {
+        logo: <MessageCircle size={20} />,
+        text: "Social services upload",
+      },
       content: <SocialServiceForm />,
     },
   ];
 
   const getPageTitle = () => {
     switch (activeView) {
-      case "dashboard": return "Your JILA! Dashboard";
-      case "upload": return "Upload";
-      case "jobs": return "Job board management";
-      case "metrics": return "Metrics";
-      default: return "Your JILA! Dashboard";
+      case "dashboard":
+        return "Your JILA! Dashboard";
+      case "upload":
+        return "Upload";
+      case "jobs":
+        return "Job board management";
+      case "metrics":
+        return "Metrics";
+      default:
+        return "Your JILA! Dashboard";
     }
   };
 
@@ -282,9 +290,17 @@ export default function DashboardDev() {
           </div>
         );
       case "jobs":
-        return <div className="flex-1 px-10 py-6"><p>jobs</p></div>;
+        return (
+          <div className="flex-1 px-10 py-6">
+            <p>jobs</p>
+          </div>
+        );
       case "metrics":
-        return <div className="flex-1 px-10 py-6"><p>metrics</p></div>;
+        return (
+          <div className="flex-1 px-10 py-6">
+            <p>metrics</p>
+          </div>
+        );
       default:
         return null;
     }
