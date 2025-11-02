@@ -1,19 +1,16 @@
 import { router, publicProcedure } from "../trpc";
-import { z } from "zod";
-import { SocialServiceCategory } from "@prisma/client";
 import prisma from "@/lib/prisma";
 import { TRPCError } from "@trpc/server";
+import {
+  addSocialServiceInputSchema,
+  removeSocialServiceInputSchema,
+  editSocialServiceInputSchema,
+  type AddSocialServiceInput,
+  type RemoveSocialServiceInput,
+  type EditSocialServiceInput,
+} from "@/lib/types";
 
-const addSocialServiceInput = z.object({
-  title: z.string(),
-  category: z.nativeEnum(SocialServiceCategory),
-  phone_number: z.string(),
-  address: z.string().optional(),
-  description: z.string().optional(),
-  url: z.string().optional(),
-});
-
-type AddSocialServiceInput = z.infer<typeof addSocialServiceInput>;
+const addSocialServiceInput = addSocialServiceInputSchema;
 
 async function addSocialService(input: AddSocialServiceInput) {
   const existing = await prisma.socialServices.findUnique({
@@ -40,11 +37,7 @@ async function addSocialService(input: AddSocialServiceInput) {
   });
 }
 
-const removeSocialServiceInput = z.object({
-  id: z.number().int(),
-});
-
-type RemoveSocialServiceInput = z.infer<typeof removeSocialServiceInput>;
+const removeSocialServiceInput = removeSocialServiceInputSchema;
 
 async function removeSocialService(input: RemoveSocialServiceInput) {
   const existing = await prisma.socialServices.findUnique({
@@ -65,17 +58,7 @@ async function removeSocialService(input: RemoveSocialServiceInput) {
   });
 }
 
-const editSocialServiceInput = z.object({
-  id: z.number().int(),
-  title: z.string().optional(),
-  category: z.nativeEnum(SocialServiceCategory).optional(),
-  phone_number: z.string().optional(),
-  address: z.string().optional(),
-  description: z.string().optional(),
-  url: z.string().optional(),
-});
-
-type EditSocialServiceInput = z.infer<typeof editSocialServiceInput>;
+const editSocialServiceInput = editSocialServiceInputSchema;
 
 async function editSocialService(input: EditSocialServiceInput) {
   const existing = await prisma.socialServices.findUnique({

@@ -1,7 +1,6 @@
 import React from "react";
 import { Ban } from "lucide-react";
-
-export type FormInputState = "default" | "error" | "pending" | "complete";
+import type { FormInputState } from "@/lib/types";
 
 interface FormInputWrapperProps<T> {
   title: string;

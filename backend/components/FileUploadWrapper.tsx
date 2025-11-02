@@ -1,5 +1,6 @@
 import { useState } from "react";
-import FileUpload, { UploadedFile } from "@/components/FileUpload";
+import FileUpload from "@/components/FileUpload";
+import type { UploadedFile } from "@/lib/types";
 
 interface FileUploadWrapperProps {
   onChange?: (file: File) => void;

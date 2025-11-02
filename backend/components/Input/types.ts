@@ -1,5 +1,5 @@
 import { ReactNode, FocusEvent, ChangeEvent } from "react";
-import { FormInputState } from "../FormInputWrapper";
+import type { FormInputState } from "@/lib/types";
 
 export interface CommonInputProps {
   disabled?: boolean;

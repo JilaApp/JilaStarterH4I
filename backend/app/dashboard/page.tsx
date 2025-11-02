@@ -18,6 +18,7 @@ import { trpc } from "@/lib/trpc";
 import VideoEditModal from "@/components/VideoEditModal";
 import DeleteModal from "@/components/DeleteModal";
 import { Videos } from "@prisma/client";
+import { TOPIC_MAP } from "@/lib/constants";
 
 type FullVideoType = Omit<Videos, "audioFile">;
 
@@ -36,19 +37,6 @@ interface SocialServiceData extends DataRow {
   phoneNumber: string;
   link: string;
 }
-
-const topicMap: { [key: string]: TopicVariant } = {
-  TRANSPORT: "Transport",
-  TRANSPORTATION: "Transportation",
-  LEGAL: "Legal",
-  MEDICAL: "Medical",
-  CAREER: "Career",
-  EDUCATION: "Other",
-  OTHER: "Other",
-  EMERGENCIA: "Emergencia",
-  SHELTERS: "Shelters",
-  FOOD: "Food",
-};
 
 export default function DashboardDev() {
   const { user } = useUser();
@@ -110,7 +98,7 @@ export default function DashboardDev() {
         ?.map((video) => ({
           id: video.id,
           title: video.titleEnglish,
-          topic: topicMap[video.topic] || "Other",
+          topic: TOPIC_MAP[video.topic] || "Other",
           phoneNumber: "N/A",
           link: video.url,
         }))
@@ -124,7 +112,7 @@ export default function DashboardDev() {
         ?.map((service) => ({
           id: service.id,
           title: service.title,
-          topic: topicMap[service.category] || "Other",
+          topic: TOPIC_MAP[service.category] || "Other",
           phoneNumber: service.phone_number,
           link: service.url || "N/A",
         }))
