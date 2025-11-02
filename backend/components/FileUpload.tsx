@@ -159,7 +159,6 @@ export default function FileUpload({
               <X
                 className="flex ml-auto cursor-pointer"
                 onClick={() => {
-                  console.log("??");
                   if (fileInputRef.current) {
                     fileInputRef.current.value = "";
                   }

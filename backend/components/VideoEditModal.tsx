@@ -28,16 +28,16 @@ interface VideoData {
 interface VideoEditModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onUpdateComplete: () => void;
-  isEditing: boolean;
-  videoData: VideoData | null;
+  onUpdateComplete?: () => void;
+  isEditing?: boolean;
+  videoData?: VideoData | null;
 }
 
 export default function VideoEditModal({
   isOpen,
   onClose,
   onUpdateComplete,
-  isEditing,
+  isEditing = true,
   videoData,
 }: VideoEditModalProps) {
   const [englishTitle, setEnglishTitle] = useState("");
@@ -62,9 +62,6 @@ export default function VideoEditModal({
   const updateVideoMutation = trpc.videos.updateVideo.useMutation();
 
   useEffect(() => {
-    console.log("VideoEditModal: Received videoData prop:", videoData);
-    console.log("VideoEditModal: audioFilename from videoData:", videoData?.audioFilename);
-
     if (isOpen && videoData) {
       setEnglishTitle(videoData.titleEnglish || "");
       setQanjobalTitle(videoData.titleQanjobal || "");
@@ -81,18 +78,12 @@ export default function VideoEditModal({
       setSelectedFile(undefined);
       setClearExistingFile(false);
 
-      // Set displayed file immediately
       if (videoData.audioFilename) {
-        console.log("VideoEditModal: Setting displayedFile to:", {
-          fileName: videoData.audioFilename,
-          fileSizeMB: 0,
-        });
         setDisplayedFile({
           fileName: videoData.audioFilename,
           fileSizeMB: 0,
         });
       } else {
-        console.log("VideoEditModal: No audioFilename, setting displayedFile to undefined");
         setDisplayedFile(undefined);
       }
     } else if (!isOpen) {
@@ -145,7 +136,7 @@ export default function VideoEditModal({
       try {
         await updateVideoMutation.mutateAsync(payload);
         setSaveStatus("success");
-        onUpdateComplete();
+        onUpdateComplete?.();
         onClose();
       } catch (error) {
         console.error("Failed to update video:", error);
@@ -197,9 +188,6 @@ export default function VideoEditModal({
 
   const saveButtonUI = getSaveButtonUI();
   const uploadState = displayedFile ? "complete" : "default";
-  
-  console.log("VideoEditModal render: displayedFile =", displayedFile);
-  console.log("VideoEditModal render: uploadState =", uploadState);
 
   return (
     <div className="fixed y-40 inset-0 z-50 flex items-center justify-center bg-[rgb(83,83,83,0.19)]">
@@ -218,7 +206,7 @@ export default function VideoEditModal({
             <div className="flex-1">
               <FormInputWrapper
                 title="Resource title (English)"
-                titleClassName="body1-desktop-text text-[15px]"
+                defaultClassName="body1-desktop-text text-[15px]"
                 required
                 state={englishError ? "error" : "default"}
                 errorString={englishError}
@@ -237,7 +225,7 @@ export default function VideoEditModal({
             <div className="flex-1">
               <FormInputWrapper
                 title="Resource title (Q'anjob'al)"
-                titleClassName="body1-desktop-text text-[15px]"
+                defaultClassName="body1-desktop-text text-[15px]"
                 required
                 state={qanjobalError ? "error" : "default"}
                 errorString={qanjobalError}
@@ -257,7 +245,7 @@ export default function VideoEditModal({
           <div className="flex mt-[10px]">
             <FormInputWrapper
               title="Upload file"
-              titleClassName="body1-desktop-text text-[15px]"
+              defaultClassName="body1-desktop-text text-[15px]"
               state={uploadState}
             >
               <FileUpload
@@ -272,7 +260,7 @@ export default function VideoEditModal({
             <FormInputWrapper
               required
               title="Topic"
-              titleClassName="body1-desktop-text text-[15px]"
+              defaultClassName="body1-desktop-text text-[15px]"
               state={dropdownError ? "error" : "default"}
               errorString={dropdownError}
               value={dropdownIndex}
@@ -288,7 +276,7 @@ export default function VideoEditModal({
           <div className="flex mt-[10px]">
             <FormInputWrapper
               title="Video link"
-              titleClassName="body1-desktop-text text-[15px]"
+              defaultClassName="body1-desktop-text text-[15px]"
               required
               state={videoLinkError ? "error" : "default"}
               errorString={videoLinkError}
@@ -303,7 +291,7 @@ export default function VideoEditModal({
           <div className="flex mt-[10px]">
             <FormInputWrapper
               title="Description (English)"
-              titleClassName="body1-desktop-text text-[15px]"
+              defaultClassName="body1-desktop-text text-[15px]"
               state="default"
               value={englishDescription}
               onChange={setEnglishDescription}
@@ -314,7 +302,7 @@ export default function VideoEditModal({
           <div className="flex mt-[10px]">
             <FormInputWrapper
               title="Description (Q'anjob'al)"
-              titleClassName="body1-desktop-text text-[15px]"
+              defaultClassName="body1-desktop-text text-[15px]"
               state="default"
               value={qanjobalDescription}
               onChange={setQanjobalDescription}

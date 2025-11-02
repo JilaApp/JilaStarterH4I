@@ -16,13 +16,9 @@ import SocialServiceForm from "@/components/SocialServiceForm";
 import AuthWrapper from "../AuthWrapper";
 import { trpc } from "@/lib/trpc";
 import VideoEditModal from "@/components/VideoEditModal";
+import { Videos } from "@prisma/client";
 
-type FullVideoType = NonNullable<
-  ReturnType<typeof trpc.videos.getAllVideos.useQuery>["data"]
->[0] & {
-  audioFilename: string | null;
-  audioFile: { type: "Buffer"; data: number[] } | null;
-};
+type FullVideoType = Videos;
 
 interface VideoResourceData extends DataRow {
   id: number | string;
@@ -176,11 +172,6 @@ export default function DashboardDev() {
   const handleVideoRowClick = (id: number | string) => {
     const video = videosData?.find((v) => v.id === id);
     if (video) {
-      // CONSOLE LOG ADDED HERE
-      console.log(
-        "Dashboard: Setting video data for modal (View Mode):",
-        video,
-      );
       setSelectedVideo(video as FullVideoType);
       setIsEditingMode(false);
       setIsModalOpen(true);
@@ -190,11 +181,6 @@ export default function DashboardDev() {
   const handleVideoEdit = (id: number | string) => {
     const video = videosData?.find((v) => v.id === id);
     if (video) {
-      // CONSOLE LOG ADDED HERE
-      console.log(
-        "Dashboard: Setting video data for modal (Edit Mode):",
-        video,
-      );
       setSelectedVideo(video as FullVideoType);
       setIsEditingMode(true);
       setIsModalOpen(true);

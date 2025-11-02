@@ -227,7 +227,7 @@ export default function DevPage() {
         <VideoEditModal
           isOpen={isEditModalOpen}
           onClose={() => setIsEditModalOpen(false)}
-          onSave={() => handleSaveClick(68)}
+          videoData={null}
         />
 
         <Button text="View Video" onClick={() => handleViewClick(69)}></Button>
