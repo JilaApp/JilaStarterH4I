@@ -1,6 +1,6 @@
 "use client";
 
-import { useSignIn, useUser } from "@clerk/nextjs";
+import { useSignIn, useUser, useClerk } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
 import { EmailInput, PasswordInput, TextInput } from "@/components/Input";
 import Button from "@/components/Button";
@@ -18,7 +18,9 @@ import { useRouter } from "next/navigation";
 
 export default function ForgotPasswordPage() {
   const { isLoaded, signIn } = useSignIn();
+  const { setActive } = useClerk();
   const { user } = useUser();
+
   const router = useRouter();
 
   const [email, setEmail] = useState("");
@@ -106,6 +108,7 @@ export default function ForgotPasswordPage() {
       });
 
       if (result.status === "complete") {
+        await setActive({ session: result.createdSessionId });
         setSuccessMessage(
           "Password reset successful! Redirecting to dashboard",
         );
