@@ -1,22 +1,30 @@
-import { useState } from "react";
+import { ReactNode } from "react";
 
 interface TabHeader {
-  logo: React.ReactNode;
+  logo: ReactNode;
   text: string;
 }
 
 interface Tab {
   header: TabHeader;
-  content: React.ReactNode;
+  content: ReactNode;
 }
 
 interface TabsProps {
   tabs: Tab[];
   activeIndex: number;
   onTabChange: (index: number) => void;
+  rightElement?: ReactNode;
+  containerClassName?: string;
 }
 
-export default function Tabs({ tabs, activeIndex, onTabChange }: TabsProps) {
+export default function Tabs({
+  tabs,
+  activeIndex,
+  onTabChange,
+  rightElement,
+  containerClassName = "",
+}: TabsProps) {
   if (!tabs || tabs.length === 0) {
     return null;
   }
@@ -24,26 +32,35 @@ export default function Tabs({ tabs, activeIndex, onTabChange }: TabsProps) {
   const activeTab = tabs[activeIndex];
 
   return (
-    <div className="shadow-lg shadow-gray-400 rounded-xl p-6 mx-10 space-y-5 bg-[linear-gradient(to_bottom,white_0%,rgba(109,15,0,0.07)_30%,rgba(109,15,0,0.07)_70%,white_100%)]">
-      <div className="flex flex-wrap">
-        {tabs.map((tab, index) => (
-          <button
-            key={index}
-            className={`px-4 py-2 font-semibold ${
-              activeIndex === index
-                ? "border-b-3 border-jila-400 text-jila-400"
-                : "text-gray-400 hover:text-jila-300 cursor-pointer"
-            }`}
-            onClick={() => onTabChange(index)}
-          >
-            <div className="flex justify-start gap-2">
+    <div
+      className={`bg-[#F5F5F5] rounded-[20px] shadow-lg flex flex-col flex-1 overflow-hidden min-h-0 ${containerClassName}`}
+    >
+      <div className="flex-shrink-0 flex items-center justify-between px-6 pt-4 pb-3">
+        <div className="flex gap-8">
+          {tabs.map((tab, index) => (
+            <button
+              key={index}
+              onClick={() => onTabChange(index)}
+              className={`flex items-center gap-2 pb-2 border-b-[3px] transition-colors ${
+                activeIndex === index
+                  ? "border-jila-400 text-type-400"
+                  : "border-transparent text-gray-400 hover:text-gray-500"
+              }`}
+            >
               {tab.header.logo}
-              <span>{tab.header.text}</span>
-            </div>
-          </button>
-        ))}
+              <span className="body2-desktop-text font-semibold whitespace-nowrap">
+                {tab.header.text}
+              </span>
+            </button>
+          ))}
+        </div>
+
+        {rightElement && <div>{rightElement}</div>}
       </div>
-      <div>{activeTab.content}</div>
+
+      <div className="flex-1 overflow-auto bg-[#F5F5F5]">
+        {activeTab.content}
+      </div>
     </div>
   );
 }
