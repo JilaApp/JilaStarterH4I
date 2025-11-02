@@ -182,16 +182,20 @@ export default function ForgotPasswordPage() {
                   required
                   state={emailError ? "error" : "default"}
                   errorString={emailError}
+                  value={email}
+                  onChange={setEmail}
                 >
                   <FormText
                     required
                     validate={validateEmail}
                     error={emailError}
                     onErrorChange={setEmailError}
-                    value={email}
-                    onChange={setEmail}
                   >
-                    <EmailInput id="email-input" name="email" />
+                    <EmailInput
+                      id="email-input"
+                      name="email"
+                      className="w-[450px] h-[60px]"
+                    />
                   </FormText>
                 </FormInputWrapper>
 
@@ -225,18 +229,15 @@ export default function ForgotPasswordPage() {
                     required
                     state={error ? "error" : "default"}
                     errorString={error}
+                    value={code}
+                    onChange={setCode}
                   >
-                    <FormText
-                      required
-                      onErrorChange={setError}
-                      error={error}
-                      value={code}
-                      onChange={setCode}
-                    >
+                    <FormText required onErrorChange={setError} error={error}>
                       <TextInput
                         id="code"
                         name="code"
                         placeholder="Enter 6-digit code"
+                        className="w-[450px] h-[60px]"
                       />
                     </FormText>
                   </FormInputWrapper>
@@ -247,19 +248,20 @@ export default function ForgotPasswordPage() {
                   required
                   state={passwordError ? "error" : "default"}
                   errorString={passwordError}
+                  value={password}
+                  onChange={setPassword}
                 >
                   <FormText
                     required
                     validate={validatePassword}
                     onErrorChange={setPasswordError}
                     error={passwordError}
-                    value={password}
-                    onChange={setPassword}
                   >
                     <PasswordInput
                       id="new-password"
                       name="new-password"
                       autoComplete="new-password"
+                      className="w-[450px] h-[60px]"
                     />
                   </FormText>
                 </FormInputWrapper>

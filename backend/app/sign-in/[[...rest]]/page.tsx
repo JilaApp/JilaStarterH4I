@@ -133,16 +133,19 @@ export default function SignInPage() {
                   required
                   state={emailError ? "error" : "default"}
                   errorString={emailError}
+                  value={email}
+                  onChange={setEmail}
                 >
                   <FormText
                     required
                     validate={validateEmail}
                     error={emailError}
                     onErrorChange={setEmailError}
-                    value={email}
-                    onChange={setEmail}
                   >
-                    <EmailInput id="email-input" />
+                    <EmailInput
+                      id="email-input"
+                      className="w-[450px] h-[60px]"
+                    />
                   </FormText>
                 </FormInputWrapper>
 
@@ -151,16 +154,19 @@ export default function SignInPage() {
                   required
                   state={passwordError ? "error" : "default"}
                   errorString={passwordError}
+                  value={password}
+                  onChange={setPassword}
                 >
                   <FormText
                     required
                     validate={validatePassword}
                     onErrorChange={setPasswordError}
                     error={passwordError}
-                    value={password}
-                    onChange={setPassword}
                   >
-                    <PasswordInput id="password-input" />
+                    <PasswordInput
+                      id="password-input"
+                      className="w-[450px] h-[60px]"
+                    />
                   </FormText>
                 </FormInputWrapper>
               </div>
