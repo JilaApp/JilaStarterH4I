@@ -1,12 +1,15 @@
 "use client";
 
-import { Video, MessageCircle, Search, X } from "lucide-react";
+import { Video, MessageCircle } from "lucide-react";
 import { useState } from "react";
 
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
 import Table, { ColumnDefinition, DataRow } from "@/components/Table";
 import TopicTag, { TopicVariant } from "@/components/TopicTag";
+import FilterBar from "@/components/FilterBar";
+import SearchBar from "@/components/SearchBar";
+import Tabs from "@/components/Tabs";
 
 interface VideoResourceData extends DataRow {
   id: number | string;
@@ -25,7 +28,7 @@ interface SocialServiceData extends DataRow {
 }
 
 export default function DashboardDev() {
-  const [selectedOptions, setSelectedOptions] = useState([
+  const [selectedFilters, setSelectedFilters] = useState([
     "Career",
     "Legal",
     "Medical",
@@ -122,15 +125,9 @@ export default function DashboardDev() {
       phoneNumber: "2:44",
       link: "https://www.google.com/",
     },
-    {
-      id: "ride-bus-5",
-      title: "How to Ride the Bus",
-      topic: "Transport",
-      phoneNumber: "2:44",
-      link: "https://www.google.com/",
-    },
   ];
 
+  // Video Resources Table Configuration
   const videoColumns: ColumnDefinition<VideoResourceData>[] = [
     {
       header: "Title",
@@ -156,12 +153,25 @@ export default function DashboardDev() {
           rel="noopener noreferrer"
           onClick={(e) => e.stopPropagation()}
         >
-          google.com
+          {new URL(String(value)).hostname}
         </a>
       ),
     },
   ];
 
+  const handleVideoRowClick = (id: number | string) => {
+    console.log("Video Row Clicked:", id);
+  };
+
+  const handleVideoEdit = (id: number | string) => {
+    console.log("Editing Video:", id);
+  };
+
+  const handleVideoDelete = (id: number | string) => {
+    console.log("Deleting Video:", id);
+  };
+
+  // Social Services Table Configuration
   const socialColumns: ColumnDefinition<SocialServiceData>[] = [
     {
       header: "Title",
@@ -187,23 +197,11 @@ export default function DashboardDev() {
           rel="noopener noreferrer"
           onClick={(e) => e.stopPropagation()}
         >
-          google.com
+          {new URL(String(value)).hostname}
         </a>
       ),
     },
   ];
-
-  const handleVideoRowClick = (id: number | string) => {
-    console.log("Video Row Clicked:", id);
-  };
-
-  const handleVideoEdit = (id: number | string) => {
-    console.log("Editing Video:", id);
-  };
-
-  const handleVideoDelete = (id: number | string) => {
-    console.log("Deleting Video:", id);
-  };
 
   const handleSocialRowClick = (id: number | string) => {
     console.log("Social Service Row Clicked:", id);
@@ -217,42 +215,38 @@ export default function DashboardDev() {
     console.log("Deleting Social Service:", id);
   };
 
-  const handleClearFilters = () => {
-    setSelectedOptions([]);
-  };
-
-  const handleFilterClick = (option: string) => {
-    if (selectedOptions.includes(option)) {
-      setSelectedOptions(selectedOptions.filter((o) => o !== option));
-    } else {
-      setSelectedOptions([...selectedOptions, option]);
-    }
-  };
-
   const tabs = [
     {
-      id: "video-resources",
-      icon: <Video size={20} />,
-      label: "Video resources",
-      data: videoResourcesData,
-      columns: videoColumns,
-      onEdit: handleVideoEdit,
-      onDelete: handleVideoDelete,
-      onRowClick: handleVideoRowClick,
+      header: {
+        logo: <Video size={20} />,
+        text: "Video resources",
+      },
+      content: (
+        <Table
+          data={videoResourcesData}
+          columns={videoColumns}
+          handleEdit={handleVideoEdit}
+          handleDelete={handleVideoDelete}
+          handleRowClick={handleVideoRowClick}
+        />
+      ),
     },
     {
-      id: "social-services",
-      icon: <MessageCircle size={20} />,
-      label: "Social services",
-      data: socialServicesData,
-      columns: socialColumns,
-      onEdit: handleSocialEdit,
-      onDelete: handleSocialDelete,
-      onRowClick: handleSocialRowClick,
+      header: {
+        logo: <MessageCircle size={20} />,
+        text: "Social services",
+      },
+      content: (
+        <Table
+          data={socialServicesData}
+          columns={socialColumns}
+          handleEdit={handleSocialEdit}
+          handleDelete={handleSocialDelete}
+          handleRowClick={handleSocialRowClick}
+        />
+      ),
     },
   ];
-
-  const currentTab = tabs[currentTabIndex];
 
   return (
     <div className="flex h-screen overflow-hidden bg-[linear-gradient(348deg,_#7E0601_51.81%,_#E8965B_130.16%)]">
@@ -260,6 +254,7 @@ export default function DashboardDev() {
       <div className="fixed left-0 top-0 h-screen z-50">
         <Sidebar activeButton="dashboard" setActiveButton={() => {}} />
       </div>
+
       <div className="flex-1 ml-[196px] flex flex-col bg-cream-300 rounded-tl-[60px] overflow-hidden">
         {/* Header */}
         <div className="flex-shrink-0 px-10 mt-6">
@@ -272,79 +267,23 @@ export default function DashboardDev() {
 
         {/* Filter Bar */}
         <div className="flex-shrink-0 px-10 mt-6">
-          <div className="flex items-center gap-3">
-            {["Career", "Legal", "Medical", "Transport"].map((option) => (
-              <button
-                key={option}
-                onClick={() => handleFilterClick(option)}
-                className={`flex items-center gap-2 px-4 h-10 rounded-lg font-bold body2-desktop-text transition-colors ${
-                  selectedOptions.includes(option)
-                    ? "bg-jila-400 text-white hover:bg-type-400"
-                    : "bg-white text-gray-400 hover:bg-gray-200"
-                }`}
-              >
-                {option}
-                {selectedOptions.includes(option) && (
-                  <X size={16} strokeWidth={3} />
-                )}
-              </button>
-            ))}
-            {selectedOptions.length > 0 && (
-              <button
-                onClick={handleClearFilters}
-                className="text-jila-400 underline body2-desktop-text font-semibold whitespace-nowrap ml-2"
-              >
-                Clear filters
-              </button>
-            )}
-          </div>
+          <FilterBar
+            options={["Career", "Legal", "Medical", "Transport"]}
+            selectedOptions={selectedFilters}
+            setSelectedOptions={setSelectedFilters}
+          />
         </div>
 
-        <div className="flex-1 px-10 py-6 overflow-hidden flex flex-col min-h-0">
-          <div className="bg-[#F5F5F5] rounded-[20px] shadow-lg flex flex-col flex-1 overflow-hidden min-h-0">
-            <div className="flex-shrink-0 flex items-center justify-between px-6 pt-4 pb-3">
-              <div className="flex gap-8">
-                {tabs.map((tab, index) => (
-                  <button
-                    key={tab.id}
-                    onClick={() => setCurrentTabIndex(index)}
-                    className={`flex items-center gap-2 pb-2 border-b-[3px] transition-colors ${
-                      currentTabIndex === index
-                        ? "border-jila-400 text-type-400"
-                        : "border-transparent text-gray-400 hover:text-gray-500"
-                    }`}
-                  >
-                    {tab.icon}
-                    <span className="body2-desktop-text font-semibold whitespace-nowrap">
-                      {tab.label}
-                    </span>
-                  </button>
-                ))}
-              </div>
-
-              {/* Search Bar */}
-              <div className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg w-96 bg-white">
-                <Search size={20} className="text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Search"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="outline-none flex-1 body2-desktop-text placeholder:text-gray-400 bg-transparent"
-                />
-              </div>
-            </div>
-
-            <div className="flex-1 overflow-auto bg-[#F5F5F5]">
-              <Table
-                data={currentTab.data}
-                columns={currentTab.columns}
-                handleEdit={currentTab.onEdit}
-                handleDelete={currentTab.onDelete}
-                handleRowClick={currentTab.onRowClick}
-              />
-            </div>
-          </div>
+        {/* Tabs with Search */}
+        <div className="flex-1 px-10 py-6 overflow-hidden flex flex-col min-h-0 mb-7">
+          <Tabs
+            tabs={tabs}
+            activeIndex={currentTabIndex}
+            onTabChange={setCurrentTabIndex}
+            rightElement={
+              <SearchBar value={searchQuery} onChange={setSearchQuery} />
+            }
+          />
         </div>
       </div>
     </div>
