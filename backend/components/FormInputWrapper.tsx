@@ -3,13 +3,16 @@ import { Ban } from "lucide-react";
 
 export type FormInputState = "default" | "error" | "pending" | "complete";
 
-interface FormInputWrapperProps<T> {
+interface FormInputWrapperProps<T>
+  extends Omit<
+    React.HTMLProps<HTMLDivElement>,
+    "value" | "onChange" | "children"
+  > {
   title: string;
   required?: boolean;
   children: React.ReactNode;
   state?: FormInputState;
   setState?: (state: FormInputState) => void;
-  defaultClassName?: string;
   errorString?: string;
   description?: string;
   titleClassName?: string;
@@ -24,11 +27,12 @@ export default function FormInputWrapper<T>({
   state = "default",
   setState,
   errorString = "This field is required",
-  defaultClassName = "",
+  className = "",
   description,
   titleClassName = "",
   value,
   onChange = () => {},
+  ...rest
 }: FormInputWrapperProps<T>) {
   const handleChange = (val: T) => {
     onChange(val);
@@ -41,9 +45,11 @@ export default function FormInputWrapper<T>({
 
   if (React.isValidElement(children)) {
     childWithState = React.cloneElement(children, {
+      ...children.props,
       value,
       onChange: handleChange,
       state,
+      ...rest,
     });
   } else {
     childWithState = children;
@@ -51,7 +57,7 @@ export default function FormInputWrapper<T>({
 
   return (
     <div
-      className={`flex flex-col w-full font-[400] text-[18px]  ${defaultClassName} `}
+      className={`flex flex-col w-full font-[400] text-[18px]  ${className} `}
     >
       <div className="flex items-center gap-1 h-[30px] mb-1">
         <span className={titleClassName}>{title}</span>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { X, Plus } from "lucide-react";
+import { X } from "lucide-react";
 import FormInputWrapper from "@/components/FormInputWrapper";
 import FormText from "@/components/FormTextWrapper";
 import { TextInput } from "@/components/Input";
@@ -7,44 +7,124 @@ import FileUpload from "@/components/FileUpload";
 import Dropdown from "@/components/Dropdown";
 import Button from "@/components/Button";
 import ParagraphInput from "./ParagraphInput";
+import { trpc } from "@/lib/trpc";
+import { VideoTopic } from "@prisma/client";
 
-interface VideoEditModal {
+const TOPIC_OPTIONS = Object.keys(VideoTopic);
+
+type SaveStatus = "idle" | "saving" | "success" | "error";
+
+interface VideoData {
+  id: string | number;
+  titleEnglish: string;
+  titleQanjobal: string;
+  topic: string;
+  url: string;
+  descriptionEnglish: string | null;
+  descriptionQanjobal: string | null;
+}
+
+interface VideoEditModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave?: () => void;
-  isEditing?: boolean;
+  onUpdateComplete: () => void;
+  isEditing: boolean;
+  videoData: VideoData | null;
 }
+
 export default function VideoEditModal({
   isOpen,
   onClose,
-  onSave,
-  isEditing = true,
-}: VideoEditModal) {
+  onUpdateComplete,
+  isEditing,
+  videoData,
+}: VideoEditModalProps) {
+  const [englishTitle, setEnglishTitle] = useState("");
+  const [qanjobalTitle, setQanjobalTitle] = useState("");
+  const [videoLink, setVideoLink] = useState("");
+  const [englishDescription, setEnglishDescription] = useState("");
+  const [qanjobalDescription, setQanjobalDescription] = useState("");
+  const [dropdownIndex, setDropdownIndex] = useState<number | undefined>();
+  const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
+
   const [englishError, setEnglishError] = useState("");
   const [qanjobalError, setQanjobalError] = useState("");
   const [videoLinkError, setVideoLinkError] = useState("");
-
-  const [uploadState, setUploadState] = useState("complete");
-
-  let uploadedFile = {
-    fileName: "sixty-seven.zip",
-    fileSizeMB: 67,
-  };
-
-  const [dropdownIndex, setDropdownIndex] = useState<number>();
   const [dropdownError, setDropdownError] = useState("");
 
-  const onDropdownChange = (index: number) => {
-    setDropdownIndex(index);
-    if (dropdownError) {
-      setDropdownError("");
+  const [uploadState, setUploadState] = useState("complete");
+  const uploadedFile = { fileName: "sixty-seven.zip", fileSizeMB: 67 };
+
+  const updateVideoMutation = trpc.videos.updateVideo.useMutation();
+
+  useEffect(() => {
+    if (isOpen && videoData) {
+      setEnglishTitle(videoData.titleEnglish || "");
+      setQanjobalTitle(videoData.titleQanjobal || "");
+      setVideoLink(videoData.url || "");
+      setEnglishDescription(videoData.descriptionEnglish || "");
+      setQanjobalDescription(videoData.descriptionQanjobal || "");
+      const topicIndex = TOPIC_OPTIONS.findIndex(
+        (option) =>
+          option.toUpperCase() === (videoData.topic || "").toUpperCase()
+      );
+      setDropdownIndex(topicIndex !== -1 ? topicIndex : undefined);
+      setSaveStatus("idle");
     }
-  };
+  }, [isOpen, videoData]);
+
   useEffect(() => {
     document.body.style.overflow = isOpen ? "hidden" : "auto";
   }, [isOpen]);
 
+  const handleSave = async () => {
+    if (!videoData) return;
+    setSaveStatus("saving");
+
+    try {
+      await updateVideoMutation.mutateAsync({
+        id: videoData.id as number,
+        titleEnglish: englishTitle,
+        titleQanjobal: qanjobalTitle,
+        url: videoLink,
+        descriptionEnglish: englishDescription,
+        descriptionQanjobal: qanjobalDescription,
+        topic:
+          dropdownIndex !== undefined
+            ? (TOPIC_OPTIONS[dropdownIndex] as VideoTopic)
+            : undefined,
+      });
+
+      setSaveStatus("success");
+      setTimeout(() => {
+        onUpdateComplete();
+        onClose();
+      }, 1500);
+    } catch (error) {
+      console.error("Failed to update video:", error);
+      setSaveStatus("error");
+      setTimeout(() => {
+        setSaveStatus("idle");
+      }, 2000);
+    }
+  };
+
+  const getSaveButtonUI = () => {
+    switch (saveStatus) {
+      case "saving":
+        return { text: "Saving...", disabled: true, className: "opacity-70" };
+      case "success":
+        return { text: "Saved!", disabled: true, className: "bg-green-500" };
+      case "error":
+        return { text: "Error! Try Again", disabled: false, className: "bg-red-500" };
+      default:
+        return { text: "Save", disabled: false, className: "" };
+    }
+  };
+
   if (!isOpen) return null;
+
+  const saveButtonUI = getSaveButtonUI();
 
   return (
     <div className="fixed y-40 inset-0 z-50 flex items-center justify-center bg-[rgb(83,83,83,0.19)]">
@@ -67,6 +147,8 @@ export default function VideoEditModal({
                 required
                 state={englishError ? "error" : "default"}
                 errorString={englishError}
+                value={englishTitle}
+                onChange={setEnglishTitle}
               >
                 <FormText required onErrorChange={setEnglishError}>
                   <TextInput
@@ -77,7 +159,6 @@ export default function VideoEditModal({
                 </FormText>
               </FormInputWrapper>
             </div>
-
             <div className="flex-1">
               <FormInputWrapper
                 title="Resource title (Q'anjob'al)"
@@ -85,6 +166,8 @@ export default function VideoEditModal({
                 required
                 state={qanjobalError ? "error" : "default"}
                 errorString={qanjobalError}
+                value={qanjobalTitle}
+                onChange={setQanjobalTitle}
               >
                 <FormText required onErrorChange={setQanjobalError}>
                   <TextInput
@@ -96,7 +179,6 @@ export default function VideoEditModal({
               </FormInputWrapper>
             </div>
           </div>
-
           <div className="flex mt-[10px]">
             <FormInputWrapper
               title="Upload file"
@@ -107,12 +189,11 @@ export default function VideoEditModal({
                 extendedTextClassName="body1-desktop-text text-[15px]"
                 uploadedFile={uploadedFile}
                 onDelete={() => setUploadState("default")}
-                onFileSelect={() => set}
+                onFileSelect={() => {}}
                 editable={isEditing}
               />
             </FormInputWrapper>
           </div>
-
           <div className="flex mt-[10px]">
             <FormInputWrapper
               required
@@ -120,24 +201,16 @@ export default function VideoEditModal({
               titleClassName="body1-desktop-text text-[15px]"
               state={dropdownError ? "error" : "default"}
               errorString={dropdownError}
+              value={dropdownIndex}
+              onChange={setDropdownIndex}
             >
               <Dropdown
-                options={[
-                  "Transport",
-                  "Legal",
-                  "Medical",
-                  "Career",
-                  "Education",
-                  "Other",
-                ]}
-                currentIndex={dropdownIndex}
-                onChange={onDropdownChange}
+                options={TOPIC_OPTIONS}
                 state={dropdownError ? "error" : "default"}
                 disabled={!isEditing}
               />
             </FormInputWrapper>
           </div>
-
           <div className="flex mt-[10px]">
             <FormInputWrapper
               title="Video link"
@@ -145,56 +218,40 @@ export default function VideoEditModal({
               required
               state={videoLinkError ? "error" : "default"}
               errorString={videoLinkError}
+              value={videoLink}
+              onChange={setVideoLink}
             >
               <FormText required onErrorChange={setVideoLinkError}>
                 <TextInput
                   id="video-input"
-                  className="[315px] h-[46px]"
+                  className="w-[315px] h-[46px]"
                   disabled={!isEditing}
                 />
               </FormText>
             </FormInputWrapper>
           </div>
-
-          {false && (
-            <div className="flex items-center gap-2 mt-[10px] body1-desktop-text text-[15px] text-jila-400 cursor-pointer">
-              <Plus className="w-[18px] h-[18px]" />
-              Add another video
-            </div>
-          )}
-
           <div className="flex mt-[10px]">
             <FormInputWrapper
               title="Description (English)"
               titleClassName="body1-desktop-text text-[15px]"
               state="default"
+              value={englishDescription}
+              onChange={setEnglishDescription}
             >
-              <FormText>
-                <ParagraphInput
-                  value=""
-                  onChange={() => {}}
-                  disabled={!isEditing}
-                />
-              </FormText>
+              <ParagraphInput disabled={!isEditing} />
             </FormInputWrapper>
           </div>
-
           <div className="flex mt-[10px]">
             <FormInputWrapper
               title="Description (Q'anjob'al)"
               titleClassName="body1-desktop-text text-[15px]"
               state="default"
+              value={qanjobalDescription}
+              onChange={setQanjobalDescription}
             >
-              <FormText>
-                <ParagraphInput
-                  value=""
-                  onChange={() => {}}
-                  disabled={!isEditing}
-                />
-              </FormText>
+              <ParagraphInput disabled={!isEditing} />
             </FormInputWrapper>
           </div>
-
           {isEditing && (
             <div className="flex gap-3 justify-end mt-[26px] gap-x-[26px]">
               <Button
@@ -204,9 +261,10 @@ export default function VideoEditModal({
                 hoverClassName="hover:bg-gray-300"
               />
               <Button
-                onClick={onSave}
-                text="Save"
-                defaultClassName="w-[141px] h-[60px] rounded-[10px] components-text"
+                onClick={handleSave}
+                text={saveButtonUI.text}
+                disabled={saveButtonUI.disabled}
+                defaultClassName={`w-[141px] h-[60px] rounded-[10px] components-text transition-all duration-300 ${saveButtonUI.className}`}
               />
             </div>
           )}

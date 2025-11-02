@@ -19,7 +19,6 @@ export default function Dropdown({
   disabled = false,
 }: DropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
-
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

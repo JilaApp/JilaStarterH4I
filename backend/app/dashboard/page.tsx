@@ -15,6 +15,11 @@ import VideoUploadForm from "@/components/VideoUploadForm";
 import SocialServiceForm from "@/components/SocialServiceForm";
 import AuthWrapper from "../AuthWrapper";
 import { trpc } from "@/lib/trpc";
+import VideoEditModal from "@/components/VideoEditModal";
+
+type FullVideoType = NonNullable<
+  ReturnType<typeof trpc.videos.getAllVideos.useQuery>["data"]
+>[0];
 
 interface VideoResourceData extends DataRow {
   id: number | string;
@@ -54,6 +59,12 @@ export default function DashboardDev() {
   const [currentTabIndex, setCurrentTabIndex] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditingMode, setIsEditingMode] = useState(false);
+  const [selectedVideo, setSelectedVideo] = useState<FullVideoType | null>(
+    null
+  );
+
   const {
     data: videosData,
     isLoading: videosLoading,
@@ -76,7 +87,7 @@ export default function DashboardDev() {
       refetchVideos();
       refetchSocialServices();
     }
-  }, [activeView]);
+  }, [activeView, refetchVideos, refetchSocialServices]);
 
   const videoResourcesData: VideoResourceData[] =
     videosData?.map((video) => ({
@@ -97,19 +108,13 @@ export default function DashboardDev() {
     })) || [];
 
   const videoColumns: ColumnDefinition<VideoResourceData>[] = [
-    {
-      header: "Title",
-      accessorKey: "title",
-    },
+    { header: "Title", accessorKey: "title" },
     {
       header: "Topic",
       accessorKey: "topic",
       cell: (value) => <TopicTag variant={value as TopicVariant} />,
     },
-    {
-      header: "Phone number",
-      accessorKey: "phoneNumber",
-    },
+    { header: "Phone number", accessorKey: "phoneNumber" },
     {
       header: "Link",
       accessorKey: "link",
@@ -128,11 +133,21 @@ export default function DashboardDev() {
   ];
 
   const handleVideoRowClick = (id: number | string) => {
-    console.log("Video Row Clicked:", id);
+    const video = videosData?.find((v) => v.id === id);
+    if (video) {
+      setSelectedVideo(video);
+      setIsEditingMode(false);
+      setIsModalOpen(true);
+    }
   };
 
   const handleVideoEdit = (id: number | string) => {
-    console.log("Editing Video:", id);
+    const video = videosData?.find((v) => v.id === id);
+    if (video) {
+      setSelectedVideo(video);
+      setIsEditingMode(true);
+      setIsModalOpen(true);
+    }
   };
 
   const handleVideoDelete = (id: number | string) => {
@@ -140,19 +155,13 @@ export default function DashboardDev() {
   };
 
   const socialColumns: ColumnDefinition<SocialServiceData>[] = [
-    {
-      header: "Title",
-      accessorKey: "title",
-    },
+    { header: "Title", accessorKey: "title" },
     {
       header: "Topic",
       accessorKey: "topic",
       cell: (value) => <TopicTag variant={value as TopicVariant} />,
     },
-    {
-      header: "Phone number",
-      accessorKey: "phoneNumber",
-    },
+    { header: "Phone number", accessorKey: "phoneNumber" },
     {
       header: "Link",
       accessorKey: "link",
@@ -184,10 +193,7 @@ export default function DashboardDev() {
 
   const dashboardTabs = [
     {
-      header: {
-        logo: <Video size={20} />,
-        text: "Video resources",
-      },
+      header: { logo: <Video size={20} />, text: "Video resources" },
       content: videosLoading ? (
         <div className="flex items-center justify-center h-full">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-jila-400"></div>
@@ -203,10 +209,7 @@ export default function DashboardDev() {
       ),
     },
     {
-      header: {
-        logo: <MessageCircle size={20} />,
-        text: "Social services",
-      },
+      header: { logo: <MessageCircle size={20} />, text: "Social services" },
       content: socialServicesLoading ? (
         <div className="flex items-center justify-center h-full">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-jila-400"></div>
@@ -225,33 +228,22 @@ export default function DashboardDev() {
 
   const uploadTabs = [
     {
-      header: {
-        logo: <Video size={20} />,
-        text: "Video upload",
-      },
+      header: { logo: <Video size={20} />, text: "Video upload" },
       content: <VideoUploadForm />,
     },
     {
-      header: {
-        logo: <MessageCircle size={20} />,
-        text: "Social services upload",
-      },
+      header: { logo: <MessageCircle size={20} />, text: "Social services upload" },
       content: <SocialServiceForm />,
     },
   ];
 
   const getPageTitle = () => {
     switch (activeView) {
-      case "dashboard":
-        return "Your JILA! Dashboard";
-      case "upload":
-        return "Upload";
-      case "jobs":
-        return "Job board management";
-      case "metrics":
-        return "Metrics";
-      default:
-        return "Your JILA! Dashboard";
+      case "dashboard": return "Your JILA! Dashboard";
+      case "upload": return "Upload";
+      case "jobs": return "Job board management";
+      case "metrics": return "Metrics";
+      default: return "Your JILA! Dashboard";
     }
   };
 
@@ -267,7 +259,6 @@ export default function DashboardDev() {
                 setSelectedOptions={setSelectedFilters}
               />
             </div>
-
             <div className="flex-1 px-10 py-6 overflow-hidden flex flex-col min-h-0 mb-7">
               <Tabs
                 tabs={dashboardTabs}
@@ -291,17 +282,9 @@ export default function DashboardDev() {
           </div>
         );
       case "jobs":
-        return (
-          <div className="flex-1 px-10 py-6">
-            <p>jobs</p>
-          </div>
-        );
+        return <div className="flex-1 px-10 py-6"><p>jobs</p></div>;
       case "metrics":
-        return (
-          <div className="flex-1 px-10 py-6">
-            <p>metrics</p>
-          </div>
-        );
+        return <div className="flex-1 px-10 py-6"><p>metrics</p></div>;
       default:
         return null;
     }
@@ -313,7 +296,6 @@ export default function DashboardDev() {
         <div className="fixed left-0 top-0 h-screen z-50">
           <Sidebar activeButton={activeView} setActiveButton={setActiveView} />
         </div>
-
         <div className="flex-1 ml-[196px] flex flex-col bg-cream-300 rounded-tl-[60px] overflow-hidden">
           <div className="flex-shrink-0 px-10 mt-6">
             <Header
@@ -323,10 +305,16 @@ export default function DashboardDev() {
               onSignOut={() => signOut({ redirectUrl: "/sign-in" })}
             />
           </div>
-
           {renderContent()}
         </div>
       </div>
+      <VideoEditModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onUpdateComplete={refetchVideos}
+        isEditing={isEditingMode}
+        videoData={selectedVideo}
+      />
     </AuthWrapper>
   );
 }

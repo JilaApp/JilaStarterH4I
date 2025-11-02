@@ -75,6 +75,37 @@ async function removeVideo(input: RemoveVideoInput) {
   });
 }
 
+const updateVideoInput = z.object({
+  id: z.number(),
+  titleEnglish: z.string().optional(),
+  titleQanjobal: z.string().optional(),
+  topic: z.nativeEnum(VideoTopic).optional(),
+  url: z.string().optional(),
+  descriptionEnglish: z.string().optional(),
+  descriptionQanjobal: z.string().optional(),
+});
+
+type UpdateVideoInput = z.infer<typeof updateVideoInput>;
+
+async function updateVideo(input: UpdateVideoInput) {
+  const { id, ...dataToUpdate } = input;
+  const existing = await prisma.videos.findUnique({
+    where: { id },
+  });
+
+  if (!existing) {
+    throw new TRPCError({
+      code: "NOT_FOUND",
+      message: `Video with id ${id} does not exist`,
+    });
+  }
+
+  return await prisma.videos.update({
+    where: { id },
+    data: dataToUpdate,
+  });
+}
+
 async function getAllVideos() {
   const videos = await prisma.videos.findMany();
   return videos;
@@ -88,4 +119,7 @@ export const videosRouter = router({
   removeVideo: publicProcedure
     .input(removeVideoInput)
     .mutation(({ input }) => removeVideo(input)),
+  updateVideo: publicProcedure
+    .input(updateVideoInput)
+    .mutation(({ input }) => updateVideo(input)),
 });
