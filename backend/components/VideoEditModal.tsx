@@ -8,9 +8,8 @@ import Dropdown from "@/components/Dropdown";
 import Button from "@/components/Button";
 import ParagraphInput from "./ParagraphInput";
 import { trpc } from "@/lib/trpc";
-import { VideoTopic } from "@prisma/client";
-
-const TOPIC_OPTIONS = Object.keys(VideoTopic);
+import { VideoTopic } from "@/lib/types";
+import { VIDEO_TOPIC_OPTIONS } from "@/lib/constants";
 
 type SaveStatus = "idle" | "saving" | "success" | "error";
 
@@ -69,7 +68,7 @@ export default function VideoEditModal({
       setVideoLink(videoData.url || "");
       setEnglishDescription(videoData.descriptionEnglish || "");
       setQanjobalDescription(videoData.descriptionQanjobal || "");
-      const topicIndex = TOPIC_OPTIONS.findIndex(
+      const topicIndex = VIDEO_TOPIC_OPTIONS.findIndex(
         (option) =>
           option.toUpperCase() === (videoData.topic || "").toUpperCase(),
       );
@@ -128,7 +127,7 @@ export default function VideoEditModal({
       descriptionQanjobal: qanjobalDescription,
       topic:
         dropdownIndex !== undefined
-          ? (TOPIC_OPTIONS[dropdownIndex] as VideoTopic)
+          ? (VIDEO_TOPIC_OPTIONS[dropdownIndex] as VideoTopic)
           : undefined,
     };
 
@@ -270,7 +269,7 @@ export default function VideoEditModal({
               onChange={setDropdownIndex}
             >
               <Dropdown
-                options={TOPIC_OPTIONS}
+                options={VIDEO_TOPIC_OPTIONS}
                 state={dropdownError ? "error" : "default"}
                 disabled={!isEditing}
               />

@@ -1,10 +1,6 @@
 import { Upload, CircleCheck, CircleAlert, File, X } from "lucide-react";
 import { useRef } from "react";
-
-export type UploadedFile = {
-  fileName: string;
-  fileSizeMB: number;
-};
+import type { UploadedFile } from "@/lib/types";
 
 interface FileUploadProps {
   onFileSelect?: (file: File) => void;

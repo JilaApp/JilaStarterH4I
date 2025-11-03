@@ -3,12 +3,12 @@ import FileUploadWrapper from "@/components/FileUploadWrapper";
 import ParagraphInput from "@/components/ParagraphInput";
 import FormInputWrapper from "@/components/FormInputWrapper";
 import { useState } from "react";
-import { FormInputState } from "@/components/FormInputWrapper";
 import Dropdown from "@/components/Dropdown";
 import Button from "@/components/Button";
 import Notification from "@/components/Notification";
 import { trpc } from "@/lib/trpc";
-import { VideoTopic } from "@prisma/client";
+import { VideoTopic, type FormInputState } from "@/lib/types";
+import { VIDEO_TOPIC_DISPLAY_OPTIONS } from "@/lib/constants";
 
 export default function VideoUploadForm() {
   const [resourceTitleEnglish, setResourceTitleEnglish] = useState<string>("");
@@ -25,14 +25,7 @@ export default function VideoUploadForm() {
     useState<FormInputState>("default");
 
   const [topicDropdownIndex, setTopicDropdownIndex] = useState<number>();
-  const topicDropdownOptions = [
-    "Transport",
-    "Legal",
-    "Medical",
-    "Career",
-    "Education",
-    "Other",
-  ];
+  const topicDropdownOptions = [...VIDEO_TOPIC_DISPLAY_OPTIONS];
   const [topicDropdownState, setTopicDropdownState] =
     useState<FormInputState>("default");
 

@@ -1,19 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { MoreVertical } from "lucide-react";
-
-export interface DataRow {
-  id: number | string;
-  [key: string]: unknown;
-}
-
-export interface ColumnDefinition<
-  T extends DataRow,
-  K extends keyof T = keyof T,
-> {
-  header: string;
-  accessorKey: K;
-  cell?: (value: T[K]) => React.ReactNode;
-}
+import type { DataRow, ColumnDefinition } from "@/lib/types";
 
 interface TableProps<T extends DataRow> {
   data: T[];

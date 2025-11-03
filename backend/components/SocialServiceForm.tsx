@@ -8,112 +8,48 @@ import ParagraphInput from "./ParagraphInput";
 import Button from "./Button";
 import Notification from "./Notification";
 import { trpc } from "@/lib/trpc";
-import { SocialServiceCategory } from "@prisma/client";
+import { SocialServiceCategory } from "@/lib/types";
+import {
+  SOCIAL_SERVICE_CATEGORY_DISPLAY_OPTIONS,
+  US_STATES,
+} from "@/lib/constants";
+import type { FormInputState } from "@/lib/types";
 
 export default function SocialServiceForm() {
   const [englishTitle, setEnglishTitle] = useState<string>("");
-  const [englishTitleState, setEnglishTitleState] = useState<
-    "default" | "error" | "pending" | "complete"
-  >("default");
+  const [englishTitleState, setEnglishTitleState] =
+    useState<FormInputState>("default");
 
   const [qanjobalTitle, setQanjobalTitle] = useState<string>("");
-  const [qanjobalTitleState, setQanjobalTitleState] = useState<
-    "default" | "error" | "pending" | "complete"
-  >("default");
+  const [qanjobalTitleState, setQanjobalTitleState] =
+    useState<FormInputState>("default");
 
   const [titleFile, setTitleFile] = useState<File>();
-  const [titleFileState, setTitleFileState] = useState<
-    "default" | "error" | "pending" | "complete"
-  >("default");
+  const [titleFileState, setTitleFileState] =
+    useState<FormInputState>("default");
 
   const [topicIndex, setTopicIndex] = useState<number>();
-  const topicOptions = [
-    "Emergencia",
-    "Shelters",
-    "Food",
-    "Transportation",
-    "Other",
-  ];
-  const [topicState, setTopicState] = useState<
-    "default" | "error" | "pending" | "complete"
-  >("default");
+  const topicOptions = [...SOCIAL_SERVICE_CATEGORY_DISPLAY_OPTIONS];
+  const [topicState, setTopicState] = useState<FormInputState>("default");
 
   const [phoneNumber, setPhoneNumber] = useState<string>("");
-  const [phoneNumberState, setPhoneNumberState] = useState<
-    "default" | "error" | "pending" | "complete"
-  >("default");
+  const [phoneNumberState, setPhoneNumberState] =
+    useState<FormInputState>("default");
 
   const [addressLine, setAddressLine] = useState<string>("");
-  const [addressLineState, setAddressLineState] = useState<
-    "default" | "error" | "pending" | "complete"
-  >("default");
+  const [addressLineState, setAddressLineState] =
+    useState<FormInputState>("default");
 
   const [city, setCity] = useState<string>("");
-  const [cityState, setCityState] = useState<
-    "default" | "error" | "pending" | "complete"
-  >("default");
+  const [cityState, setCityState] = useState<FormInputState>("default");
 
   const [stateIndex, setStateIndex] = useState<number>();
-  const stateOptions = [
-    "Alabama",
-    "Alaska",
-    "Arizona",
-    "Arkansas",
-    "California",
-    "Colorado",
-    "Connecticut",
-    "Delaware",
-    "Florida",
-    "Georgia",
-    "Hawaii",
-    "Idaho",
-    "Illinois",
-    "Indiana",
-    "Iowa",
-    "Kansas",
-    "Kentucky",
-    "Louisiana",
-    "Maine",
-    "Maryland",
-    "Massachusetts",
-    "Michigan",
-    "Minnesota",
-    "Mississippi",
-    "Missouri",
-    "Montana",
-    "Nebraska",
-    "Nevada",
-    "New Hampshire",
-    "New Jersey",
-    "New Mexico",
-    "New York",
-    "North Carolina",
-    "North Dakota",
-    "Ohio",
-    "Oklahoma",
-    "Oregon",
-    "Pennsylvania",
-    "Rhode Island",
-    "South Carolina",
-    "South Dakota",
-    "Tennessee",
-    "Texas",
-    "Utah",
-    "Vermont",
-    "Virginia",
-    "Washington",
-    "West Virginia",
-    "Wisconsin",
-    "Wyoming",
-  ];
-  const [stateDropdownState, setStateDropdownState] = useState<
-    "default" | "error" | "pending" | "complete"
-  >("default");
+  const stateOptions = [...US_STATES];
+  const [stateDropdownState, setStateDropdownState] =
+    useState<FormInputState>("default");
 
   const [link, setLink] = useState<string>("");
-  const [linkState, setLinkState] = useState<
-    "default" | "error" | "pending" | "complete"
-  >("default");
+  const [linkState, setLinkState] = useState<FormInputState>("default");
 
   const [englishDescription, setEnglishDescription] = useState<string>("");
   const [qanjobalDescription, setQanjobalDescription] = useState<string>("");

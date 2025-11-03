@@ -1,8 +1,8 @@
 import { router, publicProcedure } from "../trpc";
-import { z } from "zod";
-import { VideoTopic } from "@prisma/client";
 import prisma from "@/lib/prisma";
 import { TRPCError } from "@trpc/server";
+import { z } from "zod";
+import { VideoTopic } from "@prisma/client";
 
 const addVideoInput = z.object({
   titleEnglish: z.string(),
@@ -16,9 +16,28 @@ const addVideoInput = z.object({
   descriptionQanjobal: z.string(),
 });
 
-type AddVideoInput = z.infer<typeof addVideoInput>;
+const removeVideoInput = z.object({
+  id: z.union([z.string(), z.number()]),
+});
 
-export async function addVideo(input: AddVideoInput) {
+const updateVideoInput = z.object({
+  id: z.number(),
+  titleEnglish: z.string().optional(),
+  titleQanjobal: z.string().optional(),
+  topic: z.nativeEnum(VideoTopic).optional(),
+  url: z.string().optional(),
+  descriptionEnglish: z.string().optional(),
+  descriptionQanjobal: z.string().optional(),
+  audioFile: z.string().optional(),
+  audioFilename: z.string().optional(),
+  audioFileSize: z.number().optional(),
+});
+
+type AddVideoInput = z.infer<typeof addVideoInput>;
+type RemoveVideoInput = z.infer<typeof removeVideoInput>;
+type UpdateVideoInput = z.infer<typeof updateVideoInput>;
+
+async function addVideo(input: AddVideoInput) {
   try {
     const existing = await prisma.videos.findUnique({
       where: { url: input.url },
@@ -54,12 +73,6 @@ export async function addVideo(input: AddVideoInput) {
   }
 }
 
-const removeVideoInput = z.object({
-  id: z.union([z.string(), z.number()]),
-});
-
-type RemoveVideoInput = z.infer<typeof removeVideoInput>;
-
 async function removeVideo(input: RemoveVideoInput) {
   const numericId =
     typeof input.id === "string" ? parseInt(input.id, 10) : input.id;
@@ -88,21 +101,6 @@ async function removeVideo(input: RemoveVideoInput) {
     },
   });
 }
-
-const updateVideoInput = z.object({
-  id: z.number(),
-  titleEnglish: z.string().optional(),
-  titleQanjobal: z.string().optional(),
-  topic: z.nativeEnum(VideoTopic).optional(),
-  url: z.string().optional(),
-  descriptionEnglish: z.string().optional(),
-  descriptionQanjobal: z.string().optional(),
-  audioFile: z.string().optional(),
-  audioFilename: z.string().optional(),
-  audioFileSize: z.number().optional(),
-});
-
-type UpdateVideoInput = z.infer<typeof updateVideoInput>;
 
 async function updateVideo(input: UpdateVideoInput) {
   const { id, audioFile, audioFilename, audioFileSize, ...rest } = input;
