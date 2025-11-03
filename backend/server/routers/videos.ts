@@ -1,18 +1,43 @@
 import { router, publicProcedure } from "../trpc";
 import prisma from "@/lib/prisma";
 import { TRPCError } from "@trpc/server";
-import {
-  addVideoInputSchema,
-  removeVideoInputSchema,
-  updateVideoInputSchema,
-  type AddVideoInput,
-  type RemoveVideoInput,
-  type UpdateVideoInput,
-} from "@/lib/types";
+import { z } from "zod";
+import { VideoTopic } from "@prisma/client";
 
-const addVideoInput = addVideoInputSchema;
+const addVideoInput = z.object({
+  titleEnglish: z.string(),
+  titleQanjobal: z.string(),
+  audioFile: z.string(),
+  audioFilename: z.string(),
+  audioFileSize: z.number(),
+  topic: z.nativeEnum(VideoTopic),
+  url: z.string(),
+  descriptionEnglish: z.string(),
+  descriptionQanjobal: z.string(),
+});
 
-export async function addVideo(input: AddVideoInput) {
+const removeVideoInput = z.object({
+  id: z.union([z.string(), z.number()]),
+});
+
+const updateVideoInput = z.object({
+  id: z.number(),
+  titleEnglish: z.string().optional(),
+  titleQanjobal: z.string().optional(),
+  topic: z.nativeEnum(VideoTopic).optional(),
+  url: z.string().optional(),
+  descriptionEnglish: z.string().optional(),
+  descriptionQanjobal: z.string().optional(),
+  audioFile: z.string().optional(),
+  audioFilename: z.string().optional(),
+  audioFileSize: z.number().optional(),
+});
+
+type AddVideoInput = z.infer<typeof addVideoInput>;
+type RemoveVideoInput = z.infer<typeof removeVideoInput>;
+type UpdateVideoInput = z.infer<typeof updateVideoInput>;
+
+async function addVideo(input: AddVideoInput) {
   try {
     const existing = await prisma.videos.findUnique({
       where: { url: input.url },
@@ -48,8 +73,6 @@ export async function addVideo(input: AddVideoInput) {
   }
 }
 
-const removeVideoInput = removeVideoInputSchema;
-
 async function removeVideo(input: RemoveVideoInput) {
   const numericId =
     typeof input.id === "string" ? parseInt(input.id, 10) : input.id;
@@ -78,8 +101,6 @@ async function removeVideo(input: RemoveVideoInput) {
     },
   });
 }
-
-const updateVideoInput = updateVideoInputSchema;
 
 async function updateVideo(input: UpdateVideoInput) {
   const { id, audioFile, audioFilename, audioFileSize, ...rest } = input;
