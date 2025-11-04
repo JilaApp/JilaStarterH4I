@@ -12,6 +12,14 @@ export interface FormConfig {
   [key: string]: FieldConfig;
 }
 
+export function createField<T>(value: T): FieldConfig<T> {
+  return {
+    value,
+    error: "",
+    state: "default",
+  };
+}
+
 export function useForm<T extends FormConfig>(initialConfig: T) {
   const [fields, setFields] = useState<T>(initialConfig);
 

@@ -9,6 +9,7 @@ import ParagraphInput from "./ParagraphInput";
 import { trpc } from "@/lib/trpc";
 import { VideoTopic } from "@/lib/types";
 import { VIDEO_TOPIC_OPTIONS } from "@/lib/constants";
+import { useForm, createField } from "@/hooks/useForm";
 import { validateRequired } from "@/lib/validators";
 
 type SaveStatus = "idle" | "saving" | "success" | "error";
@@ -40,19 +41,17 @@ export default function VideoEditModal({
   isEditing = true,
   videoData,
 }: VideoEditModalProps) {
-  const [englishTitle, setEnglishTitle] = useState("");
-  const [englishTitleError, setEnglishTitleError] = useState("");
-  const [qanjobalTitle, setQanjobalTitle] = useState("");
-  const [qanjobalTitleError, setQanjobalTitleError] = useState("");
-  const [videoLink, setVideoLink] = useState("");
-  const [videoLinkError, setVideoLinkError] = useState("");
-  const [englishDescription, setEnglishDescription] = useState("");
-  const [qanjobalDescription, setQanjobalDescription] = useState("");
-  const [dropdownIndex, setDropdownIndex] = useState<number | undefined>();
-  const [dropdownError, setDropdownError] = useState("");
+  const { fields, setFieldValue, setFieldError, resetForm } = useForm({
+    englishTitle: createField(""),
+    qanjobalTitle: createField(""),
+    videoLink: createField(""),
+    englishDescription: createField(""),
+    qanjobalDescription: createField(""),
+    dropdownIndex: createField<number | undefined>(undefined),
+    audioFile: createField<File | undefined>(undefined),
+  });
 
   const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
-  const [audioFile, setAudioFile] = useState<File | undefined>();
   const [existingFileMetadata, setExistingFileMetadata] = useState<
     { fileName: string; fileSizeMB: number } | undefined
   >();
@@ -62,27 +61,24 @@ export default function VideoEditModal({
 
   useEffect(() => {
     if (isOpen && videoData) {
-      console.log("VideoEditModal - videoData:", videoData);
-      setEnglishTitle(videoData.titleEnglish || "");
-      setQanjobalTitle(videoData.titleQanjobal || "");
-      setVideoLink(videoData.url || "");
-      setEnglishDescription(videoData.descriptionEnglish || "");
-      setQanjobalDescription(videoData.descriptionQanjobal || "");
+      setFieldValue("englishTitle", videoData.titleEnglish || "");
+      setFieldValue("qanjobalTitle", videoData.titleQanjobal || "");
+      setFieldValue("videoLink", videoData.url || "");
+      setFieldValue("englishDescription", videoData.descriptionEnglish || "");
+      setFieldValue("qanjobalDescription", videoData.descriptionQanjobal || "");
 
       const topicIndex = VIDEO_TOPIC_OPTIONS.findIndex(
         (option) =>
           option.toUpperCase() === (videoData.topic || "").toUpperCase(),
       );
-      setDropdownIndex(topicIndex !== -1 ? topicIndex : undefined);
+      setFieldValue(
+        "dropdownIndex",
+        topicIndex !== -1 ? topicIndex : undefined,
+      );
 
       setSaveStatus("idle");
-      setAudioFile(undefined);
+      setFieldValue("audioFile", undefined);
       setClearExistingFile(false);
-
-      setEnglishTitleError("");
-      setQanjobalTitleError("");
-      setVideoLinkError("");
-      setDropdownError("");
 
       if (videoData.audioFilename && videoData.audioFileSize) {
         const metadata = {
@@ -90,26 +86,24 @@ export default function VideoEditModal({
           fileSizeMB:
             Math.round((videoData.audioFileSize / 1_000_000) * 100) / 100,
         };
-        console.log("VideoEditModal - setting existingFileMetadata:", metadata);
         setExistingFileMetadata(metadata);
       } else {
-        console.log("VideoEditModal - no audio file data");
         setExistingFileMetadata(undefined);
       }
     }
-  }, [isOpen, videoData]);
+  }, [isOpen, videoData, setFieldValue]);
 
   useEffect(() => {
     document.body.style.overflow = isOpen ? "hidden" : "auto";
   }, [isOpen]);
 
   const handleFileChange = (file: File) => {
-    setAudioFile(file);
+    setFieldValue("audioFile", file);
     setClearExistingFile(false);
   };
 
   const handleDeleteFile = () => {
-    setAudioFile(undefined);
+    setFieldValue("audioFile", undefined);
     setClearExistingFile(true);
   };
 
@@ -118,20 +112,20 @@ export default function VideoEditModal({
 
     let hasError = false;
 
-    if (!englishTitle) {
-      setEnglishTitleError("This field is required");
+    if (!fields.englishTitle.value) {
+      setFieldError("englishTitle", "This field is required");
       hasError = true;
     }
-    if (!qanjobalTitle) {
-      setQanjobalTitleError("This field is required");
+    if (!fields.qanjobalTitle.value) {
+      setFieldError("qanjobalTitle", "This field is required");
       hasError = true;
     }
-    if (!videoLink) {
-      setVideoLinkError("This field is required");
+    if (!fields.videoLink.value) {
+      setFieldError("videoLink", "This field is required");
       hasError = true;
     }
-    if (dropdownIndex === undefined) {
-      setDropdownError("This field is required");
+    if (fields.dropdownIndex.value === undefined) {
+      setFieldError("dropdownIndex", "This field is required");
       hasError = true;
     }
 
@@ -143,14 +137,14 @@ export default function VideoEditModal({
       typeof updateVideoMutation.mutateAsync
     >[0] = {
       id: videoData.id as number,
-      titleEnglish: englishTitle,
-      titleQanjobal: qanjobalTitle,
-      url: videoLink,
-      descriptionEnglish: englishDescription,
-      descriptionQanjobal: qanjobalDescription,
+      titleEnglish: fields.englishTitle.value,
+      titleQanjobal: fields.qanjobalTitle.value,
+      url: fields.videoLink.value,
+      descriptionEnglish: fields.englishDescription.value,
+      descriptionQanjobal: fields.qanjobalDescription.value,
       topic:
-        dropdownIndex !== undefined
-          ? (VIDEO_TOPIC_OPTIONS[dropdownIndex] as VideoTopic)
+        fields.dropdownIndex.value !== undefined
+          ? (VIDEO_TOPIC_OPTIONS[fields.dropdownIndex.value] as VideoTopic)
           : undefined,
     };
 
@@ -171,19 +165,19 @@ export default function VideoEditModal({
       }
     };
 
-    if (audioFile) {
+    if (fields.audioFile.value) {
       const reader = new FileReader();
       reader.onload = () => {
         mutationPayload.audioFile = reader.result?.toString().split(",")[1];
-        mutationPayload.audioFilename = audioFile.name;
-        mutationPayload.audioFileSize = audioFile.size;
+        mutationPayload.audioFilename = fields.audioFile.value!.name;
+        mutationPayload.audioFileSize = fields.audioFile.value!.size;
         executeMutation(mutationPayload);
       };
       reader.onerror = (error) => {
         console.error("FileReader error:", error);
         setSaveStatus("error");
       };
-      reader.readAsDataURL(audioFile);
+      reader.readAsDataURL(fields.audioFile.value);
     } else if (clearExistingFile) {
       mutationPayload.audioFile = "";
       executeMutation(mutationPayload);
@@ -213,13 +207,6 @@ export default function VideoEditModal({
 
   const saveButtonUI = getSaveButtonUI();
 
-  console.log("VideoEditModal - render:", {
-    audioFile,
-    existingFileMetadata,
-    clearExistingFile,
-    finalExistingFile: clearExistingFile ? undefined : existingFileMetadata,
-  });
-
   return (
     <div className="fixed y-40 inset-0 z-50 flex items-center justify-center bg-[rgb(83,83,83,0.19)]">
       <div className="relative flex flex-col bg-white rounded-[10px] w-[698px] h-[830px] p-[26.48px]">
@@ -239,10 +226,10 @@ export default function VideoEditModal({
                 title="Resource title (English)"
                 defaultClassName="body1-desktop-text text-[15px]"
                 required
-                state={englishTitleError ? "error" : "default"}
-                errorString={englishTitleError}
-                value={englishTitle}
-                onChange={setEnglishTitle}
+                state={fields.englishTitle.state}
+                errorString={fields.englishTitle.error}
+                value={fields.englishTitle.value}
+                onChange={(val) => setFieldValue("englishTitle", val)}
               >
                 <TextInput
                   id="english-input"
@@ -256,10 +243,10 @@ export default function VideoEditModal({
                 title="Resource title (Q'anjob'al)"
                 defaultClassName="body1-desktop-text text-[15px]"
                 required
-                state={qanjobalTitleError ? "error" : "default"}
-                errorString={qanjobalTitleError}
-                value={qanjobalTitle}
-                onChange={setQanjobalTitle}
+                state={fields.qanjobalTitle.state}
+                errorString={fields.qanjobalTitle.error}
+                value={fields.qanjobalTitle.value}
+                onChange={(val) => setFieldValue("qanjobalTitle", val)}
               >
                 <TextInput
                   id="qanjobal-input"
@@ -273,7 +260,7 @@ export default function VideoEditModal({
             <FormField
               title="Upload file"
               defaultClassName="body1-desktop-text text-[15px]"
-              value={audioFile}
+              value={fields.audioFile.value}
               onChange={handleFileChange}
               existingFile={
                 clearExistingFile ? undefined : existingFileMetadata
@@ -287,14 +274,16 @@ export default function VideoEditModal({
               required
               title="Topic"
               defaultClassName="body1-desktop-text text-[15px]"
-              state={dropdownError ? "error" : "default"}
-              errorString={dropdownError}
-              value={dropdownIndex}
-              onChange={setDropdownIndex}
+              state={fields.dropdownIndex.state}
+              errorString={fields.dropdownIndex.error}
+              value={fields.dropdownIndex.value}
+              onChange={(val) => setFieldValue("dropdownIndex", val)}
             >
               <Dropdown
                 options={VIDEO_TOPIC_OPTIONS}
-                state={dropdownError ? "error" : "default"}
+                state={
+                  fields.dropdownIndex.state === "error" ? "error" : "default"
+                }
                 disabled={!isEditing}
               />
             </FormField>
@@ -304,10 +293,10 @@ export default function VideoEditModal({
               title="Video link"
               defaultClassName="body1-desktop-text text-[15px]"
               required
-              state={videoLinkError ? "error" : "default"}
-              errorString={videoLinkError}
-              value={videoLink}
-              onChange={setVideoLink}
+              state={fields.videoLink.state}
+              errorString={fields.videoLink.error}
+              value={fields.videoLink.value}
+              onChange={(val) => setFieldValue("videoLink", val)}
             >
               <TextInput id="video-input w-full" disabled={!isEditing} />
             </FormField>
@@ -317,8 +306,8 @@ export default function VideoEditModal({
               title="Description (English)"
               defaultClassName="body1-desktop-text text-[15px]"
               state="default"
-              value={englishDescription}
-              onChange={setEnglishDescription}
+              value={fields.englishDescription.value}
+              onChange={(val) => setFieldValue("englishDescription", val)}
             >
               <ParagraphInput disabled={!isEditing} />
             </FormField>
@@ -328,8 +317,8 @@ export default function VideoEditModal({
               title="Description (Q'anjob'al)"
               defaultClassName="body1-desktop-text text-[15px]"
               state="default"
-              value={qanjobalDescription}
-              onChange={setQanjobalDescription}
+              value={fields.qanjobalDescription.value}
+              onChange={(val) => setFieldValue("qanjobalDescription", val)}
             >
               <ParagraphInput disabled={!isEditing} />
             </FormField>

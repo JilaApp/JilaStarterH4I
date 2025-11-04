@@ -1,6 +1,6 @@
 import { Upload, CircleCheck, CircleAlert, File, X } from "lucide-react";
 import { useRef, useState, useEffect } from "react";
-import type { UploadedFile } from "@/lib/types";
+import type { UploadedFile, FormInputState } from "@/lib/types";
 
 interface FileUploadProps {
   value?: File;
@@ -10,7 +10,7 @@ interface FileUploadProps {
   extendedText?: string;
   errorText?: string;
   extendedTextClassName?: string;
-  state?: "default" | "pending" | "complete" | "error";
+  state?: FormInputState;
   existingFile?: {
     fileName: string;
     fileSizeMB: number;
@@ -30,13 +30,9 @@ export default function FileUpload({
 }: FileUploadProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploadedFile, setUploadedFile] = useState<UploadedFile | undefined>();
-  const [internalState, setInternalState] = useState<
-    "default" | "pending" | "complete" | "error"
-  >(state);
+  const [internalState, setInternalState] = useState<FormInputState>(state);
 
-  // Update internal state when existingFile changes
   useEffect(() => {
-    console.log("FileUpload - useEffect existingFile:", existingFile);
     if (existingFile) {
       setInternalState("complete");
     } else if (!value && !uploadedFile) {
@@ -52,15 +48,6 @@ export default function FileUpload({
     : existingFile || uploadedFile;
 
   const currentState = displayedFile ? "complete" : internalState;
-
-  console.log("FileUpload - render:", {
-    existingFile,
-    displayedFile,
-    currentState,
-    editable,
-    value,
-    uploadedFile,
-  });
 
   const handleClickUpload = () => {
     fileInputRef.current?.click();

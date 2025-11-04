@@ -21,7 +21,7 @@ import { ColumnDefinition, DataRow } from "@/lib/types";
 import VideoEditModal from "@/components/VideoEditModal";
 import VideoUploadForm from "@/components/VideoUploadForm";
 import SocialServiceForm from "@/components/SocialServiceForm";
-import { useForm } from "@/hooks/useForm";
+import { useForm, createField } from "@/hooks/useForm";
 import { validateEmail, validatePassword } from "@/lib/validators";
 
 interface ServiceData extends DataRow {
@@ -46,25 +46,13 @@ export default function DevPage() {
   const [currentTabIndex, setCurrentTabIndex] = useState(1);
 
   const { fields, setFieldValue, validateField } = useForm({
-    textInput: { value: "", error: "", state: "default" as const },
-    emailInput: { value: "", error: "", state: "default" as const },
-    passwordInput: { value: "", error: "", state: "default" as const },
-    dropdownIndex: {
-      value: undefined as number | undefined,
-      error: "",
-      state: "default" as const,
-    },
-    errorDropdownIndex: {
-      value: undefined as number | undefined,
-      error: "",
-      state: "default" as const,
-    },
-    file: {
-      value: undefined as File | undefined,
-      error: "",
-      state: "default" as const,
-    },
-    paragraphInput: { value: "", error: "", state: "default" as const },
+    textInput: createField(""),
+    emailInput: createField(""),
+    passwordInput: createField(""),
+    dropdownIndex: createField<number | undefined>(undefined),
+    errorDropdownIndex: createField<number | undefined>(undefined),
+    file: createField<File | undefined>(undefined),
+    paragraphInput: createField(""),
   });
 
   const myOptions = [

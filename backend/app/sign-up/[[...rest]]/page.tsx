@@ -9,7 +9,7 @@ import DisplayBox from "@/components/DisplayBox";
 import FormField from "@/components/FormField";
 import PageBackground from "@/components/PageBackground";
 import { trpc } from "@/lib/trpc";
-import { useForm } from "@/hooks/useForm";
+import { useForm, createField } from "@/hooks/useForm";
 import { validatePassword } from "@/lib/validators";
 
 export default function InviteSignUpPage() {
@@ -20,9 +20,9 @@ export default function InviteSignUpPage() {
   const finalizeSignUpMutation = trpc.user.finalizeSignUp.useMutation();
 
   const { fields, setFieldValue, setFieldError, validateField } = useForm({
-    email: { value: "", error: "", state: "default" as const },
-    password: { value: "", error: "", state: "default" as const },
-    confirmPassword: { value: "", error: "", state: "default" as const },
+    email: createField(""),
+    password: createField(""),
+    confirmPassword: createField(""),
   });
 
   const [error, setError] = useState("");

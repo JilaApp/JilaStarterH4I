@@ -10,7 +10,7 @@ import Link from "next/link";
 import FormField from "@/components/FormField";
 import PageBackground from "@/components/PageBackground";
 import { useRouter } from "next/navigation";
-import { useForm } from "@/hooks/useForm";
+import { useForm, createField } from "@/hooks/useForm";
 import { validateEmail, validatePassword } from "@/lib/validators";
 
 export default function ForgotPasswordPage() {
@@ -20,9 +20,9 @@ export default function ForgotPasswordPage() {
   const router = useRouter();
 
   const { fields, setFieldValue, setFieldError, validateField } = useForm({
-    email: { value: "", error: "", state: "default" as const },
-    password: { value: "", error: "", state: "default" as const },
-    code: { value: "", error: "", state: "default" as const },
+    email: createField(""),
+    password: createField(""),
+    code: createField(""),
   });
 
   const [error, setError] = useState("");

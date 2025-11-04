@@ -1,6 +1,6 @@
 import React, { ReactElement, cloneElement, isValidElement } from "react";
 import { Ban } from "lucide-react";
-import type { FormInputState } from "@/hooks/useForm";
+import type { FormInputState } from "@/lib/types";
 
 interface FormFieldProps<T> {
   title: string;

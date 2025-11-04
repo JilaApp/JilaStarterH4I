@@ -12,38 +12,22 @@ import {
   SOCIAL_SERVICE_CATEGORY_DISPLAY_OPTIONS,
   US_STATES,
 } from "@/lib/constants";
-import { useForm } from "@/hooks/useForm";
+import { useForm, createField } from "@/hooks/useForm";
 
 export default function SocialServiceForm() {
   const { fields, setFieldValue, setFieldError, resetForm } = useForm({
-    englishTitle: { value: "", error: "", state: "default" as const },
-    qanjobalTitle: { value: "", error: "", state: "default" as const },
-    titleFile: {
-      value: undefined as File | undefined,
-      error: "",
-      state: "default" as const,
-    },
-    topicIndex: {
-      value: undefined as number | undefined,
-      error: "",
-      state: "default" as const,
-    },
-    phoneNumber: { value: "", error: "", state: "default" as const },
-    addressLine: { value: "", error: "", state: "default" as const },
-    city: { value: "", error: "", state: "default" as const },
-    stateIndex: {
-      value: undefined as number | undefined,
-      error: "",
-      state: "default" as const,
-    },
-    link: { value: "", error: "", state: "default" as const },
-    englishDescription: { value: "", error: "", state: "default" as const },
-    qanjobalDescription: { value: "", error: "", state: "default" as const },
-    descriptionFile: {
-      value: undefined as File | undefined,
-      error: "",
-      state: "default" as const,
-    },
+    englishTitle: createField(""),
+    qanjobalTitle: createField(""),
+    titleFile: createField<File | undefined>(undefined),
+    topicIndex: createField<number | undefined>(undefined),
+    phoneNumber: createField(""),
+    addressLine: createField(""),
+    city: createField(""),
+    stateIndex: createField<number | undefined>(undefined),
+    link: createField(""),
+    englishDescription: createField(""),
+    qanjobalDescription: createField(""),
+    descriptionFile: createField<File | undefined>(undefined),
   });
 
   const [notification, setNotification] = useState<string | null>(null);

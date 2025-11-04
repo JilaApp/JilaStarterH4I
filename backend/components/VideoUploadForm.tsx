@@ -8,26 +8,18 @@ import Notification from "@/components/Notification";
 import { trpc } from "@/lib/trpc";
 import { VideoTopic } from "@/lib/types";
 import { VIDEO_TOPIC_DISPLAY_OPTIONS } from "@/lib/constants";
-import { useForm } from "@/hooks/useForm";
+import { useForm, createField } from "@/hooks/useForm";
 import { useState } from "react";
 
 export default function VideoUploadForm() {
   const { fields, setFieldValue, setFieldError, resetForm } = useForm({
-    resourceTitleEnglish: { value: "", error: "", state: "default" as const },
-    resourceTitleQanjobal: { value: "", error: "", state: "default" as const },
-    audioFile: {
-      value: undefined as File | undefined,
-      error: "",
-      state: "default" as const,
-    },
-    topicDropdownIndex: {
-      value: undefined as number | undefined,
-      error: "",
-      state: "default" as const,
-    },
-    videoLink: { value: "", error: "", state: "default" as const },
-    descriptionEnglish: { value: "", error: "", state: "default" as const },
-    descriptionQanjobal: { value: "", error: "", state: "default" as const },
+    resourceTitleEnglish: createField(""),
+    resourceTitleQanjobal: createField(""),
+    audioFile: createField<File | undefined>(undefined),
+    topicDropdownIndex: createField<number | undefined>(undefined),
+    videoLink: createField(""),
+    descriptionEnglish: createField(""),
+    descriptionQanjobal: createField(""),
   });
 
   const [notification, setNotification] = useState<string | null>(null);
