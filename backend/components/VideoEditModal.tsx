@@ -275,13 +275,11 @@ export default function VideoEditModal({
               defaultClassName="body1-desktop-text text-[15px]"
               value={audioFile}
               onChange={handleFileChange}
-              editable={isEditing}
               existingFile={
                 clearExistingFile ? undefined : existingFileMetadata
               }
-              onDelete={handleDeleteFile}
             >
-              <FileUpload />
+              <FileUpload editable={isEditing} onDelete={handleDeleteFile} />
             </FormField>
           </div>
           <div className="flex mt-[10px]">

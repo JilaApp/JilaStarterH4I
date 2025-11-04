@@ -1,5 +1,5 @@
 import { Upload, CircleCheck, CircleAlert, File, X } from "lucide-react";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import type { UploadedFile } from "@/lib/types";
 
 interface FileUploadProps {
@@ -34,6 +34,16 @@ export default function FileUpload({
     "default" | "pending" | "complete" | "error"
   >(state);
 
+  // Update internal state when existingFile changes
+  useEffect(() => {
+    console.log("FileUpload - useEffect existingFile:", existingFile);
+    if (existingFile) {
+      setInternalState("complete");
+    } else if (!value && !uploadedFile) {
+      setInternalState("default");
+    }
+  }, [existingFile, value, uploadedFile]);
+
   const displayedFile = value
     ? {
         fileName: value.name,
@@ -48,6 +58,8 @@ export default function FileUpload({
     displayedFile,
     currentState,
     editable,
+    value,
+    uploadedFile,
   });
 
   const handleClickUpload = () => {

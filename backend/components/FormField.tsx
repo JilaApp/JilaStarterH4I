@@ -1,4 +1,4 @@
-import React, { ReactElement, cloneElement } from "react";
+import React, { ReactElement, cloneElement, isValidElement } from "react";
 import { Ban } from "lucide-react";
 import type { FormInputState } from "@/hooks/useForm";
 
@@ -14,6 +14,8 @@ interface FormFieldProps<T> {
   onBlur?: () => void;
   validate?: (value: T) => string | null;
   defaultClassName?: string;
+  // Allow passing any additional props to children
+  [key: string]: any;
 }
 
 export default function FormField<T>({
@@ -28,6 +30,7 @@ export default function FormField<T>({
   onBlur,
   validate,
   defaultClassName = "",
+  ...additionalProps
 }: FormFieldProps<T>) {
   const handleChange = (val: T) => {
     onChange(val);
@@ -45,14 +48,29 @@ export default function FormField<T>({
     }
   };
 
-  const childWithProps = React.isValidElement(children)
+  // Filter out FormField-specific props before passing to children
+  const {
+    title: _title,
+    required: _required,
+    children: _children,
+    errorString: _errorString,
+    description: _description,
+    validate: _validate,
+    defaultClassName: _defaultClassName,
+    ...propsForChildren
+  } = additionalProps;
+
+  const childWithProps = isValidElement(children)
     ? cloneElement(children, {
-        ...children.props,
+        ...(typeof children.props === "object" && children.props !== null
+          ? children.props
+          : {}),
+        ...propsForChildren,
         value,
         onChange: handleChange,
         onBlur: handleBlur,
         state,
-      })
+      } as any)
     : children;
 
   return (
