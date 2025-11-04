@@ -1,5 +1,5 @@
 import { Upload, CircleCheck, CircleAlert, File, X } from "lucide-react";
-import { useRef, useState, useEffect } from "react";
+import { useRef } from "react";
 import type { UploadedFile, FormInputState } from "@/lib/types";
 
 interface FileUploadProps {
@@ -29,25 +29,17 @@ export default function FileUpload({
   existingFile,
 }: FileUploadProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [uploadedFile, setUploadedFile] = useState<UploadedFile | undefined>();
-  const [internalState, setInternalState] = useState<FormInputState>(state);
 
-  useEffect(() => {
-    if (existingFile) {
-      setInternalState("complete");
-    } else if (!value && !uploadedFile) {
-      setInternalState("default");
-    }
-  }, [existingFile, value, uploadedFile]);
-
+  // Determine the display state based on props (parent controls state)
   const displayedFile = value
     ? {
         fileName: value.name,
         fileSizeMB: Math.round((value.size / 1_000_000) * 100) / 100,
       }
-    : existingFile || uploadedFile;
+    : existingFile;
 
-  const currentState = displayedFile ? "complete" : internalState;
+  // Current state is determined by the combination of state prop and whether we have a file
+  const currentState = displayedFile && state !== "error" ? "complete" : state;
 
   const handleClickUpload = () => {
     fileInputRef.current?.click();
@@ -56,17 +48,7 @@ export default function FileUpload({
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setInternalState("pending");
-      try {
-        onChange(file);
-        setUploadedFile({
-          fileName: file.name,
-          fileSizeMB: Math.round((file.size / 1_000_000) * 100) / 100,
-        });
-        setInternalState("complete");
-      } catch (err: any) {
-        setInternalState("error");
-      }
+      onChange(file);
     }
   };
 
@@ -74,8 +56,6 @@ export default function FileUpload({
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
-    setUploadedFile(undefined);
-    setInternalState("default");
     onDelete();
   };
 

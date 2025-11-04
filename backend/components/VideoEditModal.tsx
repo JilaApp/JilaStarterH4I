@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { X } from "lucide-react";
 import FormField from "@/components/FormField";
 import { TextInput } from "@/components/Input";
@@ -10,7 +10,6 @@ import { trpc } from "@/lib/trpc";
 import { VideoTopic } from "@/lib/types";
 import { VIDEO_TOPIC_OPTIONS } from "@/lib/constants";
 import { useForm, createField } from "@/hooks/useForm";
-import { validateRequired } from "@/lib/validators";
 
 type SaveStatus = "idle" | "saving" | "success" | "error";
 
@@ -52,12 +51,21 @@ export default function VideoEditModal({
   });
 
   const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
-  const [existingFileMetadata, setExistingFileMetadata] = useState<
-    { fileName: string; fileSizeMB: number } | undefined
-  >();
   const [clearExistingFile, setClearExistingFile] = useState(false);
 
   const updateVideoMutation = trpc.videos.updateVideo.useMutation();
+
+  // Memoize the existing file metadata to prevent infinite re-renders
+  const existingFileMetadata = useMemo(() => {
+    if (videoData?.audioFilename && videoData?.audioFileSize) {
+      return {
+        fileName: videoData.audioFilename,
+        fileSizeMB:
+          Math.round((videoData.audioFileSize / 1_000_000) * 100) / 100,
+      };
+    }
+    return undefined;
+  }, [videoData?.audioFilename, videoData?.audioFileSize]);
 
   useEffect(() => {
     if (isOpen && videoData) {
@@ -79,19 +87,9 @@ export default function VideoEditModal({
       setSaveStatus("idle");
       setFieldValue("audioFile", undefined);
       setClearExistingFile(false);
-
-      if (videoData.audioFilename && videoData.audioFileSize) {
-        const metadata = {
-          fileName: videoData.audioFilename,
-          fileSizeMB:
-            Math.round((videoData.audioFileSize / 1_000_000) * 100) / 100,
-        };
-        setExistingFileMetadata(metadata);
-      } else {
-        setExistingFileMetadata(undefined);
-      }
     }
-  }, [isOpen, videoData, setFieldValue]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen, videoData?.id]);
 
   useEffect(() => {
     document.body.style.overflow = isOpen ? "hidden" : "auto";
@@ -262,11 +260,14 @@ export default function VideoEditModal({
               defaultClassName="body1-desktop-text text-[15px]"
               value={fields.audioFile.value}
               onChange={handleFileChange}
-              existingFile={
-                clearExistingFile ? undefined : existingFileMetadata
-              }
             >
-              <FileUpload editable={isEditing} onDelete={handleDeleteFile} />
+              <FileUpload
+                editable={isEditing}
+                onDelete={handleDeleteFile}
+                existingFile={
+                  clearExistingFile ? undefined : existingFileMetadata
+                }
+              />
             </FormField>
           </div>
           <div className="flex mt-[10px]">
