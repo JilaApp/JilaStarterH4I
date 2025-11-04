@@ -1,43 +1,87 @@
 import { Upload, CircleCheck, CircleAlert, File, X } from "lucide-react";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import type { UploadedFile } from "@/lib/types";
 
 interface FileUploadProps {
-  onFileSelect?: (file: File) => void;
-  onDelete: () => void;
-  state?: "default" | "pending" | "complete" | "error";
-  uploadedFile?: UploadedFile;
+  value?: File;
+  onChange?: (file: File) => void;
+  onDelete?: () => void;
   editable?: boolean;
   extendedText?: string;
   errorText?: string;
   extendedTextClassName?: string;
+  state?: "default" | "pending" | "complete" | "error";
+  existingFile?: {
+    fileName: string;
+    fileSizeMB: number;
+  };
 }
 
 export default function FileUpload({
-  onFileSelect = (file: File) => {},
-  onDelete,
+  value,
+  onChange = () => {},
+  onDelete = () => {},
   state = "default",
   editable = true,
-  uploadedFile,
   extendedText = "",
   errorText = "",
   extendedTextClassName = "",
+  existingFile,
 }: FileUploadProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [uploadedFile, setUploadedFile] = useState<UploadedFile | undefined>();
+  const [internalState, setInternalState] = useState<
+    "default" | "pending" | "complete" | "error"
+  >(state);
+
+  const displayedFile = value
+    ? {
+        fileName: value.name,
+        fileSizeMB: Math.round((value.size / 1_000_000) * 100) / 100,
+      }
+    : existingFile || uploadedFile;
+
+  const currentState = displayedFile ? "complete" : internalState;
+
+  console.log("FileUpload - render:", {
+    existingFile,
+    displayedFile,
+    currentState,
+    editable,
+  });
 
   const handleClickUpload = () => {
     fileInputRef.current?.click();
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      onFileSelect(file);
+      setInternalState("pending");
+      try {
+        onChange(file);
+        setUploadedFile({
+          fileName: file.name,
+          fileSizeMB: Math.round((file.size / 1_000_000) * 100) / 100,
+        });
+        setInternalState("complete");
+      } catch (err: any) {
+        setInternalState("error");
+      }
     }
   };
 
+  const handleDelete = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+    setUploadedFile(undefined);
+    setInternalState("default");
+    onDelete();
+  };
+
   const renderContent = () => {
-    switch (state) {
+    switch (currentState) {
       case "default":
         return (
           <div className="flex flex-col justify-center items-center text-[var(--color-gray-300)] cursor-pointer">
@@ -94,72 +138,70 @@ export default function FileUpload({
 
   return (
     <div className="flex flex-col gap-[11px]">
-      <span
-        className={`flex text-[var(--color-gray-300)] font-[300] leading-none mt-[2px] ${extendedTextClassName}`}
-      >
-        {extendedText}
-      </span>
+      {extendedText && (
+        <span
+          className={`flex text-[var(--color-gray-300)] font-[300] leading-none mt-[2px] ${extendedTextClassName}`}
+        >
+          {extendedText}
+        </span>
+      )}
       <input
         ref={fileInputRef}
         type="file"
         className="hidden"
         onChange={handleFileChange}
       />
-      {editable && (
-        <div
-          onClick={state === "default" ? handleClickUpload : undefined}
-          className={`
+      {(currentState === "default" ||
+        currentState === "pending" ||
+        currentState === "error") &&
+        editable && (
+          <div
+            onClick={currentState === "default" ? handleClickUpload : undefined}
+            className={`
     flex justify-center items-center w-full h-[122px]
     rounded-[10px]
     ${
-      state === "default"
+      currentState === "default"
         ? "cursor-pointer hover:bg-[var(--color-cream-300)]"
         : ""
     }
-    ${state === "error" ? "bg-[#FFF3F3]" : "bg-white"}
+    ${currentState === "error" ? "bg-[#FFF3F3]" : "bg-white"}
   `}
-          style={{
-            backgroundImage: `url("data:image/svg+xml,${encodeURIComponent(
-              `<svg width='100%' height='100%' xmlns='http://www.w3.org/2000/svg'>
+            style={{
+              backgroundImage: `url("data:image/svg+xml,${encodeURIComponent(
+                `<svg width='100%' height='100%' xmlns='http://www.w3.org/2000/svg'>
         <rect
           width='100%'
           height='100%'
           fill='none'
           rx='10' ry='10'
-          stroke='${state === "error" ? "#E31F1F" : "#CDCDCD"}'
+          stroke='${currentState === "error" ? "#E31F1F" : "#CDCDCD"}'
           stroke-width='3'
           stroke-dasharray='6,14'
           stroke-dashoffset='0'
           stroke-linecap='square'
         />
       </svg>`,
-            )}")`,
-          }}
-        >
-          {renderContent()}
-        </div>
-      )}
-      {state == "complete" && (
+              )}")`,
+            }}
+          >
+            {renderContent()}
+          </div>
+        )}
+      {currentState === "complete" && displayedFile && (
         <div className="flex items-center rounded-[10px] px-[10px] py-[8px] bg-white">
           <div className="flex gap-[17px] items-center w-full">
             <File className="text-[var(--color-jila-400)]" />
             <div className="flex flex-col">
-              <span className="font-[500]">
-                {uploadedFile && uploadedFile.fileName}
-              </span>
+              <span className="font-[500]">{displayedFile.fileName}</span>
               <span className="text-[var(--color-gray-300)] font-[200]">
-                {uploadedFile && uploadedFile.fileSizeMB} MB
+                {displayedFile.fileSizeMB} MB
               </span>
             </div>
             {editable && (
               <X
                 className="flex ml-auto cursor-pointer"
-                onClick={() => {
-                  if (fileInputRef.current) {
-                    fileInputRef.current.value = "";
-                  }
-                  onDelete();
-                }}
+                onClick={handleDelete}
               />
             )}
           </div>

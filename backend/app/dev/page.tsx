@@ -2,11 +2,7 @@
 import { useState } from "react";
 import Button from "@/components/Button";
 import Notification from "@/components/Notification";
-import FormInputWrapper from "@/components/FormInputWrapper";
-import FormText, {
-  validateEmail,
-  validatePassword,
-} from "@/components/FormTextWrapper";
+import FormField from "@/components/FormField";
 import { TextInput, EmailInput, PasswordInput } from "@/components/Input";
 import Sidebar from "@/components/Sidebar";
 import Dropdown from "@/components/Dropdown";
@@ -19,13 +15,14 @@ import TopicTag from "@/components/TopicTag";
 import type { TopicVariant } from "@/lib/types";
 import Header from "@/components/Header";
 import FileUpload from "@/components/FileUpload";
-import FileUploadWrapper from "@/components/FileUploadWrapper";
 import DeleteModal from "@/components/DeleteModal";
 import Table from "@/components/Table";
 import { ColumnDefinition, DataRow } from "@/lib/types";
 import VideoEditModal from "@/components/VideoEditModal";
 import VideoUploadForm from "@/components/VideoUploadForm";
 import SocialServiceForm from "@/components/SocialServiceForm";
+import { useForm } from "@/hooks/useForm";
+import { validateEmail, validatePassword } from "@/lib/validators";
 
 interface ServiceData extends DataRow {
   id: number | string;
@@ -46,15 +43,29 @@ export default function DevPage() {
       content: <p>Bye</p>,
     },
   ];
-  // This starts on index 1 (second tab)
   const [currentTabIndex, setCurrentTabIndex] = useState(1);
 
-  const [dropdownIndex, setDropdownIndex] = useState<number>();
-  const [errorDropdownIndex, setErrorDropdownIndex] = useState<number>();
-
-  const [textError, setTextError] = useState("");
-  const [emailError, setEmailError] = useState("");
-  const [passwordError, setPasswordError] = useState("");
+  const { fields, setFieldValue, validateField } = useForm({
+    textInput: { value: "", error: "", state: "default" as const },
+    emailInput: { value: "", error: "", state: "default" as const },
+    passwordInput: { value: "", error: "", state: "default" as const },
+    dropdownIndex: {
+      value: undefined as number | undefined,
+      error: "",
+      state: "default" as const,
+    },
+    errorDropdownIndex: {
+      value: undefined as number | undefined,
+      error: "",
+      state: "default" as const,
+    },
+    file: {
+      value: undefined as File | undefined,
+      error: "",
+      state: "default" as const,
+    },
+    paragraphInput: { value: "", error: "", state: "default" as const },
+  });
 
   const myOptions = [
     { name: "1" },
@@ -63,8 +74,6 @@ export default function DevPage() {
     { name: "7" },
   ];
   const [selected, setSelected] = useState(["6", "7"]);
-
-  const [file, setFile] = useState<File>();
 
   const uploadedFile = {
     fileName: "sixty-seven.zip",
@@ -150,16 +159,6 @@ export default function DevPage() {
     "three",
   ]);
 
-  const [paragraphInputValue, setParagraphInputValue] = useState<string>("");
-
-  const onDropdownChange = (index: number) => {
-    setDropdownIndex(index);
-  };
-
-  const onErrorDropdownChange = (index: number) => {
-    setErrorDropdownIndex(index);
-  };
-
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
@@ -177,10 +176,6 @@ export default function DevPage() {
 
   const handleViewClick = (id: number) => {
     setIsViewModalOpen(true);
-  };
-
-  const handleSaveClick = (id: number) => {
-    setIsEditModalOpen(false);
   };
 
   const handleConfirmDelete = () => {
@@ -212,11 +207,7 @@ export default function DevPage() {
       </div>
 
       <div className="flex gap-[10px]">
-        <Button
-          text="Delete"
-          // Instead of 67 this would pull from the row id
-          onClick={() => handleDeleteClick(67)}
-        />
+        <Button text="Delete" onClick={() => handleDeleteClick(67)} />
 
         <DeleteModal
           isOpen={isDeleteModalOpen}
@@ -249,7 +240,7 @@ export default function DevPage() {
       <p className="mt-4">Selected: {selected.join(", ")}</p>
       <div className="flex flex-col gap-3 px-5">
         <Notification
-          message="We’ve resent the link to your email!"
+          message="We've resent the link to your email!"
           onClose={() => {}}
         />
         <FilterBar
@@ -258,84 +249,42 @@ export default function DevPage() {
           setSelectedOptions={setSelectedOptions}
         />
         <div className="flex flex-col gap-y-[20px] pl-[20px] pr-[20px] pt-[20px] pb-[20px]">
-          <FormInputWrapper
+          <FormField
             title="Text Input"
             required
-            state={textError ? "error" : "default"}
-            errorString={textError}
+            state={fields.textInput.state}
+            errorString={fields.textInput.error}
+            value={fields.textInput.value}
+            onChange={(val) => setFieldValue("textInput", val)}
           >
-            <FormText required onErrorChange={setTextError}>
-              <TextInput id="text-input" />
-            </FormText>
-          </FormInputWrapper>
-          <FormInputWrapper
-            title="Text Input"
-            required
-            state={textError ? "error" : "default"}
-            errorString={textError}
-          >
-            <FormText required onErrorChange={setTextError}>
-              <TextInput id="text-input" />
-            </FormText>
-          </FormInputWrapper>
+            <TextInput id="text-input" />
+          </FormField>
 
-          <FormInputWrapper
+          <FormField
             title="Email Input"
             required
-            state={emailError ? "error" : "default"}
-            errorString={emailError}
+            state={fields.emailInput.state}
+            errorString={fields.emailInput.error}
+            value={fields.emailInput.value}
+            onChange={(val) => setFieldValue("emailInput", val)}
+            validate={validateEmail}
+            onBlur={() => validateField("emailInput", validateEmail)}
           >
-            <FormText
-              required
-              validate={validateEmail}
-              onErrorChange={setEmailError}
-            >
-              <EmailInput id="email-input" />
-            </FormText>
-          </FormInputWrapper>
-          <FormInputWrapper
-            title="Email Input"
-            required
-            state={emailError ? "error" : "default"}
-            errorString={emailError}
-          >
-            <FormText
-              required
-              validate={validateEmail}
-              onErrorChange={setEmailError}
-            >
-              <EmailInput id="email-input" />
-            </FormText>
-          </FormInputWrapper>
+            <EmailInput id="email-input" />
+          </FormField>
 
-          <FormInputWrapper
+          <FormField
             title="Password Input"
             required
-            state={passwordError ? "error" : "default"}
-            errorString={passwordError}
+            state={fields.passwordInput.state}
+            errorString={fields.passwordInput.error}
+            value={fields.passwordInput.value}
+            onChange={(val) => setFieldValue("passwordInput", val)}
+            validate={validatePassword}
+            onBlur={() => validateField("passwordInput", validatePassword)}
           >
-            <FormText
-              required
-              validate={validatePassword}
-              onErrorChange={setPasswordError}
-            >
-              <PasswordInput id="password-input" />
-            </FormText>
-          </FormInputWrapper>
-          <FormInputWrapper
-            title="Password Input"
-            required
-            state={passwordError ? "error" : "default"}
-            errorString={passwordError}
-          >
-            <FormText
-              required
-              validate={validatePassword}
-              onErrorChange={setPasswordError}
-            >
-              <PasswordInput id="password-input" />
-            </FormText>
-          </FormInputWrapper>
+            <PasswordInput id="password-input" />
+          </FormField>
         </div>
         <TopicTag variant="Career" />
         <TopicTag variant="Legal" />
@@ -346,10 +295,14 @@ export default function DevPage() {
         <TopicTag variant="Food" />
         <TopicTag variant="Emergencia" />
         <TopicTag variant="Transportation" />
-        <FormInputWrapper
+        <FormField
           required
           title="Title"
           description="Maximum size: 67MB"
+          state={fields.dropdownIndex.state}
+          errorString={fields.dropdownIndex.error}
+          value={fields.dropdownIndex.value}
+          onChange={(val) => setFieldValue("dropdownIndex", val)}
         >
           <Dropdown
             options={[
@@ -366,16 +319,18 @@ export default function DevPage() {
               "Full-time",
               "Internship",
             ]}
-            value={dropdownIndex}
-            onChange={onDropdownChange}
           />
-        </FormInputWrapper>
+        </FormField>
 
         <div className="flex flex-col p-5 bg-[#F2F2F2]">
-          <FormInputWrapper
-            required={true}
+          <FormField
+            required
             title="Title"
             description="Maximum size: 67MB"
+            state={fields.dropdownIndex.state}
+            errorString={fields.dropdownIndex.error}
+            value={fields.dropdownIndex.value}
+            onChange={(val) => setFieldValue("dropdownIndex", val)}
           >
             <Dropdown
               options={[
@@ -392,114 +347,79 @@ export default function DevPage() {
                 "Full-time",
                 "Internship",
               ]}
-              value={dropdownIndex}
-              onChange={onDropdownChange}
             />
-          </FormInputWrapper>
+          </FormField>
 
-          <FormInputWrapper
-            required={true}
+          <FormField
+            required
             title="Title"
-            state="error"
-            errorString="This is an error string!"
+            state={fields.errorDropdownIndex.state}
+            errorString={
+              fields.errorDropdownIndex.error || "This is an error string!"
+            }
             description="Maximum size: 67MB"
+            value={fields.errorDropdownIndex.value}
+            onChange={(val) => setFieldValue("errorDropdownIndex", val)}
           >
-            <Dropdown
-              options={["Part-time", "Full-time", "Internship"]}
-              value={errorDropdownIndex}
-              onChange={onErrorDropdownChange}
-            />
-          </FormInputWrapper>
+            <Dropdown options={["Part-time", "Full-time", "Internship"]} />
+          </FormField>
 
-          <FormInputWrapper
+          <FormField
             title="Upload file"
             description="Maximum size: 67MB"
             state="default"
           >
             <FileUpload
-              onFileSelect={setFile}
-              onDelete={() => {}}
+              value={fields.file.value}
+              onChange={(f) => setFieldValue("file", f)}
+              onDelete={() => setFieldValue("file", undefined)}
               extendedText="Must be exactly 67MB!"
             />
-          </FormInputWrapper>
+          </FormField>
 
-          <FormInputWrapper
-            title="Upload file"
-            description="Maximum size: 67MB"
-            state="pending"
-          >
-            <FileUpload
-              onDelete={() => {}}
-              extendedText="Must be exactly 67MB!"
-            />
-          </FormInputWrapper>
-
-          <FormInputWrapper
-            title="Upload file"
-            description="Maximum size: 67MB"
-            state="complete"
-          >
-            <FileUpload
-              onDelete={() => {}}
-              uploadedFile={uploadedFile}
-              extendedText="Must be exactly 67MB!"
-            />
-          </FormInputWrapper>
-
-          <FormInputWrapper
-            title="Upload file"
+          <FormField
+            title="Upload file with error"
             description="Maximum size: 67MB"
             state="error"
+            errorString="File too large. Max size 67MB"
           >
             <FileUpload
               onDelete={() => {}}
-              uploadedFile={uploadedFile}
               extendedText="Must be exactly 67MB!"
               errorText="File too large. Max size 67MB"
             />
-          </FormInputWrapper>
-
-          <FormInputWrapper
-            title="Upload file"
-            description="Maximum size: 67MB"
-          >
-            <FileUploadWrapper
-              onChange={(file: File) => {
-                setFile(file);
-              }}
-              onDelete={() => {
-                setFile(undefined);
-              }}
-            />
-          </FormInputWrapper>
+          </FormField>
         </div>
-        <FormInputWrapper
+        <FormField
           required
           title="Title"
-          state="error"
-          errorString="This is an error string!"
+          state={fields.errorDropdownIndex.state}
+          errorString={
+            fields.errorDropdownIndex.error || "This is an error string!"
+          }
           description="Maximum size: 67MB"
+          value={fields.errorDropdownIndex.value}
+          onChange={(val) => setFieldValue("errorDropdownIndex", val)}
         >
-          <Dropdown
-            options={["Part-time", "Full-time", "Internship"]}
-            value={errorDropdownIndex}
-            onChange={onErrorDropdownChange}
-          />
-        </FormInputWrapper>
-        <FormInputWrapper
+          <Dropdown options={["Part-time", "Full-time", "Internship"]} />
+        </FormField>
+        <FormField
           title="Enter your password lil bro"
           state="error"
           errorString="u got it wrong haha"
+          value={fields.passwordInput.value}
+          onChange={(val) => setFieldValue("passwordInput", val)}
         >
           <PasswordInput placeholder="Enter Password" id="password-input" />
-        </FormInputWrapper>
+        </FormField>
 
-        <FormInputWrapper title="Description">
-          <ParagraphInput
-            value={paragraphInputValue}
-            onChange={setParagraphInputValue}
-          ></ParagraphInput>
-        </FormInputWrapper>
+        <FormField
+          title="Description"
+          value={fields.paragraphInput.value}
+          onChange={(val) => setFieldValue("paragraphInput", val)}
+        >
+          <ParagraphInput />
+        </FormField>
       </div>
       <div className="page-title-text">page-title-text</div>
       <div className="components-text">components-text</div>

@@ -1,9 +1,7 @@
 import type React from "react";
 
 export { VideoTopic, SocialServiceCategory } from "@prisma/client";
-
-// Component types
-export type FormInputState = "default" | "error" | "pending" | "complete";
+export type { FormInputState } from "@/hooks/useForm";
 
 export type UploadedFile = {
   fileName: string;

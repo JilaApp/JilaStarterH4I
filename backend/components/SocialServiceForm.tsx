@@ -1,8 +1,7 @@
 import { useState } from "react";
-import FormInputWrapper from "./FormInputWrapper";
+import FormField from "./FormField";
 import { TextInput } from "./Input/TextInput";
-import FormText from "@/components/FormTextWrapper";
-import FileUploadWrapper from "./FileUploadWrapper";
+import FileUpload from "./FileUpload";
 import Dropdown from "./Dropdown";
 import ParagraphInput from "./ParagraphInput";
 import Button from "./Button";
@@ -13,117 +12,88 @@ import {
   SOCIAL_SERVICE_CATEGORY_DISPLAY_OPTIONS,
   US_STATES,
 } from "@/lib/constants";
-import type { FormInputState } from "@/lib/types";
+import { useForm } from "@/hooks/useForm";
 
 export default function SocialServiceForm() {
-  const [englishTitle, setEnglishTitle] = useState<string>("");
-  const [englishTitleState, setEnglishTitleState] =
-    useState<FormInputState>("default");
-
-  const [qanjobalTitle, setQanjobalTitle] = useState<string>("");
-  const [qanjobalTitleState, setQanjobalTitleState] =
-    useState<FormInputState>("default");
-
-  const [titleFile, setTitleFile] = useState<File>();
-  const [titleFileState, setTitleFileState] =
-    useState<FormInputState>("default");
-
-  const [topicIndex, setTopicIndex] = useState<number>();
-  const topicOptions = [...SOCIAL_SERVICE_CATEGORY_DISPLAY_OPTIONS];
-  const [topicState, setTopicState] = useState<FormInputState>("default");
-
-  const [phoneNumber, setPhoneNumber] = useState<string>("");
-  const [phoneNumberState, setPhoneNumberState] =
-    useState<FormInputState>("default");
-
-  const [addressLine, setAddressLine] = useState<string>("");
-  const [addressLineState, setAddressLineState] =
-    useState<FormInputState>("default");
-
-  const [city, setCity] = useState<string>("");
-  const [cityState, setCityState] = useState<FormInputState>("default");
-
-  const [stateIndex, setStateIndex] = useState<number>();
-  const stateOptions = [...US_STATES];
-  const [stateDropdownState, setStateDropdownState] =
-    useState<FormInputState>("default");
-
-  const [link, setLink] = useState<string>("");
-  const [linkState, setLinkState] = useState<FormInputState>("default");
-
-  const [englishDescription, setEnglishDescription] = useState<string>("");
-  const [qanjobalDescription, setQanjobalDescription] = useState<string>("");
-
-  const [descriptionFile, setDescriptionFile] = useState<File>();
+  const { fields, setFieldValue, setFieldError, resetForm } = useForm({
+    englishTitle: { value: "", error: "", state: "default" as const },
+    qanjobalTitle: { value: "", error: "", state: "default" as const },
+    titleFile: {
+      value: undefined as File | undefined,
+      error: "",
+      state: "default" as const,
+    },
+    topicIndex: {
+      value: undefined as number | undefined,
+      error: "",
+      state: "default" as const,
+    },
+    phoneNumber: { value: "", error: "", state: "default" as const },
+    addressLine: { value: "", error: "", state: "default" as const },
+    city: { value: "", error: "", state: "default" as const },
+    stateIndex: {
+      value: undefined as number | undefined,
+      error: "",
+      state: "default" as const,
+    },
+    link: { value: "", error: "", state: "default" as const },
+    englishDescription: { value: "", error: "", state: "default" as const },
+    qanjobalDescription: { value: "", error: "", state: "default" as const },
+    descriptionFile: {
+      value: undefined as File | undefined,
+      error: "",
+      state: "default" as const,
+    },
+  });
 
   const [notification, setNotification] = useState<string | null>(null);
-
   const addSocialServiceMutation =
     trpc.socialServices.addSocialService.useMutation();
 
   const submitForm = async () => {
     let hasError = false;
 
-    if (!englishTitle) {
-      setEnglishTitleState("error");
+    if (!fields.englishTitle.value) {
+      setFieldError("englishTitle", "This field is required");
       hasError = true;
     }
-    if (!qanjobalTitle) {
-      setQanjobalTitleState("error");
+    if (!fields.qanjobalTitle.value) {
+      setFieldError("qanjobalTitle", "This field is required");
       hasError = true;
     }
-    if (!titleFile) {
-      setTitleFileState("error");
+    if (!fields.titleFile.value) {
+      setFieldError("titleFile", "This field is required");
       hasError = true;
     }
-    if (topicIndex === undefined) {
-      setTopicState("error");
+    if (fields.topicIndex.value === undefined) {
+      setFieldError("topicIndex", "This field is required");
       hasError = true;
     }
-    if (!phoneNumber) {
-      setPhoneNumberState("error");
+    if (!fields.phoneNumber.value) {
+      setFieldError("phoneNumber", "This field is required");
       hasError = true;
     }
 
-    if (hasError) {
-      return;
-    }
+    if (hasError) return;
 
     try {
       await addSocialServiceMutation.mutateAsync({
-        title: englishTitle,
-        category: topicOptions[
-          topicIndex!
+        title: fields.englishTitle.value,
+        category: SOCIAL_SERVICE_CATEGORY_DISPLAY_OPTIONS[
+          fields.topicIndex.value!
         ].toUpperCase() as SocialServiceCategory,
-        phone_number: phoneNumber,
-        address: addressLine || undefined,
-        description: englishDescription || undefined,
-        url: link || undefined,
+        phone_number: fields.phoneNumber.value,
+        address: fields.addressLine.value || undefined,
+        description: fields.englishDescription.value || undefined,
+        url: fields.link.value || undefined,
       });
 
       setNotification("Social service submitted successfully!");
-
-      setEnglishTitle("");
-      setQanjobalTitle("");
-      setTitleFile(undefined);
-      setTopicIndex(undefined);
-      setPhoneNumber("");
-      setAddressLine("");
-      setCity("");
-      setStateIndex(undefined);
-      setLink("");
-      setEnglishDescription("");
-      setQanjobalDescription("");
-      setDescriptionFile(undefined);
+      resetForm();
     } catch (err) {
       console.error(err);
       setNotification("Error submitting social service.");
     }
-  };
-
-  const getButtonText = () => {
-    if (addSocialServiceMutation.isPending) return "Submitting...";
-    return "Submit social service";
   };
 
   return (
@@ -133,155 +103,155 @@ export default function SocialServiceForm() {
       </div>
 
       <div className="flex flex-row gap-[18px]">
-        <FormInputWrapper
+        <FormField
           title="Resource title (English)"
-          state={englishTitleState}
-          setState={setEnglishTitleState}
-          value={englishTitle}
-          onChange={setEnglishTitle}
+          state={fields.englishTitle.state}
+          errorString={fields.englishTitle.error}
+          value={fields.englishTitle.value}
+          onChange={(val) => setFieldValue("englishTitle", val)}
           defaultClassName="max-w-[450px]"
           required
         >
           <TextInput />
-        </FormInputWrapper>
+        </FormField>
 
-        <FormInputWrapper
+        <FormField
           title="Resource title (Q'anjob'al)"
-          state={qanjobalTitleState}
-          setState={setQanjobalTitleState}
-          value={qanjobalTitle}
-          onChange={setQanjobalTitle}
+          state={fields.qanjobalTitle.state}
+          errorString={fields.qanjobalTitle.error}
+          value={fields.qanjobalTitle.value}
+          onChange={(val) => setFieldValue("qanjobalTitle", val)}
           defaultClassName="max-w-[450px]"
           required
         >
           <TextInput />
-        </FormInputWrapper>
+        </FormField>
       </div>
 
-      <FormInputWrapper
+      <FormField
         title="Title audio file (Q'anjob'al)"
         description="Maximum size: 30MB"
-        state={titleFileState}
-        setState={setTitleFileState}
+        state={fields.titleFile.state}
+        errorString={fields.titleFile.error}
+        value={fields.titleFile.value}
+        onChange={(val) => setFieldValue("titleFile", val)}
         defaultClassName="max-w-[918px]"
-        value={titleFile}
-        onChange={setTitleFile}
         required
       >
-        <FileUploadWrapper
-          onDelete={() => {
-            setTitleFile(undefined);
-          }}
+        <FileUpload
+          onDelete={() => setFieldValue("titleFile", undefined)}
           extendedText="Upload an audio recording of the resource title in Q'anjob'al"
         />
-      </FormInputWrapper>
+      </FormField>
 
-      <FormInputWrapper
+      <FormField
         title="Topic"
-        state={topicState}
-        setState={setTopicState}
-        value={topicIndex}
-        onChange={setTopicIndex}
+        state={fields.topicIndex.state}
+        errorString={fields.topicIndex.error}
+        value={fields.topicIndex.value}
+        onChange={(val) => setFieldValue("topicIndex", val)}
         defaultClassName="max-w-[450px]"
         required
       >
-        <Dropdown options={topicOptions} />
-      </FormInputWrapper>
+        <Dropdown options={[...SOCIAL_SERVICE_CATEGORY_DISPLAY_OPTIONS]} />
+      </FormField>
 
-      <FormInputWrapper
+      <FormField
         title="Phone number"
-        state={phoneNumberState}
-        setState={setPhoneNumberState}
-        value={phoneNumber}
-        onChange={setPhoneNumber}
+        state={fields.phoneNumber.state}
+        errorString={fields.phoneNumber.error}
+        value={fields.phoneNumber.value}
+        onChange={(val) => setFieldValue("phoneNumber", val)}
         defaultClassName="max-w-[918px]"
         required
       >
         <TextInput />
-      </FormInputWrapper>
+      </FormField>
 
-      <FormInputWrapper
+      <FormField
         title="Address line 1"
-        state={addressLineState}
-        setState={setAddressLineState}
-        value={addressLine}
-        onChange={setAddressLine}
+        state={fields.addressLine.state}
+        errorString={fields.addressLine.error}
+        value={fields.addressLine.value}
+        onChange={(val) => setFieldValue("addressLine", val)}
         defaultClassName="max-w-[918px]"
       >
         <TextInput />
-      </FormInputWrapper>
+      </FormField>
 
       <div className="flex flex-row gap-[18px]">
-        <FormInputWrapper
+        <FormField
           title="City"
-          state={cityState}
-          setState={setCityState}
-          value={city}
-          onChange={setCity}
+          state={fields.city.state}
+          errorString={fields.city.error}
+          value={fields.city.value}
+          onChange={(val) => setFieldValue("city", val)}
           defaultClassName="max-w-[450px]"
         >
           <TextInput />
-        </FormInputWrapper>
+        </FormField>
 
-        <FormInputWrapper
+        <FormField
           title="State"
-          state={stateDropdownState}
-          setState={setStateDropdownState}
-          value={stateIndex}
-          onChange={setStateIndex}
+          state={fields.stateIndex.state}
+          errorString={fields.stateIndex.error}
+          value={fields.stateIndex.value}
+          onChange={(val) => setFieldValue("stateIndex", val)}
           defaultClassName="max-w-[450px]"
         >
-          <Dropdown options={stateOptions} />
-        </FormInputWrapper>
+          <Dropdown options={[...US_STATES]} />
+        </FormField>
       </div>
 
-      <FormInputWrapper
+      <FormField
         title="Link to external website"
-        state={linkState}
-        setState={setLinkState}
-        value={link}
-        onChange={setLink}
+        state={fields.link.state}
+        errorString={fields.link.error}
+        value={fields.link.value}
+        onChange={(val) => setFieldValue("link", val)}
         defaultClassName="max-w-[918px]"
       >
         <TextInput />
-      </FormInputWrapper>
+      </FormField>
 
-      <FormInputWrapper
+      <FormField
         title="Description (English)"
         defaultClassName="max-w-[918px]"
-        value={englishDescription}
-        onChange={setEnglishDescription}
+        value={fields.englishDescription.value}
+        onChange={(val) => setFieldValue("englishDescription", val)}
       >
         <ParagraphInput />
-      </FormInputWrapper>
+      </FormField>
 
-      <FormInputWrapper
+      <FormField
         title="Description (Q'anjob'al)"
         defaultClassName="max-w-[918px]"
-        value={qanjobalDescription}
-        onChange={setQanjobalDescription}
+        value={fields.qanjobalDescription.value}
+        onChange={(val) => setFieldValue("qanjobalDescription", val)}
       >
         <ParagraphInput />
-      </FormInputWrapper>
+      </FormField>
 
-      <FormInputWrapper
+      <FormField
         title="Description audio file (Q'anjob'al)"
         description="Maximum size: 30MB"
         defaultClassName="max-w-[918px]"
-        value={descriptionFile}
-        onChange={setDescriptionFile}
+        value={fields.descriptionFile.value}
+        onChange={(val) => setFieldValue("descriptionFile", val)}
       >
-        <FileUploadWrapper
-          onDelete={() => {
-            setDescriptionFile(undefined);
-          }}
+        <FileUpload
+          onDelete={() => setFieldValue("descriptionFile", undefined)}
           extendedText="Upload an audio recording of the description in Q'anjob'al"
         />
-      </FormInputWrapper>
+      </FormField>
 
       <div className="flex justify-end">
         <Button
-          text={getButtonText()}
+          text={
+            addSocialServiceMutation.isPending
+              ? "Submitting..."
+              : "Submit social service"
+          }
           onClick={submitForm}
           disabled={addSocialServiceMutation.isPending}
           defaultClassName={

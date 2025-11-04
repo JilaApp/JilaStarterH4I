@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { X } from "lucide-react";
-import FormInputWrapper from "@/components/FormInputWrapper";
-import FormText from "@/components/FormTextWrapper";
+import FormField from "@/components/FormField";
 import { TextInput } from "@/components/Input";
 import FileUpload from "@/components/FileUpload";
 import Dropdown from "@/components/Dropdown";
@@ -10,6 +9,7 @@ import ParagraphInput from "./ParagraphInput";
 import { trpc } from "@/lib/trpc";
 import { VideoTopic } from "@/lib/types";
 import { VIDEO_TOPIC_OPTIONS } from "@/lib/constants";
+import { validateRequired } from "@/lib/validators";
 
 type SaveStatus = "idle" | "saving" | "success" | "error";
 
@@ -41,20 +41,19 @@ export default function VideoEditModal({
   videoData,
 }: VideoEditModalProps) {
   const [englishTitle, setEnglishTitle] = useState("");
+  const [englishTitleError, setEnglishTitleError] = useState("");
   const [qanjobalTitle, setQanjobalTitle] = useState("");
+  const [qanjobalTitleError, setQanjobalTitleError] = useState("");
   const [videoLink, setVideoLink] = useState("");
+  const [videoLinkError, setVideoLinkError] = useState("");
   const [englishDescription, setEnglishDescription] = useState("");
   const [qanjobalDescription, setQanjobalDescription] = useState("");
   const [dropdownIndex, setDropdownIndex] = useState<number | undefined>();
-  const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
-
-  const [englishError, setEnglishError] = useState("");
-  const [qanjobalError, setQanjobalError] = useState("");
-  const [videoLinkError, setVideoLinkError] = useState("");
   const [dropdownError, setDropdownError] = useState("");
 
-  const [selectedFile, setSelectedFile] = useState<File | undefined>();
-  const [displayedFile, setDisplayedFile] = useState<
+  const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
+  const [audioFile, setAudioFile] = useState<File | undefined>();
+  const [existingFileMetadata, setExistingFileMetadata] = useState<
     { fileName: string; fileSizeMB: number } | undefined
   >();
   const [clearExistingFile, setClearExistingFile] = useState(false);
@@ -63,33 +62,40 @@ export default function VideoEditModal({
 
   useEffect(() => {
     if (isOpen && videoData) {
+      console.log("VideoEditModal - videoData:", videoData);
       setEnglishTitle(videoData.titleEnglish || "");
       setQanjobalTitle(videoData.titleQanjobal || "");
       setVideoLink(videoData.url || "");
       setEnglishDescription(videoData.descriptionEnglish || "");
       setQanjobalDescription(videoData.descriptionQanjobal || "");
+
       const topicIndex = VIDEO_TOPIC_OPTIONS.findIndex(
         (option) =>
           option.toUpperCase() === (videoData.topic || "").toUpperCase(),
       );
       setDropdownIndex(topicIndex !== -1 ? topicIndex : undefined);
-      setSaveStatus("idle");
 
-      setSelectedFile(undefined);
+      setSaveStatus("idle");
+      setAudioFile(undefined);
       setClearExistingFile(false);
 
+      setEnglishTitleError("");
+      setQanjobalTitleError("");
+      setVideoLinkError("");
+      setDropdownError("");
+
       if (videoData.audioFilename && videoData.audioFileSize) {
-        setDisplayedFile({
+        const metadata = {
           fileName: videoData.audioFilename,
           fileSizeMB:
             Math.round((videoData.audioFileSize / 1_000_000) * 100) / 100,
-        });
+        };
+        console.log("VideoEditModal - setting existingFileMetadata:", metadata);
+        setExistingFileMetadata(metadata);
       } else {
-        setDisplayedFile(undefined);
+        console.log("VideoEditModal - no audio file data");
+        setExistingFileMetadata(undefined);
       }
-    } else if (!isOpen) {
-      // Reset state when modal closes
-      setDisplayedFile(undefined);
     }
   }, [isOpen, videoData]);
 
@@ -97,23 +103,40 @@ export default function VideoEditModal({
     document.body.style.overflow = isOpen ? "hidden" : "auto";
   }, [isOpen]);
 
-  const handleFileSelect = (file: File) => {
-    setSelectedFile(file);
-    setDisplayedFile({
-      fileName: file.name,
-      fileSizeMB: Math.round((file.size / 1_000_000) * 100) / 100,
-    });
+  const handleFileChange = (file: File) => {
+    setAudioFile(file);
     setClearExistingFile(false);
   };
 
   const handleDeleteFile = () => {
-    setSelectedFile(undefined);
-    setDisplayedFile(undefined);
+    setAudioFile(undefined);
     setClearExistingFile(true);
   };
 
   const handleSave = async () => {
     if (!videoData) return;
+
+    let hasError = false;
+
+    if (!englishTitle) {
+      setEnglishTitleError("This field is required");
+      hasError = true;
+    }
+    if (!qanjobalTitle) {
+      setQanjobalTitleError("This field is required");
+      hasError = true;
+    }
+    if (!videoLink) {
+      setVideoLinkError("This field is required");
+      hasError = true;
+    }
+    if (dropdownIndex === undefined) {
+      setDropdownError("This field is required");
+      hasError = true;
+    }
+
+    if (hasError) return;
+
     setSaveStatus("saving");
 
     const mutationPayload: Parameters<
@@ -148,19 +171,19 @@ export default function VideoEditModal({
       }
     };
 
-    if (selectedFile) {
+    if (audioFile) {
       const reader = new FileReader();
       reader.onload = () => {
         mutationPayload.audioFile = reader.result?.toString().split(",")[1];
-        mutationPayload.audioFilename = selectedFile.name;
-        mutationPayload.audioFileSize = selectedFile.size;
+        mutationPayload.audioFilename = audioFile.name;
+        mutationPayload.audioFileSize = audioFile.size;
         executeMutation(mutationPayload);
       };
       reader.onerror = (error) => {
         console.error("FileReader error:", error);
         setSaveStatus("error");
       };
-      reader.readAsDataURL(selectedFile);
+      reader.readAsDataURL(audioFile);
     } else if (clearExistingFile) {
       mutationPayload.audioFile = "";
       executeMutation(mutationPayload);
@@ -189,7 +212,13 @@ export default function VideoEditModal({
   if (!isOpen) return null;
 
   const saveButtonUI = getSaveButtonUI();
-  const uploadState = displayedFile ? "complete" : "default";
+
+  console.log("VideoEditModal - render:", {
+    audioFile,
+    existingFileMetadata,
+    clearExistingFile,
+    finalExistingFile: clearExistingFile ? undefined : existingFileMetadata,
+  });
 
   return (
     <div className="fixed y-40 inset-0 z-50 flex items-center justify-center bg-[rgb(83,83,83,0.19)]">
@@ -206,60 +235,57 @@ export default function VideoEditModal({
         <div className="overflow-y-auto flex-1 pl-4 pr-4">
           <div className="flex gap-[13.62px] mb-[10px]">
             <div className="flex-1">
-              <FormInputWrapper
+              <FormField
                 title="Resource title (English)"
                 defaultClassName="body1-desktop-text text-[15px]"
                 required
-                state={englishError ? "error" : "default"}
-                errorString={englishError}
+                state={englishTitleError ? "error" : "default"}
+                errorString={englishTitleError}
                 value={englishTitle}
                 onChange={setEnglishTitle}
               >
-                <FormText required onErrorChange={setEnglishError}>
-                  <TextInput
-                    id="english-input"
-                    className="w-full h-[46px]"
-                    disabled={!isEditing}
-                  />
-                </FormText>
-              </FormInputWrapper>
+                <TextInput
+                  id="english-input"
+                  className="w-full h-[46px]"
+                  disabled={!isEditing}
+                />
+              </FormField>
             </div>
             <div className="flex-1">
-              <FormInputWrapper
+              <FormField
                 title="Resource title (Q'anjob'al)"
                 defaultClassName="body1-desktop-text text-[15px]"
                 required
-                state={qanjobalError ? "error" : "default"}
-                errorString={qanjobalError}
+                state={qanjobalTitleError ? "error" : "default"}
+                errorString={qanjobalTitleError}
                 value={qanjobalTitle}
                 onChange={setQanjobalTitle}
               >
-                <FormText required onErrorChange={setQanjobalError}>
-                  <TextInput
-                    id="qanjobal-input"
-                    className="w-full h-[46px]"
-                    disabled={!isEditing}
-                  />
-                </FormText>
-              </FormInputWrapper>
+                <TextInput
+                  id="qanjobal-input"
+                  className="w-full h-[46px]"
+                  disabled={!isEditing}
+                />
+              </FormField>
             </div>
           </div>
           <div className="flex mt-[10px]">
-            <FormInputWrapper
+            <FormField
               title="Upload file"
               defaultClassName="body1-desktop-text text-[15px]"
-              state={uploadState}
+              value={audioFile}
+              onChange={handleFileChange}
+              editable={isEditing}
+              existingFile={
+                clearExistingFile ? undefined : existingFileMetadata
+              }
+              onDelete={handleDeleteFile}
             >
-              <FileUpload
-                uploadedFile={displayedFile}
-                onFileSelect={handleFileSelect}
-                onDelete={handleDeleteFile}
-                editable={isEditing}
-              />
-            </FormInputWrapper>
+              <FileUpload />
+            </FormField>
           </div>
           <div className="flex mt-[10px]">
-            <FormInputWrapper
+            <FormField
               required
               title="Topic"
               defaultClassName="body1-desktop-text text-[15px]"
@@ -273,10 +299,10 @@ export default function VideoEditModal({
                 state={dropdownError ? "error" : "default"}
                 disabled={!isEditing}
               />
-            </FormInputWrapper>
+            </FormField>
           </div>
           <div className="flex mt-[10px]">
-            <FormInputWrapper
+            <FormField
               title="Video link"
               defaultClassName="body1-desktop-text text-[15px]"
               required
@@ -285,13 +311,11 @@ export default function VideoEditModal({
               value={videoLink}
               onChange={setVideoLink}
             >
-              <FormText required onErrorChange={setVideoLinkError}>
-                <TextInput id="video-input w-full" disabled={!isEditing} />
-              </FormText>
-            </FormInputWrapper>
+              <TextInput id="video-input w-full" disabled={!isEditing} />
+            </FormField>
           </div>
           <div className="flex mt-[10px]">
-            <FormInputWrapper
+            <FormField
               title="Description (English)"
               defaultClassName="body1-desktop-text text-[15px]"
               state="default"
@@ -299,10 +323,10 @@ export default function VideoEditModal({
               onChange={setEnglishDescription}
             >
               <ParagraphInput disabled={!isEditing} />
-            </FormInputWrapper>
+            </FormField>
           </div>
           <div className="flex mt-[10px]">
-            <FormInputWrapper
+            <FormField
               title="Description (Q'anjob'al)"
               defaultClassName="body1-desktop-text text-[15px]"
               state="default"
@@ -310,7 +334,7 @@ export default function VideoEditModal({
               onChange={setQanjobalDescription}
             >
               <ParagraphInput disabled={!isEditing} />
-            </FormInputWrapper>
+            </FormField>
           </div>
           {isEditing && (
             <div className="flex gap-3 justify-end mt-[26px] gap-x-[26px]">
