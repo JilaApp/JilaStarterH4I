@@ -29,6 +29,9 @@ export default function ForgotPasswordPage() {
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const [showNotification, setShowNotification] = useState(false);
+
+  // Step 1: Request password reset
+  // Step 2: Verify code and reset password
   const [step, setStep] = useState<"request" | "reset">("request");
 
   useEffect(() => {
