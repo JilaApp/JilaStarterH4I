@@ -9,12 +9,6 @@ interface LinkProps {
   onClick?: (e: React.MouseEvent) => void;
 }
 
-/**
- * Standardized link component
- * - Uses Next.js Link for internal navigation (faster, no page reload)
- * - Uses <a> tag for external links with proper security attributes
- * - Consistent styling across the app with hover underline
- */
 export default function Link({
   href,
   children,
