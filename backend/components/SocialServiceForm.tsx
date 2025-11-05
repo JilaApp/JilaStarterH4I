@@ -85,10 +85,8 @@ export default function SocialServiceForm() {
   };
 
   return (
-    <div className="flex flex-col gap-[26px] py-[30px] px-[35px] rounded-[24px] bg-white">
-      <div className="h-[60px] font-[500] text-[24px]">
-        Add new social service
-      </div>
+    <div className="flex flex-col gap-[26px] py-[30px] px-[35px] rounded-3xl bg-white">
+      <div className="h-[60px] font-[500] text-2xl">Add new social service</div>
 
       <div className="flex flex-row gap-[18px]">
         <FormField

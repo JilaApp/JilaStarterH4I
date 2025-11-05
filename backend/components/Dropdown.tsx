@@ -30,12 +30,11 @@ export default function Dropdown({
       <button
         onClick={() => !disabled && setIsOpen((prev) => !prev)}
         className={clsx(
-          "w-full h-[60px] border-[1px] rounded-[10px] px-[16px] py-[10px]",
+          "w-full h-[60px] border rounded-[10px] px-[16px] py-[10px]",
           "text-left flex justify-between items-center font-[500]",
           {
             "border-gray-300": state === "default",
-            "border-[var(--color-error-400)] shadow-[0_0_0_3px_#FFA8A8]":
-              state === "error",
+            "border-error-400 shadow-[0_0_0_3px_#FFA8A8]": state === "error",
             "bg-gray-200 cursor-not-allowed": disabled,
             "bg-white cursor-pointer": !disabled,
             "text-black": value !== undefined,
@@ -55,7 +54,7 @@ export default function Dropdown({
 
       <ul
         className={clsx(
-          "absolute z-10 mt-1 w-full border-[1px] rounded-[10px] border-gray-300",
+          "absolute z-10 mt-1 w-full border rounded-[10px] border-gray-300",
           "bg-white shadow-lg max-h-60 overflow-auto divide-y divide-gray-200",
           "text-black font-[500] transform transition-all duration-300 origin-top",
           {

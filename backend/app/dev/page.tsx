@@ -200,7 +200,7 @@ export default function DevPage() {
         />
       </div>
 
-      <div className="flex gap-[10px]">
+      <div className="flex gap-2.5">
         <Button text="Delete" onClick={() => handleDeleteClick(67)} />
 
         <DeleteModal

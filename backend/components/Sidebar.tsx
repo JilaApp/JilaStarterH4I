@@ -56,11 +56,7 @@ export default function Sidebar({ activeButton, setActiveButton }: InputProps) {
                   }`}
                 >
                   <Icon
-                    color={
-                      clicked
-                        ? "var(--color-type-400)"
-                        : "var(--color-white-400)"
-                    }
+                    className={clicked ? "text-type-400" : "text-white-400"}
                   />
                   {label}
                 </button>
@@ -73,7 +69,7 @@ export default function Sidebar({ activeButton, setActiveButton }: InputProps) {
           onClick={() => dummyButtonClick()}
           className="flex font-semibold flex-row gap-[16px] left-[24px] absolute bottom-[24px] text-white-400 hover:cursor-default"
         >
-          <Settings color={"var(--color-white-400)"} /> Settings
+          <Settings className="text-white-400" /> Settings
         </button>
       </div>
     </div>

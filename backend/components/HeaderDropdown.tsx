@@ -34,7 +34,7 @@ export default function HeaderDropdown({
         <div className="absolute top-full left-0 w-full mt-[12px] z-10">
           <button
             onClick={onSignOut}
-            className="flex items-center bg-white-400 hover:bg-[#F8F8F8] rounded-[10px] gap-[10px] h-[48px] w-full px-[10px]"
+            className="flex items-center bg-white-400 hover:bg-[#F8F8F8] rounded-[10px] gap-2.5 h-[48px] w-full px-[10px]"
           >
             <div className="text-error-400">
               <LogOut />

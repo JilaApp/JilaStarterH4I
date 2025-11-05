@@ -30,21 +30,17 @@ export default function RadioButtonGroup({
   const renderIcon = (isSelected: boolean, isDisabled: boolean) => {
     if (isSelected && !isDisabled) {
       return (
-        <SquareCheck
-          size={30}
-          stroke="var(--color-white-400)"
-          fill="var(--color-jila-400)"
-        />
+        <SquareCheck size={30} className="stroke-white-400 fill-jila-400" />
       );
     }
     if (isDisabled) {
-      return <Square color="var(--color-gray-300)" />;
+      return <Square className="text-gray-300" />;
     }
-    return <Square color="var(--color-jila-400)" />;
+    return <Square className="text-jila-400" />;
   };
 
   return (
-    <div className="flex flex-col gap-[10px]">
+    <div className="flex flex-col gap-2.5">
       {options.map((option) => {
         const { name, disabled = false } = option;
         const isSelected = selectedOptions.includes(name);
@@ -61,7 +57,7 @@ export default function RadioButtonGroup({
             <div
               onClick={() => !disabled && handleClick(name)}
               className={clsx(
-                "flex flex-row h-[60px] items-center w-full rounded-[10px] border-[1px] select-none",
+                "flex flex-row h-[60px] items-center w-full rounded-[10px] border select-none",
                 {
                   "border-jila-400": isActive,
                   "border-gray-200": !isActive,
@@ -79,7 +75,7 @@ export default function RadioButtonGroup({
                 {renderIcon(isSelected, disabled)}
               </div>
               <div
-                className={clsx("font-semibold text-[18px]", {
+                className={clsx("font-semibold text-lg", {
                   "text-black": isActive,
                   "text-gray-300": !isActive,
                 })}

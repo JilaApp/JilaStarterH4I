@@ -37,7 +37,7 @@ export function BaseInput({
 
   const getContainerClasses = () => {
     return clsx(
-      "group flex items-center border-[1px] rounded-[10px] pr-[18px]",
+      "group flex items-center border rounded-[10px] pr-[18px]",
       {
         "h-[60px]": className.length === 0, // Only apply default height if no className is provided
         "w-full": className.length === 0, // Only apply default width if no className is provided
@@ -61,10 +61,6 @@ export function BaseInput({
     );
   };
 
-  const iconColor = isFocused
-    ? "var(--color-type-400)"
-    : "var(--color-gray-300)";
-
   return (
     <label
       htmlFor={id}
@@ -72,7 +68,6 @@ export function BaseInput({
       style={
         state === "error"
           ? {
-              borderColor: "var(--color-error-400)",
               boxShadow: "0 0 0 3px #FFA8A8",
             }
           : undefined
@@ -80,8 +75,10 @@ export function BaseInput({
     >
       {icon && (
         <div
-          className="pl-[18px] pr-[12px] flex items-center"
-          style={{ color: iconColor }}
+          className={clsx("pl-[18px] pr-[12px] flex items-center", {
+            "text-type-400": isFocused,
+            "text-gray-300": !isFocused,
+          })}
         >
           {icon}
         </div>

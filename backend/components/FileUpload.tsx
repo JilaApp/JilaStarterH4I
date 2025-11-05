@@ -64,7 +64,7 @@ export default function FileUpload({
         return (
           <div className="flex flex-col justify-center items-center text-gray-300 cursor-pointer">
             <Upload />
-            <div className="flex items-center h-[40px] text-[18px] font-[500]">
+            <div className="flex items-center h-[40px] text-lg font-[500]">
               Upload your file here
             </div>
           </div>
@@ -73,7 +73,7 @@ export default function FileUpload({
         return (
           <div className="flex flex-col justify-center items-center text-gray-300">
             <Spinner size={24} className="text-gray-300" />
-            <div className="flex items-center h-[40px] text-[18px] font-[400]">
+            <div className="flex items-center h-[40px] text-lg font-[400]">
               Uploading file...
             </div>
           </div>
@@ -82,7 +82,7 @@ export default function FileUpload({
         return (
           <div className="flex flex-col justify-center items-center text-jila-400">
             <CircleCheck />
-            <div className="flex items-center h-[40px] text-[18px] font-[500]">
+            <div className="flex items-center h-[40px] text-lg font-[500]">
               File uploaded!
             </div>
           </div>
@@ -91,7 +91,7 @@ export default function FileUpload({
         return (
           <div className="flex flex-col justify-center items-center text-error-400">
             <CircleAlert />
-            <div className="flex items-center h-[40px] text-[18px] font-[500]">
+            <div className="flex items-center h-[40px] text-lg font-[500]">
               {errorText}
             </div>
           </div>
@@ -103,7 +103,7 @@ export default function FileUpload({
     <div className="flex flex-col gap-[11px]">
       {extendedText && (
         <span
-          className={`flex text-[var(--color-gray-300)] font-[300] leading-none mt-[2px] ${extendedTextClassName}`}
+          className={`flex text-gray-300 font-[300] leading-none mt-[2px] ${extendedTextClassName}`}
         >
           {extendedText}
         </span>

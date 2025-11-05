@@ -33,11 +33,11 @@ export default function DeleteModal({
         </div>
 
         <div className="flex flex-col justify-center items-center gap-[4px]">
-          <div className="text-[24px] mt-[26px] body1-desktop-semi-text text-type-400">
+          <div className="text-2xl mt-[26px] body1-desktop-semi-text text-type-400">
             Delete
           </div>
           <div className="flex flex-col justify-center items-center w-[308px] h-[32px]">
-            <div className="text-[18px] text-gray-300 body2-desktop-text">
+            <div className="text-lg text-gray-300 body2-desktop-text">
               This action cannot be undone.
             </div>
           </div>

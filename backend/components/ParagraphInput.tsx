@@ -20,10 +20,10 @@ export default function ParagraphInput({
         className={clsx(
           `
           w-full min-h-[120px] p-3 rounded-lg
-          border-[1px] border-[var(--color-gray-200)] outline-none resize-none
-          text-[18px] leading-[22px]
-        placeholder:text-[var(--color-gray-300)] placeholder:font-[500]
-        focus:border-[var(--color-jila-400)] `,
+          border border-gray-200 outline-none resize-none
+          text-lg leading-[22px]
+        placeholder:text-gray-300 placeholder:font-[500]
+        focus:border-jila-400 `,
           disabled && "border-gray-300 bg-gray-200 cursor-not-allowed",
         )}
         placeholder={placeholder}

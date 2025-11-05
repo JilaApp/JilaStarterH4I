@@ -158,7 +158,7 @@ export default function SignInPage() {
                 </FormField>
               </div>
               {error && (
-                <div className="!rounded-lg !mt-0 bg-error-200 w-full flex items-center gap-[3px] p-[14px] text-[var(--color-error-400)] text-[18px]">
+                <div className="!rounded-lg !mt-0 bg-error-200 w-full flex items-center gap-[3px] p-[14px] text-error-400 text-lg">
                   <div className="flex items-center justify-center">
                     <Ban width={"20px"} height={"20px"} />
                   </div>
