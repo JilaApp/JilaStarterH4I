@@ -1,15 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useSignUp, useUser } from "@clerk/nextjs";
 import { useSearchParams, useRouter } from "next/navigation";
 import { EmailInput, PasswordInput } from "@/components/Input";
 import Button from "@/components/Button";
 import DisplayBox from "@/components/DisplayBox";
-import FormText, { validatePassword } from "@/components/FormTextWrapper";
-import FormInputWrapper from "@/components/FormInputWrapper";
+import FormField from "@/components/FormField";
 import PageBackground from "@/components/PageBackground";
 import { trpc } from "@/lib/trpc";
+import { useForm, createField } from "@/hooks/useForm";
+import { validatePassword } from "@/lib/validators";
 
 export default function InviteSignUpPage() {
   const { isLoaded, signUp, setActive } = useSignUp();
@@ -18,11 +19,12 @@ export default function InviteSignUpPage() {
   const router = useRouter();
   const finalizeSignUpMutation = trpc.user.finalizeSignUp.useMutation();
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [passwordError, setPasswordError] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [confirmPasswordError, setConfirmPasswordError] = useState("");
+  const { fields, setFieldValue, setFieldError, validateAllFields } = useForm({
+    email: createField(""),
+    password: createField(""),
+    confirmPassword: createField(""),
+  });
+
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [emailApproved, setEmailApproved] = useState(false);
@@ -59,7 +61,7 @@ export default function InviteSignUpPage() {
           createdSignUp.status === "missing_requirements" &&
           createdSignUp.emailAddress
         ) {
-          setEmail(createdSignUp.emailAddress);
+          setFieldValue("email", createdSignUp.emailAddress);
         }
       } catch (err: any) {
         setError(
@@ -74,6 +76,16 @@ export default function InviteSignUpPage() {
     createSignUpFromTicket();
   }, [isLoaded, searchParams, signUp, isTicketProcessed]);
 
+  const validateConfirmPassword = useCallback(
+    (value: string): string | null => {
+      if (value !== fields.password.value) {
+        return "Passwords do not match.";
+      }
+      return null;
+    },
+    [fields.password.value],
+  );
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -84,30 +96,27 @@ export default function InviteSignUpPage() {
     }
 
     setError("");
-    setPasswordError("");
-    setConfirmPasswordError("");
 
-    if (password.length < 8) {
-      setPasswordError("Password must be at least 8 characters long.");
-      return;
-    }
-    if (password !== confirmPassword) {
-      setConfirmPasswordError("Passwords do not match.");
-      return;
-    }
+    setFieldError("password", "");
+    setFieldError("confirmPassword", "");
+
+    const isValid = validateAllFields({
+      password: validatePassword,
+      confirmPassword: validateConfirmPassword,
+    });
+
+    if (!isValid) return;
 
     setIsLoading(true);
 
     try {
       const result = await signUp.update({
-        password,
+        password: fields.password.value,
       });
 
       if (result.status === "complete") {
         await setActive({ session: result.createdSessionId });
-
         await finalizeSignUpMutation.mutateAsync();
-
         router.push("/dashboard");
       } else {
         setError("Could not complete your sign up. Please try again.");
@@ -143,15 +152,15 @@ export default function InviteSignUpPage() {
                 account
               </p>
               <div>
-                <FormText value={email}>
-                  <EmailInput
-                    id="email-input"
-                    name="email"
-                    disabled
-                    placeholder="Loading from invitation..."
-                    className="w-[450px] h-[60px]"
-                  />
-                </FormText>
+                <EmailInput
+                  id="email-input"
+                  name="email"
+                  value={fields.email.value}
+                  onChange={() => {}}
+                  disabled
+                  placeholder="Loading from invitation..."
+                  className="w-[450px] h-[60px]"
+                />
               </div>
               {error && (
                 <div className="rounded-lg bg-error-200 p-4 text-error-400">
@@ -170,6 +179,7 @@ export default function InviteSignUpPage() {
                   type="button"
                   defaultClassName="w-full"
                   onClick={() => {
+                    setError("");
                     setEmailApproved(true);
                   }}
                 />
@@ -189,52 +199,44 @@ export default function InviteSignUpPage() {
                   Create a secure password for your account
                 </p>
                 <div className="flex flex-col gap-y-2">
-                  <FormInputWrapper
+                  <FormField
                     title="Password"
                     required
-                    state={passwordError ? "error" : "default"}
-                    errorString={passwordError}
-                    value={password}
-                    onChange={setPassword}
+                    state={fields.password.state}
+                    errorString={fields.password.error}
+                    value={fields.password.value}
+                    onChange={(val) => setFieldValue("password", val)}
                   >
-                    <FormText
-                      required
-                      validate={validatePassword}
-                      onErrorChange={setPasswordError}
-                      error={passwordError}
-                    >
+                    {(props) => (
                       <PasswordInput
+                        {...props}
+                        state={fields.password.state}
                         id="password-input"
                         name="password"
                         autoComplete="new-password"
                         className="w-[450px] h-[60px]"
                       />
-                    </FormText>
-                  </FormInputWrapper>
-                  <FormInputWrapper
+                    )}
+                  </FormField>
+                  <FormField
                     title="Confirm Password"
                     required
-                    state={confirmPasswordError ? "error" : "default"}
-                    errorString={confirmPasswordError}
-                    value={confirmPassword}
-                    onChange={setConfirmPassword}
+                    state={fields.confirmPassword.state}
+                    errorString={fields.confirmPassword.error}
+                    value={fields.confirmPassword.value}
+                    onChange={(val) => setFieldValue("confirmPassword", val)}
                   >
-                    <FormText
-                      required
-                      validate={(value) =>
-                        value === password ? "" : "Passwords do not match."
-                      }
-                      error={confirmPasswordError}
-                      onErrorChange={setConfirmPasswordError}
-                    >
+                    {(props) => (
                       <PasswordInput
+                        {...props}
+                        state={fields.confirmPassword.state}
                         id="confirm-password-input"
                         name="confirmPassword"
                         autoComplete="new-password"
                         className="w-[450px] h-[60px]"
                       />
-                    </FormText>
-                  </FormInputWrapper>
+                    )}
+                  </FormField>
                 </div>
                 {error && (
                   <div className="rounded-lg bg-error-200 p-4 text-error-400">

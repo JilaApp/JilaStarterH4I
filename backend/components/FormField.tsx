@@ -2,65 +2,51 @@ import React from "react";
 import { Ban } from "lucide-react";
 import type { FormInputState } from "@/lib/types";
 
-interface FormInputWrapperProps<T> {
+interface FormFieldProps<T> {
   title: string;
   required?: boolean;
-  children: React.ReactNode;
+  children: (props: {
+    value: T;
+    onChange: (val: T) => void;
+  }) => React.ReactElement;
   state?: FormInputState;
-  setState?: (state: FormInputState) => void;
-  defaultClassName?: string;
   errorString?: string;
   description?: string;
   value?: T;
   onChange?: (val: T) => void;
+  defaultClassName?: string;
 }
 
-export default function FormInputWrapper<T>({
+export default function FormField<T>({
   title,
   required = false,
   children,
   state = "default",
-  setState,
   errorString = "This field is required",
-  defaultClassName = "",
   description,
   value,
-  onChange = (val: T) => {},
-  ...rest
-}: FormInputWrapperProps<T>) {
+  onChange = () => {},
+  defaultClassName = "",
+}: FormFieldProps<T>) {
   const handleChange = (val: T) => {
     onChange(val);
-    if (state !== "default") {
-      setState?.("default");
-    }
   };
-
-  let childWithState: React.ReactNode;
-
-  if (React.isValidElement(children)) {
-    childWithState = React.cloneElement(children, {
-      ...children.props,
-      value,
-      onChange: handleChange,
-      state,
-      ...rest,
-    });
-  } else {
-    childWithState = children;
-  }
 
   return (
     <div
-      className={`flex flex-col w-full font-[400] text-[18px]  ${defaultClassName} `}
+      className={`flex flex-col w-full font-[400] text-[18px] ${defaultClassName}`}
     >
       <div className="flex items-center gap-1 h-[30px] mb-1">
         <span>{title}</span>
         {required && <span className="text-[var(--color-error-400)]">*</span>}
       </div>
-      {childWithState}
-      {state === "error" && (
+      {children({
+        value: value as T,
+        onChange: handleChange,
+      })}
+      {state === "error" && errorString && (
         <div className="flex items-center gap-[3px] pt-[8px] text-[var(--color-error-400)] text-[18px]">
-          <div className="flex items-center justify-center ">
+          <div className="flex items-center justify-center">
             <Ban width={"20px"} height={"20px"} />
           </div>
           <span className="font-[500]">{errorString}</span>

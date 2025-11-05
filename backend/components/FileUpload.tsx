@@ -1,39 +1,58 @@
 import { Upload, CircleCheck, CircleAlert, File, X } from "lucide-react";
 import { useRef } from "react";
-import type { UploadedFile } from "@/lib/types";
+import type { FormInputState } from "@/lib/types";
 
 interface FileUploadProps {
-  onFileSelect?: (file: File) => void;
-  onDelete: () => void;
-  state?: "default" | "pending" | "complete" | "error";
-  uploadedFile?: UploadedFile;
+  value?: File;
+  onChange?: (file: File) => void;
+  onDelete?: () => void;
   editable?: boolean;
   extendedText?: string;
   errorText?: string;
   extendedTextClassName?: string;
+  state?: FormInputState;
+  existingFile?: {
+    fileName: string;
+    fileSizeMB: number;
+  };
 }
 
 export default function FileUpload({
-  onFileSelect = (file: File) => {},
-  onDelete,
+  value,
+  onChange = () => {},
+  onDelete = () => {},
   state = "default",
   editable = true,
-  uploadedFile,
   extendedText = "",
   errorText = "",
   extendedTextClassName = "",
+  existingFile,
 }: FileUploadProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const displayedFile = value
+    ? {
+        fileName: value.name,
+        fileSizeMB: Math.round((value.size / 1_000_000) * 100) / 100,
+      }
+    : existingFile;
 
   const handleClickUpload = () => {
     fileInputRef.current?.click();
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      onFileSelect(file);
+      onChange(file);
     }
+  };
+
+  const handleDelete = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+    onDelete();
   };
 
   const renderContent = () => {
@@ -94,33 +113,36 @@ export default function FileUpload({
 
   return (
     <div className="flex flex-col gap-[11px]">
-      <span
-        className={`flex text-[var(--color-gray-300)] font-[300] leading-none mt-[2px] ${extendedTextClassName}`}
-      >
-        {extendedText}
-      </span>
+      {extendedText && (
+        <span
+          className={`flex text-[var(--color-gray-300)] font-[300] leading-none mt-[2px] ${extendedTextClassName}`}
+        >
+          {extendedText}
+        </span>
+      )}
       <input
         ref={fileInputRef}
         type="file"
         className="hidden"
         onChange={handleFileChange}
       />
-      {editable && (
-        <div
-          onClick={state === "default" ? handleClickUpload : undefined}
-          className={`
+      {(state === "default" || state === "pending" || state === "error") &&
+        editable && (
+          <div
+            onClick={state === "pending" ? undefined : handleClickUpload}
+            className={`
     flex justify-center items-center w-full h-[122px]
     rounded-[10px]
     ${
-      state === "default"
-        ? "cursor-pointer hover:bg-[var(--color-cream-300)]"
-        : ""
+      state === "pending"
+        ? ""
+        : "cursor-pointer hover:bg-[var(--color-cream-300)]"
     }
     ${state === "error" ? "bg-[#FFF3F3]" : "bg-white"}
   `}
-          style={{
-            backgroundImage: `url("data:image/svg+xml,${encodeURIComponent(
-              `<svg width='100%' height='100%' xmlns='http://www.w3.org/2000/svg'>
+            style={{
+              backgroundImage: `url("data:image/svg+xml,${encodeURIComponent(
+                `<svg width='100%' height='100%' xmlns='http://www.w3.org/2000/svg'>
         <rect
           width='100%'
           height='100%'
@@ -133,33 +155,26 @@ export default function FileUpload({
           stroke-linecap='square'
         />
       </svg>`,
-            )}")`,
-          }}
-        >
-          {renderContent()}
-        </div>
-      )}
-      {state == "complete" && (
+              )}")`,
+            }}
+          >
+            {renderContent()}
+          </div>
+        )}
+      {state === "complete" && displayedFile && (
         <div className="flex items-center rounded-[10px] px-[10px] py-[8px] bg-white">
           <div className="flex gap-[17px] items-center w-full">
             <File className="text-[var(--color-jila-400)]" />
             <div className="flex flex-col">
-              <span className="font-[500]">
-                {uploadedFile && uploadedFile.fileName}
-              </span>
+              <span className="font-[500]">{displayedFile.fileName}</span>
               <span className="text-[var(--color-gray-300)] font-[200]">
-                {uploadedFile && uploadedFile.fileSizeMB} MB
+                {displayedFile.fileSizeMB} MB
               </span>
             </div>
             {editable && (
               <X
                 className="flex ml-auto cursor-pointer"
-                onClick={() => {
-                  if (fileInputRef.current) {
-                    fileInputRef.current.value = "";
-                  }
-                  onDelete();
-                }}
+                onClick={handleDelete}
               />
             )}
           </div>

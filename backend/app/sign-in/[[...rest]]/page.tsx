@@ -7,29 +7,26 @@ import { EmailInput, PasswordInput } from "@/components/Input";
 import Button from "@/components/Button";
 import DisplayBox from "@/components/DisplayBox";
 import Link from "next/link";
-import FormText, {
-  validateEmail,
-  validatePassword,
-} from "@/components/FormTextWrapper";
-
-import FormInputWrapper from "@/components/FormInputWrapper";
+import FormField from "@/components/FormField";
 import PageBackground from "@/components/PageBackground";
 import { Ban } from "lucide-react";
+import { useForm, createField } from "@/hooks/useForm";
+import { validateEmail, validatePassword } from "@/lib/validators";
 
 export default function SignInPage() {
   const { isLoaded, signIn, setActive } = useSignIn();
   const { user, isLoaded: isUserLoaded } = useUser();
   const router = useRouter();
 
-  const [email, setEmail] = useState("");
-  const [emailError, setEmailError] = useState("");
-  const [passwordError, setPasswordError] = useState("");
-  const [password, setPassword] = useState("");
+  const { fields, setFieldValue, setFieldError, validateAllFields } = useForm({
+    email: createField(""),
+    password: createField(""),
+  });
+
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [isWaitingForMetadata, setIsWaitingForMetadata] = useState(false);
 
-  // If user is already signed in with admin role, redirect
   useEffect(() => {
     if (isUserLoaded && user) {
       const userType = user.publicMetadata?.userType;
@@ -38,13 +35,11 @@ export default function SignInPage() {
         router.push("/dashboard");
         return;
       } else if (userType) {
-        // Has userType but not admin
         setError("This account does not have admin access.");
       }
     }
   }, [isUserLoaded, user, router]);
 
-  // Poll for metadata after sign-in
   useEffect(() => {
     if (isWaitingForMetadata && user) {
       const checkMetadata = setInterval(() => {
@@ -55,7 +50,6 @@ export default function SignInPage() {
           router.push("/dashboard");
           return;
         } else if (userType) {
-          // Has userType but not admin
           clearInterval(checkMetadata);
           setError("This account does not have admin access.");
           setIsWaitingForMetadata(false);
@@ -63,11 +57,10 @@ export default function SignInPage() {
         }
       }, 500);
 
-      // Timeout after 10 seconds
       const timeout = setTimeout(() => {
         clearInterval(checkMetadata);
         if (!user.publicMetadata?.userType) {
-          router.push("/dashboard"); // Let dashboard handle the check
+          router.push("/dashboard");
         }
       }, 10000);
 
@@ -83,27 +76,27 @@ export default function SignInPage() {
 
     if (!isLoaded) return;
 
-    const em = validateEmail(email) || "";
-    const p = validatePassword(password) || "";
     setError("");
-    if (em != "" || p != "") {
-      setEmailError(em);
-      setPasswordError(p);
-      return;
-    }
+    setFieldError("email", "");
+    setFieldError("password", "");
+
+    const isValid = validateAllFields({
+      email: validateEmail,
+      password: validatePassword,
+    });
+
+    if (!isValid) return;
 
     setLoading(true);
 
     try {
       const result = await signIn.create({
-        identifier: email,
-        password,
+        identifier: fields.email.value,
+        password: fields.password.value,
       });
 
       if (result.status === "complete") {
         await setActive({ session: result.createdSessionId });
-
-        // Wait for metadata to be populated
         setIsWaitingForMetadata(true);
       }
     } catch (err: any) {
@@ -128,51 +121,45 @@ export default function SignInPage() {
                 Enter your details to get signed into your admin account
               </p>
               <div className="flex flex-col gap-y-2">
-                <FormInputWrapper
+                <FormField
                   title="Email"
                   required
-                  state={emailError ? "error" : "default"}
-                  errorString={emailError}
-                  value={email}
-                  onChange={setEmail}
+                  state={fields.email.state}
+                  errorString={fields.email.error}
+                  value={fields.email.value}
+                  onChange={(val) => setFieldValue("email", val)}
                 >
-                  <FormText
-                    required
-                    validate={validateEmail}
-                    error={emailError}
-                    onErrorChange={setEmailError}
-                  >
+                  {(props) => (
                     <EmailInput
+                      {...props}
+                      state={fields.email.state}
                       id="email-input"
                       className="w-[450px] h-[60px]"
                     />
-                  </FormText>
-                </FormInputWrapper>
+                  )}
+                </FormField>
 
-                <FormInputWrapper
+                <FormField
                   title="Password"
                   required
-                  state={passwordError ? "error" : "default"}
-                  errorString={passwordError}
-                  value={password}
-                  onChange={setPassword}
+                  state={fields.password.state}
+                  errorString={fields.password.error}
+                  value={fields.password.value}
+                  onChange={(val) => setFieldValue("password", val)}
                 >
-                  <FormText
-                    required
-                    validate={validatePassword}
-                    onErrorChange={setPasswordError}
-                    error={passwordError}
-                  >
+                  {(props) => (
                     <PasswordInput
+                      {...props}
+                      state={fields.password.state}
                       id="password-input"
                       className="w-[450px] h-[60px]"
                     />
-                  </FormText>
-                </FormInputWrapper>
+                  )}
+                </FormField>
               </div>
               {error && (
                 <div className="!rounded-lg !mt-0 bg-error-200 w-full flex items-center gap-[3px] p-[14px] text-[var(--color-error-400)] text-[18px]">
-                  <div className="flex items-center justify-center ">
+                  <div className="flex items-center justify-center">
                     <Ban width={"20px"} height={"20px"} />
                   </div>
                   <span className="font-[500]">{error}</span>

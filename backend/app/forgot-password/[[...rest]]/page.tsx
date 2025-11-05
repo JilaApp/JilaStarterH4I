@@ -7,31 +7,30 @@ import Button from "@/components/Button";
 import DisplayBox from "@/components/DisplayBox";
 import Notification from "@/components/Notification";
 import Link from "next/link";
-import FormText, {
-  validateEmail,
-  validatePassword,
-} from "@/components/FormTextWrapper";
-import FormInputWrapper from "@/components/FormInputWrapper";
+import FormField from "@/components/FormField";
 import PageBackground from "@/components/PageBackground";
-import { router } from "@/server/trpc";
 import { useRouter } from "next/navigation";
+import { useForm, createField } from "@/hooks/useForm";
+import { validateEmail, validatePassword } from "@/lib/validators";
 
 export default function ForgotPasswordPage() {
   const { isLoaded, signIn } = useSignIn();
   const { setActive } = useClerk();
   const { user } = useUser();
-
   const router = useRouter();
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [code, setCode] = useState("");
+  const { fields, setFieldValue, setFieldError, validateAllFields } = useForm({
+    email: createField(""),
+    password: createField(""),
+    code: createField(""),
+  });
+
   const [error, setError] = useState("");
-  const [emailError, setEmailError] = useState("");
-  const [passwordError, setPasswordError] = useState("");
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const [showNotification, setShowNotification] = useState(false);
+
+  const [step, setStep] = useState<"request" | "reset">("request");
 
   useEffect(() => {
     if (showNotification) {
@@ -49,14 +48,11 @@ export default function ForgotPasswordPage() {
     }
   }, [router, user]);
 
-  // Step 1: Request password reset
-  // Step 2: Verify code and reset password
-  const [step, setStep] = useState<"request" | "reset">("request");
-
   const resetErrorStates = () => {
     setError("");
-    setEmailError("");
-    setPasswordError("");
+    setFieldError("email", "");
+    setFieldError("password", "");
+    setFieldError("code", "");
   };
 
   const handleRequestReset = async (e: React.FormEvent) => {
@@ -65,20 +61,28 @@ export default function ForgotPasswordPage() {
     if (!isLoaded) return;
 
     resetErrorStates();
+
+    const isValid = validateAllFields({
+      email: validateEmail,
+    });
+    if (!isValid) return;
+
     setLoading(true);
 
     try {
       await signIn.create({
         strategy: "reset_password_email_code",
-        identifier: email,
+        identifier: fields.email.value,
       });
 
       setSuccessMessage("Reset code sent to your email!");
       setShowNotification(true);
+      resetErrorStates(); // Clear all errors before moving to next step
       setStep("reset");
     } catch (err: any) {
       console.error("Password reset request error:", err);
-      setEmailError(
+      setFieldError(
+        "email",
         err.errors?.[0]?.message ||
           "Failed to send reset code. Please check your email address.",
       );
@@ -92,19 +96,20 @@ export default function ForgotPasswordPage() {
 
     if (!isLoaded) return;
 
-    if (password.length < 8) {
-      setPasswordError("Password must be at least 8 characters long.");
-      return;
-    }
-
     resetErrorStates();
+
+    const isValid = validateAllFields({
+      password: validatePassword,
+    });
+    if (!isValid) return;
+
     setLoading(true);
 
     try {
       const result = await signIn.attemptFirstFactor({
         strategy: "reset_password_email_code",
-        code,
-        password,
+        code: fields.code.value,
+        password: fields.password.value,
       });
 
       if (result.status === "complete") {
@@ -137,7 +142,7 @@ export default function ForgotPasswordPage() {
     try {
       await signIn.create({
         strategy: "reset_password_email_code",
-        identifier: email,
+        identifier: fields.email.value,
       });
 
       setSuccessMessage("Reset code resent to your email!");
@@ -171,7 +176,7 @@ export default function ForgotPasswordPage() {
               <p className="body1-desktop-text text-type-400 text-center">
                 {step === "request"
                   ? "Don't worry! Enter your account's email and we'll send you a reset code."
-                  : `Enter the code sent to ${email} and your new password.`}
+                  : `Enter the code sent to ${fields.email.value} and your new password.`}
               </p>
             </div>
 
@@ -180,27 +185,24 @@ export default function ForgotPasswordPage() {
                 onSubmit={handleRequestReset}
                 className="flex flex-col gap-y-5"
               >
-                <FormInputWrapper
+                <FormField
                   title="Email"
                   required
-                  state={emailError ? "error" : "default"}
-                  errorString={emailError}
-                  value={email}
-                  onChange={setEmail}
+                  state={fields.email.state}
+                  errorString={fields.email.error}
+                  value={fields.email.value}
+                  onChange={(val) => setFieldValue("email", val)}
                 >
-                  <FormText
-                    required
-                    validate={validateEmail}
-                    error={emailError}
-                    onErrorChange={setEmailError}
-                  >
+                  {(props) => (
                     <EmailInput
+                      {...props}
+                      state={fields.email.state}
                       id="email-input"
                       name="email"
                       className="w-[450px] h-[60px]"
                     />
-                  </FormText>
-                </FormInputWrapper>
+                  )}
+                </FormField>
 
                 <Button
                   text={loading ? "Sending..." : "Send Reset Code"}
@@ -227,47 +229,46 @@ export default function ForgotPasswordPage() {
                 autoComplete="off"
               >
                 <div>
-                  <FormInputWrapper
+                  <FormField
                     title="Reset Code"
                     required
                     state={error ? "error" : "default"}
                     errorString={error}
-                    value={code}
-                    onChange={setCode}
+                    value={fields.code.value}
+                    onChange={(val) => setFieldValue("code", val)}
                   >
-                    <FormText required onErrorChange={setError} error={error}>
+                    {(props) => (
                       <TextInput
+                        {...props}
+                        state={error ? "error" : "default"}
                         id="code"
                         name="code"
                         placeholder="Enter 6-digit code"
                         className="w-[450px] h-[60px]"
                       />
-                    </FormText>
-                  </FormInputWrapper>
+                    )}
+                  </FormField>
                 </div>
 
-                <FormInputWrapper
+                <FormField
                   title="New Password"
                   required
-                  state={passwordError ? "error" : "default"}
-                  errorString={passwordError}
-                  value={password}
-                  onChange={setPassword}
+                  state={fields.password.state}
+                  errorString={fields.password.error}
+                  value={fields.password.value}
+                  onChange={(val) => setFieldValue("password", val)}
                 >
-                  <FormText
-                    required
-                    validate={validatePassword}
-                    onErrorChange={setPasswordError}
-                    error={passwordError}
-                  >
+                  {(props) => (
                     <PasswordInput
+                      {...props}
+                      state={fields.password.state}
                       id="new-password"
                       name="new-password"
                       autoComplete="new-password"
                       className="w-[450px] h-[60px]"
                     />
-                  </FormText>
-                </FormInputWrapper>
+                  )}
+                </FormField>
 
                 <Button
                   text={loading ? "Resetting..." : "Reset Password"}

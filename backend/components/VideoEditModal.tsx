@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { X } from "lucide-react";
-import FormInputWrapper from "@/components/FormInputWrapper";
-import FormText from "@/components/FormTextWrapper";
+import FormField from "@/components/FormField";
 import { TextInput } from "@/components/Input";
 import FileUpload from "@/components/FileUpload";
 import Dropdown from "@/components/Dropdown";
@@ -10,6 +9,8 @@ import ParagraphInput from "./ParagraphInput";
 import { trpc } from "@/lib/trpc";
 import { VideoTopic } from "@/lib/types";
 import { VIDEO_TOPIC_OPTIONS } from "@/lib/constants";
+import { useForm, createField } from "@/hooks/useForm";
+import { validateRequired, validateURL } from "@/lib/validators";
 
 type SaveStatus = "idle" | "saving" | "success" | "error";
 
@@ -40,94 +41,96 @@ export default function VideoEditModal({
   isEditing = true,
   videoData,
 }: VideoEditModalProps) {
-  const [englishTitle, setEnglishTitle] = useState("");
-  const [qanjobalTitle, setQanjobalTitle] = useState("");
-  const [videoLink, setVideoLink] = useState("");
-  const [englishDescription, setEnglishDescription] = useState("");
-  const [qanjobalDescription, setQanjobalDescription] = useState("");
-  const [dropdownIndex, setDropdownIndex] = useState<number | undefined>();
+  const { fields, setFieldValue, setFieldError, resetForm, validateAllFields } =
+    useForm({
+      englishTitle: createField(""),
+      qanjobalTitle: createField(""),
+      videoLink: createField(""),
+      englishDescription: createField(""),
+      qanjobalDescription: createField(""),
+      dropdownIndex: createField<number | undefined>(undefined),
+      audioFile: createField<File | undefined>(undefined),
+    });
+
   const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
-
-  const [englishError, setEnglishError] = useState("");
-  const [qanjobalError, setQanjobalError] = useState("");
-  const [videoLinkError, setVideoLinkError] = useState("");
-  const [dropdownError, setDropdownError] = useState("");
-
-  const [selectedFile, setSelectedFile] = useState<File | undefined>();
-  const [displayedFile, setDisplayedFile] = useState<
-    { fileName: string; fileSizeMB: number } | undefined
-  >();
   const [clearExistingFile, setClearExistingFile] = useState(false);
 
   const updateVideoMutation = trpc.videos.updateVideo.useMutation();
 
+  const existingFileMetadata = useMemo(() => {
+    if (videoData?.audioFilename && videoData?.audioFileSize) {
+      return {
+        fileName: videoData.audioFilename,
+        fileSizeMB:
+          Math.round((videoData.audioFileSize / 1_000_000) * 100) / 100,
+      };
+    }
+    return undefined;
+  }, [videoData?.audioFilename, videoData?.audioFileSize]);
+
   useEffect(() => {
     if (isOpen && videoData) {
-      setEnglishTitle(videoData.titleEnglish || "");
-      setQanjobalTitle(videoData.titleQanjobal || "");
-      setVideoLink(videoData.url || "");
-      setEnglishDescription(videoData.descriptionEnglish || "");
-      setQanjobalDescription(videoData.descriptionQanjobal || "");
+      setFieldValue("englishTitle", videoData.titleEnglish || "");
+      setFieldValue("qanjobalTitle", videoData.titleQanjobal || "");
+      setFieldValue("videoLink", videoData.url || "");
+      setFieldValue("englishDescription", videoData.descriptionEnglish || "");
+      setFieldValue("qanjobalDescription", videoData.descriptionQanjobal || "");
+
       const topicIndex = VIDEO_TOPIC_OPTIONS.findIndex(
         (option) =>
           option.toUpperCase() === (videoData.topic || "").toUpperCase(),
       );
-      setDropdownIndex(topicIndex !== -1 ? topicIndex : undefined);
+      setFieldValue(
+        "dropdownIndex",
+        topicIndex !== -1 ? topicIndex : undefined,
+      );
+
       setSaveStatus("idle");
-
-      setSelectedFile(undefined);
+      setFieldValue("audioFile", undefined);
       setClearExistingFile(false);
-
-      if (videoData.audioFilename && videoData.audioFileSize) {
-        setDisplayedFile({
-          fileName: videoData.audioFilename,
-          fileSizeMB:
-            Math.round((videoData.audioFileSize / 1_000_000) * 100) / 100,
-        });
-      } else {
-        setDisplayedFile(undefined);
-      }
-    } else if (!isOpen) {
-      // Reset state when modal closes
-      setDisplayedFile(undefined);
     }
-  }, [isOpen, videoData]);
+  }, [isOpen, videoData?.id]);
 
   useEffect(() => {
     document.body.style.overflow = isOpen ? "hidden" : "auto";
   }, [isOpen]);
 
-  const handleFileSelect = (file: File) => {
-    setSelectedFile(file);
-    setDisplayedFile({
-      fileName: file.name,
-      fileSizeMB: Math.round((file.size / 1_000_000) * 100) / 100,
-    });
+  const handleFileChange = (file: File) => {
+    setFieldValue("audioFile", file);
     setClearExistingFile(false);
   };
 
   const handleDeleteFile = () => {
-    setSelectedFile(undefined);
-    setDisplayedFile(undefined);
+    setFieldValue("audioFile", undefined);
     setClearExistingFile(true);
   };
 
   const handleSave = async () => {
     if (!videoData) return;
+
+    const isValid = validateAllFields({
+      englishTitle: validateRequired,
+      qanjobalTitle: validateRequired,
+      videoLink: validateURL,
+      dropdownIndex: validateRequired,
+    });
+
+    if (!isValid) return;
+
     setSaveStatus("saving");
 
     const mutationPayload: Parameters<
       typeof updateVideoMutation.mutateAsync
     >[0] = {
       id: videoData.id as number,
-      titleEnglish: englishTitle,
-      titleQanjobal: qanjobalTitle,
-      url: videoLink,
-      descriptionEnglish: englishDescription,
-      descriptionQanjobal: qanjobalDescription,
+      titleEnglish: fields.englishTitle.value,
+      titleQanjobal: fields.qanjobalTitle.value,
+      url: fields.videoLink.value,
+      descriptionEnglish: fields.englishDescription.value,
+      descriptionQanjobal: fields.qanjobalDescription.value,
       topic:
-        dropdownIndex !== undefined
-          ? (VIDEO_TOPIC_OPTIONS[dropdownIndex] as VideoTopic)
+        fields.dropdownIndex.value !== undefined
+          ? (VIDEO_TOPIC_OPTIONS[fields.dropdownIndex.value] as VideoTopic)
           : undefined,
     };
 
@@ -148,19 +151,19 @@ export default function VideoEditModal({
       }
     };
 
-    if (selectedFile) {
+    if (fields.audioFile.value) {
       const reader = new FileReader();
       reader.onload = () => {
         mutationPayload.audioFile = reader.result?.toString().split(",")[1];
-        mutationPayload.audioFilename = selectedFile.name;
-        mutationPayload.audioFileSize = selectedFile.size;
+        mutationPayload.audioFilename = fields.audioFile.value!.name;
+        mutationPayload.audioFileSize = fields.audioFile.value!.size;
         executeMutation(mutationPayload);
       };
       reader.onerror = (error) => {
         console.error("FileReader error:", error);
         setSaveStatus("error");
       };
-      reader.readAsDataURL(selectedFile);
+      reader.readAsDataURL(fields.audioFile.value);
     } else if (clearExistingFile) {
       mutationPayload.audioFile = "";
       executeMutation(mutationPayload);
@@ -186,10 +189,16 @@ export default function VideoEditModal({
     }
   };
 
+  const getFileUploadState = () => {
+    if (fields.audioFile.state === "error") return "error";
+    if (fields.audioFile.value || (existingFileMetadata && !clearExistingFile))
+      return "complete";
+    return "default";
+  };
+
   if (!isOpen) return null;
 
   const saveButtonUI = getSaveButtonUI();
-  const uploadState = displayedFile ? "complete" : "default";
 
   return (
     <div className="fixed y-40 inset-0 z-50 flex items-center justify-center bg-[rgb(83,83,83,0.19)]">
@@ -206,111 +215,132 @@ export default function VideoEditModal({
         <div className="overflow-y-auto flex-1 pl-4 pr-4">
           <div className="flex gap-[13.62px] mb-[10px]">
             <div className="flex-1">
-              <FormInputWrapper
+              <FormField
                 title="Resource title (English)"
                 defaultClassName="body1-desktop-text text-[15px]"
                 required
-                state={englishError ? "error" : "default"}
-                errorString={englishError}
-                value={englishTitle}
-                onChange={setEnglishTitle}
+                state={fields.englishTitle.state}
+                errorString={fields.englishTitle.error}
+                value={fields.englishTitle.value}
+                onChange={(val) => setFieldValue("englishTitle", val)}
               >
-                <FormText required onErrorChange={setEnglishError}>
+                {(props) => (
                   <TextInput
+                    {...props}
+                    state={fields.englishTitle.state}
                     id="english-input"
                     className="w-full h-[46px]"
                     disabled={!isEditing}
                   />
-                </FormText>
-              </FormInputWrapper>
+                )}
+              </FormField>
             </div>
             <div className="flex-1">
-              <FormInputWrapper
+              <FormField
                 title="Resource title (Q'anjob'al)"
                 defaultClassName="body1-desktop-text text-[15px]"
                 required
-                state={qanjobalError ? "error" : "default"}
-                errorString={qanjobalError}
-                value={qanjobalTitle}
-                onChange={setQanjobalTitle}
+                state={fields.qanjobalTitle.state}
+                errorString={fields.qanjobalTitle.error}
+                value={fields.qanjobalTitle.value}
+                onChange={(val) => setFieldValue("qanjobalTitle", val)}
               >
-                <FormText required onErrorChange={setQanjobalError}>
+                {(props) => (
                   <TextInput
+                    {...props}
+                    state={fields.qanjobalTitle.state}
                     id="qanjobal-input"
                     className="w-full h-[46px]"
                     disabled={!isEditing}
                   />
-                </FormText>
-              </FormInputWrapper>
+                )}
+              </FormField>
             </div>
           </div>
           <div className="flex mt-[10px]">
-            <FormInputWrapper
+            <FormField
               title="Upload file"
               defaultClassName="body1-desktop-text text-[15px]"
-              state={uploadState}
+              value={fields.audioFile.value}
+              onChange={handleFileChange}
             >
-              <FileUpload
-                uploadedFile={displayedFile}
-                onFileSelect={handleFileSelect}
-                onDelete={handleDeleteFile}
-                editable={isEditing}
-              />
-            </FormInputWrapper>
+              {(props) => (
+                <FileUpload
+                  value={props.value}
+                  onChange={props.onChange}
+                  editable={isEditing}
+                  onDelete={handleDeleteFile}
+                  state={getFileUploadState()}
+                  existingFile={
+                    clearExistingFile ? undefined : existingFileMetadata
+                  }
+                />
+              )}
+            </FormField>
           </div>
           <div className="flex mt-[10px]">
-            <FormInputWrapper
+            <FormField
               required
               title="Topic"
               defaultClassName="body1-desktop-text text-[15px]"
-              state={dropdownError ? "error" : "default"}
-              errorString={dropdownError}
-              value={dropdownIndex}
-              onChange={setDropdownIndex}
+              state={fields.dropdownIndex.state}
+              errorString={fields.dropdownIndex.error}
+              value={fields.dropdownIndex.value}
+              onChange={(val) => setFieldValue("dropdownIndex", val)}
             >
-              <Dropdown
-                options={VIDEO_TOPIC_OPTIONS}
-                state={dropdownError ? "error" : "default"}
-                disabled={!isEditing}
-              />
-            </FormInputWrapper>
+              {(props) => (
+                <Dropdown
+                  {...props}
+                  state={
+                    fields.dropdownIndex.state === "error" ? "error" : "default"
+                  }
+                  options={VIDEO_TOPIC_OPTIONS}
+                  disabled={!isEditing}
+                />
+              )}
+            </FormField>
           </div>
           <div className="flex mt-[10px]">
-            <FormInputWrapper
+            <FormField
               title="Video link"
               defaultClassName="body1-desktop-text text-[15px]"
               required
-              state={videoLinkError ? "error" : "default"}
-              errorString={videoLinkError}
-              value={videoLink}
-              onChange={setVideoLink}
+              state={fields.videoLink.state}
+              errorString={fields.videoLink.error}
+              value={fields.videoLink.value}
+              onChange={(val) => setFieldValue("videoLink", val)}
             >
-              <FormText required onErrorChange={setVideoLinkError}>
-                <TextInput id="video-input w-full" disabled={!isEditing} />
-              </FormText>
-            </FormInputWrapper>
+              {(props) => (
+                <TextInput
+                  {...props}
+                  state={fields.videoLink.state}
+                  id="video-input w-full"
+                  disabled={!isEditing}
+                />
+              )}
+            </FormField>
           </div>
           <div className="flex mt-[10px]">
-            <FormInputWrapper
+            <FormField
               title="Description (English)"
               defaultClassName="body1-desktop-text text-[15px]"
               state="default"
-              value={englishDescription}
-              onChange={setEnglishDescription}
+              value={fields.englishDescription.value}
+              onChange={(val) => setFieldValue("englishDescription", val)}
             >
-              <ParagraphInput disabled={!isEditing} />
-            </FormInputWrapper>
+              {(props) => <ParagraphInput {...props} disabled={!isEditing} />}
+            </FormField>
           </div>
           <div className="flex mt-[10px]">
-            <FormInputWrapper
+            <FormField
               title="Description (Q'anjob'al)"
               defaultClassName="body1-desktop-text text-[15px]"
               state="default"
-              value={qanjobalDescription}
-              onChange={setQanjobalDescription}
+              value={fields.qanjobalDescription.value}
+              onChange={(val) => setFieldValue("qanjobalDescription", val)}
             >
-              <ParagraphInput disabled={!isEditing} />
-            </FormInputWrapper>
+              {(props) => <ParagraphInput {...props} disabled={!isEditing} />}
+            </FormField>
           </div>
           {isEditing && (
             <div className="flex gap-3 justify-end mt-[26px] gap-x-[26px]">
