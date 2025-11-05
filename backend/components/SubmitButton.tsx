@@ -9,10 +9,6 @@ interface SubmitButtonProps {
   defaultClassName?: string;
 }
 
-/**
- * A button component that handles loading states for form submissions
- * Automatically disables and shows loading text when isLoading is true
- */
 export default function SubmitButton({
   isLoading,
   loadingText,
