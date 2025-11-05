@@ -1,11 +1,15 @@
-import React, { ReactElement, cloneElement, isValidElement } from "react";
+import React from "react";
 import { Ban } from "lucide-react";
 import type { FormInputState } from "@/lib/types";
 
 interface FormFieldProps<T> {
   title: string;
   required?: boolean;
-  children: ReactElement;
+  children: (props: {
+    value: T;
+    onChange: (val: T) => void;
+    onBlur?: () => void;
+  }) => React.ReactElement;
   state?: FormInputState;
   errorString?: string;
   description?: string;
@@ -14,8 +18,6 @@ interface FormFieldProps<T> {
   onBlur?: () => void;
   validate?: (value: T) => string | null;
   defaultClassName?: string;
-  // Allow passing any additional props to children
-  [key: string]: any;
 }
 
 export default function FormField<T>({
@@ -30,7 +32,6 @@ export default function FormField<T>({
   onBlur,
   validate,
   defaultClassName = "",
-  ...additionalProps
 }: FormFieldProps<T>) {
   const handleChange = (val: T) => {
     onChange(val);
@@ -48,31 +49,6 @@ export default function FormField<T>({
     }
   };
 
-  // Filter out FormField-specific props before passing to children
-  const {
-    title: _title,
-    required: _required,
-    children: _children,
-    errorString: _errorString,
-    description: _description,
-    validate: _validate,
-    defaultClassName: _defaultClassName,
-    ...propsForChildren
-  } = additionalProps;
-
-  const childWithProps = isValidElement(children)
-    ? cloneElement(children, {
-        ...(typeof children.props === "object" && children.props !== null
-          ? children.props
-          : {}),
-        ...propsForChildren,
-        value,
-        onChange: handleChange,
-        onBlur: handleBlur,
-        state,
-      } as any)
-    : children;
-
   return (
     <div
       className={`flex flex-col w-full font-[400] text-[18px] ${defaultClassName}`}
@@ -81,7 +57,11 @@ export default function FormField<T>({
         <span>{title}</span>
         {required && <span className="text-[var(--color-error-400)]">*</span>}
       </div>
-      {childWithProps}
+      {children({
+        value: value as T,
+        onChange: handleChange,
+        onBlur: handleBlur,
+      })}
       {state === "error" && errorString && (
         <div className="flex items-center gap-[3px] pt-[8px] text-[var(--color-error-400)] text-[18px]">
           <div className="flex items-center justify-center">

@@ -55,7 +55,6 @@ export default function VideoEditModal({
 
   const updateVideoMutation = trpc.videos.updateVideo.useMutation();
 
-  // Memoize the existing file metadata to prevent infinite re-renders
   const existingFileMetadata = useMemo(() => {
     if (videoData?.audioFilename && videoData?.audioFileSize) {
       return {
@@ -88,7 +87,6 @@ export default function VideoEditModal({
       setFieldValue("audioFile", undefined);
       setClearExistingFile(false);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, videoData?.id]);
 
   useEffect(() => {
@@ -201,6 +199,13 @@ export default function VideoEditModal({
     }
   };
 
+  const getFileUploadState = () => {
+    if (fields.audioFile.state === "error") return "error";
+    if (fields.audioFile.value || (existingFileMetadata && !clearExistingFile))
+      return "complete";
+    return "default";
+  };
+
   if (!isOpen) return null;
 
   const saveButtonUI = getSaveButtonUI();
@@ -229,11 +234,15 @@ export default function VideoEditModal({
                 value={fields.englishTitle.value}
                 onChange={(val) => setFieldValue("englishTitle", val)}
               >
-                <TextInput
-                  id="english-input"
-                  className="w-full h-[46px]"
-                  disabled={!isEditing}
-                />
+                {(props) => (
+                  <TextInput
+                    {...props}
+                    state={fields.englishTitle.state}
+                    id="english-input"
+                    className="w-full h-[46px]"
+                    disabled={!isEditing}
+                  />
+                )}
               </FormField>
             </div>
             <div className="flex-1">
@@ -246,11 +255,15 @@ export default function VideoEditModal({
                 value={fields.qanjobalTitle.value}
                 onChange={(val) => setFieldValue("qanjobalTitle", val)}
               >
-                <TextInput
-                  id="qanjobal-input"
-                  className="w-full h-[46px]"
-                  disabled={!isEditing}
-                />
+                {(props) => (
+                  <TextInput
+                    {...props}
+                    state={fields.qanjobalTitle.state}
+                    id="qanjobal-input"
+                    className="w-full h-[46px]"
+                    disabled={!isEditing}
+                  />
+                )}
               </FormField>
             </div>
           </div>
@@ -261,13 +274,18 @@ export default function VideoEditModal({
               value={fields.audioFile.value}
               onChange={handleFileChange}
             >
-              <FileUpload
-                editable={isEditing}
-                onDelete={handleDeleteFile}
-                existingFile={
-                  clearExistingFile ? undefined : existingFileMetadata
-                }
-              />
+              {(props) => (
+                <FileUpload
+                  value={props.value}
+                  onChange={props.onChange}
+                  editable={isEditing}
+                  onDelete={handleDeleteFile}
+                  state={getFileUploadState()}
+                  existingFile={
+                    clearExistingFile ? undefined : existingFileMetadata
+                  }
+                />
+              )}
             </FormField>
           </div>
           <div className="flex mt-[10px]">
@@ -280,13 +298,16 @@ export default function VideoEditModal({
               value={fields.dropdownIndex.value}
               onChange={(val) => setFieldValue("dropdownIndex", val)}
             >
-              <Dropdown
-                options={VIDEO_TOPIC_OPTIONS}
-                state={
-                  fields.dropdownIndex.state === "error" ? "error" : "default"
-                }
-                disabled={!isEditing}
-              />
+              {(props) => (
+                <Dropdown
+                  {...props}
+                  state={
+                    fields.dropdownIndex.state === "error" ? "error" : "default"
+                  }
+                  options={VIDEO_TOPIC_OPTIONS}
+                  disabled={!isEditing}
+                />
+              )}
             </FormField>
           </div>
           <div className="flex mt-[10px]">
@@ -299,7 +320,14 @@ export default function VideoEditModal({
               value={fields.videoLink.value}
               onChange={(val) => setFieldValue("videoLink", val)}
             >
-              <TextInput id="video-input w-full" disabled={!isEditing} />
+              {(props) => (
+                <TextInput
+                  {...props}
+                  state={fields.videoLink.state}
+                  id="video-input w-full"
+                  disabled={!isEditing}
+                />
+              )}
             </FormField>
           </div>
           <div className="flex mt-[10px]">
@@ -310,7 +338,7 @@ export default function VideoEditModal({
               value={fields.englishDescription.value}
               onChange={(val) => setFieldValue("englishDescription", val)}
             >
-              <ParagraphInput disabled={!isEditing} />
+              {(props) => <ParagraphInput {...props} disabled={!isEditing} />}
             </FormField>
           </div>
           <div className="flex mt-[10px]">
@@ -321,7 +349,7 @@ export default function VideoEditModal({
               value={fields.qanjobalDescription.value}
               onChange={(val) => setFieldValue("qanjobalDescription", val)}
             >
-              <ParagraphInput disabled={!isEditing} />
+              {(props) => <ParagraphInput {...props} disabled={!isEditing} />}
             </FormField>
           </div>
           {isEditing && (

@@ -30,8 +30,6 @@ export default function ForgotPasswordPage() {
   const [successMessage, setSuccessMessage] = useState("");
   const [showNotification, setShowNotification] = useState(false);
 
-  // Step 1: Request password reset
-  // Step 2: Verify code and reset password
   const [step, setStep] = useState<"request" | "reset">("request");
 
   useEffect(() => {
@@ -192,11 +190,15 @@ export default function ForgotPasswordPage() {
                   validate={validateEmail}
                   onBlur={() => validateField("email", validateEmail)}
                 >
-                  <EmailInput
-                    id="email-input"
-                    name="email"
-                    className="w-[450px] h-[60px]"
-                  />
+                  {(props) => (
+                    <EmailInput
+                      {...props}
+                      state={fields.email.state}
+                      id="email-input"
+                      name="email"
+                      className="w-[450px] h-[60px]"
+                    />
+                  )}
                 </FormField>
 
                 <Button
@@ -232,12 +234,16 @@ export default function ForgotPasswordPage() {
                     value={fields.code.value}
                     onChange={(val) => setFieldValue("code", val)}
                   >
-                    <TextInput
-                      id="code"
-                      name="code"
-                      placeholder="Enter 6-digit code"
-                      className="w-[450px] h-[60px]"
-                    />
+                    {(props) => (
+                      <TextInput
+                        {...props}
+                        state={error ? "error" : "default"}
+                        id="code"
+                        name="code"
+                        placeholder="Enter 6-digit code"
+                        className="w-[450px] h-[60px]"
+                      />
+                    )}
                   </FormField>
                 </div>
 
@@ -251,12 +257,16 @@ export default function ForgotPasswordPage() {
                   validate={validatePassword}
                   onBlur={() => validateField("password", validatePassword)}
                 >
-                  <PasswordInput
-                    id="new-password"
-                    name="new-password"
-                    autoComplete="new-password"
-                    className="w-[450px] h-[60px]"
-                  />
+                  {(props) => (
+                    <PasswordInput
+                      {...props}
+                      state={fields.password.state}
+                      id="new-password"
+                      name="new-password"
+                      autoComplete="new-password"
+                      className="w-[450px] h-[60px]"
+                    />
+                  )}
                 </FormField>
 
                 <Button

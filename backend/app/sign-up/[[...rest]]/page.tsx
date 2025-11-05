@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useSignUp, useUser } from "@clerk/nextjs";
 import { useSearchParams, useRouter } from "next/navigation";
 import { EmailInput, PasswordInput } from "@/components/Input";
@@ -74,14 +74,17 @@ export default function InviteSignUpPage() {
     };
 
     createSignUpFromTicket();
-  }, [isLoaded, searchParams, signUp, isTicketProcessed, setFieldValue]);
+  }, [isLoaded, searchParams, signUp, isTicketProcessed]);
 
-  const validateConfirmPassword = (value: string): string | null => {
-    if (value !== fields.password.value) {
-      return "Passwords do not match.";
-    }
-    return null;
-  };
+  const validateConfirmPassword = useCallback(
+    (value: string): string | null => {
+      if (value !== fields.password.value) {
+        return "Passwords do not match.";
+      }
+      return null;
+    },
+    [fields.password.value],
+  );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -153,6 +156,7 @@ export default function InviteSignUpPage() {
                   id="email-input"
                   name="email"
                   value={fields.email.value}
+                  onChange={() => {}}
                   disabled
                   placeholder="Loading from invitation..."
                   className="w-[450px] h-[60px]"
@@ -202,12 +206,16 @@ export default function InviteSignUpPage() {
                     validate={validatePassword}
                     onBlur={() => validateField("password", validatePassword)}
                   >
-                    <PasswordInput
-                      id="password-input"
-                      name="password"
-                      autoComplete="new-password"
-                      className="w-[450px] h-[60px]"
-                    />
+                    {(props) => (
+                      <PasswordInput
+                        {...props}
+                        state={fields.password.state}
+                        id="password-input"
+                        name="password"
+                        autoComplete="new-password"
+                        className="w-[450px] h-[60px]"
+                      />
+                    )}
                   </FormField>
                   <FormField
                     title="Confirm Password"
@@ -221,12 +229,16 @@ export default function InviteSignUpPage() {
                       validateField("confirmPassword", validateConfirmPassword)
                     }
                   >
-                    <PasswordInput
-                      id="confirm-password-input"
-                      name="confirmPassword"
-                      autoComplete="new-password"
-                      className="w-[450px] h-[60px]"
-                    />
+                    {(props) => (
+                      <PasswordInput
+                        {...props}
+                        state={fields.confirmPassword.state}
+                        id="confirm-password-input"
+                        name="confirmPassword"
+                        autoComplete="new-password"
+                        className="w-[450px] h-[60px]"
+                      />
+                    )}
                   </FormField>
                 </div>
                 {error && (

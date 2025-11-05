@@ -45,7 +45,7 @@ export default function DevPage() {
   ];
   const [currentTabIndex, setCurrentTabIndex] = useState(1);
 
-  const { fields, setFieldValue, validateField } = useForm({
+  const { fields, setFieldValue, setFieldError, validateField } = useForm({
     textInput: createField(""),
     emailInput: createField(""),
     passwordInput: createField(""),
@@ -177,6 +177,12 @@ export default function DevPage() {
     setIdToDelete(null);
   };
 
+  const getFileUploadState = () => {
+    if (fields.file.state === "error") return "error";
+    if (fields.file.value) return "complete";
+    return "default";
+  };
+
   return (
     <>
       <div className="bg-[#FFFBF3] p-[24px]">
@@ -245,7 +251,13 @@ export default function DevPage() {
             value={fields.textInput.value}
             onChange={(val) => setFieldValue("textInput", val)}
           >
-            <TextInput id="text-input" />
+            {(props) => (
+              <TextInput
+                {...props}
+                state={fields.textInput.state}
+                id="text-input"
+              />
+            )}
           </FormField>
 
           <FormField
@@ -258,7 +270,13 @@ export default function DevPage() {
             validate={validateEmail}
             onBlur={() => validateField("emailInput", validateEmail)}
           >
-            <EmailInput id="email-input" />
+            {(props) => (
+              <EmailInput
+                {...props}
+                state={fields.emailInput.state}
+                id="email-input"
+              />
+            )}
           </FormField>
 
           <FormField
@@ -271,7 +289,13 @@ export default function DevPage() {
             validate={validatePassword}
             onBlur={() => validateField("passwordInput", validatePassword)}
           >
-            <PasswordInput id="password-input" />
+            {(props) => (
+              <PasswordInput
+                {...props}
+                state={fields.passwordInput.state}
+                id="password-input"
+              />
+            )}
           </FormField>
         </div>
         <TopicTag variant="Career" />
@@ -292,35 +316,10 @@ export default function DevPage() {
           value={fields.dropdownIndex.value}
           onChange={(val) => setFieldValue("dropdownIndex", val)}
         >
-          <Dropdown
-            options={[
-              "Part-time",
-              "Full-time",
-              "Internship",
-              "Part-time",
-              "Full-time",
-              "Internship",
-              "Part-time",
-              "Full-time",
-              "Internship",
-              "Part-time",
-              "Full-time",
-              "Internship",
-            ]}
-          />
-        </FormField>
-
-        <div className="flex flex-col p-5 bg-[#F2F2F2]">
-          <FormField
-            required
-            title="Title"
-            description="Maximum size: 67MB"
-            state={fields.dropdownIndex.state}
-            errorString={fields.dropdownIndex.error}
-            value={fields.dropdownIndex.value}
-            onChange={(val) => setFieldValue("dropdownIndex", val)}
-          >
+          {(props) => (
             <Dropdown
+              value={props.value}
+              onChange={props.onChange}
               options={[
                 "Part-time",
                 "Full-time",
@@ -336,6 +335,39 @@ export default function DevPage() {
                 "Internship",
               ]}
             />
+          )}
+        </FormField>
+
+        <div className="flex flex-col p-5 bg-[#F2F2F2]">
+          <FormField
+            required
+            title="Title"
+            description="Maximum size: 67MB"
+            state={fields.dropdownIndex.state}
+            errorString={fields.dropdownIndex.error}
+            value={fields.dropdownIndex.value}
+            onChange={(val) => setFieldValue("dropdownIndex", val)}
+          >
+            {(props) => (
+              <Dropdown
+                value={props.value}
+                onChange={props.onChange}
+                options={[
+                  "Part-time",
+                  "Full-time",
+                  "Internship",
+                  "Part-time",
+                  "Full-time",
+                  "Internship",
+                  "Part-time",
+                  "Full-time",
+                  "Internship",
+                  "Part-time",
+                  "Full-time",
+                  "Internship",
+                ]}
+              />
+            )}
           </FormField>
 
           <FormField
@@ -349,20 +381,31 @@ export default function DevPage() {
             value={fields.errorDropdownIndex.value}
             onChange={(val) => setFieldValue("errorDropdownIndex", val)}
           >
-            <Dropdown options={["Part-time", "Full-time", "Internship"]} />
+            {(props) => (
+              <Dropdown
+                value={props.value}
+                onChange={props.onChange}
+                options={["Part-time", "Full-time", "Internship"]}
+              />
+            )}
           </FormField>
 
           <FormField
             title="Upload file"
             description="Maximum size: 67MB"
             state="default"
+            value={fields.file.value}
+            onChange={(val) => setFieldValue("file", val)}
           >
-            <FileUpload
-              value={fields.file.value}
-              onChange={(f) => setFieldValue("file", f)}
-              onDelete={() => setFieldValue("file", undefined)}
-              extendedText="Must be exactly 67MB!"
-            />
+            {(props) => (
+              <FileUpload
+                value={props.value}
+                onChange={props.onChange}
+                onDelete={() => setFieldValue("file", undefined)}
+                state={getFileUploadState()}
+                extendedText="Must be exactly 67MB!"
+              />
+            )}
           </FormField>
 
           <FormField
@@ -370,12 +413,19 @@ export default function DevPage() {
             description="Maximum size: 67MB"
             state="error"
             errorString="File too large. Max size 67MB"
+            value={fields.file.value}
+            onChange={(val) => setFieldValue("file", val)}
           >
-            <FileUpload
-              onDelete={() => {}}
-              extendedText="Must be exactly 67MB!"
-              errorText="File too large. Max size 67MB"
-            />
+            {(props) => (
+              <FileUpload
+                value={props.value}
+                onChange={props.onChange}
+                onDelete={() => setFieldValue("file", undefined)}
+                state="error"
+                extendedText="Must be exactly 67MB!"
+                errorText="File too large. Max size 67MB"
+              />
+            )}
           </FormField>
         </div>
         <FormField
@@ -389,7 +439,13 @@ export default function DevPage() {
           value={fields.errorDropdownIndex.value}
           onChange={(val) => setFieldValue("errorDropdownIndex", val)}
         >
-          <Dropdown options={["Part-time", "Full-time", "Internship"]} />
+          {(props) => (
+            <Dropdown
+              value={props.value}
+              onChange={props.onChange}
+              options={["Part-time", "Full-time", "Internship"]}
+            />
+          )}
         </FormField>
         <FormField
           title="Enter your password lil bro"
@@ -398,7 +454,14 @@ export default function DevPage() {
           value={fields.passwordInput.value}
           onChange={(val) => setFieldValue("passwordInput", val)}
         >
-          <PasswordInput placeholder="Enter Password" id="password-input" />
+          {(props) => (
+            <PasswordInput
+              {...props}
+              state="error"
+              placeholder="Enter Password"
+              id="password-input"
+            />
+          )}
         </FormField>
 
         <FormField
@@ -406,7 +469,7 @@ export default function DevPage() {
           value={fields.paragraphInput.value}
           onChange={(val) => setFieldValue("paragraphInput", val)}
         >
-          <ParagraphInput />
+          {(props) => <ParagraphInput {...props} />}
         </FormField>
       </div>
       <div className="page-title-text">page-title-text</div>

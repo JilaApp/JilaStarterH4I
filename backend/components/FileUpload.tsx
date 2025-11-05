@@ -1,6 +1,6 @@
 import { Upload, CircleCheck, CircleAlert, File, X } from "lucide-react";
 import { useRef } from "react";
-import type { UploadedFile, FormInputState } from "@/lib/types";
+import type { FormInputState } from "@/lib/types";
 
 interface FileUploadProps {
   value?: File;
@@ -30,16 +30,12 @@ export default function FileUpload({
 }: FileUploadProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Determine the display state based on props (parent controls state)
   const displayedFile = value
     ? {
         fileName: value.name,
         fileSizeMB: Math.round((value.size / 1_000_000) * 100) / 100,
       }
     : existingFile;
-
-  // Current state is determined by the combination of state prop and whether we have a file
-  const currentState = displayedFile && state !== "error" ? "complete" : state;
 
   const handleClickUpload = () => {
     fileInputRef.current?.click();
@@ -60,7 +56,7 @@ export default function FileUpload({
   };
 
   const renderContent = () => {
-    switch (currentState) {
+    switch (state) {
       case "default":
         return (
           <div className="flex flex-col justify-center items-center text-[var(--color-gray-300)] cursor-pointer">
@@ -130,21 +126,19 @@ export default function FileUpload({
         className="hidden"
         onChange={handleFileChange}
       />
-      {(currentState === "default" ||
-        currentState === "pending" ||
-        currentState === "error") &&
+      {(state === "default" || state === "pending" || state === "error") &&
         editable && (
           <div
-            onClick={currentState === "default" ? handleClickUpload : undefined}
+            onClick={state === "default" ? handleClickUpload : undefined}
             className={`
     flex justify-center items-center w-full h-[122px]
     rounded-[10px]
     ${
-      currentState === "default"
+      state === "default"
         ? "cursor-pointer hover:bg-[var(--color-cream-300)]"
         : ""
     }
-    ${currentState === "error" ? "bg-[#FFF3F3]" : "bg-white"}
+    ${state === "error" ? "bg-[#FFF3F3]" : "bg-white"}
   `}
             style={{
               backgroundImage: `url("data:image/svg+xml,${encodeURIComponent(
@@ -154,7 +148,7 @@ export default function FileUpload({
           height='100%'
           fill='none'
           rx='10' ry='10'
-          stroke='${currentState === "error" ? "#E31F1F" : "#CDCDCD"}'
+          stroke='${state === "error" ? "#E31F1F" : "#CDCDCD"}'
           stroke-width='3'
           stroke-dasharray='6,14'
           stroke-dashoffset='0'
@@ -167,7 +161,7 @@ export default function FileUpload({
             {renderContent()}
           </div>
         )}
-      {currentState === "complete" && displayedFile && (
+      {state === "complete" && displayedFile && (
         <div className="flex items-center rounded-[10px] px-[10px] py-[8px] bg-white">
           <div className="flex gap-[17px] items-center w-full">
             <File className="text-[var(--color-jila-400)]" />

@@ -80,6 +80,12 @@ export default function VideoUploadForm() {
     reader.readAsDataURL(fields.audioFile.value!);
   };
 
+  const getFileUploadState = () => {
+    if (fields.audioFile.state === "error") return "error";
+    if (fields.audioFile.value) return "complete";
+    return "default";
+  };
+
   return (
     <div className="flex flex-col gap-[26px] py-[30px] px-[35px] rounded-[24px] bg-white">
       <div className="h-[60px] font-[500] text-[24px]">Add new video</div>
@@ -93,7 +99,9 @@ export default function VideoUploadForm() {
           defaultClassName="max-w-[450px]"
           required
         >
-          <TextInput />
+          {(props) => (
+            <TextInput {...props} state={fields.resourceTitleEnglish.state} />
+          )}
         </FormField>
 
         <FormField
@@ -105,7 +113,9 @@ export default function VideoUploadForm() {
           defaultClassName="max-w-[450px]"
           required
         >
-          <TextInput />
+          {(props) => (
+            <TextInput {...props} state={fields.resourceTitleQanjobal.state} />
+          )}
         </FormField>
       </div>
       <FormField
@@ -118,10 +128,15 @@ export default function VideoUploadForm() {
         defaultClassName="max-w-[918px]"
         required
       >
-        <FileUpload
-          onDelete={() => setFieldValue("audioFile", undefined)}
-          extendedText="Upload an audio recording of the resource title in Q'anjob'al"
-        />
+        {(props) => (
+          <FileUpload
+            value={props.value}
+            onChange={props.onChange}
+            onDelete={() => setFieldValue("audioFile", undefined)}
+            state={getFileUploadState()}
+            extendedText="Upload an audio recording of the resource title in Q'anjob'al"
+          />
+        )}
       </FormField>
       <FormField
         title="Topic"
@@ -132,7 +147,15 @@ export default function VideoUploadForm() {
         defaultClassName="max-w-[450px]"
         required
       >
-        <Dropdown options={[...VIDEO_TOPIC_DISPLAY_OPTIONS]} />
+        {(props) => (
+          <Dropdown
+            {...props}
+            state={
+              fields.topicDropdownIndex.state === "error" ? "error" : "default"
+            }
+            options={[...VIDEO_TOPIC_DISPLAY_OPTIONS]}
+          />
+        )}
       </FormField>
       <FormField
         title="Video link"
@@ -143,7 +166,7 @@ export default function VideoUploadForm() {
         defaultClassName="max-w-[918px]"
         required
       >
-        <TextInput />
+        {(props) => <TextInput {...props} state={fields.videoLink.state} />}
       </FormField>
       <FormField
         title="Description (English)"
@@ -151,7 +174,7 @@ export default function VideoUploadForm() {
         value={fields.descriptionEnglish.value}
         onChange={(val) => setFieldValue("descriptionEnglish", val)}
       >
-        <ParagraphInput />
+        {(props) => <ParagraphInput {...props} />}
       </FormField>
       <FormField
         title="Description (Q'anjob'al)"
@@ -159,7 +182,7 @@ export default function VideoUploadForm() {
         value={fields.descriptionQanjobal.value}
         onChange={(val) => setFieldValue("descriptionQanjobal", val)}
       >
-        <ParagraphInput />
+        {(props) => <ParagraphInput {...props} />}
       </FormField>
       <div className="flex justify-end">
         <Button

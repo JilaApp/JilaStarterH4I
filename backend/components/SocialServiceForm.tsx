@@ -80,6 +80,18 @@ export default function SocialServiceForm() {
     }
   };
 
+  const getTitleFileUploadState = () => {
+    if (fields.titleFile.state === "error") return "error";
+    if (fields.titleFile.value) return "complete";
+    return "default";
+  };
+
+  const getDescriptionFileUploadState = () => {
+    if (fields.descriptionFile.state === "error") return "error";
+    if (fields.descriptionFile.value) return "complete";
+    return "default";
+  };
+
   return (
     <div className="flex flex-col gap-[26px] py-[30px] px-[35px] rounded-[24px] bg-white">
       <div className="h-[60px] font-[500] text-[24px]">
@@ -96,7 +108,9 @@ export default function SocialServiceForm() {
           defaultClassName="max-w-[450px]"
           required
         >
-          <TextInput />
+          {(props) => (
+            <TextInput {...props} state={fields.englishTitle.state} />
+          )}
         </FormField>
 
         <FormField
@@ -108,7 +122,9 @@ export default function SocialServiceForm() {
           defaultClassName="max-w-[450px]"
           required
         >
-          <TextInput />
+          {(props) => (
+            <TextInput {...props} state={fields.qanjobalTitle.state} />
+          )}
         </FormField>
       </div>
 
@@ -122,10 +138,15 @@ export default function SocialServiceForm() {
         defaultClassName="max-w-[918px]"
         required
       >
-        <FileUpload
-          onDelete={() => setFieldValue("titleFile", undefined)}
-          extendedText="Upload an audio recording of the resource title in Q'anjob'al"
-        />
+        {(props) => (
+          <FileUpload
+            value={props.value}
+            onChange={props.onChange}
+            onDelete={() => setFieldValue("titleFile", undefined)}
+            state={getTitleFileUploadState()}
+            extendedText="Upload an audio recording of the resource title in Q'anjob'al"
+          />
+        )}
       </FormField>
 
       <FormField
@@ -137,7 +158,13 @@ export default function SocialServiceForm() {
         defaultClassName="max-w-[450px]"
         required
       >
-        <Dropdown options={[...SOCIAL_SERVICE_CATEGORY_DISPLAY_OPTIONS]} />
+        {(props) => (
+          <Dropdown
+            {...props}
+            state={fields.topicIndex.state === "error" ? "error" : "default"}
+            options={[...SOCIAL_SERVICE_CATEGORY_DISPLAY_OPTIONS]}
+          />
+        )}
       </FormField>
 
       <FormField
@@ -149,7 +176,7 @@ export default function SocialServiceForm() {
         defaultClassName="max-w-[918px]"
         required
       >
-        <TextInput />
+        {(props) => <TextInput {...props} state={fields.phoneNumber.state} />}
       </FormField>
 
       <FormField
@@ -160,7 +187,7 @@ export default function SocialServiceForm() {
         onChange={(val) => setFieldValue("addressLine", val)}
         defaultClassName="max-w-[918px]"
       >
-        <TextInput />
+        {(props) => <TextInput {...props} state={fields.addressLine.state} />}
       </FormField>
 
       <div className="flex flex-row gap-[18px]">
@@ -172,7 +199,7 @@ export default function SocialServiceForm() {
           onChange={(val) => setFieldValue("city", val)}
           defaultClassName="max-w-[450px]"
         >
-          <TextInput />
+          {(props) => <TextInput {...props} state={fields.city.state} />}
         </FormField>
 
         <FormField
@@ -183,7 +210,13 @@ export default function SocialServiceForm() {
           onChange={(val) => setFieldValue("stateIndex", val)}
           defaultClassName="max-w-[450px]"
         >
-          <Dropdown options={[...US_STATES]} />
+          {(props) => (
+            <Dropdown
+              {...props}
+              state={fields.stateIndex.state === "error" ? "error" : "default"}
+              options={[...US_STATES]}
+            />
+          )}
         </FormField>
       </div>
 
@@ -195,7 +228,7 @@ export default function SocialServiceForm() {
         onChange={(val) => setFieldValue("link", val)}
         defaultClassName="max-w-[918px]"
       >
-        <TextInput />
+        {(props) => <TextInput {...props} state={fields.link.state} />}
       </FormField>
 
       <FormField
@@ -204,7 +237,7 @@ export default function SocialServiceForm() {
         value={fields.englishDescription.value}
         onChange={(val) => setFieldValue("englishDescription", val)}
       >
-        <ParagraphInput />
+        {(props) => <ParagraphInput {...props} />}
       </FormField>
 
       <FormField
@@ -213,7 +246,7 @@ export default function SocialServiceForm() {
         value={fields.qanjobalDescription.value}
         onChange={(val) => setFieldValue("qanjobalDescription", val)}
       >
-        <ParagraphInput />
+        {(props) => <ParagraphInput {...props} />}
       </FormField>
 
       <FormField
@@ -223,10 +256,15 @@ export default function SocialServiceForm() {
         value={fields.descriptionFile.value}
         onChange={(val) => setFieldValue("descriptionFile", val)}
       >
-        <FileUpload
-          onDelete={() => setFieldValue("descriptionFile", undefined)}
-          extendedText="Upload an audio recording of the description in Q'anjob'al"
-        />
+        {(props) => (
+          <FileUpload
+            value={props.value}
+            onChange={props.onChange}
+            onDelete={() => setFieldValue("descriptionFile", undefined)}
+            state={getDescriptionFileUploadState()}
+            extendedText="Upload an audio recording of the description in Q'anjob'al"
+          />
+        )}
       </FormField>
 
       <div className="flex justify-end">

@@ -129,7 +129,14 @@ export default function SignInPage() {
                   validate={validateEmail}
                   onBlur={() => validateField("email", validateEmail)}
                 >
-                  <EmailInput id="email-input" className="w-[450px] h-[60px]" />
+                  {(props) => (
+                    <EmailInput
+                      {...props}
+                      state={fields.email.state}
+                      id="email-input"
+                      className="w-[450px] h-[60px]"
+                    />
+                  )}
                 </FormField>
 
                 <FormField
@@ -142,10 +149,14 @@ export default function SignInPage() {
                   validate={validatePassword}
                   onBlur={() => validateField("password", validatePassword)}
                 >
-                  <PasswordInput
-                    id="password-input"
-                    className="w-[450px] h-[60px]"
-                  />
+                  {(props) => (
+                    <PasswordInput
+                      {...props}
+                      state={fields.password.state}
+                      id="password-input"
+                      className="w-[450px] h-[60px]"
+                    />
+                  )}
                 </FormField>
               </div>
               {error && (
