@@ -129,14 +129,14 @@ export default function FileUpload({
       {(state === "default" || state === "pending" || state === "error") &&
         editable && (
           <div
-            onClick={state === "default" ? handleClickUpload : undefined}
+            onClick={state === "pending" ? undefined : handleClickUpload}
             className={`
     flex justify-center items-center w-full h-[122px]
     rounded-[10px]
     ${
-      state === "default"
-        ? "cursor-pointer hover:bg-[var(--color-cream-300)]"
-        : ""
+      state === "pending"
+        ? ""
+        : "cursor-pointer hover:bg-[var(--color-cream-300)]"
     }
     ${state === "error" ? "bg-[#FFF3F3]" : "bg-white"}
   `}
