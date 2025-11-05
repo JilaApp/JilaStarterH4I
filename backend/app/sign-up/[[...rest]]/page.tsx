@@ -96,7 +96,7 @@ export default function InviteSignUpPage() {
     }
 
     setError("");
-    // Clear any previous field errors before validating
+
     setFieldError("password", "");
     setFieldError("confirmPassword", "");
 

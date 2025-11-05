@@ -44,7 +44,6 @@ export function useForm<T extends FormConfig>(initialConfig: T) {
       error: string,
       state?: FormInputState,
     ) => {
-      // If no state is provided, auto-determine: empty error = "default", non-empty = "error"
       const fieldState = state ?? (error ? "error" : "default");
 
       setFields((prev) => ({

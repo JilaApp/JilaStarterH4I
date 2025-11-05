@@ -32,7 +32,6 @@ export const validateRequired = (value: any): string | null => {
 };
 
 const isValidPhone = (phone: string): boolean => {
-  // Matches: (123) 456-7890, 123-456-7890, 1234567890, +1 123 456 7890, etc.
   const phoneRegex =
     /^[\+]?[(]?[0-9]{1,4}[)]?[-\s\.]?[(]?[0-9]{1,4}[)]?[-\s\.]?[0-9]{1,9}$/;
   return phoneRegex.test(phone);
