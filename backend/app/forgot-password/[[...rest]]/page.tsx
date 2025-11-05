@@ -6,7 +6,7 @@ import { EmailInput, PasswordInput, TextInput } from "@/components/Input";
 import Button from "@/components/Button";
 import DisplayBox from "@/components/DisplayBox";
 import Notification from "@/components/Notification";
-import Link from "next/link";
+import Link from "@/components/Link";
 import FormField from "@/components/FormField";
 import PageBackground from "@/components/PageBackground";
 import { useRouter } from "next/navigation";
@@ -214,12 +214,7 @@ export default function ForgotPasswordPage() {
                 />
 
                 <div className="text-center">
-                  <Link
-                    href="/sign-in"
-                    className="link-text text-jila-400 hover:underline"
-                  >
-                    Back to Sign In
-                  </Link>
+                  <Link href="/sign-in">Back to Sign In</Link>
                 </div>
               </form>
             ) : (
@@ -288,10 +283,7 @@ export default function ForgotPasswordPage() {
                   >
                     Resend Code
                   </button>
-                  <Link
-                    href="/sign-in"
-                    className="link-text text-gray-400 hover:underline"
-                  >
+                  <Link href="/sign-in" className="text-gray-400">
                     Back to Sign In
                   </Link>
                 </div>

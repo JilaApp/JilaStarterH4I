@@ -21,6 +21,7 @@ import { ColumnDefinition, DataRow } from "@/lib/types";
 import VideoEditModal from "@/components/VideoEditModal";
 import VideoUploadForm from "@/components/VideoUploadForm";
 import SocialServiceForm from "@/components/SocialServiceForm";
+import Link from "@/components/Link";
 import { useForm, createField } from "@/hooks/useForm";
 import { validateEmail, validatePassword } from "@/lib/validators";
 
@@ -110,15 +111,13 @@ export default function DevPage() {
       header: "Link",
       accessorKey: "link",
       cell: (value) => (
-        <a
-          className="text-jila-400"
+        <Link
           href={String(value)}
-          target="_blank"
-          rel="noopener noreferrer"
+          external
           onClick={(e) => e.stopPropagation()}
         >
           {new URL(String(value)).hostname}
-        </a>
+        </Link>
       ),
     },
   ];
