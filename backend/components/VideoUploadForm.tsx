@@ -9,46 +9,38 @@ import { trpc } from "@/lib/trpc";
 import { VideoTopic } from "@/lib/types";
 import { VIDEO_TOPIC_DISPLAY_OPTIONS } from "@/lib/constants";
 import { useForm, createField } from "@/hooks/useForm";
+import {
+  validateRequired,
+  validateURL,
+  validateFileSize,
+} from "@/lib/validators";
 import { useState } from "react";
 
 export default function VideoUploadForm() {
-  const { fields, setFieldValue, setFieldError, resetForm } = useForm({
-    resourceTitleEnglish: createField(""),
-    resourceTitleQanjobal: createField(""),
-    audioFile: createField<File | undefined>(undefined),
-    topicDropdownIndex: createField<number | undefined>(undefined),
-    videoLink: createField(""),
-    descriptionEnglish: createField(""),
-    descriptionQanjobal: createField(""),
-  });
+  const { fields, setFieldValue, setFieldError, resetForm, validateAllFields } =
+    useForm({
+      resourceTitleEnglish: createField(""),
+      resourceTitleQanjobal: createField(""),
+      audioFile: createField<File | undefined>(undefined),
+      topicDropdownIndex: createField<number | undefined>(undefined),
+      videoLink: createField(""),
+      descriptionEnglish: createField(""),
+      descriptionQanjobal: createField(""),
+    });
 
   const [notification, setNotification] = useState<string | null>(null);
   const addVideoMutation = trpc.videos.addVideo.useMutation();
 
   const submitForm = async () => {
-    let hasError = false;
+    const isValid = validateAllFields({
+      resourceTitleEnglish: validateRequired,
+      resourceTitleQanjobal: validateRequired,
+      audioFile: validateFileSize(30),
+      topicDropdownIndex: validateRequired,
+      videoLink: validateURL,
+    });
 
-    if (!fields.resourceTitleEnglish.value) {
-      setFieldError("resourceTitleEnglish", "This field is required");
-      hasError = true;
-    }
-    if (!fields.resourceTitleQanjobal.value) {
-      setFieldError("resourceTitleQanjobal", "This field is required");
-      hasError = true;
-    }
-    if (!fields.audioFile.value) {
-      setFieldError("audioFile", "This field is required");
-      hasError = true;
-    }
-    if (fields.topicDropdownIndex.value === undefined) {
-      setFieldError("topicDropdownIndex", "This field is required");
-      hasError = true;
-    }
-    if (!fields.videoLink.value) {
-      setFieldError("videoLink", "This field is required");
-      hasError = true;
-    }
-    if (hasError) return;
+    if (!isValid) return;
 
     const reader = new FileReader();
     reader.onload = async () => {

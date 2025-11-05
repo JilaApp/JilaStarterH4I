@@ -8,15 +8,12 @@ interface FormFieldProps<T> {
   children: (props: {
     value: T;
     onChange: (val: T) => void;
-    onBlur?: () => void;
   }) => React.ReactElement;
   state?: FormInputState;
   errorString?: string;
   description?: string;
   value?: T;
   onChange?: (val: T) => void;
-  onBlur?: () => void;
-  validate?: (value: T) => string | null;
   defaultClassName?: string;
 }
 
@@ -29,24 +26,10 @@ export default function FormField<T>({
   description,
   value,
   onChange = () => {},
-  onBlur,
-  validate,
   defaultClassName = "",
 }: FormFieldProps<T>) {
   const handleChange = (val: T) => {
     onChange(val);
-  };
-
-  const handleBlur = () => {
-    if (validate && value !== undefined) {
-      const error = validate(value);
-      if (error && onBlur) {
-        onBlur();
-      }
-    }
-    if (onBlur) {
-      onBlur();
-    }
   };
 
   return (
@@ -60,7 +43,6 @@ export default function FormField<T>({
       {children({
         value: value as T,
         onChange: handleChange,
-        onBlur: handleBlur,
       })}
       {state === "error" && errorString && (
         <div className="flex items-center gap-[3px] pt-[8px] text-[var(--color-error-400)] text-[18px]">

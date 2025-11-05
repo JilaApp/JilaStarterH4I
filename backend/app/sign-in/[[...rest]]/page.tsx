@@ -18,7 +18,7 @@ export default function SignInPage() {
   const { user, isLoaded: isUserLoaded } = useUser();
   const router = useRouter();
 
-  const { fields, setFieldValue, setFieldError, validateField } = useForm({
+  const { fields, setFieldValue, setFieldError, validateAllFields } = useForm({
     email: createField(""),
     password: createField(""),
   });
@@ -76,14 +76,14 @@ export default function SignInPage() {
 
     if (!isLoaded) return;
 
-    const emailValid = validateField("email", validateEmail);
-    const passwordValid = validateField("password", validatePassword);
-
     setError("");
 
-    if (!emailValid || !passwordValid) {
-      return;
-    }
+    const isValid = validateAllFields({
+      email: validateEmail,
+      password: validatePassword,
+    });
+
+    if (!isValid) return;
 
     setLoading(true);
 
@@ -126,8 +126,6 @@ export default function SignInPage() {
                   errorString={fields.email.error}
                   value={fields.email.value}
                   onChange={(val) => setFieldValue("email", val)}
-                  validate={validateEmail}
-                  onBlur={() => validateField("email", validateEmail)}
                 >
                   {(props) => (
                     <EmailInput
@@ -146,8 +144,6 @@ export default function SignInPage() {
                   errorString={fields.password.error}
                   value={fields.password.value}
                   onChange={(val) => setFieldValue("password", val)}
-                  validate={validatePassword}
-                  onBlur={() => validateField("password", validatePassword)}
                 >
                   {(props) => (
                     <PasswordInput

@@ -13,52 +13,45 @@ import {
   US_STATES,
 } from "@/lib/constants";
 import { useForm, createField } from "@/hooks/useForm";
+import {
+  validateRequired,
+  validatePhone,
+  validateURL,
+  validateFileSize,
+} from "@/lib/validators";
 
 export default function SocialServiceForm() {
-  const { fields, setFieldValue, setFieldError, resetForm } = useForm({
-    englishTitle: createField(""),
-    qanjobalTitle: createField(""),
-    titleFile: createField<File | undefined>(undefined),
-    topicIndex: createField<number | undefined>(undefined),
-    phoneNumber: createField(""),
-    addressLine: createField(""),
-    city: createField(""),
-    stateIndex: createField<number | undefined>(undefined),
-    link: createField(""),
-    englishDescription: createField(""),
-    qanjobalDescription: createField(""),
-    descriptionFile: createField<File | undefined>(undefined),
-  });
+  const { fields, setFieldValue, setFieldError, resetForm, validateAllFields } =
+    useForm({
+      englishTitle: createField(""),
+      qanjobalTitle: createField(""),
+      titleFile: createField<File | undefined>(undefined),
+      topicIndex: createField<number | undefined>(undefined),
+      phoneNumber: createField(""),
+      addressLine: createField(""),
+      city: createField(""),
+      stateIndex: createField<number | undefined>(undefined),
+      link: createField(""),
+      englishDescription: createField(""),
+      qanjobalDescription: createField(""),
+      descriptionFile: createField<File | undefined>(undefined),
+    });
 
   const [notification, setNotification] = useState<string | null>(null);
   const addSocialServiceMutation =
     trpc.socialServices.addSocialService.useMutation();
 
   const submitForm = async () => {
-    let hasError = false;
+    const isValid = validateAllFields({
+      englishTitle: validateRequired,
+      qanjobalTitle: validateRequired,
+      titleFile: validateFileSize(30),
+      topicIndex: validateRequired,
+      phoneNumber: validatePhone,
+      link: fields.link.value ? validateURL : undefined,
+    });
 
-    if (!fields.englishTitle.value) {
-      setFieldError("englishTitle", "This field is required");
-      hasError = true;
-    }
-    if (!fields.qanjobalTitle.value) {
-      setFieldError("qanjobalTitle", "This field is required");
-      hasError = true;
-    }
-    if (!fields.titleFile.value) {
-      setFieldError("titleFile", "This field is required");
-      hasError = true;
-    }
-    if (fields.topicIndex.value === undefined) {
-      setFieldError("topicIndex", "This field is required");
-      hasError = true;
-    }
-    if (!fields.phoneNumber.value) {
-      setFieldError("phoneNumber", "This field is required");
-      hasError = true;
-    }
-
-    if (hasError) return;
+    if (!isValid) return;
 
     try {
       await addSocialServiceMutation.mutateAsync({

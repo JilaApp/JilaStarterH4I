@@ -19,7 +19,7 @@ export default function InviteSignUpPage() {
   const router = useRouter();
   const finalizeSignUpMutation = trpc.user.finalizeSignUp.useMutation();
 
-  const { fields, setFieldValue, setFieldError, validateField } = useForm({
+  const { fields, setFieldValue, setFieldError, validateAllFields } = useForm({
     email: createField(""),
     password: createField(""),
     confirmPassword: createField(""),
@@ -97,15 +97,12 @@ export default function InviteSignUpPage() {
 
     setError("");
 
-    const passwordValid = validateField("password", validatePassword);
-    const confirmPasswordValid = validateField(
-      "confirmPassword",
-      validateConfirmPassword,
-    );
+    const isValid = validateAllFields({
+      password: validatePassword,
+      confirmPassword: validateConfirmPassword,
+    });
 
-    if (!passwordValid || !confirmPasswordValid) {
-      return;
-    }
+    if (!isValid) return;
 
     setIsLoading(true);
 
@@ -203,8 +200,6 @@ export default function InviteSignUpPage() {
                     errorString={fields.password.error}
                     value={fields.password.value}
                     onChange={(val) => setFieldValue("password", val)}
-                    validate={validatePassword}
-                    onBlur={() => validateField("password", validatePassword)}
                   >
                     {(props) => (
                       <PasswordInput
@@ -224,10 +219,6 @@ export default function InviteSignUpPage() {
                     errorString={fields.confirmPassword.error}
                     value={fields.confirmPassword.value}
                     onChange={(val) => setFieldValue("confirmPassword", val)}
-                    validate={validateConfirmPassword}
-                    onBlur={() =>
-                      validateField("confirmPassword", validateConfirmPassword)
-                    }
                   >
                     {(props) => (
                       <PasswordInput

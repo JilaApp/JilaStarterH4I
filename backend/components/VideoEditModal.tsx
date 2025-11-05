@@ -10,6 +10,7 @@ import { trpc } from "@/lib/trpc";
 import { VideoTopic } from "@/lib/types";
 import { VIDEO_TOPIC_OPTIONS } from "@/lib/constants";
 import { useForm, createField } from "@/hooks/useForm";
+import { validateRequired, validateURL } from "@/lib/validators";
 
 type SaveStatus = "idle" | "saving" | "success" | "error";
 
@@ -40,15 +41,16 @@ export default function VideoEditModal({
   isEditing = true,
   videoData,
 }: VideoEditModalProps) {
-  const { fields, setFieldValue, setFieldError, resetForm } = useForm({
-    englishTitle: createField(""),
-    qanjobalTitle: createField(""),
-    videoLink: createField(""),
-    englishDescription: createField(""),
-    qanjobalDescription: createField(""),
-    dropdownIndex: createField<number | undefined>(undefined),
-    audioFile: createField<File | undefined>(undefined),
-  });
+  const { fields, setFieldValue, setFieldError, resetForm, validateAllFields } =
+    useForm({
+      englishTitle: createField(""),
+      qanjobalTitle: createField(""),
+      videoLink: createField(""),
+      englishDescription: createField(""),
+      qanjobalDescription: createField(""),
+      dropdownIndex: createField<number | undefined>(undefined),
+      audioFile: createField<File | undefined>(undefined),
+    });
 
   const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
   const [clearExistingFile, setClearExistingFile] = useState(false);
@@ -106,26 +108,14 @@ export default function VideoEditModal({
   const handleSave = async () => {
     if (!videoData) return;
 
-    let hasError = false;
+    const isValid = validateAllFields({
+      englishTitle: validateRequired,
+      qanjobalTitle: validateRequired,
+      videoLink: validateURL,
+      dropdownIndex: validateRequired,
+    });
 
-    if (!fields.englishTitle.value) {
-      setFieldError("englishTitle", "This field is required");
-      hasError = true;
-    }
-    if (!fields.qanjobalTitle.value) {
-      setFieldError("qanjobalTitle", "This field is required");
-      hasError = true;
-    }
-    if (!fields.videoLink.value) {
-      setFieldError("videoLink", "This field is required");
-      hasError = true;
-    }
-    if (fields.dropdownIndex.value === undefined) {
-      setFieldError("dropdownIndex", "This field is required");
-      hasError = true;
-    }
-
-    if (hasError) return;
+    if (!isValid) return;
 
     setSaveStatus("saving");
 

@@ -19,7 +19,7 @@ export default function ForgotPasswordPage() {
   const { user } = useUser();
   const router = useRouter();
 
-  const { fields, setFieldValue, setFieldError, validateField } = useForm({
+  const { fields, setFieldValue, setFieldError, validateAllFields } = useForm({
     email: createField(""),
     password: createField(""),
     code: createField(""),
@@ -62,8 +62,10 @@ export default function ForgotPasswordPage() {
 
     resetErrorStates();
 
-    const emailValid = validateField("email", validateEmail);
-    if (!emailValid) return;
+    const isValid = validateAllFields({
+      email: validateEmail,
+    });
+    if (!isValid) return;
 
     setLoading(true);
 
@@ -95,8 +97,10 @@ export default function ForgotPasswordPage() {
 
     resetErrorStates();
 
-    const passwordValid = validateField("password", validatePassword);
-    if (!passwordValid) return;
+    const isValid = validateAllFields({
+      password: validatePassword,
+    });
+    if (!isValid) return;
 
     setLoading(true);
 
@@ -187,8 +191,6 @@ export default function ForgotPasswordPage() {
                   errorString={fields.email.error}
                   value={fields.email.value}
                   onChange={(val) => setFieldValue("email", val)}
-                  validate={validateEmail}
-                  onBlur={() => validateField("email", validateEmail)}
                 >
                   {(props) => (
                     <EmailInput
@@ -254,8 +256,6 @@ export default function ForgotPasswordPage() {
                   errorString={fields.password.error}
                   value={fields.password.value}
                   onChange={(val) => setFieldValue("password", val)}
-                  validate={validatePassword}
-                  onBlur={() => validateField("password", validatePassword)}
                 >
                   {(props) => (
                     <PasswordInput

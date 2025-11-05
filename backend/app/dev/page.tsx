@@ -45,7 +45,7 @@ export default function DevPage() {
   ];
   const [currentTabIndex, setCurrentTabIndex] = useState(1);
 
-  const { fields, setFieldValue, setFieldError, validateField } = useForm({
+  const { fields, setFieldValue, setFieldError } = useForm({
     textInput: createField(""),
     emailInput: createField(""),
     passwordInput: createField(""),
@@ -267,8 +267,6 @@ export default function DevPage() {
             errorString={fields.emailInput.error}
             value={fields.emailInput.value}
             onChange={(val) => setFieldValue("emailInput", val)}
-            validate={validateEmail}
-            onBlur={() => validateField("emailInput", validateEmail)}
           >
             {(props) => (
               <EmailInput
@@ -286,8 +284,6 @@ export default function DevPage() {
             errorString={fields.passwordInput.error}
             value={fields.passwordInput.value}
             onChange={(val) => setFieldValue("passwordInput", val)}
-            validate={validatePassword}
-            onBlur={() => validateField("passwordInput", validatePassword)}
           >
             {(props) => (
               <PasswordInput
