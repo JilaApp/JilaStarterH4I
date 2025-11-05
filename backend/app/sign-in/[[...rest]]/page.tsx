@@ -77,6 +77,8 @@ export default function SignInPage() {
     if (!isLoaded) return;
 
     setError("");
+    setFieldError("email", "");
+    setFieldError("password", "");
 
     const isValid = validateAllFields({
       email: validateEmail,

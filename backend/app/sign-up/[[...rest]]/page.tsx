@@ -96,6 +96,9 @@ export default function InviteSignUpPage() {
     }
 
     setError("");
+    // Clear any previous field errors before validating
+    setFieldError("password", "");
+    setFieldError("confirmPassword", "");
 
     const isValid = validateAllFields({
       password: validatePassword,
@@ -175,7 +178,10 @@ export default function InviteSignUpPage() {
                   text="Sign up"
                   type="button"
                   defaultClassName="w-full"
-                  onClick={() => setEmailApproved(true)}
+                  onClick={() => {
+                    setError("");
+                    setEmailApproved(true);
+                  }}
                 />
               </div>
             </div>

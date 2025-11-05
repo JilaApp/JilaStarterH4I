@@ -77,6 +77,7 @@ export default function ForgotPasswordPage() {
 
       setSuccessMessage("Reset code sent to your email!");
       setShowNotification(true);
+      resetErrorStates(); // Clear all errors before moving to next step
       setStep("reset");
     } catch (err: any) {
       console.error("Password reset request error:", err);
