@@ -1,5 +1,7 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { ChevronDown } from "lucide-react";
+import { useClickOutside } from "@/hooks/useClickOutside";
+import clsx from "clsx";
 
 interface DropdownProps {
   options: string[];
@@ -21,56 +23,46 @@ export default function Dropdown({
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
-        setIsOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
+  useClickOutside(dropdownRef, () => setIsOpen(false));
 
   return (
     <div className="relative inline-block" ref={dropdownRef}>
       <button
         onClick={() => !disabled && setIsOpen((prev) => !prev)}
-        className={`w-full h-[60px] border-[1px] ${
-          state == "default"
-            ? "border-gray-300"
-            : "border-[var(--color-error-400)] shadow-[0_0_0_3px_#FFA8A8]"
-        } rounded-[10px] px-[16px] py-[10px] ${
-          disabled
-            ? "bg-gray-200 cursor-not-allowed"
-            : "bg-white cursor-pointer"
-        } text-left flex justify-between items-center font-[500] ${
-          value !== undefined ? "text-black" : "text-gray-300"
-        }`}
+        className={clsx(
+          "w-full h-[60px] border-[1px] rounded-[10px] px-[16px] py-[10px]",
+          "text-left flex justify-between items-center font-[500]",
+          {
+            "border-gray-300": state === "default",
+            "border-[var(--color-error-400)] shadow-[0_0_0_3px_#FFA8A8]":
+              state === "error",
+            "bg-gray-200 cursor-not-allowed": disabled,
+            "bg-white cursor-pointer": !disabled,
+            "text-black": value !== undefined,
+            "text-gray-300": value === undefined,
+          },
+        )}
       >
         <span>{value !== undefined ? options[value] : placeholder}</span>
         <ChevronDown
-          className={`transition-transform duration-300 ${
-            isOpen ? "rotate-180" : "rotate-0"
-          }`}
+          className={clsx("transition-transform duration-300", {
+            "rotate-180": isOpen,
+            "rotate-0": !isOpen,
+          })}
           color="black"
         />
       </button>
 
       <ul
-        className={`absolute z-10 mt-1 w-full border-[1px] rounded-[10px] border-gray-300 bg-white shadow-lg max-h-60 overflow-auto divide-y divide-gray-200 text-black font-[500]
-          transform transition-all duration-300 origin-top
-          ${
-            isOpen
-              ? "scale-y-100 opacity-100"
-              : "scale-y-0 opacity-0 pointer-events-none"
-          }
-        `}
+        className={clsx(
+          "absolute z-10 mt-1 w-full border-[1px] rounded-[10px] border-gray-300",
+          "bg-white shadow-lg max-h-60 overflow-auto divide-y divide-gray-200",
+          "text-black font-[500] transform transition-all duration-300 origin-top",
+          {
+            "scale-y-100 opacity-100": isOpen,
+            "scale-y-0 opacity-0 pointer-events-none": !isOpen,
+          },
+        )}
       >
         {options.map((option, index) => (
           <li
@@ -80,9 +72,11 @@ export default function Dropdown({
               onChange(index);
               setIsOpen(false);
             }}
-            className={`px-[16px] py-[10px] hover:bg-gray-100 ${
-              disabled ? "cursor-not-allowed" : "cursor-pointer"
-            } ${value !== undefined && index == value ? "bg-gray-200" : ""}`}
+            className={clsx("px-[16px] py-[10px] hover:bg-gray-100", {
+              "cursor-not-allowed": disabled,
+              "cursor-pointer": !disabled,
+              "bg-gray-200": value !== undefined && index === value,
+            })}
           >
             {option}
           </li>

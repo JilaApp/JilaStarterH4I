@@ -1,6 +1,7 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import { MoreVertical } from "lucide-react";
 import type { DataRow, ColumnDefinition } from "@/lib/types";
+import { useClickOutside } from "@/hooks/useClickOutside";
 
 interface TableProps<T extends DataRow> {
   data: T[];
@@ -26,21 +27,7 @@ export default function Table<T extends DataRow>({
   const menuRef = useRef<HTMLDivElement>(null);
   const buttonRefs = useRef<Map<number | string, HTMLButtonElement>>(new Map());
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        setOpenMenu(null);
-      }
-    };
-
-    if (openMenu !== null) {
-      document.addEventListener("mousedown", handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [openMenu]);
+  useClickOutside(menuRef, () => setOpenMenu(null));
 
   const handleCheckboxChange = (id: number | string) => {
     setSelectedRows((prevSelectedRows) => {

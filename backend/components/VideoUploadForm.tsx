@@ -3,18 +3,17 @@ import FileUpload from "@/components/FileUpload";
 import ParagraphInput from "@/components/ParagraphInput";
 import FormField from "@/components/FormField";
 import Dropdown from "@/components/Dropdown";
-import Button from "@/components/Button";
-import Notification from "@/components/Notification";
+import SubmitButton from "@/components/SubmitButton";
 import { trpc } from "@/lib/trpc";
 import { VideoTopic } from "@/lib/types";
 import { VIDEO_TOPIC_DISPLAY_OPTIONS } from "@/lib/constants";
 import { useForm, createField } from "@/hooks/useForm";
+import { useNotification } from "@/hooks/useNotification";
 import {
   validateRequired,
   validateURL,
   validateFileSize,
 } from "@/lib/validators";
-import { useState } from "react";
 
 export default function VideoUploadForm() {
   const { fields, setFieldValue, setFieldError, resetForm, validateAllFields } =
@@ -28,7 +27,7 @@ export default function VideoUploadForm() {
       descriptionQanjobal: createField(""),
     });
 
-  const [notification, setNotification] = useState<string | null>(null);
+  const { showNotification, NotificationContainer } = useNotification();
   const addVideoMutation = trpc.videos.addVideo.useMutation();
 
   const submitForm = async () => {
@@ -61,11 +60,11 @@ export default function VideoUploadForm() {
           descriptionQanjobal: fields.descriptionQanjobal.value,
         });
 
-        setNotification("Video submitted successfully!");
+        showNotification("Video submitted successfully!");
         resetForm();
       } catch (err) {
         console.error(err);
-        setNotification("Error submitting video.");
+        showNotification("Error submitting video.");
       }
     };
 
@@ -177,23 +176,13 @@ export default function VideoUploadForm() {
         {(props) => <ParagraphInput {...props} />}
       </FormField>
       <div className="flex justify-end">
-        <Button
-          text={addVideoMutation.isPending ? "Submitting..." : "Submit video"}
+        <SubmitButton
+          isLoading={addVideoMutation.isPending}
+          text="Submit video"
           onClick={submitForm}
-          disabled={addVideoMutation.isPending}
-          defaultClassName={
-            addVideoMutation.isPending ? "opacity-50 cursor-not-allowed" : ""
-          }
         />
       </div>
-      {notification && (
-        <div className="fixed top-10 left-1/2 transform -translate-x-1/2 z-[9999]">
-          <Notification
-            message={notification}
-            onClose={() => setNotification(null)}
-          />
-        </div>
-      )}
+      <NotificationContainer />
     </div>
   );
 }

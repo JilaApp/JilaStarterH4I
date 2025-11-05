@@ -1,6 +1,9 @@
 import { Upload, CircleCheck, CircleAlert, File, X } from "lucide-react";
 import { useRef } from "react";
 import type { FormInputState } from "@/lib/types";
+import { formatFileSize } from "@/lib/utils";
+import Spinner from "./Spinner";
+import clsx from "clsx";
 
 interface FileUploadProps {
   value?: File;
@@ -33,7 +36,7 @@ export default function FileUpload({
   const displayedFile = value
     ? {
         fileName: value.name,
-        fileSizeMB: Math.round((value.size / 1_000_000) * 100) / 100,
+        fileSizeMB: formatFileSize(value.size),
       }
     : existingFile;
 
@@ -59,7 +62,7 @@ export default function FileUpload({
     switch (state) {
       case "default":
         return (
-          <div className="flex flex-col justify-center items-center text-[var(--color-gray-300)] cursor-pointer">
+          <div className="flex flex-col justify-center items-center text-gray-300 cursor-pointer">
             <Upload />
             <div className="flex items-center h-[40px] text-[18px] font-[500]">
               Upload your file here
@@ -68,23 +71,8 @@ export default function FileUpload({
         );
       case "pending":
         return (
-          <div className="flex flex-col justify-center items-center text-[var(--color-gray-300)]">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              className="animate-spin"
-            >
-              <path
-                d="M21 12C20.9999 13.9006 20.3981 15.7524 19.2809 17.2899C18.1637 18.8275 16.5885 19.9719 14.7809 20.5592C12.9733 21.1464 11.0262 21.1464 9.21864 20.559C7.41109 19.9717 5.83588 18.8272 4.71876 17.2895C3.60165 15.7519 2.99999 13.9001 3 11.9995C3.00001 10.0989 3.60171 8.24712 4.71884 6.70951C5.83598 5.1719 7.4112 4.02742 9.21877 3.44009C11.0263 2.85276 12.9734 2.85273 14.781 3.44001"
-                stroke="#A1A1A1"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+          <div className="flex flex-col justify-center items-center text-gray-300">
+            <Spinner size={24} className="text-gray-300" />
             <div className="flex items-center h-[40px] text-[18px] font-[400]">
               Uploading file...
             </div>
@@ -92,7 +80,7 @@ export default function FileUpload({
         );
       case "complete":
         return (
-          <div className="flex flex-col justify-center items-center text-[var(--color-jila-400)]">
+          <div className="flex flex-col justify-center items-center text-jila-400">
             <CircleCheck />
             <div className="flex items-center h-[40px] text-[18px] font-[500]">
               File uploaded!
@@ -101,7 +89,7 @@ export default function FileUpload({
         );
       case "error":
         return (
-          <div className="flex flex-col justify-center items-center text-[var(--color-error-400)]">
+          <div className="flex flex-col justify-center items-center text-error-400">
             <CircleAlert />
             <div className="flex items-center h-[40px] text-[18px] font-[500]">
               {errorText}
@@ -130,16 +118,14 @@ export default function FileUpload({
         editable && (
           <div
             onClick={state === "pending" ? undefined : handleClickUpload}
-            className={`
-    flex justify-center items-center w-full h-[122px]
-    rounded-[10px]
-    ${
-      state === "pending"
-        ? ""
-        : "cursor-pointer hover:bg-[var(--color-cream-300)]"
-    }
-    ${state === "error" ? "bg-[#FFF3F3]" : "bg-white"}
-  `}
+            className={clsx(
+              "flex justify-center items-center w-full h-[122px] rounded-[10px]",
+              {
+                "cursor-pointer hover:bg-cream-300": state !== "pending",
+                "bg-[#FFF3F3]": state === "error",
+                "bg-white": state !== "error",
+              },
+            )}
             style={{
               backgroundImage: `url("data:image/svg+xml,${encodeURIComponent(
                 `<svg width='100%' height='100%' xmlns='http://www.w3.org/2000/svg'>
@@ -164,10 +150,10 @@ export default function FileUpload({
       {state === "complete" && displayedFile && (
         <div className="flex items-center rounded-[10px] px-[10px] py-[8px] bg-white">
           <div className="flex gap-[17px] items-center w-full">
-            <File className="text-[var(--color-jila-400)]" />
+            <File className="text-jila-400" />
             <div className="flex flex-col">
               <span className="font-[500]">{displayedFile.fileName}</span>
-              <span className="text-[var(--color-gray-300)] font-[200]">
+              <span className="text-gray-300 font-[200]">
                 {displayedFile.fileSizeMB} MB
               </span>
             </div>
