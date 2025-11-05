@@ -1,11 +1,9 @@
-import { useState } from "react";
 import FormField from "./FormField";
 import { TextInput } from "./Input/TextInput";
 import FileUpload from "./FileUpload";
 import Dropdown from "./Dropdown";
 import ParagraphInput from "./ParagraphInput";
-import Button from "./Button";
-import Notification from "./Notification";
+import SubmitButton from "./SubmitButton";
 import { trpc } from "@/lib/trpc";
 import { SocialServiceCategory } from "@/lib/types";
 import {
@@ -13,6 +11,7 @@ import {
   US_STATES,
 } from "@/lib/constants";
 import { useForm, createField } from "@/hooks/useForm";
+import { useNotification } from "@/hooks/useNotification";
 import {
   validateRequired,
   validatePhone,
@@ -37,7 +36,7 @@ export default function SocialServiceForm() {
       descriptionFile: createField<File | undefined>(undefined),
     });
 
-  const [notification, setNotification] = useState<string | null>(null);
+  const { showNotification, NotificationContainer } = useNotification();
   const addSocialServiceMutation =
     trpc.socialServices.addSocialService.useMutation();
 
@@ -65,11 +64,11 @@ export default function SocialServiceForm() {
         url: fields.link.value || undefined,
       });
 
-      setNotification("Social service submitted successfully!");
+      showNotification("Social service submitted successfully!");
       resetForm();
     } catch (err) {
       console.error(err);
-      setNotification("Error submitting social service.");
+      showNotification("Error submitting social service.");
     }
   };
 
@@ -86,10 +85,8 @@ export default function SocialServiceForm() {
   };
 
   return (
-    <div className="flex flex-col gap-[26px] py-[30px] px-[35px] rounded-[24px] bg-white">
-      <div className="h-[60px] font-[500] text-[24px]">
-        Add new social service
-      </div>
+    <div className="flex flex-col gap-[26px] py-[30px] px-[35px] rounded-3xl bg-white">
+      <div className="h-[60px] font-[500] text-2xl">Add new social service</div>
 
       <div className="flex flex-row gap-[18px]">
         <FormField
@@ -261,30 +258,14 @@ export default function SocialServiceForm() {
       </FormField>
 
       <div className="flex justify-end">
-        <Button
-          text={
-            addSocialServiceMutation.isPending
-              ? "Submitting..."
-              : "Submit social service"
-          }
+        <SubmitButton
+          isLoading={addSocialServiceMutation.isPending}
+          text="Submit social service"
           onClick={submitForm}
-          disabled={addSocialServiceMutation.isPending}
-          defaultClassName={
-            addSocialServiceMutation.isPending
-              ? "opacity-50 cursor-not-allowed"
-              : ""
-          }
         />
       </div>
 
-      {notification && (
-        <div className="fixed top-10 left-1/2 transform -translate-x-1/2 z-[9999]">
-          <Notification
-            message={notification}
-            onClose={() => setNotification(null)}
-          />
-        </div>
-      )}
+      <NotificationContainer />
     </div>
   );
 }

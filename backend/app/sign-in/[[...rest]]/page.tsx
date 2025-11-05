@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 import { EmailInput, PasswordInput } from "@/components/Input";
 import Button from "@/components/Button";
 import DisplayBox from "@/components/DisplayBox";
-import Link from "next/link";
+import Link from "@/components/Link";
 import FormField from "@/components/FormField";
 import PageBackground from "@/components/PageBackground";
 import { Ban } from "lucide-react";
@@ -158,7 +158,7 @@ export default function SignInPage() {
                 </FormField>
               </div>
               {error && (
-                <div className="!rounded-lg !mt-0 bg-error-200 w-full flex items-center gap-[3px] p-[14px] text-[var(--color-error-400)] text-[18px]">
+                <div className="!rounded-lg !mt-0 bg-error-200 w-full flex items-center gap-[3px] p-[14px] text-error-400 text-lg">
                   <div className="flex items-center justify-center">
                     <Ban width={"20px"} height={"20px"} />
                   </div>
@@ -167,12 +167,7 @@ export default function SignInPage() {
               )}
               <div className="w-full flex flex-col gap-y-2">
                 <div>
-                  <Link
-                    href="/forgot-password"
-                    className="link-text text-jila-400 hover:underline mb-3"
-                  >
-                    Forgot your password?
-                  </Link>
+                  <Link href="/forgot-password">Forgot your password?</Link>
                 </div>
                 <Button
                   text={loading ? "Signing in..." : "Sign In"}

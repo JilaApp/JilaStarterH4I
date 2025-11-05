@@ -18,6 +18,7 @@ import SocialServiceForm from "@/components/SocialServiceForm";
 import AuthWrapper from "../AuthWrapper";
 import { trpc } from "@/lib/trpc";
 import VideoEditModal from "@/components/VideoEditModal";
+import Link from "@/components/Link";
 import DeleteModal from "@/components/DeleteModal";
 import { Videos } from "@prisma/client";
 import { TOPIC_MAP } from "@/lib/constants";
@@ -162,15 +163,13 @@ export default function DashboardDev() {
       header: "Link",
       accessorKey: "link",
       cell: (value) => (
-        <a
-          className="text-jila-400"
+        <Link
           href={String(value)}
-          target="_blank"
-          rel="noopener noreferrer"
+          external
           onClick={(e) => e.stopPropagation()}
         >
           {String(value)}
-        </a>
+        </Link>
       ),
     },
   ];
@@ -229,15 +228,13 @@ export default function DashboardDev() {
       header: "Link",
       accessorKey: "link",
       cell: (value) => (
-        <a
-          className="text-jila-400"
+        <Link
           href={String(value)}
-          target="_blank"
-          rel="noopener noreferrer"
+          external
           onClick={(e) => e.stopPropagation()}
         >
           {String(value)}
-        </a>
+        </Link>
       ),
     },
   ];

@@ -8,6 +8,7 @@ import Button from "@/components/Button";
 import DisplayBox from "@/components/DisplayBox";
 import FormField from "@/components/FormField";
 import PageBackground from "@/components/PageBackground";
+import Link from "@/components/Link";
 import { trpc } from "@/lib/trpc";
 import { useForm, createField } from "@/hooks/useForm";
 import { validatePassword } from "@/lib/validators";
@@ -169,10 +170,7 @@ export default function InviteSignUpPage() {
               )}
               <div className="flex flex-col w-full">
                 <label className="components-text text-type-400 mb-2 block">
-                  Have an account?{" "}
-                  <a href="/sign-in" className="text-jila-400">
-                    Sign in
-                  </a>
+                  Have an account? <Link href="/sign-in">Sign in</Link>
                 </label>
                 <Button
                   text="Sign up"

@@ -11,6 +11,7 @@ import { VideoTopic } from "@/lib/types";
 import { VIDEO_TOPIC_OPTIONS } from "@/lib/constants";
 import { useForm, createField } from "@/hooks/useForm";
 import { validateRequired, validateURL } from "@/lib/validators";
+import { formatFileSize } from "@/lib/utils";
 
 type SaveStatus = "idle" | "saving" | "success" | "error";
 
@@ -61,8 +62,7 @@ export default function VideoEditModal({
     if (videoData?.audioFilename && videoData?.audioFileSize) {
       return {
         fileName: videoData.audioFilename,
-        fileSizeMB:
-          Math.round((videoData.audioFileSize / 1_000_000) * 100) / 100,
+        fileSizeMB: formatFileSize(videoData.audioFileSize),
       };
     }
     return undefined;

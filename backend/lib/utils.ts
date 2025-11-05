@@ -6,3 +6,7 @@ export const timeAgo = (timestamp: Date, timeOnly?: boolean): string => {
     timeOnly ? "" : " ago"
   }`;
 };
+
+export const formatFileSize = (bytes: number): number => {
+  return Math.round((bytes / 1_000_000) * 100) / 100;
+};
