@@ -7,9 +7,9 @@ on:
   workflow_dispatch:
 
 jobs:
-  frontend-format:
+  mobile-app-format:
     runs-on: ubuntu-latest
-    name: Frontend Format
+    name: Mobile App Format
     steps:
       - name: Check out repository
         uses: actions/checkout@v2
@@ -19,19 +19,19 @@ jobs:
         with:
           node-version: 18
           cache: 'npm'
-          cache-dependency-path: frontend/package-lock.json
+          cache-dependency-path: mobile-app/package-lock.json
 
       - name: Install dependencies
-        working-directory: ./frontend
+        working-directory: ./mobile-app
         run: npm i
 
       - name: Check formatting
-        working-directory: ./frontend
+        working-directory: ./mobile-app
         run: npx expo lint
 
-  # frontend-build:
+  # mobile-app-build:
   #   runs-on: ubuntu-latest
-  #   name: Frontend Build
+  #   name: Mobile App Build
   #   steps:
   #     - name: Check out repository
   #       uses: actions/checkout@v2
@@ -41,19 +41,19 @@ jobs:
   #       with:
   #         node-version: 18
   #         cache: 'npm'
-  #         cache-dependency-path: frontend/package-lock.json
+  #         cache-dependency-path: mobile-app/package-lock.json
 
   #     - name: Install dependencies
-  #       working-directory: ./frontend
+  #       working-directory: ./mobile-app
   #       run: npm i
 
   #     - name: Run build
-  #       working-directory: ./frontend
+  #       working-directory: ./mobile-app
   #       run: npx expo export
 
-  backend-format:
+  admin-dashboard-format:
     runs-on: ubuntu-latest
-    name: Backend Format
+    name: Admin Dashboard Format
     steps:
       - name: Check out repository
         uses: actions/checkout@v2
@@ -63,19 +63,19 @@ jobs:
         with:
           node-version: 18
           cache: 'npm'
-          cache-dependency-path: backend/package-lock.json
+          cache-dependency-path: admin-dashboard/package-lock.json
 
       - name: Install dependencies
-        working-directory: ./backend
+        working-directory: ./admin-dashboard
         run: npm i
 
       - name: Check formatting
-        working-directory: ./backend
+        working-directory: ./admin-dashboard
         run: npm run format:check
 
-  backend-build:
+  admin-dashboard-build:
     runs-on: ubuntu-latest
-    name: Backend Build
+    name: Admin Dashboard Build
     environment: Production
     steps:
       - name: Check out repository
@@ -86,14 +86,14 @@ jobs:
         with:
           node-version: 18
           cache: 'npm'
-          cache-dependency-path: backend/package-lock.json
+          cache-dependency-path: admin-dashboard/package-lock.json
 
       - name: Install dependencies
-        working-directory: ./backend
+        working-directory: ./admin-dashboard
         run: npm i
 
       - name: Run build
-        working-directory: ./backend
+        working-directory: ./admin-dashboard
         env:
           JILA_BACKEND_PRISMA_DATABASE_URL: ${{ secrets.JILA_BACKEND_PRISMA_DATABASE_URL }}
           JILA_BACKEND_POSTGRES_URL: ${{ secrets.JILA_BACKEND_POSTGRES_URL }}

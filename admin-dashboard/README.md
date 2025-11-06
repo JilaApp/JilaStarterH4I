@@ -17,7 +17,7 @@ relatedTemplates:
 ## Getting started
 
 1. Clone the repo: `git clone https://github.com/hack4impact-uiuc/jila-starter`
-2. Go to backend `cd backend`
+2. Go to admin-dashboard `cd admin-dashboard`
 3. Install packeges `npm i`
 4. Create a .env file: `touch .env`
 5. Start dev server: `npm run dev`
