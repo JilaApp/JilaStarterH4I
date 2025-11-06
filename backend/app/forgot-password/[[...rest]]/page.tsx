@@ -196,7 +196,6 @@ export default function ForgotPasswordPage() {
                   {(props) => (
                     <EmailInput
                       {...props}
-                      state={fields.email.state}
                       id="email-input"
                       name="email"
                       className="w-[450px] h-[60px]"
@@ -235,7 +234,6 @@ export default function ForgotPasswordPage() {
                     {(props) => (
                       <TextInput
                         {...props}
-                        state={error ? "error" : "default"}
                         id="code"
                         name="code"
                         placeholder="Enter 6-digit code"
@@ -256,7 +254,6 @@ export default function ForgotPasswordPage() {
                   {(props) => (
                     <PasswordInput
                       {...props}
-                      state={fields.password.state}
                       id="new-password"
                       name="new-password"
                       autoComplete="new-password"

@@ -2,13 +2,14 @@ import { useRef, useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { useClickOutside } from "@/hooks/useClickOutside";
 import clsx from "clsx";
+import type { FormInputState } from "@/lib/types";
 
 interface DropdownProps {
   options: string[];
   value?: number;
   onChange?: (value: number) => void;
   placeholder?: string;
-  state?: "default" | "error";
+  state?: FormInputState;
   disabled?: boolean;
 }
 

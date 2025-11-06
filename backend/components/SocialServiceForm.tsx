@@ -98,9 +98,7 @@ export default function SocialServiceForm() {
           defaultClassName="max-w-[450px]"
           required
         >
-          {(props) => (
-            <TextInput {...props} state={fields.englishTitle.state} />
-          )}
+          {(props) => <TextInput {...props} />}
         </FormField>
 
         <FormField
@@ -112,9 +110,7 @@ export default function SocialServiceForm() {
           defaultClassName="max-w-[450px]"
           required
         >
-          {(props) => (
-            <TextInput {...props} state={fields.qanjobalTitle.state} />
-          )}
+          {(props) => <TextInput {...props} />}
         </FormField>
       </div>
 
@@ -151,7 +147,6 @@ export default function SocialServiceForm() {
         {(props) => (
           <Dropdown
             {...props}
-            state={fields.topicIndex.state === "error" ? "error" : "default"}
             options={[...SOCIAL_SERVICE_CATEGORY_DISPLAY_OPTIONS]}
           />
         )}
@@ -166,7 +161,7 @@ export default function SocialServiceForm() {
         defaultClassName="max-w-[918px]"
         required
       >
-        {(props) => <TextInput {...props} state={fields.phoneNumber.state} />}
+        {(props) => <TextInput {...props} />}
       </FormField>
 
       <FormField
@@ -177,7 +172,7 @@ export default function SocialServiceForm() {
         onChange={(val) => setFieldValue("addressLine", val)}
         defaultClassName="max-w-[918px]"
       >
-        {(props) => <TextInput {...props} state={fields.addressLine.state} />}
+        {(props) => <TextInput {...props} />}
       </FormField>
 
       <div className="flex flex-row gap-[18px]">
@@ -189,7 +184,7 @@ export default function SocialServiceForm() {
           onChange={(val) => setFieldValue("city", val)}
           defaultClassName="max-w-[450px]"
         >
-          {(props) => <TextInput {...props} state={fields.city.state} />}
+          {(props) => <TextInput {...props} />}
         </FormField>
 
         <FormField
@@ -200,13 +195,7 @@ export default function SocialServiceForm() {
           onChange={(val) => setFieldValue("stateIndex", val)}
           defaultClassName="max-w-[450px]"
         >
-          {(props) => (
-            <Dropdown
-              {...props}
-              state={fields.stateIndex.state === "error" ? "error" : "default"}
-              options={[...US_STATES]}
-            />
-          )}
+          {(props) => <Dropdown {...props} options={[...US_STATES]} />}
         </FormField>
       </div>
 
@@ -218,7 +207,7 @@ export default function SocialServiceForm() {
         onChange={(val) => setFieldValue("link", val)}
         defaultClassName="max-w-[918px]"
       >
-        {(props) => <TextInput {...props} state={fields.link.state} />}
+        {(props) => <TextInput {...props} />}
       </FormField>
 
       <FormField

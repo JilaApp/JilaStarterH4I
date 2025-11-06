@@ -227,7 +227,6 @@ export default function VideoEditModal({
                 {(props) => (
                   <TextInput
                     {...props}
-                    state={fields.englishTitle.state}
                     id="english-input"
                     className="w-full h-[46px]"
                     disabled={!isEditing}
@@ -248,7 +247,6 @@ export default function VideoEditModal({
                 {(props) => (
                   <TextInput
                     {...props}
-                    state={fields.qanjobalTitle.state}
                     id="qanjobal-input"
                     className="w-full h-[46px]"
                     disabled={!isEditing}
@@ -291,9 +289,6 @@ export default function VideoEditModal({
               {(props) => (
                 <Dropdown
                   {...props}
-                  state={
-                    fields.dropdownIndex.state === "error" ? "error" : "default"
-                  }
                   options={VIDEO_TOPIC_OPTIONS}
                   disabled={!isEditing}
                 />
@@ -313,7 +308,6 @@ export default function VideoEditModal({
               {(props) => (
                 <TextInput
                   {...props}
-                  state={fields.videoLink.state}
                   id="video-input w-full"
                   disabled={!isEditing}
                 />

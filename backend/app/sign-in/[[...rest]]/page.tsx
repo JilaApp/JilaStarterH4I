@@ -132,7 +132,6 @@ export default function SignInPage() {
                   {(props) => (
                     <EmailInput
                       {...props}
-                      state={fields.email.state}
                       id="email-input"
                       className="w-[450px] h-[60px]"
                     />
@@ -150,7 +149,6 @@ export default function SignInPage() {
                   {(props) => (
                     <PasswordInput
                       {...props}
-                      state={fields.password.state}
                       id="password-input"
                       className="w-[450px] h-[60px]"
                     />

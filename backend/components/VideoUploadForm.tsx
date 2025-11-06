@@ -90,9 +90,7 @@ export default function VideoUploadForm() {
           defaultClassName="max-w-[450px]"
           required
         >
-          {(props) => (
-            <TextInput {...props} state={fields.resourceTitleEnglish.state} />
-          )}
+          {(props) => <TextInput {...props} />}
         </FormField>
 
         <FormField
@@ -104,9 +102,7 @@ export default function VideoUploadForm() {
           defaultClassName="max-w-[450px]"
           required
         >
-          {(props) => (
-            <TextInput {...props} state={fields.resourceTitleQanjobal.state} />
-          )}
+          {(props) => <TextInput {...props} />}
         </FormField>
       </div>
       <FormField
@@ -139,13 +135,7 @@ export default function VideoUploadForm() {
         required
       >
         {(props) => (
-          <Dropdown
-            {...props}
-            state={
-              fields.topicDropdownIndex.state === "error" ? "error" : "default"
-            }
-            options={[...VIDEO_TOPIC_DISPLAY_OPTIONS]}
-          />
+          <Dropdown {...props} options={[...VIDEO_TOPIC_DISPLAY_OPTIONS]} />
         )}
       </FormField>
       <FormField
@@ -157,7 +147,7 @@ export default function VideoUploadForm() {
         defaultClassName="max-w-[918px]"
         required
       >
-        {(props) => <TextInput {...props} state={fields.videoLink.state} />}
+        {(props) => <TextInput {...props} />}
       </FormField>
       <FormField
         title="Description (English)"

@@ -8,6 +8,7 @@ interface FormFieldProps<T> {
   children: (props: {
     value: T;
     onChange: (val: T) => void;
+    state: FormInputState;
   }) => React.ReactElement;
   state?: FormInputState;
   errorString?: string;
@@ -43,6 +44,7 @@ export default function FormField<T>({
       {children({
         value: value as T,
         onChange: handleChange,
+        state,
       })}
       {state === "error" && errorString && (
         <div className="flex items-center gap-[3px] pt-[8px] text-error-400 text-lg">

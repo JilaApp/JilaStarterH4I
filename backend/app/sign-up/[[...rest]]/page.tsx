@@ -208,7 +208,6 @@ export default function InviteSignUpPage() {
                     {(props) => (
                       <PasswordInput
                         {...props}
-                        state={fields.password.state}
                         id="password-input"
                         name="password"
                         autoComplete="new-password"
@@ -227,7 +226,6 @@ export default function InviteSignUpPage() {
                     {(props) => (
                       <PasswordInput
                         {...props}
-                        state={fields.confirmPassword.state}
                         id="confirm-password-input"
                         name="confirmPassword"
                         autoComplete="new-password"

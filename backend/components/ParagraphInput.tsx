@@ -1,11 +1,13 @@
 import clsx from "clsx";
 import React from "react";
+import type { FormInputState } from "@/lib/types";
 
 interface ParagraphInputProps {
   placeholder?: string;
   value?: string;
   onChange?: (val: string) => void;
   disabled?: boolean;
+  state?: FormInputState;
 }
 
 export default function ParagraphInput({
@@ -13,6 +15,7 @@ export default function ParagraphInput({
   value = "",
   onChange = (val: string) => {},
   disabled = false,
+  state = "default",
 }: ParagraphInputProps) {
   return (
     <div className="flex flex-col w-full">

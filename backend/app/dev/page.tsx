@@ -250,13 +250,7 @@ export default function DevPage() {
             value={fields.textInput.value}
             onChange={(val) => setFieldValue("textInput", val)}
           >
-            {(props) => (
-              <TextInput
-                {...props}
-                state={fields.textInput.state}
-                id="text-input"
-              />
-            )}
+            {(props) => <TextInput {...props} id="text-input" />}
           </FormField>
 
           <FormField
@@ -267,13 +261,7 @@ export default function DevPage() {
             value={fields.emailInput.value}
             onChange={(val) => setFieldValue("emailInput", val)}
           >
-            {(props) => (
-              <EmailInput
-                {...props}
-                state={fields.emailInput.state}
-                id="email-input"
-              />
-            )}
+            {(props) => <EmailInput {...props} id="email-input" />}
           </FormField>
 
           <FormField
@@ -284,13 +272,7 @@ export default function DevPage() {
             value={fields.passwordInput.value}
             onChange={(val) => setFieldValue("passwordInput", val)}
           >
-            {(props) => (
-              <PasswordInput
-                {...props}
-                state={fields.passwordInput.state}
-                id="password-input"
-              />
-            )}
+            {(props) => <PasswordInput {...props} id="password-input" />}
           </FormField>
         </div>
         <TopicTag variant="Career" />
@@ -452,7 +434,6 @@ export default function DevPage() {
           {(props) => (
             <PasswordInput
               {...props}
-              state="error"
               placeholder="Enter Password"
               id="password-input"
             />
