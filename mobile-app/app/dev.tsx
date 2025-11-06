@@ -1,10 +1,36 @@
+import { useState } from "react";
 import { Link } from "expo-router";
 import { View, Text } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
+import LikeDislike from "@/components/LikeDislike";
 
 export default function DevPage() {
+
+  const [numLikesUp, setNumLikesUp] = useState(0);
+  const [isClickedUp, setIsClickedUp] = useState(false);
+
+  const [numLikesDown, setNumLikesDown] = useState(0);
+  const [isClickedDown, setIsClickedDown] = useState(false);
   return (
     <View>
+      <View className="flex-col gap-[10px]">
+        <LikeDislike
+          numLikes={numLikesUp}
+          setNumLikes={setNumLikesUp}
+          isClicked={isClickedUp}
+          setIsClicked={setIsClickedUp}
+          type="like"
+        />
+
+        <LikeDislike
+          numLikes={numLikesDown}
+          setNumLikes={setNumLikesDown}
+          isClicked={isClickedDown}
+          setIsClicked={setIsClickedDown}
+          type="dislike"
+        />
+      </View>
+
       <Link href="/auth/sign-up">sign in</Link>
       <Text className="text-3xl font-bold">Nativewind Styles:</Text>
       <Text className="page-title-text">page-title-text</Text>
