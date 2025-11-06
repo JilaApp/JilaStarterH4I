@@ -5,7 +5,6 @@ import { LinearGradient } from "expo-linear-gradient";
 import LikeDislike from "@/components/LikeDislike";
 
 export default function DevPage() {
-
   const [numLikesUp, setNumLikesUp] = useState(0);
   const [isClickedUp, setIsClickedUp] = useState(false);
 
