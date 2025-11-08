@@ -1,6 +1,6 @@
 import { View, TouchableOpacity } from "react-native";
 import { Volume2 } from "lucide-react-native";
-import { Audio } from "expo-av";
+import { Audio, InterruptionModeAndroid, InterruptionModeIOS } from "expo-av";
 import { useRef, useState } from "react";
 
 type AudioSource = number | { uri: string };
@@ -28,6 +28,16 @@ export default function AudioButton({
   );
 
   async function playSound() {
+    await Audio.requestPermissionsAsync();
+    await Audio.setAudioModeAsync({
+      allowsRecordingIOS: false,
+      staysActiveInBackground: false,
+      playsInSilentModeIOS: true,
+      interruptionModeIOS: InterruptionModeIOS.DoNotMix,
+      shouldDuckAndroid: true,
+      interruptionModeAndroid: InterruptionModeAndroid.DoNotMix,
+    });
+
     if (playingRef.current && soundRef.current) {
       await soundRef.current.stopAsync();
       await soundRef.current.unloadAsync();
