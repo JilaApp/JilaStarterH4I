@@ -61,18 +61,18 @@ model SocialServices {
 }
 
 enum VideoTopic {
-  Transport
-  Legal
-  Medical
-  Career
-  Education
-  Other
+  TRANSPORT
+  LEGAL
+  MEDICAL
+  CAREER
+  EDUCATION
+  OTHER
 }
 
 enum SocialServiceCategory {
-  Emergencia
-  Shelters
-  Food
-  Transportation
-  Other
+  EMERGENCIA
+  SHELTERS
+  FOOD
+  TRANSPORTATION
+  OTHER
 }

@@ -285,7 +285,7 @@ export default function DashboardDev() {
   };
 
   const handleSocialDelete = (id: string | number) => {
-    const numericId = typeof id === 'string' ? parseInt(id) : id;
+    const numericId = typeof id === "string" ? parseInt(id) : id;
     setSocialServiceToDeleteId(numericId);
     setIsDeleteModalOpen(true);
   };

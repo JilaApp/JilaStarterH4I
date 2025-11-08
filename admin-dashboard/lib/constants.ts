@@ -15,9 +15,7 @@ export const TOPIC_COLORS: Record<TopicVariant, string> = {
 };
 
 // Video topic options for dropdowns
-export const VIDEO_TOPIC_OPTIONS = Object.keys(VideoTopic) as Array<
-  string
->;
+export const VIDEO_TOPIC_OPTIONS = Object.keys(VideoTopic) as Array<string>;
 
 export const VIDEO_TOPIC_DISPLAY_OPTIONS = [
   "Transport",
