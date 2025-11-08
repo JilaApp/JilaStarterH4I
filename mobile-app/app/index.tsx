@@ -47,8 +47,7 @@ export default function App() {
 
         <View className="bg-gray-200 rounded-lg p-4 mb-6">
           <Text className="text-type-400 text-base mb-2">
-            <Text className="font-bold">Username:</Text>{" "}
-            {user.username}
+            <Text className="font-bold">Username:</Text> {user.username}
           </Text>
           <Text className="text-type-400 text-base mb-2">
             <Text className="font-bold">User Type:</Text>{" "}
