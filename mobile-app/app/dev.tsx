@@ -2,11 +2,16 @@ import { Link } from "expo-router";
 import { View, Text } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import AudioButton from "@/components/AudioButton";
+import { Variable } from "lucide-react-native";
 
 export default function DevPage() {
   return (
     <View>
-      <AudioButton audioSource={require("../components/sample.mp3")} />
+      <AudioButton
+        audioSource={require("../components/sample.mp3")}
+        variant={"default"}
+      />
+      <AudioButton audioSource={require("../components/sample.mp3")} disabled />
       <Link href="/auth/sign-up">sign in</Link>
       <Text className="text-3xl font-bold">Nativewind Styles:</Text>
       <Text className="page-title-text">page-title-text</Text>

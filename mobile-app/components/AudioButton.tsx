@@ -1,30 +1,68 @@
 import { View, TouchableOpacity } from "react-native";
 import { Volume2 } from "lucide-react-native";
 import { Audio } from "expo-av";
-import { useState } from "react";
+import { useRef, useState } from "react";
+
+type AudioSource = number | { uri: string };
 
 type AudioButtonProps = {
-  audioSource: string;
+  audioSource: AudioSource;
+  variant?: "default" | "light";
+  disabled?: boolean;
 };
 
-export default function AudioButton({ audioSource }: AudioButtonProps) {
-  const [playing, setPlaying] = useState(false);
+const BG_COLOR_MAP = {
+  playing: "bg-jila-400",
+  default: "bg-jila-300",
+  disabled: "bg-gray-300",
+};
+
+export default function AudioButton({
+  audioSource,
+  disabled = false,
+}: AudioButtonProps) {
+  const soundRef = useRef<Audio.Sound | null>(null);
+  const playingRef = useRef(false);
+  const [variant, setVariant] = useState<"default" | "playing" | "disabled">(
+    "default",
+  );
 
   async function playSound() {
-    if (playing) return;
-    setPlaying(true);
+    if (playingRef.current && soundRef.current) {
+      await soundRef.current.stopAsync();
+      await soundRef.current.unloadAsync();
+      playingRef.current = false;
+      setVariant("default");
+      return;
+    }
 
-    const { sound } = await Audio.Sound.createAsync(
-      { uri: audioSource },
-      { shouldPlay: true },
-    );
+    const { sound } = await Audio.Sound.createAsync(audioSource, {
+      shouldPlay: true,
+    });
 
-    sound.playAsync();
-    setPlaying(false);
+    soundRef.current = sound;
+    playingRef.current = true;
+    setVariant("playing");
+
+    sound.setOnPlaybackStatusUpdate((status) => {
+      if (!status.isLoaded) return;
+      if (status.didJustFinish) {
+        playingRef.current = false;
+        setVariant("default");
+        sound.unloadAsync();
+      }
+    });
+
+    await sound.playAsync();
   }
+
+  const bgColor = disabled ? BG_COLOR_MAP.disabled : BG_COLOR_MAP[variant];
+
   return (
-    <TouchableOpacity onPress={playSound}>
-      <View className="w-[20px] h-[20px] rounded-full bg-jila-400 justify-center items-center">
+    <TouchableOpacity onPress={playSound} disabled={disabled}>
+      <View
+        className={`w-[20px] h-[20px] rounded-full ${bgColor} justify-center items-center ${disabled && "bg-gray-300"}`}
+      >
         <Volume2 size={11} color="#FFF" />
       </View>
     </TouchableOpacity>
