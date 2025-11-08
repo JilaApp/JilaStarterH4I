@@ -1,9 +1,10 @@
 import { View, Text, Pressable } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { icons } from "lucide-react-native";
+const Icons = icons;
 
 interface GradientButtonProps {
-  icon: keyof typeof icons;
+  icon: keyof typeof Icons;
   bottomColor: string;
   topColor: string;
   text: string;
@@ -89,7 +90,7 @@ function GradientButton({
   text,
   iconColor,
 }: GradientButtonProps) {
-  const LucideIcon = icons[icon];
+  const LucideIcon = Icons[icon];
   return (
     <Pressable className="rounded-lg">
       <LinearGradient
