@@ -28,6 +28,14 @@ export const VIDEO_TOPIC_DISPLAY_OPTIONS = [
   "Other",
 ] as const;
 
+export const SOCIAL_SERVICE_CATEGORY_ENUM_MAP: Record<string, string> = {
+  Emergency: "EMERGENCIA",
+  Shelters: "SHELTERS",
+  Food: "FOOD",
+  Transportation: "TRANSPORTATION",
+  Other: "OTHER",
+};
+
 // Social service category options for dropdowns
 export const SOCIAL_SERVICE_CATEGORY_OPTIONS = Object.keys(
   SocialServiceCategory,

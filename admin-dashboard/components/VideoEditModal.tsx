@@ -202,7 +202,7 @@ export default function VideoEditModal({
 
   return (
     <div className="fixed y-40 inset-0 z-50 flex items-center justify-center bg-[rgb(83,83,83,0.19)]">
-      <div className="relative flex flex-col bg-white rounded-[10px] w-[698px] h-[830px] p-[26.48px]">
+      <div className="relative flex flex-col bg-white rounded-[10px] w-[49%] h-[90%] p-[26.48px]">
         <div className="flex justify-between items-center mb-[20px]">
           <div className="components-text">
             {isEditing ? "Edit resource" : "View resource"}
