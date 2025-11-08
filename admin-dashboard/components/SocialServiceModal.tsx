@@ -384,7 +384,7 @@ export default function SocialServiceEditModal({
                   ? "Upload an audio recording of the description in Q'anjob'al"
                   : ""
               }
-              existingFileMetadata={existingTitleFileMetadata}
+              existingFile={existingTitleFileMetadata}
             />
           )}
         </FormField>
@@ -508,7 +508,7 @@ export default function SocialServiceEditModal({
                   ? "Upload an audio recording of the description in Q'anjob'al"
                   : ""
               }
-              existingFileMetadata={existingDescriptionFileMetadata}
+              existingFile={existingDescriptionFileMetadata}
             />
           )}
         </FormField>

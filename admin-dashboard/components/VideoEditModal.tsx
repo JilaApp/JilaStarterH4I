@@ -78,7 +78,7 @@ export default function VideoEditModal({
 
       const topicIndex = VIDEO_TOPIC_OPTIONS.findIndex(
         (option) =>
-          option.toUpperCase() === (videoData.topic || "").toUpperCase(),
+          String(option).toUpperCase() === (videoData.topic || "").toUpperCase(),
       );
       setFieldValue(
         "dropdownIndex",
@@ -289,7 +289,7 @@ export default function VideoEditModal({
               {(props) => (
                 <Dropdown
                   {...props}
-                  options={VIDEO_TOPIC_OPTIONS}
+                  options={(VIDEO_TOPIC_OPTIONS)}
                   disabled={!isEditing}
                 />
               )}

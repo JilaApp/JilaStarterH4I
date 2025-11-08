@@ -69,7 +69,7 @@ export default function DashboardDev() {
     any | null
   >(null);
   const [socialServiceToDeleteId, setSocialServiceToDeleteId] = useState<
-    string | number | null
+    number | null
   >(null);
 
   const {
@@ -284,8 +284,9 @@ export default function DashboardDev() {
     }
   };
 
-  const handleSocialDelete = (id: number | string) => {
-    setSocialServiceToDeleteId(id);
+  const handleSocialDelete = (id: string | number) => {
+    const numericId = typeof id === 'string' ? parseInt(id) : id;
+    setSocialServiceToDeleteId(numericId);
     setIsDeleteModalOpen(true);
   };
 

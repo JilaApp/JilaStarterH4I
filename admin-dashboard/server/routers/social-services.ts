@@ -2,7 +2,7 @@ import { router, publicProcedure } from "../trpc";
 import prisma from "@/lib/prisma";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { SocialServiceCategory } from "@prisma/client";
+import { SocialServiceCategory } from "@/lib/types";
 
 const addSocialServiceInput = z.object({
   title: z.string(),

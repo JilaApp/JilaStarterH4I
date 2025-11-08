@@ -1,4 +1,4 @@
-import { VideoTopic, SocialServiceCategory } from "@prisma/client";
+import { VideoTopic, SocialServiceCategory } from "@/lib/types";
 import type { TopicVariant } from "@/lib/types";
 
 // Topic colors for UI display
@@ -16,7 +16,7 @@ export const TOPIC_COLORS: Record<TopicVariant, string> = {
 
 // Video topic options for dropdowns
 export const VIDEO_TOPIC_OPTIONS = Object.keys(VideoTopic) as Array<
-  keyof typeof VideoTopic
+  string
 >;
 
 export const VIDEO_TOPIC_DISPLAY_OPTIONS = [
