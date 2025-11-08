@@ -9,7 +9,7 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        source: ['Fustat', 'serif'],
+        sans: ['Fustat', 'serif'],
       },
       colors: {
         jila: {
