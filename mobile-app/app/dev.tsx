@@ -1,10 +1,17 @@
+import React, { useState } from "react";
+
 import { Link } from "expo-router";
-import { View, Text } from "react-native";
+import { View, ScrollView, Text } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 
+import Dropdown from "@/components/Dropdown";
+
 export default function DevPage() {
+  const [selected, setSelected] = useState<string | null>(null);
+  const options = ["PA", "TX", "NJ", "IL", "CA"];
+
   return (
-    <View>
+    <ScrollView>
       <Link href="/auth/sign-up">sign in</Link>
       <Text className="text-3xl font-bold">Nativewind Styles:</Text>
       <Text className="page-title-text">page-title-text</Text>
@@ -74,6 +81,12 @@ export default function DevPage() {
       >
         <Text>gradient-yellow (horizontal)</Text>
       </LinearGradient>
-    </View>
+
+      <Text className="m-10 text-gray-700">
+        You chose: <Text className="font-semibold">{selected}</Text>
+      </Text>
+
+      <Dropdown options={options} selected={selected} onSelect={setSelected} />
+    </ScrollView>
   );
 }
