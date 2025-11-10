@@ -82,11 +82,17 @@ export default function DevPage() {
         <Text>gradient-yellow (horizontal)</Text>
       </LinearGradient>
 
-      <Text className="m-10 text-gray-700">
-        You chose: <Text className="font-semibold">{selected}</Text>
-      </Text>
-
-      <Dropdown options={options} selected={selected} onSelect={setSelected} />
+      <View className="m-10">
+        <Text className="text-gray-700">
+          You chose: <Text className="font-semibold">{selected}</Text>
+        </Text>
+        <Dropdown
+          text={"--Select State--"}
+          options={options}
+          selected={selected}
+          onSelect={setSelected}
+        />
+      </View>
     </ScrollView>
   );
 }

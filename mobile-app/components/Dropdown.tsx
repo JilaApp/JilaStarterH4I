@@ -3,12 +3,14 @@ import { View, TouchableOpacity, Text } from "react-native";
 import { ChevronDown, ChevronRight } from "lucide-react-native"; // 👈 if using lucide icons
 
 interface DropdownProps {
+  text: string;
   options: string[];
   selected: string | null;
   onSelect: (option: string) => void;
 }
 
 const Dropdown: React.FC<DropdownProps> = ({
+  text,
   options,
   selected,
   onSelect,
@@ -28,7 +30,7 @@ const Dropdown: React.FC<DropdownProps> = ({
           }`}
         >
           <Text className={`${selected ? "text-gray-800" : "text-gray-400"}`}>
-            {selected || "--Select State--"}
+            {selected || text}
           </Text>
           {open ? (
             <ChevronDown size={20} color="#000000" />
