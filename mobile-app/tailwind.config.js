@@ -77,111 +77,6 @@
 // }
 
 
-// /** @type {import('tailwindcss').Config} */
-// module.exports = {
-//   content: [
-//     "./App.{js,jsx,ts,tsx}",
-//     "./app/**/*.{js,jsx,ts,tsx}",
-//     "./components/**/*.{js,jsx,ts,tsx}",
-//   ],
-//   presets: [require("nativewind/preset")],
-//   theme: {
-//     extend: {},
-//   },
-//   plugins: [],
-// };
-
-// /** @type {import('tailwindcss').Config} */
-// module.exports = {
-//   content: [
-//     "./App.{js,jsx,ts,tsx}",
-//     "./app/**/*.{js,jsx,ts,tsx}",
-//     "./components/**/*.{js,jsx,ts,tsx}",
-//   ],
-//   presets: [require("nativewind/preset")],
-//   theme: {
-//     extend: {
-//       colors: {
-//         jila: {
-//           300: '#D4928F',
-//           400: '#7E0601',
-//         },
-//         orange: {
-//           300: '#F3CAAD',
-//           400: '#E8965B',
-//         },
-//         yellow: {
-//           400: '#EFBF6A',
-//         },
-//         cream: {
-//           300: '#FFFBEF',
-//         },
-//         green: {
-//           300: '#CDE6B9',
-//           400: '#90BE6D',
-//         },
-//         teal: {
-//           300: '#BDD0E2',
-//           400: '#577590',
-//         },
-//         error: {
-//           200: '#FBCFCF',
-//           300: '#FF9494',
-//           400: '#E31F1F',
-//         },
-//         type: {
-//           400: '#361818',
-//         },
-//         white: '#FFFFFF',
-//         gray: {
-//           200: '#E8E8E8',
-//           300: '#CDCDCD',
-//           400: '#9C9C9C',
-//         },
-//       },
-//     },
-//   },
-//   plugins: [],
-// };
-
-
-
-// /** @type {import('tailwindcss').Config} */
-// module.exports = {
-//   content: [
-//     "./App.{js,jsx,ts,tsx}",
-//     "./app/**/*.{js,jsx,ts,tsx}",
-//     "./components/**/*.{js,jsx,ts,tsx}",
-//   ],
-//   presets: [require("nativewind/preset")],
-//   theme: {
-//     extend: {
-//       fontFamily: {
-//         source: ["Fustat", "serif"],
-//       },
-//       fontSize: {
-//         "page-title": 32, // roughly text-4xl
-//         "body1-desktop-semi": 20,
-//         "body1-desktop-bold": 20,
-//       },
-//       colors: {
-//         jila: { 300: "#D4928F", 400: "#7E0601" },
-//         orange: { 300: "#F3CAAD", 400: "#E8965B" },
-//         yellow: { 400: "#EFBF6A" },
-//         cream: { 300: "#FFFBEF" },
-//         green: { 300: "#CDE6B9", 400: "#90BE6D" },
-//         teal: { 300: "#BDD0E2", 400: "#577590" },
-//         error: { 200: "#FBCFCF", 300: "#FF9494", 400: "#E31F1F" },
-//         type: { 400: "#361818" },
-//         white: "#FFFFFF",
-//         gray: { 200: "#E8E8E8", 300: "#CDCDCD", 400: "#9C9C9C" },
-//       },
-//     },
-//   },
-//   plugins: [],
-// };
-
-
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
@@ -237,9 +132,8 @@ module.exports = {
         },
       },
 
-      // ✅ Define reusable text styles here
       fontSize: {
-        "page-title": 40, // adjust to your preferred scale
+        "page-title": 40,
         "body1-desktop": 20,
       },
     },
