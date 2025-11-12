@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View, TouchableOpacity, Text } from "react-native";
-import { ChevronDown, ChevronRight } from "lucide-react-native"; // 👈 if using lucide icons
+import { ChevronDown, ChevronRight } from "lucide-react-native";
 
 interface DropdownProps {
   text: string;
