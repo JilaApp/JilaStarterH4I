@@ -99,9 +99,9 @@ function GradientButton({
         end={{ x: 1, y: 0 }}
         style={{
           flex: 1,
-          width: 150,
-          height: 150,
-          borderRadius: 8,
+          width: 180,
+          height: 180,
+          borderRadius: 20,
           justifyContent: "flex-end",
         }}
       >
