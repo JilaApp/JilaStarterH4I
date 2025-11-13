@@ -27,17 +27,9 @@ export default function NavBar() {
 
   return (
     <View className="flex-row gap-[82px] w-[393px] h-[72px] items-center justify-center bg-jila-400">
-      <Briefcase
-        color={colors.white[400]}
-        size={35}
-        onPress={handleJobPress}
-      />
-      
-      <House
-        color={colors.white[400]}
-        size={35}
-        onPress={handleHomePress}
-      />
+      <Briefcase color={colors.white[400]} size={35} onPress={handleJobPress} />
+
+      <House color={colors.white[400]} size={35} onPress={handleHomePress} />
 
       <BookOpen
         color={colors.white[400]}
