@@ -16,8 +16,7 @@ import {
 import { useForm, createField } from "@/hooks/useForm";
 import { validateRequired, validateURL } from "@/lib/validators";
 import { formatFileSize } from "@/lib/utils";
-
-type SaveStatus = "idle" | "saving" | "success" | "error";
+import SubmitButton from "./SubmitButton";
 
 interface SocialServiceData {
   id: string | number;
@@ -64,10 +63,10 @@ export default function SocialServiceEditModal({
       descriptionFile: createField<File | undefined>(undefined),
     });
 
-  const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
   const [clearExistingTitleFile, setClearExistingTitleFile] = useState(false);
   const [clearExistingDescriptionFile, setClearExistingDescriptionFile] =
     useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   const updateSocialServiceMutation =
     trpc.socialServices.editSocialService.useMutation();
@@ -135,12 +134,6 @@ export default function SocialServiceEditModal({
           option.toUpperCase() === (serviceData.category || "").toUpperCase(),
       );
       setFieldValue("topicIndex", topicIndex !== -1 ? topicIndex : undefined);
-
-      setSaveStatus("idle");
-      setFieldValue("titleFile", undefined);
-      setFieldValue("descriptionFile", undefined);
-      setClearExistingTitleFile(false);
-      setClearExistingDescriptionFile(false);
     }
   }, [isOpen, serviceData?.id]);
 
@@ -180,7 +173,7 @@ export default function SocialServiceEditModal({
 
     if (!isValid) return;
 
-    setSaveStatus("saving");
+    setIsSaving(true);
 
     const addressParts = [
       fields.addressLine.value,
@@ -212,15 +205,13 @@ export default function SocialServiceEditModal({
     ): Promise<void> => {
       try {
         await updateSocialServiceMutation.mutateAsync(payload);
-        setSaveStatus("success");
+        setIsSaving(false);
         onUpdateComplete?.();
         onClose();
       } catch (error) {
         console.error("Failed to update social service:", error);
-        setSaveStatus("error");
-        setTimeout(() => {
-          setSaveStatus("idle");
-        }, 2000);
+        setIsSaving(false);
+        setTimeout(() => {}, 2000);
       }
     };
 
@@ -268,7 +259,7 @@ export default function SocialServiceEditModal({
         };
         reader.onerror = (error) => {
           console.error("FileReader error:", error);
-          setSaveStatus("error");
+          setIsSaving(false);
         };
         reader.readAsDataURL(file);
       });
@@ -280,23 +271,6 @@ export default function SocialServiceEditModal({
         mutationPayload.descriptionAudioFile = "";
       }
       executeMutation(mutationPayload);
-    }
-  };
-
-  const getSaveButtonUI = () => {
-    switch (saveStatus) {
-      case "saving":
-        return { text: "Saving...", disabled: true, className: "opacity-70" };
-      case "success":
-        return { text: "Saved!", disabled: true, className: "bg-green-500" };
-      case "error":
-        return {
-          text: "Error! Try Again",
-          disabled: false,
-          className: "bg-red-500",
-        };
-      default:
-        return { text: "Save", disabled: false, className: "" };
     }
   };
 
@@ -321,8 +295,6 @@ export default function SocialServiceEditModal({
   };
 
   if (!isOpen) return null;
-
-  const saveButtonUI = getSaveButtonUI();
 
   return (
     <div className="fixed y-40 inset-0 z-50 flex items-center justify-center  bg-[rgb(83,83,83,0.19)]">
@@ -384,7 +356,9 @@ export default function SocialServiceEditModal({
                   ? "Upload an audio recording of the description in Q'anjob'al"
                   : ""
               }
-              existingFile={existingTitleFileMetadata}
+              existingFile={
+                clearExistingTitleFile ? undefined : existingTitleFileMetadata
+              }
             />
           )}
         </FormField>
@@ -395,7 +369,7 @@ export default function SocialServiceEditModal({
           errorString={fields.topicIndex.error}
           value={fields.topicIndex.value}
           onChange={(val) => setFieldValue("topicIndex", val)}
-          defaultClassName="max-w-[450px] mt-[10px] text-[15px]"
+          defaultClassName="w-full mt-[10px] text-[15px]"
           required
         >
           {(props) => (
@@ -508,7 +482,11 @@ export default function SocialServiceEditModal({
                   ? "Upload an audio recording of the description in Q'anjob'al"
                   : ""
               }
-              existingFile={existingDescriptionFileMetadata}
+              existingFile={
+                clearExistingDescriptionFile
+                  ? undefined
+                  : existingDescriptionFileMetadata
+              }
             />
           )}
         </FormField>
@@ -521,11 +499,12 @@ export default function SocialServiceEditModal({
               defaultClassName="w-[141px] h-[60px] bg-gray-200 text-type-400 rounded-[10px] components-text"
               hoverClassName="hover:bg-gray-300"
             />
-            <Button
+            <SubmitButton
               onClick={handleSave}
-              text={saveButtonUI.text}
-              disabled={saveButtonUI.disabled}
-              defaultClassName={`w-[141px] h-[60px] rounded-[10px] components-text transition-all duration-300 ${saveButtonUI.className}`}
+              isLoading={isSaving}
+              loadingText="Saving..."
+              text="Save"
+              defaultClassName="w-[141px] h-[60px] rounded-[10px] components-text"
             />
           </div>
         )}

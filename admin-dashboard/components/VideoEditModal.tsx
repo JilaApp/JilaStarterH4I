@@ -87,8 +87,6 @@ export default function VideoEditModal({
       );
 
       setSaveStatus("idle");
-      setFieldValue("audioFile", undefined);
-      setClearExistingFile(false);
     }
   }, [isOpen, videoData?.id]);
 
