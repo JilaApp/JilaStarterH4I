@@ -2,7 +2,6 @@ import { Link } from "expo-router";
 import { View, Text } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import AudioButton from "@/components/AudioButton";
-import { Variable } from "lucide-react-native";
 
 export default function DevPage() {
   return (

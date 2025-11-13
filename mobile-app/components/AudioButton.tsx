@@ -28,7 +28,7 @@ export default function AudioButton({
   );
 
   async function playSound() {
-    await Audio.requestPermissionsAsync();
+    // await Audio.requestPermissionsAsync();
     await Audio.setAudioModeAsync({
       allowsRecordingIOS: false,
       staysActiveInBackground: false,
