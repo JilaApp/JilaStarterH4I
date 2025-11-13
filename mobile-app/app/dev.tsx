@@ -10,8 +10,9 @@ export default function DevPage() {
 
   const [numLikesDown, setNumLikesDown] = useState(0);
   const [isClickedDown, setIsClickedDown] = useState(false);
+
   return (
-    <View>
+    <View className="flex-1 bg-white">
       <ScrollView
         className="flex-1 bg-white"
         contentContainerStyle={{ paddingTop: 60, paddingBottom: 32 }}
@@ -19,23 +20,25 @@ export default function DevPage() {
       >
         <View className="flex-col gap-[10px]">
           <LikeDislike
-            numLikes={numLikesUp}
-            setNumLikes={setNumLikesUp}
-            isClicked={isClickedUp}
-            setIsClicked={setIsClickedUp}
-            type="like"
-          />
-
-          <LikeDislike
             numLikes={numLikesDown}
             setNumLikes={setNumLikesDown}
             isClicked={isClickedDown}
             setIsClicked={setIsClickedDown}
             type="dislike"
           />
+
+          <LikeDislike
+            numLikes={numLikesUp}
+            setNumLikes={setNumLikesUp}
+            isClicked={isClickedUp}
+            setIsClicked={setIsClickedUp}
+            type="like"
+          />
         </View>
 
-        <Link href="/auth/sign-up">sign in</Link>
+        <Link href="/auth/sign-up">
+          <Text>sign-in</Text>
+        </Link>
         <Text className="text-3xl font-bold">Nativewind Styles:</Text>
         <Text className="page-title-text">page-title-text</Text>
         <Text className="components-text">components-text</Text>
@@ -62,14 +65,15 @@ export default function DevPage() {
         <Text className="bg-gray-400">bg-gray-400</Text>
         <Text className="bg-gray-300">bg-gray-300</Text>
         <Text className="bg-gray-200">bg-gray-200</Text>
-
-        {/* coordinates for start and end positions
+        {/* 
+      coordinates for start and end positions
       top-left corner: { x: 0, y: 0}
       top-right corner: { x: 1, y: 0}
       bottom-left corner: { x: 1, y: 0}
-      bottom-right corner: { x: 1, y: 1} */}
+      bottom-right corner: { x: 1, y: 1} 
 
-        {/* gradient-green: green-400 & yellow-??? */}
+      gradient-green: green-400 & yellow-??? */}
+
         <LinearGradient
           colors={["#90BE6D", "#FFE078"]}
           start={{ x: 0, y: 0 }}
@@ -87,7 +91,7 @@ export default function DevPage() {
           <Text>gradient-red (right-diagonal)</Text>
         </LinearGradient>
 
-        {/* gradient-blue: teal-400 & green-300 */}
+        {/* /* gradient-blue: teal-400 & green-300 */}
         <LinearGradient
           colors={["#577590", "#CDE6B9"]}
           start={{ x: 0, y: 0 }}
@@ -96,7 +100,7 @@ export default function DevPage() {
           <Text>gradient-blue (vertical)</Text>
         </LinearGradient>
 
-        {/* gradient-yellow: yellow-400 & orange-400 */}
+        {/* /* gradient-yellow: yellow-400 & orange-400 */}
         <LinearGradient
           colors={["#EFBF6A", "#E8965B"]}
           start={{ x: 0, y: 0 }}
@@ -104,7 +108,7 @@ export default function DevPage() {
         >
           <Text>gradient-yellow (horizontal)</Text>
         </LinearGradient>
-        </ScrollView>
+      </ScrollView>
     </View>
   );
 }
