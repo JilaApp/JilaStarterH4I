@@ -1,8 +1,7 @@
 import { useState, useRef } from "react";
-import { View, TextInput } from "react-native";
+import { View, TextInput, Platform } from "react-native";
 import type { TextInput as RNTextInput } from "react-native";
 import { BaseInputProps } from "./types";
-import { Platform } from "react-native";
 
 export function BaseInput({
   type = "text",
