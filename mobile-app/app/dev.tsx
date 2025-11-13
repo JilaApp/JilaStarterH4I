@@ -21,6 +21,7 @@ export default function DevPage() {
       <View className="bg-jila-400">
         <Text className="text-white-400">bg-jila-400</Text>
       </View>
+      {/* <Text style={{fontSize : 30}} className="bg-jila-300">bg-jila-300</Text> */}
       <Text className="bg-jila-300">bg-jila-300</Text>
       <Text className="bg-orange-400">bg-orange-400</Text>
       <Text className="bg-orange-300">bg-orange-300</Text>
