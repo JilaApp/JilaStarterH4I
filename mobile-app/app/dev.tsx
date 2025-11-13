@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 import { Link } from "expo-router";
 import { View, ScrollView } from "react-native";
-import Text from "@/components/JilaText"
+import Text from "@/components/JilaText";
 import { LinearGradient } from "expo-linear-gradient";
 
 import Dropdown from "@/components/Dropdown";
