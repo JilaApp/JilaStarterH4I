@@ -60,7 +60,7 @@ export default function App() {
         </View>
 
         <Link href="/dev" asChild>
-          <TouchableOpacity className="bg-teal-400 rounded-lg p-4 mb-4">
+          <TouchableOpacity className="bg-gray-400 rounded-lg p-4 mb-4">
             <Text className="text-white-400 text-center font-bold text-base">
               Dev Page
             </Text>
