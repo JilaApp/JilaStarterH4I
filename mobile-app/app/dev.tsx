@@ -4,6 +4,7 @@ import { Link } from "expo-router";
 import { View, ScrollView } from "react-native";
 import Text from "@/components/JilaText";
 import { LinearGradient } from "expo-linear-gradient";
+import AudioButton from "@/components/AudioButton";
 
 import Dropdown from "@/components/Dropdown";
 
@@ -13,6 +14,11 @@ export default function DevPage() {
 
   return (
     <ScrollView>
+      <AudioButton
+        audioSource={require("../components/sample.mp3")}
+        variant={"default"}
+      />
+      <AudioButton audioSource={require("../components/sample.mp3")} disabled />
       <Link href="/auth/sign-up">sign in</Link>
       <Text className="text-3xl font-bold">Nativewind Styles:</Text>
       <Text className="page-title-text">page-title-text</Text>
