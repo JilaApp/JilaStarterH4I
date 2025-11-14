@@ -9,6 +9,7 @@ import {
   OtherButton,
   TransportButton,
 } from "@/components/GradientButton";
+import { LinearGradient } from "expo-linear-gradient";
 import { View, ScrollView } from "react-native";
 import Text from "@/components/JilaText";
 import AudioButton from "@/components/AudioButton";
