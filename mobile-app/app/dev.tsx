@@ -1,6 +1,6 @@
+import React, { useState } from "react";
+
 import { Link } from "expo-router";
-import { View, Text, ScrollView } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
 import {
   CareerButton,
   EducationButton,
@@ -9,19 +9,45 @@ import {
   OtherButton,
   TransportButton,
 } from "@/components/GradientButton";
+import { View, ScrollView } from "react-native";
+import Text from "@/components/JilaText";
+import AudioButton from "@/components/AudioButton";
+
+import Dropdown from "@/components/Dropdown";
 
 export default function DevPage() {
+  const [selected, setSelected] = useState<string | null>(null);
+  const options = ["PA", "TX", "NJ", "IL", "CA"];
+
   return (
     <ScrollView>
+      <AudioButton
+        audioSource={require("../components/sample.mp3")}
+        variant={"default"}
+      />
+      <AudioButton audioSource={require("../components/sample.mp3")} disabled />
       <Link href="/auth/sign-up">sign in</Link>
       <Text className="text-3xl font-bold">Nativewind Styles:</Text>
       <Text className="page-title-text">page-title-text</Text>
       <Text className="components-text">components-text</Text>
       <Text className="link-text">link-text</Text>
 
+      <View className="m-10">
+        <Text className="text-gray-700">
+          You chose: <Text className="font-semibold">{selected}</Text>
+        </Text>
+        <Dropdown
+          text={"--Select State--"}
+          options={options}
+          selected={selected}
+          onSelect={setSelected}
+        />
+      </View>
+
       <View className="bg-jila-400">
         <Text className="text-white-400">bg-jila-400</Text>
       </View>
+      {/* <Text style={{fontSize : 30}} className="bg-jila-300">bg-jila-300</Text> */}
       <Text className="bg-jila-300">bg-jila-300</Text>
       <Text className="bg-orange-400">bg-orange-400</Text>
       <Text className="bg-orange-300">bg-orange-300</Text>
