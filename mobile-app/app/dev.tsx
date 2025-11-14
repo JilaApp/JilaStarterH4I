@@ -12,7 +12,7 @@ export default function DevPage() {
   const [selected, setSelected] = useState<string | null>(null);
   const options = ["PA", "TX", "NJ", "IL", "CA"];
 
-  return (      
+  return (
     <ScrollView>
       <AudioButton
         audioSource={require("../components/sample.mp3")}
