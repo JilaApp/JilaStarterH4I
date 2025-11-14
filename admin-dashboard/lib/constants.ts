@@ -1,4 +1,4 @@
-import { VideoTopic, SocialServiceCategory } from "@prisma/client";
+import { VideoTopic, SocialServiceCategory } from "@/lib/types";
 import type { TopicVariant } from "@/lib/types";
 
 // Topic colors for UI display
@@ -15,9 +15,7 @@ export const TOPIC_COLORS: Record<TopicVariant, string> = {
 };
 
 // Video topic options for dropdowns
-export const VIDEO_TOPIC_OPTIONS = Object.keys(VideoTopic) as Array<
-  keyof typeof VideoTopic
->;
+export const VIDEO_TOPIC_OPTIONS = Object.keys(VideoTopic) as Array<string>;
 
 export const VIDEO_TOPIC_DISPLAY_OPTIONS = [
   "Transport",
@@ -27,6 +25,14 @@ export const VIDEO_TOPIC_DISPLAY_OPTIONS = [
   "Education",
   "Other",
 ] as const;
+
+export const SOCIAL_SERVICE_CATEGORY_ENUM_MAP: Record<string, string> = {
+  Emergency: "EMERGENCIA",
+  Shelters: "SHELTERS",
+  Food: "FOOD",
+  Transportation: "TRANSPORTATION",
+  Other: "OTHER",
+};
 
 // Social service category options for dropdowns
 export const SOCIAL_SERVICE_CATEGORY_OPTIONS = Object.keys(

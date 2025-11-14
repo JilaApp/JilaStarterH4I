@@ -52,6 +52,12 @@ model SocialServices {
   address      String?
   description  String?
   url          String?               @unique
+  titleAudioFilename String?
+  titleAudioFileSize Int?
+  titleAudioFile String? // base64 encoded
+  descriptionAudioFilename String?
+  descriptionAudioFileSize Int?
+  descriptionAudioFile String?
 }
 
 enum VideoTopic {

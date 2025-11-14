@@ -22,6 +22,7 @@ import Link from "@/components/Link";
 import DeleteModal from "@/components/DeleteModal";
 import { Videos } from "@prisma/client";
 import { TOPIC_MAP } from "@/lib/constants";
+import SocialServiceEditModal from "@/components/SocialServiceModal";
 
 type FullVideoType = Omit<Videos, "audioFile">;
 
@@ -50,7 +51,7 @@ export default function DashboardDev() {
   const [currentTabIndex, setCurrentTabIndex] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
   const [isEditingMode, setIsEditingMode] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState<FullVideoType | null>(
     null,
@@ -59,6 +60,16 @@ export default function DashboardDev() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [videoToDeleteId, setVideoToDeleteId] = useState<
     string | number | null
+  >(null);
+
+  const [isSocialServiceModalOpen, setIsSocialServiceModalOpen] =
+    useState(false);
+  const [isEditingSocialService, setIsEditingSocialService] = useState(false);
+  const [selectedSocialService, setSelectedSocialService] = useState<
+    any | null
+  >(null);
+  const [socialServiceToDeleteId, setSocialServiceToDeleteId] = useState<
+    number | null
   >(null);
 
   const {
@@ -87,6 +98,17 @@ export default function DashboardDev() {
       alert(`Error: ${error.message}`);
     },
   });
+
+  const deleteSocialServiceMutation =
+    trpc.socialServices.removeSocialService.useMutation({
+      onSuccess: () => {
+        refetchSocialServices();
+      },
+      onError: (error) => {
+        console.error("Failed to delete social service:", error);
+        alert(`Error: ${error.message}`);
+      },
+    });
 
   useEffect(() => {
     if (activeView === "dashboard") {
@@ -182,7 +204,7 @@ export default function DashboardDev() {
         uploadDate: new Date(video.uploadDate),
       });
       setIsEditingMode(false);
-      setIsModalOpen(true);
+      setIsVideoModalOpen(true);
     }
   };
 
@@ -194,7 +216,7 @@ export default function DashboardDev() {
         uploadDate: new Date(video.uploadDate),
       });
       setIsEditingMode(true);
-      setIsModalOpen(true);
+      setIsVideoModalOpen(true);
     }
   };
 
@@ -207,13 +229,18 @@ export default function DashboardDev() {
     if (videoToDeleteId !== null) {
       deleteVideoMutation.mutate({ id: videoToDeleteId });
     }
+    if (socialServiceToDeleteId !== null) {
+      deleteSocialServiceMutation.mutate({ id: socialServiceToDeleteId });
+    }
     setIsDeleteModalOpen(false);
     setVideoToDeleteId(null);
+    setSocialServiceToDeleteId(null);
   };
 
   const handleCloseDeleteModal = () => {
     setIsDeleteModalOpen(false);
     setVideoToDeleteId(null);
+    setSocialServiceToDeleteId(null);
   };
 
   const socialColumns: ColumnDefinition<SocialServiceData>[] = [
@@ -240,15 +267,27 @@ export default function DashboardDev() {
   ];
 
   const handleSocialRowClick = (id: number | string) => {
-    console.log("Social Service Row Clicked:", id);
+    const service = socialServicesData?.find((s) => s.id === id);
+    if (service) {
+      setSelectedSocialService(service);
+      setIsEditingSocialService(false);
+      setIsSocialServiceModalOpen(true);
+    }
   };
 
   const handleSocialEdit = (id: number | string) => {
-    console.log("Editing Social Service:", id);
+    const service = socialServicesData?.find((s) => s.id === id);
+    if (service) {
+      setSelectedSocialService(service);
+      setIsEditingSocialService(true);
+      setIsSocialServiceModalOpen(true);
+    }
   };
 
-  const handleSocialDelete = (id: number | string) => {
-    console.log("Deleting Social Service:", id);
+  const handleSocialDelete = (id: string | number) => {
+    const numericId = typeof id === "string" ? parseInt(id) : id;
+    setSocialServiceToDeleteId(numericId);
+    setIsDeleteModalOpen(true);
   };
 
   const dashboardTabs = [
@@ -385,8 +424,8 @@ export default function DashboardDev() {
         </div>
       </div>
       <VideoEditModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        isOpen={isVideoModalOpen}
+        onClose={() => setIsVideoModalOpen(false)}
         onUpdateComplete={refetchVideos}
         isEditing={isEditingMode}
         videoData={selectedVideo}
@@ -395,6 +434,13 @@ export default function DashboardDev() {
         isOpen={isDeleteModalOpen}
         onClose={handleCloseDeleteModal}
         onConfirm={handleConfirmDelete}
+      />
+      <SocialServiceEditModal
+        isOpen={isSocialServiceModalOpen}
+        onClose={() => setIsSocialServiceModalOpen(false)}
+        onUpdateComplete={refetchSocialServices}
+        isEditing={isEditingSocialService}
+        serviceData={selectedSocialService}
       />
     </AuthWrapper>
   );
