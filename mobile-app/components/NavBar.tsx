@@ -1,7 +1,6 @@
 import { useRouter, usePathname } from "expo-router";
-import { View } from "react-native";
+import { Pressable, View } from "react-native";
 import { House, Briefcase, BookOpen } from "lucide-react-native";
-import colors from "@/colors";
 
 export default function NavBar() {
   const router = useRouter();
@@ -26,16 +25,36 @@ export default function NavBar() {
   };
 
   return (
-    <View className="flex-row gap-[82px] w-[393px] h-[72px] items-center justify-center bg-jila-400">
-      <Briefcase color={colors.white[400]} size={35} onPress={handleJobPress} />
+    <View className="flex-row gap-[82px] w-full h-[10vh] items-center justify-center bg-jila-400">
+      <Pressable
+        hitSlop={{ top: 50, bottom: 50, left: 50, right: 50 }}
+        onPress={handleJobPress}
+      >
+        <Briefcase
+          color={"white"}
+          size={35}
+        />
+      </Pressable>
 
-      <House color={colors.white[400]} size={35} onPress={handleHomePress} />
+      <Pressable
+        hitSlop={{ top: 50, bottom: 50, left: 50, right: 50 }}
+        onPress={handleHomePress}
+      >
+        <House
+          color={"white"}
+          size={35}
+        />
+      </Pressable>
 
-      <BookOpen
-        color={colors.white[400]}
-        size={35}
+      <Pressable
+        hitSlop={{ top: 50, bottom: 50, left: 50, right: 50 }}
         onPress={handleSocialPress}
-      />
+      >
+        <BookOpen
+          color={"white"}
+          size={35}
+        />
+      </Pressable>
     </View>
   );
 }
