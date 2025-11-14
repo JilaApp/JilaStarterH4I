@@ -2,7 +2,7 @@ import { router, publicProcedure } from "../trpc";
 import prisma from "@/lib/prisma";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { SocialServiceCategory } from "@prisma/client";
+import { SocialServiceCategory } from "@/lib/types";
 
 const addSocialServiceInput = z.object({
   title: z.string(),
@@ -11,6 +11,12 @@ const addSocialServiceInput = z.object({
   address: z.string().optional(),
   description: z.string().optional(),
   url: z.string().optional(),
+  titleAudioFile: z.string().optional(),
+  titleAudioFilename: z.string().optional(),
+  titleAudioFileSize: z.number().optional(),
+  descriptionAudioFile: z.string().optional(),
+  descriptionAudioFilename: z.string().optional(),
+  descriptionAudioFileSize: z.number().optional(),
 });
 
 const removeSocialServiceInput = z.object({
@@ -25,6 +31,12 @@ const editSocialServiceInput = z.object({
   address: z.string().optional(),
   description: z.string().optional(),
   url: z.string().optional(),
+  titleAudioFile: z.string().optional(),
+  titleAudioFilename: z.string().optional(),
+  titleAudioFileSize: z.number().optional(),
+  descriptionAudioFile: z.string().optional(),
+  descriptionAudioFilename: z.string().optional(),
+  descriptionAudioFileSize: z.number().optional(),
 });
 
 type AddSocialServiceInput = z.infer<typeof addSocialServiceInput>;
