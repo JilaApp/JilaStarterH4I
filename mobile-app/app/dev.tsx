@@ -95,7 +95,6 @@ export default function DevPage() {
       >
         <Text>gradient-yellow (horizontal)</Text>
       </LinearGradient>
-
     </ScrollView>
   );
 }

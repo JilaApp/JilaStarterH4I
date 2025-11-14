@@ -2,8 +2,6 @@ import React, { useState } from "react";
 import { View, TouchableOpacity, Text, Pressable } from "react-native";
 import { ChevronDown, ChevronRight } from "lucide-react-native";
 
-
-
 interface DropdownProps {
   text: string;
   options: string[];
@@ -54,12 +52,12 @@ const Dropdown: React.FC<DropdownProps> = ({
             const isFirst = index === 0;
             const isLast = index === options.length - 1;
 
-            let roundingClasses = '';
+            let roundingClasses = "";
             if (isFirst) {
-              roundingClasses += 'rounded-t-xl';
+              roundingClasses += "rounded-t-xl";
             }
             if (isLast) {
-              roundingClasses += ' rounded-b-xl';
+              roundingClasses += " rounded-b-xl";
             }
 
             return (
