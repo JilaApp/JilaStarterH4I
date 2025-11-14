@@ -70,7 +70,7 @@ interface FlipCardProps {
   onLayout?: (event: LayoutChangeEvent) => void;
 }
 
-export function FlipCardWrapper(props: ResourceCardProps) {
+export function ResourceCard(props: ResourceCardProps) {
   const isFlipped = useSharedValue(false);
 
   return (
