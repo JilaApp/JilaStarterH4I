@@ -7,8 +7,16 @@ import LikeDislike from "@/components/LikeDislike";
 export default function DevPage() {
   const [numLikesUp, setNumLikesUp] = useState(0);
   const [isClickedUp, setIsClickedUp] = useState(false);
-
   const [isClickedDown, setIsClickedDown] = useState(false);
+
+  const handleLikeClick = (clicked: boolean) => {
+    setIsClickedUp(clicked);
+    if (clicked) {
+      setNumLikesUp(numLikesUp + 1);
+    } else {
+      setNumLikesUp(numLikesUp - 1);
+    }
+  };
 
   return (
     <View className="flex-1 bg-white">
@@ -26,9 +34,8 @@ export default function DevPage() {
 
           <LikeDislike
             numLikes={numLikesUp}
-            setNumLikes={setNumLikesUp}
             isClicked={isClickedUp}
-            setIsClicked={setIsClickedUp}
+            setIsClicked={handleLikeClick}
             type="like"
           />
         </View>

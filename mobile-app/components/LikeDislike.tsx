@@ -3,7 +3,6 @@ import { ThumbsUpIcon, ThumbsDownIcon } from "lucide-react-native";
 
 type LikeDislikeProps = {
   numLikes?: number;
-  setNumLikes?: (likes: number) => void;
   isClicked?: boolean;
   setIsClicked: (clicked: boolean) => void;
   type: "like" | "dislike";
@@ -11,26 +10,12 @@ type LikeDislikeProps = {
 
 export default function LikeDislike({
   numLikes,
-  setNumLikes,
   isClicked,
   setIsClicked,
   type,
 }: LikeDislikeProps) {
   const handlePress = () => {
-    const hasCounter =
-      typeof numLikes === "number" && typeof setNumLikes === "function";
-
-    if (isClicked) {
-      if (hasCounter) {
-        setNumLikes(numLikes - 1);
-      }
-      setIsClicked(false);
-    } else {
-      if (hasCounter) {
-        setNumLikes(numLikes + 1);
-      }
-      setIsClicked(true);
-    }
+    setIsClicked(!isClicked);
   };
 
   const Icon = type === "like" ? ThumbsUpIcon : ThumbsDownIcon;
@@ -44,9 +29,7 @@ export default function LikeDislike({
         />
       </TouchableOpacity>
 
-      {typeof numLikes === "number" && typeof setNumLikes === "function" ? (
-        <Text className="w-[8px] h-[15px]">{numLikes}</Text>
-      ) : null}
+      {type === "like" && numLikes !== undefined && <Text>{numLikes}</Text>}
     </View>
   );
 }
