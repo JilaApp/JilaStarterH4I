@@ -13,8 +13,6 @@ type SocialServicesCategoriesProps = {
   onSelect?: (index: number) => void;
 };
 
-const JILA_400 = "#7e0601"; // Use your jila-400 color hex
-
 export default function SocialServicesCategories({
   socialServices,
   currentIndex,
