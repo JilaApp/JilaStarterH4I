@@ -19,6 +19,18 @@ export default function DevPage() {
       <Text className="components-text">components-text</Text>
       <Text className="link-text">link-text</Text>
 
+      <View className="m-10">
+        <Text className="text-gray-700">
+          You chose: <Text className="font-semibold">{selected}</Text>
+        </Text>
+        <Dropdown
+          text={"--Select State--"}
+          options={options}
+          selected={selected}
+          onSelect={setSelected}
+        />
+      </View>
+
       <View className="bg-jila-400">
         <Text className="text-white-400">bg-jila-400</Text>
       </View>
@@ -84,17 +96,6 @@ export default function DevPage() {
         <Text>gradient-yellow (horizontal)</Text>
       </LinearGradient>
 
-      <View className="m-10">
-        <Text className="text-gray-700">
-          You chose: <Text className="font-semibold">{selected}</Text>
-        </Text>
-        <Dropdown
-          text={"--Select State--"}
-          options={options}
-          selected={selected}
-          onSelect={setSelected}
-        />
-      </View>
     </ScrollView>
   );
 }

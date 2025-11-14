@@ -1,6 +1,8 @@
 import React, { useState } from "react";
-import { View, TouchableOpacity, Text } from "react-native";
+import { View, TouchableOpacity, Text, Pressable } from "react-native";
 import { ChevronDown, ChevronRight } from "lucide-react-native";
+
+
 
 interface DropdownProps {
   text: string;
@@ -19,7 +21,6 @@ const Dropdown: React.FC<DropdownProps> = ({
 
   return (
     <View className="relative w-80 rounded-xl">
-      {/* --- Dropdown Button --- */}
       <TouchableOpacity
         onPress={() => setOpen((prev) => !prev)}
         activeOpacity={0.7}
@@ -42,7 +43,7 @@ const Dropdown: React.FC<DropdownProps> = ({
 
       {open && (
         <View
-          className="absolute left-0 mt-4 w-80 bg-white border border-gray-300 rounded-xl z-50 overflow-hidden"
+          className="absolute left-0 mt-4 w-80 bg-white z-50 overflow-hidden"
           style={{
             top: "100%",
             position: "absolute",
@@ -50,8 +51,19 @@ const Dropdown: React.FC<DropdownProps> = ({
         >
           {options.map((option, index) => {
             const isSelected = option === selected;
+            const isFirst = index === 0;
+            const isLast = index === options.length - 1;
+
+            let roundingClasses = '';
+            if (isFirst) {
+              roundingClasses += 'rounded-t-xl';
+            }
+            if (isLast) {
+              roundingClasses += ' rounded-b-xl';
+            }
+
             return (
-              <TouchableOpacity
+              <Pressable
                 key={option}
                 onPress={() => {
                   onSelect(option);
@@ -60,12 +72,14 @@ const Dropdown: React.FC<DropdownProps> = ({
               >
                 <View
                   className={`px-4 py-3 ${
-                    index !== 0 ? "border-t border-gray-300" : ""
-                  } ${isSelected ? "bg-gray-300 rounded-xl" : "bg-white"}`}
+                    !isFirst ? "border-t border-gray-400" : ""
+                  } ${
+                    isSelected ? "bg-gray-300" : "bg-white-400"
+                  } ${roundingClasses}`}
                 >
                   <Text>{option}</Text>
                 </View>
-              </TouchableOpacity>
+              </Pressable>
             );
           })}
         </View>
