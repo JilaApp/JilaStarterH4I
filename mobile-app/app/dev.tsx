@@ -5,15 +5,48 @@ import { View, ScrollView } from "react-native";
 import Text from "@/components/JilaText";
 import { LinearGradient } from "expo-linear-gradient";
 import AudioButton from "@/components/AudioButton";
+import { Ambulance, Apple, Bus, House } from "lucide-react-native";
 
 import Dropdown from "@/components/Dropdown";
+import SocialServicesCategories, {
+  SocialService,
+} from "@/components/SocialServicesCategories";
 
 export default function DevPage() {
   const [selected, setSelected] = useState<string | null>(null);
+  const [
+    currentSocialServicesCategoriesIndex,
+    setCurrentSocialServicesCategoriesIndex,
+  ] = useState<number>(0);
+
+  const socialServices: SocialService[] = [
+    {
+      icon: Ambulance,
+      name: "Emergency",
+    },
+    {
+      icon: House,
+      name: "Shelters",
+    },
+    {
+      icon: Apple,
+      name: "Food",
+    },
+    {
+      icon: Bus,
+      name: "Transport",
+    },
+  ];
+
   const options = ["PA", "TX", "NJ", "IL", "CA"];
 
   return (
     <ScrollView>
+      <SocialServicesCategories
+        socialServices={socialServices}
+        currentIndex={currentSocialServicesCategoriesIndex}
+        onSelect={setCurrentSocialServicesCategoriesIndex}
+      />
       <AudioButton
         audioSource={require("../components/sample.mp3")}
         variant={"default"}
