@@ -64,10 +64,9 @@ export default function DevPage() {
       top-left corner: { x: 0, y: 0}
       top-right corner: { x: 1, y: 0}
       bottom-left corner: { x: 1, y: 0}
-      bottom-right corner: { x: 1, y: 1} 
+      bottom-right corner: { x: 1, y: 1} */}
 
-      gradient-green: green-400 & yellow-??? */}
-
+      {/* gradient-green: green-400 & yellow-??? */}
       <LinearGradient
         colors={["#90BE6D", "#FFE078"]}
         start={{ x: 0, y: 0 }}
@@ -85,7 +84,7 @@ export default function DevPage() {
         <Text>gradient-red (right-diagonal)</Text>
       </LinearGradient>
 
-      {/* /* gradient-blue: teal-400 & green-300 */}
+      {/* gradient-blue: teal-400 & green-300 */}
       <LinearGradient
         colors={["#577590", "#CDE6B9"]}
         start={{ x: 0, y: 0 }}
