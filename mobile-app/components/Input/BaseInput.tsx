@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { View, TextInput, Platform } from "react-native";
+import { View, TextInput } from "react-native";
 import type { TextInput as RNTextInput } from "react-native";
 import { BaseInputProps } from "./types";
 
@@ -38,9 +38,9 @@ export function BaseInput({
   };
 
   const containerClass = [
-    "flex-row items-center border rounded-[10px] pr-[18px] w-full",
+    "flex-row items-center border-[1px] rounded-[10px] px-[15px] py-[10px] max-w-[275px]",
     "h-[60px]",
-    disabled ? "border-gray-300 bg-gray-200" : "border-gray-300 bg-white",
+    disabled ? "border-gray-300 bg-gray-200" : "border-gray-200 bg-white",
     !disabled && state === "error" ? "border-error-400 bg-white" : null,
     !disabled && isFocused && state !== "error"
       ? "border-jila-400 bg-white"
@@ -51,7 +51,7 @@ export function BaseInput({
     .join(" ");
 
   const inputClass = [
-    "flex-1 h-full pl-[18px] rounded-[10px] text-black",
+    "flex-1 h-full rounded-[10px] text-black font-[500]",
     disabled ? "text-gray-400" : null,
     !isFocused && value ? "text-gray-400" : null,
   ]
@@ -60,13 +60,14 @@ export function BaseInput({
 
   return (
     <View accessible accessibilityRole="text" className={containerClass}>
-      {icon && <View className="pl-[18px] pr-[12px]">{icon}</View>}
-
       {/* TODO: make selection cursor jila 400*/}
+      {icon && <View className="pr-[8px] text-gray-300">{icon}</View>}
+
       <TextInput
         underlineColorAndroid="transparent"
         ref={inputRef}
-        secureTextEntry={type == "password" ? true : undefined}
+        selectionColor="rgba(126, 6, 1)"
+        secureTextEntry={type === "password" ? true : undefined}
         value={value}
         placeholder={placeholder}
         onChangeText={handleChangeText}

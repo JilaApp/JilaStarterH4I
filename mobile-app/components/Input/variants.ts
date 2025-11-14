@@ -1,10 +1,10 @@
-import { Mail, LockKeyhole } from "lucide-react-native";
+import { UserRound, LockKeyhole } from "lucide-react-native";
 
 export const inputVariants = {
-  email: {
-    type: "email",
-    icon: Mail,
-    placeholder: "Enter your email",
+  username: {
+    type: "username",
+    icon: UserRound,
+    placeholder: "Enter your username",
   },
   password: {
     icon: LockKeyhole,

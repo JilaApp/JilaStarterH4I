@@ -2,11 +2,11 @@ import { BaseInput } from "./BaseInput";
 import { CommonInputProps } from "./types";
 import { inputVariants } from "./variants";
 
-export function EmailInput({
-  placeholder = inputVariants.email.placeholder,
+export function UsernameInput({
+  placeholder = inputVariants.username.placeholder,
   ...props
 }: CommonInputProps) {
-  const { type, icon: Icon } = inputVariants.email;
+  const { type, icon: Icon } = inputVariants.username;
   return (
     <BaseInput
       type={type}

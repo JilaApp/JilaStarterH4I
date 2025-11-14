@@ -1,3 +1,3 @@
 export * from "./TextInput";
-export * from "./EmailInput";
+export * from "./UsernameInput";
 export * from "./PasswordInput";

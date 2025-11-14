@@ -2,13 +2,13 @@ import { Link } from "expo-router";
 import { View, Text } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { BaseInput } from "@/components/Input/BaseInput";
-import { EmailInput, PasswordInput } from "@/components/Input";
+import { UsernameInput, PasswordInput } from "@/components/Input";
 
 export default function DevPage() {
   return (
     <View>
       <BaseInput />
-      <EmailInput />
+      <UsernameInput />
       <PasswordInput />
       <Link href="/auth/sign-up">sign in</Link>
       <Text className="text-3xl font-bold">Nativewind Styles:</Text>
