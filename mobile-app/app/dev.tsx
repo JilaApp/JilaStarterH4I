@@ -1,6 +1,8 @@
 import { Link } from "expo-router";
-import { View, Text } from "react-native";
+import { View } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
+import Text from "@/components/JilaText";
+import React from "react";
 
 export default function DevPage() {
   return (
