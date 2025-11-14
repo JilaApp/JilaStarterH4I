@@ -1,9 +1,17 @@
 import React, { useState } from "react";
 
 import { Link } from "expo-router";
+import {
+  CareerButton,
+  EducationButton,
+  LegalButton,
+  MedicalButton,
+  OtherButton,
+  TransportButton,
+} from "@/components/GradientButton";
+import { LinearGradient } from "expo-linear-gradient";
 import { View, ScrollView } from "react-native";
 import Text from "@/components/JilaText";
-import { LinearGradient } from "expo-linear-gradient";
 import AudioButton from "@/components/AudioButton";
 import LikeDislike from "@/components/LikeDislike";
 
@@ -126,6 +134,13 @@ export default function DevPage() {
       >
         <Text>gradient-yellow (horizontal)</Text>
       </LinearGradient>
+
+      <LegalButton />
+      <EducationButton />
+      <MedicalButton />
+      <TransportButton />
+      <CareerButton />
+      <OtherButton />
     </ScrollView>
   );
 }
