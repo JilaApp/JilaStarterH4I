@@ -1,13 +1,11 @@
 import "./global.css";
-import { Slot, usePathname } from "expo-router";
+import { Slot, usePathname, SplashScreen } from "expo-router";
 import NavBar from "@/components/NavBar";
-import { useMemo } from "react";
+import { useMemo, useEffect } from "react";
 import { View } from "react-native";
-import { Stack, SplashScreen } from "expo-router";
 import { ClerkProvider } from "@clerk/clerk-expo";
 import { tokenCache } from "@clerk/clerk-expo/token-cache";
 import { useFonts } from "expo-font";
-import { useEffect } from "react";
 
 const NAV_ROUTES = new Set(["/", "/job", "/social", "/dev"]);
 

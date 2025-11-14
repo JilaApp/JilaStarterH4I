@@ -100,22 +100,22 @@ export default function DevPage() {
 
       gradient-green: green-400 & yellow-??? */}
 
-        <LinearGradient
-          colors={["#90BE6D", "#FFE078"]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-        >
-          <Text>gradient-green (left-diagonal)</Text>
-        </LinearGradient>
+      <LinearGradient
+        colors={["#90BE6D", "#FFE078"]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+      >
+        <Text>gradient-green (left-diagonal)</Text>
+      </LinearGradient>
 
-        {/* gradient-red: jila-400 & orange-400 */}
-        <LinearGradient
-          colors={["#7E0601", "#E8965B"]}
-          start={{ x: 1, y: 0 }}
-          end={{ x: 0, y: 1 }}
-        >
-          <Text>gradient-red (right-diagonal)</Text>
-        </LinearGradient>
+      {/* gradient-red: jila-400 & orange-400 */}
+      <LinearGradient
+        colors={["#7E0601", "#E8965B"]}
+        start={{ x: 1, y: 0 }}
+        end={{ x: 0, y: 1 }}
+      >
+        <Text>gradient-red (right-diagonal)</Text>
+      </LinearGradient>
 
       {/* gradient-yellow: yellow-400 & orange-400 */}
       <LinearGradient

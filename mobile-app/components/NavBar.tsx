@@ -30,30 +30,21 @@ export default function NavBar() {
         hitSlop={{ top: 50, bottom: 50, left: 50, right: 50 }}
         onPress={handleJobPress}
       >
-        <Briefcase
-          color={"white"}
-          size={35}
-        />
+        <Briefcase color={"white"} size={35} />
       </Pressable>
 
       <Pressable
         hitSlop={{ top: 50, bottom: 50, left: 50, right: 50 }}
         onPress={handleHomePress}
       >
-        <House
-          color={"white"}
-          size={35}
-        />
+        <House color={"white"} size={35} />
       </Pressable>
 
       <Pressable
         hitSlop={{ top: 50, bottom: 50, left: 50, right: 50 }}
         onPress={handleSocialPress}
       >
-        <BookOpen
-          color={"white"}
-          size={35}
-        />
+        <BookOpen color={"white"} size={35} />
       </Pressable>
     </View>
   );
