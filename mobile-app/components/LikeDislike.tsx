@@ -41,7 +41,7 @@ export default function LikeDislike({
         <Icon
           className="w-[24px] h-[24px]"
           fill={isClicked ? "black" : "none"}
-        ></Icon>
+        />
       </TouchableOpacity>
 
       {typeof numLikes === "number" && typeof setNumLikes === "function" ? (
