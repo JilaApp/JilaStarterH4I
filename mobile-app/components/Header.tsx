@@ -2,7 +2,7 @@ import { View } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
 
-export default function GradientBox() {
+export default function Header() {
   return (
     <LinearGradient
       colors={["#E8965B", "#7E0601"]} // orange → red
@@ -16,9 +16,6 @@ export default function GradientBox() {
         borderBottomRightRadius: 30,
       }}
     >
-      <View>
-
-      </View>
     </LinearGradient>
   );
 }
