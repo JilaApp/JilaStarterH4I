@@ -5,6 +5,9 @@ import { View, ScrollView } from "react-native";
 import Text from "@/components/JilaText";
 import { LinearGradient } from "expo-linear-gradient";
 import AudioButton from "@/components/AudioButton";
+import ClearButton from "@/components/ClearAll";
+import SignUpButton from "@/components/SignUpButton";
+import ApplyButton from "@/components/ApplyButton";
 
 import Dropdown from "@/components/Dropdown";
 
@@ -12,8 +15,15 @@ export default function DevPage() {
   const [selected, setSelected] = useState<string | null>(null);
   const options = ["PA", "TX", "NJ", "IL", "CA"];
 
+  const myOnPress = () => {
+    console.log("cleared");
+  }
+
   return (
     <ScrollView>
+      <SignUpButton onPress={myOnPress} />
+      <ClearButton onPress={myOnPress} />
+      <ApplyButton onPress={myOnPress} />
       <AudioButton
         audioSource={require("../components/sample.mp3")}
         variant={"default"}
