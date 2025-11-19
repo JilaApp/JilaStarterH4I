@@ -1,13 +1,22 @@
 import React, { useState } from "react";
 
 import { Link } from "expo-router";
+import {
+  CareerButton,
+  EducationButton,
+  LegalButton,
+  MedicalButton,
+  OtherButton,
+  TransportButton,
+} from "@/components/GradientButton";
+import { LinearGradient } from "expo-linear-gradient";
 import { View, ScrollView } from "react-native";
 import Text from "@/components/JilaText";
-import { LinearGradient } from "expo-linear-gradient";
 import AudioButton from "@/components/AudioButton";
 import ClearButton from "@/components/ClearAll";
 import SignUpButton from "@/components/SignUpButton";
 import ApplyButton from "@/components/ApplyButton";
+import LikeDislike from "@/components/LikeDislike";
 
 import Dropdown from "@/components/Dropdown";
 
@@ -18,6 +27,17 @@ export default function DevPage() {
   const myOnPress = () => {
     console.log("cleared");
   }
+  const [numLikesUp, setNumLikesUp] = useState(0);
+  const [isClickedUp, setIsClickedUp] = useState(false);
+  const [isClickedDown, setIsClickedDown] = useState(false);
+  const handleLikeClick = (clicked: boolean) => {
+    setIsClickedUp(clicked);
+    if (clicked) {
+      setNumLikesUp(numLikesUp + 1);
+    } else {
+      setNumLikesUp(numLikesUp - 1);
+    }
+  };
 
   return (
     <ScrollView>
@@ -29,6 +49,18 @@ export default function DevPage() {
         variant={"default"}
       />
       <AudioButton audioSource={require("../components/sample.mp3")} disabled />
+
+      <LikeDislike
+        isClicked={isClickedDown}
+        setIsClicked={setIsClickedDown}
+        type="dislike"
+      />
+      <LikeDislike
+        numLikes={numLikesUp}
+        isClicked={isClickedUp}
+        setIsClicked={handleLikeClick}
+        type="like"
+      />
       <Link href="/auth/sign-up">sign in</Link>
       <Text className="text-3xl font-bold">Nativewind Styles:</Text>
       <Text className="page-title-text">page-title-text</Text>
@@ -111,6 +143,13 @@ export default function DevPage() {
       >
         <Text>gradient-yellow (horizontal)</Text>
       </LinearGradient>
+
+      <LegalButton />
+      <EducationButton />
+      <MedicalButton />
+      <TransportButton />
+      <CareerButton />
+      <OtherButton />
     </ScrollView>
   );
 }
