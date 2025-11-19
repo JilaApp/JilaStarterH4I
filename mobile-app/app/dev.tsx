@@ -26,7 +26,7 @@ export default function DevPage() {
 
   const myOnPress = () => {
     console.log("cleared");
-  }
+  };
   const [numLikesUp, setNumLikesUp] = useState(0);
   const [isClickedUp, setIsClickedUp] = useState(false);
   const [isClickedDown, setIsClickedDown] = useState(false);
