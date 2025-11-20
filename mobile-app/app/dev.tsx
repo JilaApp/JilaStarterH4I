@@ -12,6 +12,9 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { View, ScrollView } from "react-native";
 import Text from "@/components/JilaText";
+import { BaseInput } from "@/components/Input/BaseInput";
+import { UsernameInput, PasswordInput } from "@/components/Input";
+
 import AudioButton from "@/components/AudioButton";
 import { Ambulance, Apple, Bus, House } from "lucide-react-native";
 import LikeDislike from "@/components/LikeDislike";
@@ -20,6 +23,7 @@ import Dropdown from "@/components/Dropdown";
 import SocialServicesCategories, {
   SocialService,
 } from "@/components/SocialServicesCategories";
+import { ResourceCard } from "@/components/FlipCard";
 
 export default function DevPage() {
   const [selected, setSelected] = useState<string | null>(null);
@@ -68,6 +72,9 @@ export default function DevPage() {
         currentIndex={currentSocialServicesCategoriesIndex}
         onSelect={setCurrentSocialServicesCategoriesIndex}
       />
+      <BaseInput />
+      <UsernameInput />
+      <PasswordInput />
       <AudioButton
         audioSource={require("../components/sample.mp3")}
         variant={"default"}
@@ -168,6 +175,12 @@ export default function DevPage() {
         <Text>gradient-yellow (horizontal)</Text>
       </LinearGradient>
 
+      <ResourceCard
+        title="test"
+        address="my house"
+        phone="18943765928"
+        description="a flip cared gggg"
+      />
       <LegalButton />
       <EducationButton />
       <MedicalButton />
