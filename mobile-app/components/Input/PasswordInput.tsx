@@ -4,6 +4,7 @@ import { BaseInput } from "./BaseInput";
 import { CommonInputProps } from "./types";
 import { inputVariants } from "./variants";
 import { TextInputProps, Pressable } from "react-native";
+import { colors } from "@/colors";
 
 export function PasswordInput({
   placeholder = inputVariants.password.placeholder,
@@ -31,7 +32,11 @@ export function PasswordInput({
           className="text-gray-300 group-focus-within:text-type-400 hover:text-type-400 transition-colors disabled:cursor-not-allowed"
           aria-label={showPassword ? "Hide password" : "Show password"}
         >
-          {showPassword ? <Eye size={20} /> : <EyeOff size={20} />}
+          {showPassword ? (
+            <Eye size={20} />
+          ) : (
+            <EyeOff size={20} color={colors.gray[300]} />
+          )}
         </Pressable>
       }
       autoComplete={autoComplete}

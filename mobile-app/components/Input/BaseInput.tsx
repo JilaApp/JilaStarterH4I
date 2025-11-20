@@ -82,7 +82,9 @@ export function BaseInput({
       />
 
       {rightElement && (
-        <View className="flex-row items-center pl-2 pr-2">{rightElement}</View>
+        <View className="flex-row items-center pl-2 pr-2 text-gray-300">
+          {rightElement}
+        </View>
       )}
     </View>
   );
