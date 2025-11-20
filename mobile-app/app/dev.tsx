@@ -14,9 +14,9 @@ import { View, ScrollView } from "react-native";
 import Text from "@/components/JilaText";
 import AudioButton from "@/components/AudioButton";
 import LikeDislike from "@/components/LikeDislike";
-
 import Dropdown from "@/components/Dropdown";
 import { ResourceCard } from "@/components/FlipCard";
+import Toggle from "@/components/Toggle";
 
 export default function DevPage() {
   const [selected, setSelected] = useState<string | null>(null);
@@ -53,6 +53,32 @@ export default function DevPage() {
         setIsClicked={handleLikeClick}
         type="like"
       />
+      <View className="flex-col items-center py-[20px] gap-[25px]">
+        <Toggle
+          defaultToggled={false}
+          disabled={false}
+          title={"English"}
+          description={"This toggle uses English!"}
+          audioSource={require("../components/sample.mp3")}
+        />
+
+        <Toggle
+          defaultToggled={false}
+          disabled={false}
+          title={"Q'anjob'al"}
+          description={"This toggle uses Q'anjob'al!"}
+          audioSource={require("../components/sample.mp3")}
+        />
+
+        <Toggle
+          defaultToggled={false}
+          disabled={true}
+          title={"English"}
+          description={"This toggle uses English!"}
+          audioSource={require("../components/sample.mp3")}
+        />
+      </View>
+
       <Link href="/auth/sign-up">sign in</Link>
       <Text className="text-3xl font-bold">Nativewind Styles:</Text>
       <Text className="page-title-text">page-title-text</Text>
