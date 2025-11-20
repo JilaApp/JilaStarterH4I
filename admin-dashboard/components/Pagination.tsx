@@ -14,7 +14,7 @@ export default function Pagination({
 }: PaginationProps) {
   const [disabledLeft, setDisabledLeft] = useState(selectedOption == 1);
   const [disabledRight, setDisabledRight] = useState(
-    selectedOption == numOptions,
+    selectedOption == numOptions
   );
 
   const handleClick = (newSelection: number) => {
@@ -25,7 +25,11 @@ export default function Pagination({
 
   return (
     <div className="flex items-center body1-desktop-text text-md font-semibold">
-      <button disabled={disabledLeft} onClick={() => handleClick(1)}>
+      <button
+        disabled={disabledLeft}
+        onClick={() => handleClick(1)}
+        className="cursor-pointer"
+      >
         <ChevronFirst size={28} color={disabledLeft ? "#D7D7D7" : "black"} />
       </button>
       <div className="p-5 w-50 flex flex-row items-center justify-center">
@@ -34,13 +38,14 @@ export default function Pagination({
       <button
         disabled={disabledLeft}
         onClick={() => handleClick(selectedOption - 1)}
+        className="cursor-pointer"
       >
         <ChevronLeft size={28} color={disabledLeft ? "#D7D7D7" : "black"} />
       </button>
       <button
         disabled={disabledRight}
         onClick={() => handleClick(selectedOption + 1)}
-        className="pl-3"
+        className="pl-3 cursor-pointer"
       >
         <ChevronRight size={28} color={disabledRight ? "#D7D7D7" : "black"} />
       </button>
