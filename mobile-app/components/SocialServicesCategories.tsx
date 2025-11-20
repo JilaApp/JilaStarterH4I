@@ -1,5 +1,5 @@
 import { LucideIcon } from "lucide-react-native";
-import { View, TouchableOpacity, Text } from "react-native";
+import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 
 export type SocialService = {
@@ -19,52 +19,32 @@ export default function SocialServicesCategories({
   onSelect,
 }: SocialServicesCategoriesProps) {
   return (
-    <View className="flex flex-row w-full justify-center items-center bg-white-400 rounded-full py-[3px] px-[5px]">
+    <View style={styles.container}>
       {socialServices.map((service, idx) => (
         <TouchableOpacity
           key={service.name}
           onPress={() => onSelect?.(idx)}
           activeOpacity={0.8}
-          className={`flex-1 flex-col items-center justify-center`}
+          style={styles.button}
         >
           {idx === currentIndex ? (
             <LinearGradient
-              className="flex flex-col w-full justify-center items-center rounded-full py-[3px]"
+              style={styles.gradientContainer}
               colors={["#7E0601", "#AA4A2C"]}
               start={{ x: 0, y: 1 }}
-              end={{ x: 0, y: -1 }}
+              end={{ x: 0, y: 0 }}
             >
-              <View
-                className={`${idx === currentIndex ? "text-white-400" : "text-jila-400"}`}
-              >
-                <service.icon />
+              <View className="mb-[2px]">
+                <service.icon color="#fff" size={24} />
               </View>
-              <Text
-                style={{
-                  textAlign: "center",
-                  color: idx === currentIndex ? "#fff" : "#222",
-                  fontSize: 14,
-                }}
-              >
-                {service.name}
-              </Text>
+              <Text className="text-white-400 text-[14px]">{service.name}</Text>
             </LinearGradient>
           ) : (
             <>
-              <View
-                className={`${idx === currentIndex ? "text-white-400" : "text-jila-400"}`}
-              >
-                <service.icon />
+              <View className="mb-[2px]">
+                <service.icon color="#222" size={24} />
               </View>
-              <Text
-                style={{
-                  textAlign: "center",
-                  color: idx === currentIndex ? "#fff" : "#222",
-                  fontSize: 14,
-                }}
-              >
-                {service.name}
-              </Text>
+              <Text className="text-black text-[14px]">{service.name}</Text>
             </>
           )}
         </TouchableOpacity>
@@ -72,3 +52,30 @@ export default function SocialServicesCategories({
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: "row",
+    width: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#fff",
+    borderRadius: 9999,
+    paddingVertical: 3,
+    paddingHorizontal: 5,
+  },
+  button: {
+    flex: 1,
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  gradientContainer: {
+    flexDirection: "column",
+    width: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 9999,
+    paddingVertical: 3,
+  },
+});
