@@ -1,6 +1,7 @@
 import { LucideIcon } from "lucide-react-native";
 import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
+import { colors } from "@/colors";
 
 export type SocialService = {
   icon: LucideIcon;
@@ -42,7 +43,7 @@ export default function SocialServicesCategories({
           ) : (
             <>
               <View className="mb-[2px]">
-                <service.icon color="#222" size={24} />
+                <service.icon color={colors.jila[400]} size={24} />
               </View>
               <Text className="text-black text-[14px]">{service.name}</Text>
             </>

@@ -66,12 +66,7 @@ export default function DevPage() {
   };
 
   return (
-    <ScrollView>
-      <SocialServicesCategories
-        socialServices={socialServices}
-        currentIndex={currentSocialServicesCategoriesIndex}
-        onSelect={setCurrentSocialServicesCategoriesIndex}
-      />
+    <ScrollView className="bg-white-400">
       <BaseInput />
       <UsernameInput />
       <PasswordInput />
@@ -91,6 +86,11 @@ export default function DevPage() {
         isClicked={isClickedUp}
         setIsClicked={handleLikeClick}
         type="like"
+      />
+      <SocialServicesCategories
+        socialServices={socialServices}
+        currentIndex={currentSocialServicesCategoriesIndex}
+        onSelect={setCurrentSocialServicesCategoriesIndex}
       />
       <Link href="/auth/sign-up">sign in</Link>
       <Text className="text-3xl font-bold">Nativewind Styles:</Text>
