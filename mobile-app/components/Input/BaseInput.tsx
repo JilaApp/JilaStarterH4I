@@ -2,6 +2,7 @@ import { useState, useRef } from "react";
 import { View, TextInput } from "react-native";
 import type { TextInput as RNTextInput } from "react-native";
 import { BaseInputProps } from "./types";
+import { colors } from "@/colors";
 
 export function BaseInput({
   type = "text",
@@ -66,7 +67,7 @@ export function BaseInput({
       <TextInput
         underlineColorAndroid="transparent"
         ref={inputRef}
-        selectionColor="rgba(126, 6, 1)"
+        selectionColor={colors.jila[400]}
         secureTextEntry={type === "password" ? true : undefined}
         value={value}
         placeholder={placeholder}
