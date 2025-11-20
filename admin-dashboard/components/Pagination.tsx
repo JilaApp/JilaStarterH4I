@@ -28,7 +28,7 @@ export default function Pagination({
       <button
         disabled={disabledLeft}
         onClick={() => handleClick(1)}
-        className="cursor-pointer"
+        style={{ cursor: disabledLeft ? "default" : "pointer" }}
       >
         <ChevronFirst size={28} color={disabledLeft ? "#D7D7D7" : "black"} />
       </button>
@@ -38,14 +38,15 @@ export default function Pagination({
       <button
         disabled={disabledLeft}
         onClick={() => handleClick(selectedOption - 1)}
-        className="cursor-pointer"
+        style={{ cursor: disabledLeft ? "default" : "pointer" }}
       >
         <ChevronLeft size={28} color={disabledLeft ? "#D7D7D7" : "black"} />
       </button>
       <button
         disabled={disabledRight}
         onClick={() => handleClick(selectedOption + 1)}
-        className="pl-3 cursor-pointer"
+        className="pl-3"
+        style={{ cursor: disabledRight ? "default" : "pointer" }}
       >
         <ChevronRight size={28} color={disabledRight ? "#D7D7D7" : "black"} />
       </button>
