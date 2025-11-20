@@ -16,6 +16,7 @@ import AudioButton from "@/components/AudioButton";
 import LikeDislike from "@/components/LikeDislike";
 
 import Dropdown from "@/components/Dropdown";
+import { ResourceCard } from "@/components/FlipCard";
 
 export default function DevPage() {
   const [selected, setSelected] = useState<string | null>(null);
@@ -135,6 +136,12 @@ export default function DevPage() {
         <Text>gradient-yellow (horizontal)</Text>
       </LinearGradient>
 
+      <ResourceCard
+        title="test"
+        address="my house"
+        phone="18943765928"
+        description="a flip cared gggg"
+      />
       <LegalButton />
       <EducationButton />
       <MedicalButton />
