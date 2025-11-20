@@ -14,7 +14,7 @@ export default function Pagination({
 }: PaginationProps) {
   const [disabledLeft, setDisabledLeft] = useState(selectedOption == 1);
   const [disabledRight, setDisabledRight] = useState(
-    selectedOption == numOptions
+    selectedOption == numOptions,
   );
 
   const handleClick = (newSelection: number) => {
