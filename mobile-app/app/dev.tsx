@@ -16,6 +16,9 @@ import { BaseInput } from "@/components/Input/BaseInput";
 import { UsernameInput, PasswordInput } from "@/components/Input";
 
 import AudioButton from "@/components/AudioButton";
+import ClearButton from "@/components/ClearAll";
+import SignUpButton from "@/components/SignUpButton";
+import ApplyButton from "@/components/ApplyButton";
 import LikeDislike from "@/components/LikeDislike";
 
 import Dropdown from "@/components/Dropdown";
@@ -25,6 +28,9 @@ export default function DevPage() {
   const [selected, setSelected] = useState<string | null>(null);
   const options = ["PA", "TX", "NJ", "IL", "CA"];
 
+  const myOnPress = () => {
+    console.log("cleared");
+  };
   const [numLikesUp, setNumLikesUp] = useState(0);
   const [isClickedUp, setIsClickedUp] = useState(false);
   const [isClickedDown, setIsClickedDown] = useState(false);
@@ -39,6 +45,9 @@ export default function DevPage() {
 
   return (
     <ScrollView>
+      <SignUpButton onPress={myOnPress} />
+      <ClearButton onPress={myOnPress} />
+      <ApplyButton onPress={myOnPress} />
       <BaseInput />
       <UsernameInput />
       <PasswordInput />
