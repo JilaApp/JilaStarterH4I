@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 
 import { Link } from "expo-router";
-import { View, Text, ScrollView } from "react-native";
 import {
   CareerButton,
   EducationButton,
@@ -11,6 +10,8 @@ import {
   TransportButton,
 } from "@/components/GradientButton";
 import { LinearGradient } from "expo-linear-gradient";
+import { View, ScrollView } from "react-native";
+import Text from "@/components/JilaText";
 import AudioButton from "@/components/AudioButton";
 import LikeDislike from "@/components/LikeDislike";
 
@@ -96,10 +97,9 @@ export default function DevPage() {
       top-left corner: { x: 0, y: 0}
       top-right corner: { x: 1, y: 0}
       bottom-left corner: { x: 1, y: 0}
-      bottom-right corner: { x: 1, y: 1} 
+      bottom-right corner: { x: 1, y: 1} */}
 
-      gradient-green: green-400 & yellow-??? */}
-
+      {/* gradient-green: green-400 & yellow-??? */}
       <LinearGradient
         colors={["#90BE6D", "#FFE078"]}
         start={{ x: 0, y: 0 }}
@@ -115,6 +115,15 @@ export default function DevPage() {
         end={{ x: 0, y: 1 }}
       >
         <Text>gradient-red (right-diagonal)</Text>
+      </LinearGradient>
+
+      {/* gradient-blue: teal-400 & green-300 */}
+      <LinearGradient
+        colors={["#577590", "#CDE6B9"]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 0, y: 1 }}
+      >
+        <Text>gradient-blue (vertical)</Text>
       </LinearGradient>
 
       {/* gradient-yellow: yellow-400 & orange-400 */}
