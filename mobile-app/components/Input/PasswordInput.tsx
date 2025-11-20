@@ -24,7 +24,7 @@ export function PasswordInput({
     <BaseInput
       type={showPassword ? "text" : "password"}
       placeholder={placeholder}
-      icon={<Icon size={20} />}
+      icon={<Icon size={20} color={colors.gray[300]} />}
       rightElement={
         <Pressable
           onPress={togglePasswordVisibility}
@@ -33,7 +33,7 @@ export function PasswordInput({
           aria-label={showPassword ? "Hide password" : "Show password"}
         >
           {showPassword ? (
-            <Eye size={20} />
+            <Eye size={20} color={colors.gray[300]} />
           ) : (
             <EyeOff size={20} color={colors.gray[300]} />
           )}
