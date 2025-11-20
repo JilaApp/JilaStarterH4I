@@ -16,7 +16,7 @@ import AudioButton from "@/components/AudioButton";
 import LikeDislike from "@/components/LikeDislike";
 import Dropdown from "@/components/Dropdown";
 import { ResourceCard } from "@/components/FlipCard";
-import Toggle from "@/components/Toggle";
+import Select from "@/components/Select";
 
 export default function DevPage() {
   const [selected, setSelected] = useState<string | null>(null);
@@ -54,7 +54,7 @@ export default function DevPage() {
         type="like"
       />
       <View className="flex-col items-center py-[20px] gap-[25px]">
-        <Toggle
+        <Select
           defaultToggled={false}
           disabled={false}
           title={"English"}
@@ -62,7 +62,7 @@ export default function DevPage() {
           audioSource={require("../components/sample.mp3")}
         />
 
-        <Toggle
+        <Select
           defaultToggled={false}
           disabled={false}
           title={"Q'anjob'al"}
@@ -70,7 +70,7 @@ export default function DevPage() {
           audioSource={require("../components/sample.mp3")}
         />
 
-        <Toggle
+        <Select
           defaultToggled={false}
           disabled={true}
           title={"English"}

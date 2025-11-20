@@ -6,7 +6,7 @@ import { Check } from "lucide-react-native";
 
 type AudioSource = number | { uri: string };
 
-interface ToggleProps {
+interface SelectProps {
   defaultToggled: boolean;
   disabled: boolean;
   title: string;
@@ -14,13 +14,13 @@ interface ToggleProps {
   audioSource: AudioSource;
 }
 
-export default function Toggle({
+export default function Select({
   defaultToggled,
   disabled,
   title,
   description,
   audioSource,
-}: ToggleProps) {
+}: SelectProps) {
   const [isToggled, setIsToggled] = useState(defaultToggled);
 
   const handlePress = () => {
