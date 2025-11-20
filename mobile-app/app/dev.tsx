@@ -1,19 +1,86 @@
+import React, { useState } from "react";
+
 import { Link } from "expo-router";
-import { View, Text } from "react-native";
+import {
+  CareerButton,
+  EducationButton,
+  LegalButton,
+  MedicalButton,
+  OtherButton,
+  TransportButton,
+} from "@/components/GradientButton";
 import { LinearGradient } from "expo-linear-gradient";
+import { View, ScrollView } from "react-native";
+import Text from "@/components/JilaText";
+import { BaseInput } from "@/components/Input/BaseInput";
+import { UsernameInput, PasswordInput } from "@/components/Input";
+
+import AudioButton from "@/components/AudioButton";
+import LikeDislike from "@/components/LikeDislike";
+
+import Dropdown from "@/components/Dropdown";
+import { ResourceCard } from "@/components/FlipCard";
 
 export default function DevPage() {
+  const [selected, setSelected] = useState<string | null>(null);
+  const options = ["PA", "TX", "NJ", "IL", "CA"];
+
+  const [numLikesUp, setNumLikesUp] = useState(0);
+  const [isClickedUp, setIsClickedUp] = useState(false);
+  const [isClickedDown, setIsClickedDown] = useState(false);
+  const handleLikeClick = (clicked: boolean) => {
+    setIsClickedUp(clicked);
+    if (clicked) {
+      setNumLikesUp(numLikesUp + 1);
+    } else {
+      setNumLikesUp(numLikesUp - 1);
+    }
+  };
+
   return (
-    <View>
+    <ScrollView>
+      <BaseInput />
+      <UsernameInput />
+      <PasswordInput />
+      <AudioButton
+        audioSource={require("../components/sample.mp3")}
+        variant={"default"}
+      />
+      <AudioButton audioSource={require("../components/sample.mp3")} disabled />
+
+      <LikeDislike
+        isClicked={isClickedDown}
+        setIsClicked={setIsClickedDown}
+        type="dislike"
+      />
+      <LikeDislike
+        numLikes={numLikesUp}
+        isClicked={isClickedUp}
+        setIsClicked={handleLikeClick}
+        type="like"
+      />
       <Link href="/auth/sign-up">sign in</Link>
       <Text className="text-3xl font-bold">Nativewind Styles:</Text>
       <Text className="page-title-text">page-title-text</Text>
       <Text className="components-text">components-text</Text>
       <Text className="link-text">link-text</Text>
 
+      <View className="m-10">
+        <Text className="text-gray-700">
+          You chose: <Text className="font-semibold">{selected}</Text>
+        </Text>
+        <Dropdown
+          text={"--Select State--"}
+          options={options}
+          selected={selected}
+          onSelect={setSelected}
+        />
+      </View>
+
       <View className="bg-jila-400">
         <Text className="text-white-400">bg-jila-400</Text>
       </View>
+      {/* <Text style={{fontSize : 30}} className="bg-jila-300">bg-jila-300</Text> */}
       <Text className="bg-jila-300">bg-jila-300</Text>
       <Text className="bg-orange-400">bg-orange-400</Text>
       <Text className="bg-orange-300">bg-orange-300</Text>
@@ -74,6 +141,19 @@ export default function DevPage() {
       >
         <Text>gradient-yellow (horizontal)</Text>
       </LinearGradient>
-    </View>
+
+      <ResourceCard
+        title="test"
+        address="my house"
+        phone="18943765928"
+        description="a flip cared gggg"
+      />
+      <LegalButton />
+      <EducationButton />
+      <MedicalButton />
+      <TransportButton />
+      <CareerButton />
+      <OtherButton />
+    </ScrollView>
   );
 }
