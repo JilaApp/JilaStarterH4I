@@ -10,6 +10,9 @@ module.exports = {
   ],
   presets: [require("nativewind/preset")],
   theme: {
+    fontFamily: {
+      source: ["Fustat", "serif"],
+    },
     extend: {
       fontFamily: {
         source: ["Fustat", "serif"],

@@ -347,6 +347,8 @@ export default function DashboardDev() {
         return "Upload";
       case "jobs":
         return "Job board management";
+      case "job-requests":
+        return "Job requests";
       case "metrics":
         return "Metrics";
       default:
@@ -392,6 +394,12 @@ export default function DashboardDev() {
         return (
           <div className="flex-1 px-10 py-6">
             <p>jobs</p>
+          </div>
+        );
+      case "job-requests":
+        return (
+          <div className="flex-1 px-10 py-6">
+            <p>job requests</p>
           </div>
         );
       case "metrics":

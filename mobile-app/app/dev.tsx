@@ -1,18 +1,41 @@
 import React, { useState } from "react";
 
 import { Link } from "expo-router";
+import {
+  CareerButton,
+  EducationButton,
+  LegalButton,
+  MedicalButton,
+  OtherButton,
+  TransportButton,
+} from "@/components/GradientButton";
+import { LinearGradient } from "expo-linear-gradient";
 import { View, ScrollView } from "react-native";
 import Text from "@/components/JilaText";
-import { LinearGradient } from "expo-linear-gradient";
 import { BaseInput } from "@/components/Input/BaseInput";
 import { UsernameInput, PasswordInput } from "@/components/Input";
 
-import Dropdown from "@/components/Dropdown";
 import AudioButton from "@/components/AudioButton";
+import LikeDislike from "@/components/LikeDislike";
+
+import Dropdown from "@/components/Dropdown";
+import { ResourceCard } from "@/components/FlipCard";
 
 export default function DevPage() {
   const [selected, setSelected] = useState<string | null>(null);
   const options = ["PA", "TX", "NJ", "IL", "CA"];
+
+  const [numLikesUp, setNumLikesUp] = useState(0);
+  const [isClickedUp, setIsClickedUp] = useState(false);
+  const [isClickedDown, setIsClickedDown] = useState(false);
+  const handleLikeClick = (clicked: boolean) => {
+    setIsClickedUp(clicked);
+    if (clicked) {
+      setNumLikesUp(numLikesUp + 1);
+    } else {
+      setNumLikesUp(numLikesUp - 1);
+    }
+  };
 
   return (
     <ScrollView>
@@ -24,6 +47,18 @@ export default function DevPage() {
         variant={"default"}
       />
       <AudioButton audioSource={require("../components/sample.mp3")} disabled />
+
+      <LikeDislike
+        isClicked={isClickedDown}
+        setIsClicked={setIsClickedDown}
+        type="dislike"
+      />
+      <LikeDislike
+        numLikes={numLikesUp}
+        isClicked={isClickedUp}
+        setIsClicked={handleLikeClick}
+        type="like"
+      />
       <Link href="/auth/sign-up">sign in</Link>
       <Text className="text-3xl font-bold">Nativewind Styles:</Text>
       <Text className="page-title-text">page-title-text</Text>
@@ -106,6 +141,19 @@ export default function DevPage() {
       >
         <Text>gradient-yellow (horizontal)</Text>
       </LinearGradient>
+
+      <ResourceCard
+        title="test"
+        address="my house"
+        phone="18943765928"
+        description="a flip cared gggg"
+      />
+      <LegalButton />
+      <EducationButton />
+      <MedicalButton />
+      <TransportButton />
+      <CareerButton />
+      <OtherButton />
     </ScrollView>
   );
 }
