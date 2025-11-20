@@ -52,7 +52,7 @@ export function BaseInput({
     .join(" ");
 
   const inputClass = [
-    "flex-1 h-full rounded-[10px] text-black font-[500]",
+    "flex-1 text-black font-[500] pl-1",
     disabled ? "text-gray-400" : null,
     !isFocused && value ? "text-gray-400" : null,
   ]
@@ -61,7 +61,6 @@ export function BaseInput({
 
   return (
     <View accessible accessibilityRole="text" className={containerClass}>
-      {/* TODO: make selection cursor jila 400*/}
       {icon && <View className="pr-[8px] text-gray-300">{icon}</View>}
 
       <TextInput
@@ -79,6 +78,10 @@ export function BaseInput({
         autoComplete={autoComplete as any}
         testID={id}
         className={`${inputClass} focus:outline-none`}
+        scrollEnabled={false}
+        multiline={false}
+        autoCapitalize="none"
+        style={{ textAlignVertical: "center", paddingVertical: 0 }}
         {...inputProps}
       />
 
