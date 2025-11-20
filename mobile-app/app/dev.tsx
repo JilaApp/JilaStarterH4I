@@ -12,6 +12,9 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { View, ScrollView } from "react-native";
 import Text from "@/components/JilaText";
+import { BaseInput } from "@/components/Input/BaseInput";
+import { UsernameInput, PasswordInput } from "@/components/Input";
+
 import AudioButton from "@/components/AudioButton";
 import LikeDislike from "@/components/LikeDislike";
 
@@ -36,6 +39,9 @@ export default function DevPage() {
 
   return (
     <ScrollView>
+      <BaseInput />
+      <UsernameInput />
+      <PasswordInput />
       <AudioButton
         audioSource={require("../components/sample.mp3")}
         variant={"default"}
