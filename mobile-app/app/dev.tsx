@@ -36,8 +36,6 @@ export default function DevPage() {
   const [isClickedUp, setIsClickedUp] = useState(false);
   const [isClickedDown, setIsClickedDown] = useState(false);
 
-  const [isClickedCheck, setIsClickedCheck] = useState(false);
-
   const handleLikeClick = (clicked: boolean) => {
     setIsClickedUp(clicked);
     if (clicked) {
@@ -98,13 +96,9 @@ export default function DevPage() {
         />
       </View>
       <View className="flex-col items-center py-[10px] gap-[25px]">
-        <Checkbox
-          size={"small"}
-        />
+        <Checkbox size={"small"} />
 
-        <Checkbox
-          size={"large"}
-        />
+        <Checkbox size={"large"} />
       </View>
 
       <Link href="/auth/sign-up">sign in</Link>
