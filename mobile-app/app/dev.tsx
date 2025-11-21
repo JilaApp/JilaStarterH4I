@@ -17,6 +17,7 @@ import LikeDislike from "@/components/LikeDislike";
 import Dropdown from "@/components/Dropdown";
 import { ResourceCard } from "@/components/FlipCard";
 import Select from "@/components/Select";
+import Checkbox from "@/components/Checkbox";
 
 export default function DevPage() {
   const [selected, setSelected] = useState<string | null>(null);
@@ -25,6 +26,9 @@ export default function DevPage() {
   const [numLikesUp, setNumLikesUp] = useState(0);
   const [isClickedUp, setIsClickedUp] = useState(false);
   const [isClickedDown, setIsClickedDown] = useState(false);
+
+  const [isClickedCheck, setIsClickedCheck] = useState(false);
+
   const handleLikeClick = (clicked: boolean) => {
     setIsClickedUp(clicked);
     if (clicked) {
@@ -78,6 +82,12 @@ export default function DevPage() {
           audioSource={require("../components/sample.mp3")}
         />
       </View>
+
+      <Checkbox
+        size={"small"}
+        isClicked={isClickedCheck}
+        setIsClicked={setIsClickedCheck}
+      />
 
       <Link href="/auth/sign-up">sign in</Link>
       <Text className="text-3xl font-bold">Nativewind Styles:</Text>
