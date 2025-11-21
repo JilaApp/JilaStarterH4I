@@ -1,5 +1,5 @@
 import { MapPin, Phone } from "lucide-react-native";
-import React, { ReactNode, useState } from "react";
+import React, { ReactNode } from "react";
 import { Pressable, View, StyleSheet, LayoutChangeEvent } from "react-native";
 import Text from "./JilaText";
 import Animated, {
