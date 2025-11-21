@@ -97,12 +97,15 @@ export default function DevPage() {
           audioSource={require("../components/sample.mp3")}
         />
       </View>
+      <View className="flex-col items-center py-[10px] gap-[25px]">
+        <Checkbox
+          size={"small"}
+        />
 
-      <Checkbox
-        size={"small"}
-        isClicked={isClickedCheck}
-        setIsClicked={setIsClickedCheck}
-      />
+        <Checkbox
+          size={"large"}
+        />
+      </View>
 
       <Link href="/auth/sign-up">sign in</Link>
       <Text className="text-3xl font-bold">Nativewind Styles:</Text>

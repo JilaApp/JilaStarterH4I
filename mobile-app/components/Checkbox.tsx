@@ -1,27 +1,32 @@
-import { View, TouchableOpacity, Text } from "react-native";
-import { Check } from "lucide-react-native"
+import { View, TouchableOpacity } from "react-native";
+import { useState } from "react";
+import { Check } from "lucide-react-native";
 
 interface CheckboxProps {
     size: "small" | "large";
-    isClicked?: boolean;
-    setIsClicked: (clicked: boolean) => void;
+    defaultChecked?: boolean;
 }
 
 export default function Checkbox({
     size,
-    isClicked,
-    setIsClicked
+    defaultChecked = false
 }: CheckboxProps) {
+    const [isChecked, setIsChecked] = useState(defaultChecked);
 
     const handlePress = () => {
-        setIsClicked(!isClicked);
+        setIsChecked(!isChecked);
     };
 
-    return ([
+    const sizeClasses = size === "small" ? "w-[15px] h-[15px]" : "w-[20px] h-[20px]";
+
+    return (
         <TouchableOpacity onPress={handlePress}>
-            <View className="flex-col items-center w-[15px] h-[15px] justify-center rounded-[3.13px] border border-jila-400 ">
-                <Check size={10} color={"white"} />
+            <View className={`flex-col items-center justify-center border border-jila-400 rounded-[3.13px] 
+                ${sizeClasses} 
+                ${isChecked ? "bg-jila-400" : ""}`}
+            >
+                {isChecked && <Check size={10} color="white" />}
             </View>
         </TouchableOpacity>
-    ]);
+    );
 }
