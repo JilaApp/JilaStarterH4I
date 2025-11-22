@@ -8,7 +8,7 @@ import Header from "@/components/Header";
 export default function DevPage() {
   return (
     <>
-      <Header />
+      <Header text="Hello Anna! What would you like to learn today?" />
       <View>
         <Link href="/auth/sign-up">sign in</Link>
         <Text className="text-3xl font-bold">Nativewind Styles:</Text>
