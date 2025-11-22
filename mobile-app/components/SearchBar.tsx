@@ -1,6 +1,6 @@
 import React from "react";
-
-import { Search } from "lucide-react";
+import { View, TextInput } from "react-native";
+import { Search } from "lucide-react-native";
 
 interface SearchBarProps {
   value: string;
@@ -14,15 +14,34 @@ export default function SearchBar({
   placeholder = "Search",
 }: SearchBarProps) {
   return (
-    <div className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg w-96 bg-white">
-      <Search size={20} className="text-gray-400" />
-      <input
-        type="text"
-        placeholder={placeholder}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="outline-none flex-1 body2-desktop-text placeholder:text-gray-400 bg-transparent"
-      />
-    </div>
+    <View
+      style={{
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 8,
+        paddingHorizontal: 16,
+        paddingVertical: 10,
+        borderWidth: 1,
+        borderColor: "#ccc",
+        borderRadius: 8,
+        width: 300,
+        backgroundColor: "#fff",
+      }}
+    >
+      <Search size={20} color="#000" />
+
+      <View>
+        <TextInput
+          placeholder={placeholder}
+          // value={""}
+          onChangeText={onChange}
+          style={{
+            flex: 1,
+            fontSize: 15,
+          }}
+          placeholderTextColor="#999"
+        />
+      </View>
+    </View>
   );
 }

@@ -14,7 +14,6 @@
 //   );
 // }
 
-
 import React, { ReactNode } from "react";
 import { Text, TextProps } from "react-native";
 
@@ -26,10 +25,7 @@ export default function JilaText({
   children: ReactNode;
 } & TextProps) {
   return (
-    <Text
-      {...props}
-      style={[{ fontFamily: "Fustat" }, style]}
-    >
+    <Text {...props} style={[{ fontFamily: "Fustat" }, style]}>
       {children}
     </Text>
   );
