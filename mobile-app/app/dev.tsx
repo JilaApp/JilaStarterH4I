@@ -23,6 +23,7 @@ import LikeDislike from "@/components/LikeDislike";
 
 import Dropdown from "@/components/Dropdown";
 import { ResourceCard } from "@/components/FlipCard";
+import { Toggle } from "@/components/Toggle";
 
 export default function DevPage() {
   const [selected, setSelected] = useState<string | null>(null);
@@ -68,6 +69,7 @@ export default function DevPage() {
         setIsClicked={handleLikeClick}
         type="like"
       />
+      <Toggle />
       <Link href="/auth/sign-up">sign in</Link>
       <Text className="text-3xl font-bold">Nativewind Styles:</Text>
       <Text className="page-title-text">page-title-text</Text>
