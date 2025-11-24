@@ -17,10 +17,9 @@ import { UsernameInput, PasswordInput } from "@/components/Input";
 import { colors } from "@/colors";
 
 import AudioButton from "@/components/AudioButton";
-import ClearButton from "@/components/ClearAll";
-import SignUpButton from "@/components/SignUpButton";
-import ApplyButton from "@/components/ApplyButton";
+import { Button } from "@/components/Button";
 import LikeDislike from "@/components/LikeDislike";
+import { SquareArrowOutUpRight } from "lucide-react-native";
 import Dropdown from "@/components/Dropdown";
 import { ResourceCard } from "@/components/FlipCard";
 import Select from "@/components/Select";
@@ -76,9 +75,14 @@ export default function DevPage() {
         toggleSearch={true}
       />
       <ScrollView>
-        <SignUpButton onPress={myOnPress} />
-        <ClearButton onPress={myOnPress} />
-        <ApplyButton onPress={myOnPress} />
+        <Button text="Sign up" onPress={myOnPress} preset="outline-cream" />
+        <Button text="Clear all" onPress={myOnPress} preset="outline" />
+        <Button
+          text="Apply"
+          onPress={myOnPress}
+          preset="secondary"
+          icon={SquareArrowOutUpRight}
+        />
         <BaseInput />
         <UsernameInput />
         <PasswordInput />
