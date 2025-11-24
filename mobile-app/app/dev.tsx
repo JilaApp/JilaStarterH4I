@@ -168,7 +168,7 @@ export default function DevPage() {
 
         {/* gradient-green: green-400 & yellow-??? */}
         <LinearGradient
-          colors={["#90BE6D", "#FFE078"]}
+          colors={[colors.green[400], colors.yellow[400]]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
         >
@@ -177,7 +177,7 @@ export default function DevPage() {
 
         {/* gradient-red: jila-400 & orange-400 */}
         <LinearGradient
-          colors={["#7E0601", "#E8965B"]}
+          colors={[colors.jila[400], colors.orange[400]]}
           start={{ x: 1, y: 0 }}
           end={{ x: 0, y: 1 }}
         >
@@ -186,7 +186,7 @@ export default function DevPage() {
 
         {/* gradient-blue: teal-400 & green-300 */}
         <LinearGradient
-          colors={["#577590", "#CDE6B9"]}
+          colors={[colors.teal[400], colors.green[300]]}
           start={{ x: 0, y: 0 }}
           end={{ x: 0, y: 1 }}
         >
@@ -195,7 +195,7 @@ export default function DevPage() {
 
         {/* gradient-yellow: yellow-400 & orange-400 */}
         <LinearGradient
-          colors={["#EFBF6A", "#E8965B"]}
+          colors={[colors.yellow[400], colors.orange[400]]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
         >

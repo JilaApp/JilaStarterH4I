@@ -72,7 +72,7 @@ export function BaseInput({
         onFocus={handleFocus}
         onBlur={handleBlur}
         editable={!disabled}
-        placeholderTextColor="#9CA3AF"
+        placeholderTextColor={colors.gray[400]}
         autoComplete={autoComplete as any}
         testID={id}
         style={[styles.input, { color: getInputColor() }]}

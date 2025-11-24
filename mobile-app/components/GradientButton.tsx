@@ -17,10 +17,10 @@ export function EducationButton() {
   return (
     <GradientButton
       icon="GraduationCap"
-      bottomColor="#8F65AC"
-      topColor="#EED4FF"
+      bottomColor={colors.purple[500]}
+      topColor={colors.purple[400]}
       text="Education"
-      iconColor="#F3E0FF"
+      iconColor={colors.purple[300]}
     />
   );
 }
@@ -29,10 +29,10 @@ export function MedicalButton() {
   return (
     <GradientButton
       icon="HeartPulse"
-      bottomColor="#EFBF6A"
-      topColor="#E8965B"
+      bottomColor={colors.yellow[400]}
+      topColor={colors.orange[400]}
       text="Medical"
-      iconColor="#F9E9DD"
+      iconColor={colors.orange[300]}
     />
   );
 }
@@ -41,10 +41,10 @@ export function TransportButton() {
   return (
     <GradientButton
       icon="Bus"
-      bottomColor="#577590"
-      topColor="#CDE6B9"
+      bottomColor={colors.teal[400]}
+      topColor={colors.green[300]}
       text="Transport"
-      iconColor="#BDD0E2"
+      iconColor={colors.teal[300]}
     />
   );
 }
@@ -53,10 +53,10 @@ export function OtherButton() {
   return (
     <GradientButton
       icon="CircleEllipsis"
-      bottomColor="#A1A1A1"
-      topColor="#A1A1A1"
+      bottomColor={colors.gray[300]}
+      topColor={colors.gray[300]}
       text="Other"
-      iconColor="#E8E8E8"
+      iconColor={colors.gray[200]}
     />
   );
 }
@@ -65,10 +65,10 @@ export function LegalButton() {
   return (
     <GradientButton
       icon="Scale"
-      bottomColor="#7E0601"
-      topColor="#E8965B"
+      bottomColor={colors.jila[400]}
+      topColor={colors.orange[400]}
       text="Legal"
-      iconColor="#D4928F"
+      iconColor={colors.jila[300]}
     />
   );
 }
@@ -77,10 +77,10 @@ export function CareerButton() {
   return (
     <GradientButton
       icon="BriefcaseBusiness"
-      bottomColor="#90BE6D"
-      topColor="#FFE078"
+      bottomColor={colors.green[400]}
+      topColor={colors.yellow[400]}
       text="Career"
-      iconColor="#CDE6B9"
+      iconColor={colors.green[300]}
     />
   );
 }
