@@ -12,6 +12,7 @@ export default function Sidebar({ activeButton, setActiveButton }: InputProps) {
     { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
     { id: "upload", label: "Upload", icon: LayoutDashboard },
     { id: "jobs", label: "Job postings", icon: LayoutDashboard },
+    { id: "job-requests", label: "Job requests", icon: LayoutDashboard },
     { id: "metrics", label: "Metrics", icon: LayoutDashboard },
   ];
 

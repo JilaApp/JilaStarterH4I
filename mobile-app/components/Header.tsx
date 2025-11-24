@@ -3,6 +3,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import Text from "@/components/JilaText";
 import SearchBar from "./SearchBar";
 import React from "react";
+import { Volume2, CircleHelp, Menu } from "lucide-react-native";
 
 interface HeaderProps {
   text?: string;
@@ -47,39 +48,32 @@ export default function Header({ text, toggleSearch }: HeaderProps) {
           }}
         >
           <View style={{ paddingRight: 10 }}>
-            <Image
-              source={require("../assets/images/volume.png")}
-              style={{ width: 25, height: 25 }}
-            />
+            <Volume2 size={25} color="#fff" />
           </View>
 
           <View style={{ paddingRight: 10 }}>
-            <Image
-              source={require("../assets/images/question.png")}
-              style={{ width: 25, height: 25 }}
-            />
+            <CircleHelp size={25} color="#fff" />
           </View>
 
-          <Image
-            source={require("../assets/images/menu.png")}
-            style={{ width: 25, height: 25 }}
-          />
+          <Menu size={25} color="#fff" />
         </View>
       </View>
 
-      <Text
-        style={{
-          color: "#fff",
-          fontSize: "18",
-          fontWeight: "700",
-          textAlign: "left",
-          alignSelf: "flex-start",
-          paddingLeft: "25",
-          paddingTop: "20",
-        }}
-      >
-        {text ?? ""}
-      </Text>
+      {text && (
+        <Text
+          style={{
+            color: "#fff",
+            fontSize: 18,
+            fontWeight: "700",
+            textAlign: "left",
+            alignSelf: "flex-start",
+            paddingLeft: 25,
+            paddingTop: 20,
+          }}
+        >
+          {text}
+        </Text>
+      )}
 
       {toggleSearch && (
         <View style={{ paddingTop: 20 }}>
