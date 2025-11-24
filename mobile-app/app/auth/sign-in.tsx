@@ -5,10 +5,12 @@ import {
   TouchableOpacity,
   View,
   ScrollView,
+  StyleSheet,
 } from "react-native";
 import { useSignIn } from "@clerk/clerk-expo";
 import { useRouter } from "expo-router";
 import { Eye, EyeOff } from "lucide-react-native";
+import { colors } from "@/colors";
 
 export default function SignInScreen() {
   const { isLoaded, signIn, setActive } = useSignIn();
@@ -45,70 +47,66 @@ export default function SignInScreen() {
   };
 
   return (
-    <ScrollView className="flex-1 bg-cream-300">
-      <View className="flex-1 justify-center p-6 min-h-screen">
-        <View className="bg-white rounded-2xl p-6 shadow-lg">
-          <Text className="page-title-text text-jila-400 mb-6">Sign In</Text>
+    <ScrollView style={styles.scrollView}>
+      <View style={styles.container}>
+        <View style={styles.card}>
+          <Text style={[styles.pageTitle, styles.titleColor]}>Sign In</Text>
 
-          <View className="space-y-4">
+          <View style={styles.formContainer}>
             <View>
-              <Text className="components-text text-type-400 mb-2">
-                Username
-              </Text>
+              <Text style={[styles.label, styles.labelColor]}>Username</Text>
               <TextInput
-                className="border border-gray-300 rounded-lg p-3 text-base"
+                style={styles.input}
                 autoCapitalize="none"
                 value={username}
                 placeholder="Enter username"
                 onChangeText={setUsername}
+                selectionColor={colors.jila[400]}
               />
             </View>
 
             <View>
-              <Text className="components-text text-type-400 mb-2">
-                Password
-              </Text>
-              <View className="flex-row items-center border border-gray-300 rounded-lg">
+              <Text style={[styles.label, styles.labelColor]}>Password</Text>
+              <View style={styles.passwordContainer}>
                 <TextInput
-                  className="flex-1 p-3 text-base"
+                  style={styles.passwordInput}
                   value={password}
                   placeholder="Enter password"
                   secureTextEntry={!showPassword}
                   onChangeText={setPassword}
+                  selectionColor={colors.jila[400]}
                 />
                 <TouchableOpacity
                   onPress={() => setShowPassword(!showPassword)}
-                  className="pr-3"
+                  style={styles.eyeButton}
                 >
                   {showPassword ? (
-                    <EyeOff size={24} color="#9C9C9C" />
+                    <EyeOff size={24} color={colors.gray[400]} />
                   ) : (
-                    <Eye size={24} color="#9C9C9C" />
+                    <Eye size={24} color={colors.gray[400]} />
                   )}
                 </TouchableOpacity>
               </View>
             </View>
 
-            {error ? (
-              <Text className="text-error-400 text-sm">{error}</Text>
-            ) : null}
+            {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
             <TouchableOpacity
               onPress={onSignInPress}
               disabled={loading}
-              className={`bg-jila-400 rounded-lg p-4 mt-4 ${loading ? "opacity-50" : ""}`}
+              style={[styles.signInButton, loading && styles.buttonDisabled]}
             >
-              <Text className="text-white-400 text-center font-bold text-base">
+              <Text style={styles.buttonText}>
                 {loading ? "Signing in..." : "Sign In"}
               </Text>
             </TouchableOpacity>
 
-            <View className="flex-row justify-center mt-4">
-              <Text className="text-gray-400">
+            <View style={styles.signUpContainer}>
+              <Text style={styles.signUpText}>
                 Don&apos;t have an account?{" "}
               </Text>
               <TouchableOpacity onPress={() => router.push("/auth/sign-up")}>
-                <Text className="text-jila-400 font-bold">Sign Up</Text>
+                <Text style={styles.signUpLink}>Sign Up</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -117,3 +115,98 @@ export default function SignInScreen() {
     </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  scrollView: {
+    flex: 1,
+    backgroundColor: colors.cream[300],
+  },
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    padding: 24,
+    minHeight: "100%",
+  },
+  card: {
+    backgroundColor: colors.white[400],
+    borderRadius: 16,
+    padding: 24,
+    shadowColor: colors.black,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 5,
+  },
+  pageTitle: {
+    fontSize: 32,
+    fontWeight: "700",
+    marginBottom: 24,
+  },
+  titleColor: {
+    color: colors.jila[400],
+  },
+  formContainer: {
+    gap: 16,
+  },
+  label: {
+    fontSize: 18,
+    fontWeight: "600",
+    marginBottom: 8,
+  },
+  labelColor: {
+    color: colors.type[400],
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: colors.gray[300],
+    borderRadius: 8,
+    padding: 12,
+    fontSize: 16,
+  },
+  passwordContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: colors.gray[300],
+    borderRadius: 8,
+  },
+  passwordInput: {
+    flex: 1,
+    padding: 12,
+    fontSize: 16,
+  },
+  eyeButton: {
+    paddingRight: 12,
+  },
+  errorText: {
+    color: colors.error[400],
+    fontSize: 14,
+  },
+  signInButton: {
+    backgroundColor: colors.jila[400],
+    borderRadius: 8,
+    padding: 16,
+    marginTop: 16,
+  },
+  buttonDisabled: {
+    opacity: 0.5,
+  },
+  buttonText: {
+    color: colors.white[400],
+    textAlign: "center",
+    fontWeight: "700",
+    fontSize: 16,
+  },
+  signUpContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginTop: 16,
+  },
+  signUpText: {
+    color: colors.gray[400],
+  },
+  signUpLink: {
+    color: colors.jila[400],
+    fontWeight: "700",
+  },
+});
