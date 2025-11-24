@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 
-import { Link } from "expo-router";
 import {
   CareerButton,
   EducationButton,
@@ -27,6 +26,7 @@ import JobDropdown from "@/components/JobDropdown";
 import Select from "@/components/Select";
 import Checkbox from "@/components/Checkbox";
 import Header from "@/components/Header";
+import Link from "@/components/Link";
 
 export default function DevPage() {
   const [selectedDropdown, setSelectedDropdown] = useState<string | null>(null);
@@ -225,7 +225,13 @@ export default function DevPage() {
           />
         </View>
 
-        <Link href="/auth/sign-up">sign in</Link>
+        <Link path="/auth/sign-up">sign in</Link>
+
+        <View style={styles.linkContainer}>
+          <Text style={styles.sectionTitle}>Custom Link Component</Text>
+          <Link path="/dev">Go to Dev Page</Link>
+        </View>
+
         <Text style={styles.colorDemoTitle}>Color Demo:</Text>
 
         <View style={styles.dropdownContainer}>
@@ -367,6 +373,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 10,
     gap: 25,
+  },
+  linkContainer: {
+    paddingVertical: 20,
+    paddingHorizontal: 10,
+    gap: 15,
+    backgroundColor: colors.cream[300],
   },
   colorDemoTitle: {
     fontSize: 30,
