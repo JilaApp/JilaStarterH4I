@@ -1,6 +1,7 @@
-import { Text, Pressable, StyleSheet } from "react-native";
+import { Pressable, StyleSheet } from "react-native";
 import { colors } from "@/colors";
 import { LucideIcon } from "lucide-react-native";
+import Text from "./JilaText";
 
 type ButtonPreset = "primary" | "secondary" | "outline" | "outline-cream";
 
