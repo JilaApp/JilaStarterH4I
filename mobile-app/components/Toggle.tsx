@@ -32,7 +32,7 @@ const Switch = ({
     const color = interpolateColor(
       value.value,
       [0, 1],
-      [trackColors.off, trackColors.on]
+      [trackColors.off, trackColors.on],
     );
     const colorValue = withTiming(color, { duration });
 
@@ -46,7 +46,7 @@ const Switch = ({
     const moveValue = interpolate(
       Number(value.value),
       [0, 1],
-      [0, width.value - height.value]
+      [0, width.value - height.value],
     );
     const translateValue = withTiming(moveValue, { duration });
 
