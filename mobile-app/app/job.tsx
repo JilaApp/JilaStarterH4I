@@ -22,8 +22,8 @@ export default function JobDashboard() {
 
           {/* Example usage of Stepper and Button components */}
           <View style={styles.exampleContainer}>
-            <Button text="Continue" onPress={handleContinue} />
             <Stepper totalSteps={4} currentStep={currentStep} />
+            <Button text="Continue" onPress={handleContinue} />
           </View>
         </View>
       </DisplayBox>
