@@ -26,8 +26,28 @@ import Select from "@/components/Select";
 import Checkbox from "@/components/Checkbox";
 
 export default function DevPage() {
-  const [selected, setSelected] = useState<string | null>(null);
-  const options = ["PA", "TX", "NJ", "IL", "CA"];
+  const [selectedDropdown, setSelectedDropdown] = useState<string | null>(null);
+  const dropdownOptions = ["PA", "TX", "NJ", "IL", "CA"];
+
+  const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null);
+  const languageOptions = [
+    {
+      id: "english",
+      title: "English",
+      audioSource: require("../components/sample.mp3"),
+    },
+    {
+      id: "qanjobal",
+      title: "Q'anjob'al",
+      audioSource: require("../components/sample.mp3"),
+    },
+    {
+      id: "disabled",
+      title: "English",
+      audioSource: require("../components/sample.mp3"),
+      disabled: true,
+    },
+  ];
 
   const myOnPress = () => {
     console.log("cleared");
@@ -70,29 +90,11 @@ export default function DevPage() {
         setIsClicked={handleLikeClick}
         type="like"
       />
-      <View className="flex-col items-center py-[20px] gap-[25px]">
+      <View className="py-[20px]">
         <Select
-          defaultToggled={false}
-          disabled={false}
-          title={"English"}
-          description={"This toggle uses English!"}
-          audioSource={require("../components/sample.mp3")}
-        />
-
-        <Select
-          defaultToggled={false}
-          disabled={false}
-          title={"Q'anjob'al"}
-          description={"This toggle uses Q'anjob'al!"}
-          audioSource={require("../components/sample.mp3")}
-        />
-
-        <Select
-          defaultToggled={false}
-          disabled={true}
-          title={"English"}
-          description={"This toggle uses English!"}
-          audioSource={require("../components/sample.mp3")}
+          options={languageOptions}
+          selected={selectedLanguage}
+          onSelect={setSelectedLanguage}
         />
       </View>
       <View className="flex-col items-center py-[10px] gap-[25px]">
@@ -109,13 +111,13 @@ export default function DevPage() {
 
       <View className="m-10">
         <Text className="text-gray-700">
-          You chose: <Text className="font-semibold">{selected}</Text>
+          You chose: <Text className="font-semibold">{selectedDropdown}</Text>
         </Text>
         <Dropdown
           text={"--Select State--"}
-          options={options}
-          selected={selected}
-          onSelect={setSelected}
+          options={dropdownOptions}
+          selected={selectedDropdown}
+          onSelect={setSelectedDropdown}
         />
       </View>
 
