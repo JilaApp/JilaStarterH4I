@@ -17,13 +17,13 @@ import { UsernameInput, PasswordInput } from "@/components/Input";
 import { colors } from "@/colors";
 
 import AudioButton from "@/components/AudioButton";
-import ClearButton from "@/components/ClearAll";
-import SignUpButton from "@/components/SignUpButton";
-import ApplyButton from "@/components/ApplyButton";
+import { Button } from "@/components/Button";
 import LikeDislike from "@/components/LikeDislike";
+import { SquareArrowOutUpRight } from "lucide-react-native";
 import Dropdown from "@/components/Dropdown";
 import { ResourceCard } from "@/components/FlipCard";
 import VideoDropdown from "@/components/VideoDropdown";
+import JobDropdown from "@/components/JobDropdown";
 import Select from "@/components/Select";
 import Checkbox from "@/components/Checkbox";
 import Header from "@/components/Header";
@@ -70,7 +70,7 @@ export default function DevPage() {
     }
   };
 
-  const videoDropdownSampleData = {
+  const videoDropdownMultipleVideos = {
     text: "Riding the Bus",
     ttsUrl: "https://example.com/tts.mp3",
     parts: [
@@ -117,6 +117,18 @@ export default function DevPage() {
     ],
   };
 
+  const videoDropdownSingleVideo = {
+    text: "Quick Introduction",
+    ttsUrl: "https://example.com/tts-single.mp3",
+    parts: [
+      {
+        videoUrl: "https://example.com/single-video.mp4",
+        name: "Introduction",
+        duration: 45,
+      },
+    ],
+  };
+
   return (
     <>
       <Header
@@ -124,22 +136,49 @@ export default function DevPage() {
         toggleSearch={true}
       />
       <ScrollView>
-        <View style={{ backgroundColor: "#f2f2f2", gap: 10 }}>
+        <View style={{ backgroundColor: "#f2f2f2", gap: 10, padding: 10 }}>
+          <Text style={styles.sectionTitle}>
+            VideoDropdown - Multiple Videos (Cream)
+          </Text>
           <VideoDropdown
-            text={videoDropdownSampleData.text}
-            ttsUrl={videoDropdownSampleData.ttsUrl}
-            parts={videoDropdownSampleData.parts}
-          />
-          <VideoDropdown
-            text={videoDropdownSampleData.text}
-            ttsUrl={videoDropdownSampleData.ttsUrl}
-            parts={videoDropdownSampleData.parts}
+            text={videoDropdownMultipleVideos.text}
+            ttsUrl={videoDropdownMultipleVideos.ttsUrl}
+            parts={videoDropdownMultipleVideos.parts}
             type="cream"
           />
+
+          <Text style={styles.sectionTitle}>
+            VideoDropdown - Single Video (Cream)
+          </Text>
+          <VideoDropdown
+            text={videoDropdownSingleVideo.text}
+            ttsUrl={videoDropdownSingleVideo.ttsUrl}
+            parts={videoDropdownSingleVideo.parts}
+            type="cream"
+          />
+
+          <Text style={styles.sectionTitle}>
+            JobDropdown - White Background
+          </Text>
+          <JobDropdown
+            text="Job Application Steps"
+            ttsUrl="https://example.com/job-tts.mp3"
+          >
+            <View style={{ padding: 20, backgroundColor: colors.white[400] }}>
+              <Text>Step 1: sleep</Text>
+              <Text>Step 2: eepy</Text>
+              <Text>Step 3: buh</Text>
+            </View>
+          </JobDropdown>
         </View>
-        <SignUpButton onPress={myOnPress} />
-        <ClearButton onPress={myOnPress} />
-        <ApplyButton onPress={myOnPress} />
+        <Button text="Sign up" onPress={myOnPress} preset="outline-cream" />
+        <Button text="Clear all" onPress={myOnPress} preset="outline" />
+        <Button
+          text="Apply"
+          onPress={myOnPress}
+          preset="secondary"
+          icon={SquareArrowOutUpRight}
+        />
         <BaseInput />
         <UsernameInput />
         <PasswordInput />
@@ -199,27 +238,57 @@ export default function DevPage() {
           />
         </View>
 
-        <View style={styles.bgJila400}>
-          <Text style={styles.textWhite}>colors.jila[400]</Text>
+        <View style={{ backgroundColor: colors.jila[400] }}>
+          <Text style={{ color: colors.white[400] }}>colors.jila[400]</Text>
         </View>
-        <Text style={styles.bgJila300}>colors.jila[300]</Text>
-        <Text style={styles.bgOrange400}>colors.orange[400]</Text>
-        <Text style={styles.bgOrange300}>colors.orange[300]</Text>
-        <Text style={styles.bgYellow400}>colors.yellow[400]</Text>
-        <Text style={styles.bgCream300}>colors.cream[300]</Text>
-        <Text style={styles.bgGreen400}>colors.green[400]</Text>
-        <Text style={styles.bgTeal400}>colors.teal[400]</Text>
-        <Text style={styles.bgTeal300}>colors.teal[300]</Text>
-        <Text style={styles.bgError400}>colors.error[400]</Text>
-        <Text style={styles.bgError300}>colors.error[300]</Text>
-        <Text style={styles.bgError200}>colors.error[200]</Text>
-        <View style={styles.bgType400}>
-          <Text style={styles.textWhite}>colors.type[400]</Text>
+        <Text style={{ backgroundColor: colors.jila[300] }}>
+          colors.jila[300]
+        </Text>
+        <Text style={{ backgroundColor: colors.orange[400] }}>
+          colors.orange[400]
+        </Text>
+        <Text style={{ backgroundColor: colors.orange[300] }}>
+          colors.orange[300]
+        </Text>
+        <Text style={{ backgroundColor: colors.yellow[400] }}>
+          colors.yellow[400]
+        </Text>
+        <Text style={{ backgroundColor: colors.cream[300] }}>
+          colors.cream[300]
+        </Text>
+        <Text style={{ backgroundColor: colors.green[400] }}>
+          colors.green[400]
+        </Text>
+        <Text style={{ backgroundColor: colors.teal[400] }}>
+          colors.teal[400]
+        </Text>
+        <Text style={{ backgroundColor: colors.teal[300] }}>
+          colors.teal[300]
+        </Text>
+        <Text style={{ backgroundColor: colors.error[400] }}>
+          colors.error[400]
+        </Text>
+        <Text style={{ backgroundColor: colors.error[300] }}>
+          colors.error[300]
+        </Text>
+        <Text style={{ backgroundColor: colors.error[200] }}>
+          colors.error[200]
+        </Text>
+        <View style={{ backgroundColor: colors.type[400] }}>
+          <Text style={{ color: colors.white[400] }}>colors.type[400]</Text>
         </View>
-        <Text style={styles.bgWhite400}>colors.white[400]</Text>
-        <Text style={styles.bgGray400}>colors.gray[400]</Text>
-        <Text style={styles.bgGray300}>colors.gray[300]</Text>
-        <Text style={styles.bgGray200}>colors.gray[200]</Text>
+        <Text style={{ backgroundColor: colors.white[400] }}>
+          colors.white[400]
+        </Text>
+        <Text style={{ backgroundColor: colors.gray[400] }}>
+          colors.gray[400]
+        </Text>
+        <Text style={{ backgroundColor: colors.gray[300] }}>
+          colors.gray[300]
+        </Text>
+        <Text style={{ backgroundColor: colors.gray[200] }}>
+          colors.gray[200]
+        </Text>
 
         {/* coordinates for start and end positions
       top-left corner: { x: 0, y: 0}
@@ -281,6 +350,13 @@ export default function DevPage() {
 }
 
 const styles = StyleSheet.create({
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: "600",
+    marginTop: 10,
+    marginBottom: 5,
+    color: colors.type[400],
+  },
   selectContainer: {
     paddingVertical: 20,
   },
@@ -302,59 +378,5 @@ const styles = StyleSheet.create({
   },
   semibold: {
     fontWeight: "600",
-  },
-  bgJila400: {
-    backgroundColor: colors.jila[400],
-  },
-  bgJila300: {
-    backgroundColor: colors.jila[300],
-  },
-  bgOrange400: {
-    backgroundColor: colors.orange[400],
-  },
-  bgOrange300: {
-    backgroundColor: colors.orange[300],
-  },
-  bgYellow400: {
-    backgroundColor: colors.yellow[400],
-  },
-  bgCream300: {
-    backgroundColor: colors.cream[300],
-  },
-  bgGreen400: {
-    backgroundColor: colors.green[400],
-  },
-  bgTeal400: {
-    backgroundColor: colors.teal[400],
-  },
-  bgTeal300: {
-    backgroundColor: colors.teal[300],
-  },
-  bgError400: {
-    backgroundColor: colors.error[400],
-  },
-  bgError300: {
-    backgroundColor: colors.error[300],
-  },
-  bgError200: {
-    backgroundColor: colors.error[200],
-  },
-  bgType400: {
-    backgroundColor: colors.type[400],
-  },
-  bgWhite400: {
-    backgroundColor: colors.white[400],
-  },
-  bgGray400: {
-    backgroundColor: colors.gray[400],
-  },
-  bgGray300: {
-    backgroundColor: colors.gray[300],
-  },
-  bgGray200: {
-    backgroundColor: colors.gray[200],
-  },
-  textWhite: {
-    color: colors.white[400],
   },
 });

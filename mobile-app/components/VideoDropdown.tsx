@@ -9,6 +9,7 @@ import {
 import { ChevronRight } from "lucide-react-native";
 import AudioButton from "@/components/AudioButton";
 import { colors } from "@/colors";
+import { useRouter } from "expo-router";
 
 type VideoDropdownPart = {
   videoUrl: string;
@@ -29,14 +30,28 @@ export default function VideoDropdown({
   ttsUrl,
   type = "default",
 }: VideoDropdownProps) {
+  const router = useRouter();
   const [contentHeight, setContentHeight] = useState(0);
   const [open, setOpen] = useState(false);
   const anim = useRef(new Animated.Value(0)).current;
 
+  const isSingleVideo = parts.length === 1;
+
+  const handlePress = () => {
+    if (isSingleVideo) {
+      // Navigate directly to video page with the single video URL
+      router.push(`/video?url=${encodeURIComponent(parts[0].videoUrl)}`);
+    } else {
+      // Toggle dropdown for multiple videos
+      toggle();
+    }
+  };
+
   const toggle = () => {
-    setOpen((prev) => !prev);
+    const newOpen = !open;
+    setOpen(newOpen);
     Animated.timing(anim, {
-      toValue: open ? 0 : 1,
+      toValue: newOpen ? 1 : 0,
       duration: 200,
       useNativeDriver: false,
     }).start();
@@ -49,24 +64,31 @@ export default function VideoDropdown({
 
   const animatedHeight = anim.interpolate({
     inputRange: [0, 1],
-    outputRange: [0, contentHeight + 2],
+    outputRange: [0, contentHeight],
   });
 
+  const handlePartPress = (videoUrl: string) => {
+    router.push(`/video?url=${encodeURIComponent(videoUrl)}`);
+  };
+
+  const bgColor = type === "cream" ? colors.cream[300] : colors.white[400];
+
   return (
-    <View>
+    <View style={{ backgroundColor: colors.gray[200] }}>
       <TouchableOpacity
-        onPress={toggle}
+        onPress={handlePress}
         activeOpacity={0.7}
         style={[
           styles.parentRow,
           {
-            backgroundColor:
-              type === "cream" ? colors.cream[300] : colors.white[400],
+            backgroundColor: bgColor,
           },
         ]}
       >
         <Text style={styles.parentText}>{text}</Text>
-        <Text style={styles.partCountText}>{`(${parts.length} parts)`}</Text>
+        {!isSingleVideo && (
+          <Text style={styles.partCountText}>{`(${parts.length} parts)`}</Text>
+        )}
 
         {ttsUrl ? <AudioButton audioSource={{ uri: ttsUrl }} /> : null}
         <View style={styles.iconWrap}>
@@ -75,35 +97,69 @@ export default function VideoDropdown({
           </Animated.View>
         </View>
       </TouchableOpacity>
-      <Animated.View style={{ height: animatedHeight, overflow: "hidden" }}>
-        <View
-          style={styles.dropdownContent}
-          onLayout={(e) => {
-            const height = e.nativeEvent.layout.height;
-            setContentHeight(height);
-          }}
-        >
-          {parts.map((part, idx) => (
-            <View
-              key={idx}
-              style={[
-                styles.dropdownItem,
-                {
-                  backgroundColor:
-                    type === "cream" ? colors.cream[300] : colors.white[400],
-                },
-              ]}
-            >
-              <Text style={styles.dropdownItemText}>{part.name}</Text>
-              <View style={styles.timer}>
-                <Text style={styles.timerText}>
-                  {formatDuration(part.duration)}
-                </Text>
-              </View>
+      {!isSingleVideo && (
+        <Animated.View style={{ height: animatedHeight, overflow: "hidden" }}>
+          <View
+            style={{ position: "absolute", opacity: 0 }}
+            onLayout={(e) => {
+              const height = e.nativeEvent.layout.height;
+              if (contentHeight !== height && height > 0) {
+                setContentHeight(height);
+              }
+            }}
+          >
+            <View style={styles.dropdownContent}>
+              {parts.map((part, idx) => (
+                <View key={idx} style={styles.dropdownItemWrapper}>
+                  <View
+                    style={[
+                      styles.dropdownItem,
+                      {
+                        backgroundColor: bgColor,
+                      },
+                    ]}
+                  >
+                    <Text style={styles.dropdownItemText}>{part.name}</Text>
+                    <View style={styles.timer}>
+                      <Text style={styles.timerText}>
+                        {formatDuration(part.duration)}
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+              ))}
             </View>
-          ))}
-        </View>
-      </Animated.View>
+          </View>
+          {open && (
+            <View style={styles.dropdownContent}>
+              {parts.map((part, idx) => (
+                <TouchableOpacity
+                  key={idx}
+                  onPress={() => handlePartPress(part.videoUrl)}
+                  activeOpacity={0.7}
+                  style={styles.dropdownItemWrapper}
+                >
+                  <View
+                    style={[
+                      styles.dropdownItem,
+                      {
+                        backgroundColor: bgColor,
+                      },
+                    ]}
+                  >
+                    <Text style={styles.dropdownItemText}>{part.name}</Text>
+                    <View style={styles.timer}>
+                      <Text style={styles.timerText}>
+                        {formatDuration(part.duration)}
+                      </Text>
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              ))}
+            </View>
+          )}
+        </Animated.View>
+      )}
     </View>
   );
 }
@@ -139,10 +195,11 @@ const styles = StyleSheet.create({
     color: "black",
   },
   dropdownContent: {
-    paddingVertical: 8,
-    marginTop: 10,
-    width: "95%",
-    gap: 20,
+    gap: 0,
+    paddingHorizontal: 20,
+  },
+  dropdownItemWrapper: {
+    width: "100%",
   },
   dropdownItem: {
     flexDirection: "row",
