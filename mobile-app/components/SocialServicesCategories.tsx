@@ -31,21 +31,21 @@ export default function SocialServicesCategories({
           {idx === currentIndex ? (
             <LinearGradient
               style={styles.gradientContainer}
-              colors={["#7E0601", "#AA4A2C"]}
+              colors={[colors.jila[400], colors.orange[400]]}
               start={{ x: 0, y: 1 }}
               end={{ x: 0, y: 0 }}
             >
-              <View className="mb-[2px]">
-                <service.icon color="#fff" size={24} />
+              <View style={styles.iconContainer}>
+                <service.icon color={colors.white[400]} size={24} />
               </View>
-              <Text className="text-white-400 text-[14px]">{service.name}</Text>
+              <Text style={styles.activeText}>{service.name}</Text>
             </LinearGradient>
           ) : (
             <>
-              <View className="mb-[2px]">
+              <View style={styles.iconContainer}>
                 <service.icon color={colors.jila[400]} size={24} />
               </View>
-              <Text className="text-black text-[14px]">{service.name}</Text>
+              <Text style={styles.inactiveText}>{service.name}</Text>
             </>
           )}
         </TouchableOpacity>
@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
     width: "100%",
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#fff",
+    backgroundColor: colors.white[400],
     borderRadius: 9999,
     paddingVertical: 3,
     paddingHorizontal: 5,
@@ -78,5 +78,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 9999,
     paddingVertical: 3,
+  },
+  iconContainer: {
+    marginBottom: 2,
+  },
+  activeText: {
+    color: colors.white[400],
+    fontSize: 14,
+  },
+  inactiveText: {
+    color: colors.black,
+    fontSize: 14,
   },
 });

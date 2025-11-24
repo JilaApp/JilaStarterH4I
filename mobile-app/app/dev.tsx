@@ -33,7 +33,6 @@ import Header from "@/components/Header";
 import Link from "@/components/Link";
 
 export default function DevPage() {
-  const [selected, setSelected] = useState<string | null>(null);
   const [
     currentSocialServicesCategoriesIndex,
     setCurrentSocialServicesCategoriesIndex,
@@ -58,7 +57,6 @@ export default function DevPage() {
     },
   ];
 
-  const options = ["PA", "TX", "NJ", "IL", "CA"];
   const [selectedDropdown, setSelectedDropdown] = useState<string | null>(null);
   const dropdownOptions = ["PA", "TX", "NJ", "IL", "CA"];
 
@@ -179,27 +177,6 @@ export default function DevPage() {
             type="cream"
           />
 
-      <LikeDislike
-        isClicked={isClickedDown}
-        setIsClicked={setIsClickedDown}
-        type="dislike"
-      />
-      <LikeDislike
-        numLikes={numLikesUp}
-        isClicked={isClickedUp}
-        setIsClicked={handleLikeClick}
-        type="like"
-      />
-      <SocialServicesCategories
-        socialServices={socialServices}
-        currentIndex={currentSocialServicesCategoriesIndex}
-        onSelect={setCurrentSocialServicesCategoriesIndex}
-      />
-      <Link href="/auth/sign-up">sign in</Link>
-      <Text className="text-3xl font-bold">Nativewind Styles:</Text>
-      <Text className="page-title-text">page-title-text</Text>
-      <Text className="components-text">components-text</Text>
-      <Text className="link-text">link-text</Text>
           <Text style={styles.sectionTitle}>
             VideoDropdown - Single Video (Cream)
           </Text>
@@ -224,6 +201,11 @@ export default function DevPage() {
             </View>
           </JobDropdown>
         </View>
+        <SocialServicesCategories
+          socialServices={socialServices}
+          currentIndex={currentSocialServicesCategoriesIndex}
+          onSelect={setCurrentSocialServicesCategoriesIndex}
+        />
         <Button text="Sign up" onPress={myOnPress} preset="outline-cream" />
         <Button text="Clear all" onPress={myOnPress} preset="outline" />
         <Button

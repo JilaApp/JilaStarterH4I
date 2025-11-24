@@ -5,6 +5,7 @@ import Background from "@/components/Background";
 import DisplayBox from "@/components/DisplayBox";
 import { Stepper } from "@/components/Stepper";
 import { Button } from "@/components/Button";
+import Link from "@/components/Link";
 
 export default function JobDashboard() {
   const [currentStep, setCurrentStep] = useState(0);
@@ -19,7 +20,9 @@ export default function JobDashboard() {
         <View style={styles.container}>
           <Text style={styles.title}>Example display box</Text>
           <Text>(in job dashboard)</Text>
-
+          <Link path="/dev">
+            <Text style={styles.buttonText}>Dev Page</Text>
+          </Link>
           {/* Example usage of Stepper and Button components */}
           <View style={styles.exampleContainer}>
             <Button text="Continue" onPress={handleContinue} />
