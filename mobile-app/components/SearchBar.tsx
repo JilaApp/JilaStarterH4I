@@ -1,6 +1,7 @@
 import React from "react";
-import { View, TextInput, TouchableOpacity } from "react-native";
+import { View, TextInput, TouchableOpacity, StyleSheet } from "react-native";
 import { Search, X } from "lucide-react-native";
+import { colors } from "@/colors";
 
 interface SearchBarProps {
   placeholder?: string;
@@ -21,26 +22,21 @@ export default function SearchBar({
 }: SearchBarProps) {
   return (
     <View
-      className={`flex-row items-center bg-white-400 px-[20px] h-[50px] w-[360px] rounded-[20px] border-[1px] ${
-        isFocused ? "border-jila-400" : "border-gray-200"
-      }`}
+      style={[
+        styles.container,
+        isFocused ? styles.containerFocused : styles.containerUnfocused,
+      ]}
     >
-      <Search size={24} color="#A1A1A1" />
+      <Search size={24} color={colors.gray[300]} />
       <TextInput
         placeholder={placeholder}
-        placeholderTextColor="#A1A1A1"
+        placeholderTextColor={colors.gray[300]}
         value={value}
         onChangeText={onChange}
         onFocus={onFocus}
         onBlur={onBlur}
-        className="ml-2 flex-1 bg-transparent text-black font-bold"
-        style={{
-          outlineWidth: 0,
-          height: 50,
-          paddingVertical: 0,
-          fontWeight: "700",
-          fontSize: 18,
-        }}
+        style={styles.input}
+        selectionColor={colors.jila[400]}
         scrollEnabled={false}
         multiline={false}
       />
@@ -49,9 +45,37 @@ export default function SearchBar({
           onPress={() => onChange("")}
           hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
         >
-          <X size={22} color="#000" />
+          <X size={22} color={colors.black} />
         </TouchableOpacity>
       )}
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: colors.white[400],
+    paddingHorizontal: 20,
+    height: 50,
+    width: 360,
+    borderRadius: 20,
+    borderWidth: 1,
+  },
+  containerFocused: {
+    borderColor: colors.jila[400],
+  },
+  containerUnfocused: {
+    borderColor: colors.gray[200],
+  },
+  input: {
+    marginLeft: 8,
+    flex: 1,
+    backgroundColor: colors.white[400],
+    color: colors.black,
+    fontWeight: "700",
+    fontSize: 18,
+    paddingVertical: 0,
+  },
+});

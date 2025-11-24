@@ -10,10 +10,11 @@ import {
   TransportButton,
 } from "@/components/GradientButton";
 import { LinearGradient } from "expo-linear-gradient";
-import { View, ScrollView } from "react-native";
+import { View, ScrollView, StyleSheet } from "react-native";
 import Text from "@/components/JilaText";
 import { BaseInput } from "@/components/Input/BaseInput";
 import { UsernameInput, PasswordInput } from "@/components/Input";
+import { colors } from "@/colors";
 
 import AudioButton from "@/components/AudioButton";
 import ClearButton from "@/components/ClearAll";
@@ -37,17 +38,17 @@ export default function DevPage() {
     {
       id: "english",
       title: "English",
-      audioSource: require("../components/sample.mp3"),
+      audioSource: require("../assets/audio/sample.mp3"),
     },
     {
       id: "qanjobal",
       title: "Q'anjob'al",
-      audioSource: require("../components/sample.mp3"),
+      audioSource: require("../assets/audio/sample.mp3"),
     },
     {
       id: "disabled",
       title: "English",
-      audioSource: require("../components/sample.mp3"),
+      audioSource: require("../assets/audio/sample.mp3"),
       disabled: true,
     },
   ];
@@ -82,11 +83,11 @@ export default function DevPage() {
         <UsernameInput />
         <PasswordInput />
         <AudioButton
-          audioSource={require("../components/sample.mp3")}
+          audioSource={require("../assets/audio/sample.mp3")}
           variant={"default"}
         />
         <AudioButton
-          audioSource={require("../components/sample.mp3")}
+          audioSource={require("../assets/audio/sample.mp3")}
           disabled
         />
 
@@ -101,14 +102,14 @@ export default function DevPage() {
           setIsClicked={handleLikeClick}
           type="like"
         />
-        <View className="py-[20px]">
+        <View style={styles.selectContainer}>
           <Select
             options={languageOptions}
             selected={selectedLanguage}
             onSelect={setSelectedLanguage}
           />
         </View>
-        <View className="flex-col items-center py-[10px] gap-[25px]">
+        <View style={styles.checkboxContainer}>
           <Checkbox
             size={"small"}
             checked={smallChecked}
@@ -123,14 +124,11 @@ export default function DevPage() {
         </View>
 
         <Link href="/auth/sign-up">sign in</Link>
-        <Text className="text-3xl font-bold">Nativewind Styles:</Text>
-        <Text className="page-title-text">page-title-text</Text>
-        <Text className="components-text">components-text</Text>
-        <Text className="link-text">link-text</Text>
+        <Text style={styles.colorDemoTitle}>Color Demo:</Text>
 
-        <View className="m-10">
-          <Text className="text-gray-700">
-            You chose: <Text className="font-semibold">{selectedDropdown}</Text>
+        <View style={styles.dropdownContainer}>
+          <Text style={styles.dropdownText}>
+            You chose: <Text style={styles.semibold}>{selectedDropdown}</Text>
           </Text>
           <Dropdown
             text={"--Select State--"}
@@ -140,28 +138,27 @@ export default function DevPage() {
           />
         </View>
 
-        <View className="bg-jila-400">
-          <Text className="text-white-400">bg-jila-400</Text>
+        <View style={styles.bgJila400}>
+          <Text style={styles.textWhite}>colors.jila[400]</Text>
         </View>
-        {/* <Text style={{fontSize : 30}} className="bg-jila-300">bg-jila-300</Text> */}
-        <Text className="bg-jila-300">bg-jila-300</Text>
-        <Text className="bg-orange-400">bg-orange-400</Text>
-        <Text className="bg-orange-300">bg-orange-300</Text>
-        <Text className="bg-yellow-400">bg-yellow-400</Text>
-        <Text className="bg-cream-300">bg-cream-300</Text>
-        <Text className="bg-green-400">bg-green-400</Text>
-        <Text className="bg-teal-400">bg-teal-400</Text>
-        <Text className="bg-teal-300">bg-teal-300</Text>
-        <Text className="bg-error-400">bg-error-400</Text>
-        <Text className="bg-error-300">bg-error-300</Text>
-        <Text className="bg-error-200">bg-error-200</Text>
-        <View className="bg-type-400">
-          <Text className="text-white-400">bg-type-400</Text>
+        <Text style={styles.bgJila300}>colors.jila[300]</Text>
+        <Text style={styles.bgOrange400}>colors.orange[400]</Text>
+        <Text style={styles.bgOrange300}>colors.orange[300]</Text>
+        <Text style={styles.bgYellow400}>colors.yellow[400]</Text>
+        <Text style={styles.bgCream300}>colors.cream[300]</Text>
+        <Text style={styles.bgGreen400}>colors.green[400]</Text>
+        <Text style={styles.bgTeal400}>colors.teal[400]</Text>
+        <Text style={styles.bgTeal300}>colors.teal[300]</Text>
+        <Text style={styles.bgError400}>colors.error[400]</Text>
+        <Text style={styles.bgError300}>colors.error[300]</Text>
+        <Text style={styles.bgError200}>colors.error[200]</Text>
+        <View style={styles.bgType400}>
+          <Text style={styles.textWhite}>colors.type[400]</Text>
         </View>
-        <Text className="bg-white-400">bg-white-400</Text>
-        <Text className="bg-gray-400">bg-gray-400</Text>
-        <Text className="bg-gray-300">bg-gray-300</Text>
-        <Text className="bg-gray-200">bg-gray-200</Text>
+        <Text style={styles.bgWhite400}>colors.white[400]</Text>
+        <Text style={styles.bgGray400}>colors.gray[400]</Text>
+        <Text style={styles.bgGray300}>colors.gray[300]</Text>
+        <Text style={styles.bgGray200}>colors.gray[200]</Text>
 
         {/* coordinates for start and end positions
       top-left corner: { x: 0, y: 0}
@@ -221,3 +218,82 @@ export default function DevPage() {
     </>
   );
 }
+
+const styles = StyleSheet.create({
+  selectContainer: {
+    paddingVertical: 20,
+  },
+  checkboxContainer: {
+    flexDirection: "column",
+    alignItems: "center",
+    paddingVertical: 10,
+    gap: 25,
+  },
+  colorDemoTitle: {
+    fontSize: 30,
+    fontWeight: "700",
+  },
+  dropdownContainer: {
+    margin: 40,
+  },
+  dropdownText: {
+    color: colors.gray[700],
+  },
+  semibold: {
+    fontWeight: "600",
+  },
+  bgJila400: {
+    backgroundColor: colors.jila[400],
+  },
+  bgJila300: {
+    backgroundColor: colors.jila[300],
+  },
+  bgOrange400: {
+    backgroundColor: colors.orange[400],
+  },
+  bgOrange300: {
+    backgroundColor: colors.orange[300],
+  },
+  bgYellow400: {
+    backgroundColor: colors.yellow[400],
+  },
+  bgCream300: {
+    backgroundColor: colors.cream[300],
+  },
+  bgGreen400: {
+    backgroundColor: colors.green[400],
+  },
+  bgTeal400: {
+    backgroundColor: colors.teal[400],
+  },
+  bgTeal300: {
+    backgroundColor: colors.teal[300],
+  },
+  bgError400: {
+    backgroundColor: colors.error[400],
+  },
+  bgError300: {
+    backgroundColor: colors.error[300],
+  },
+  bgError200: {
+    backgroundColor: colors.error[200],
+  },
+  bgType400: {
+    backgroundColor: colors.type[400],
+  },
+  bgWhite400: {
+    backgroundColor: colors.white[400],
+  },
+  bgGray400: {
+    backgroundColor: colors.gray[400],
+  },
+  bgGray300: {
+    backgroundColor: colors.gray[300],
+  },
+  bgGray200: {
+    backgroundColor: colors.gray[200],
+  },
+  textWhite: {
+    color: colors.white[400],
+  },
+});

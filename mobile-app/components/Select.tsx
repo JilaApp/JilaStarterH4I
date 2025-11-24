@@ -1,7 +1,8 @@
-import { View, TouchableOpacity } from "react-native";
+import { View, TouchableOpacity, StyleSheet, ViewStyle } from "react-native";
 import AudioButton from "@/components/AudioButton";
 import JilaText from "@/components/JilaText";
 import { Check } from "lucide-react-native";
+import { colors } from "@/colors";
 
 type AudioSource = number | { uri: string };
 
@@ -23,17 +24,17 @@ export default function Select({
   options,
   selected,
   onSelect,
-  className = "w-[275px] h-[45px]",
+  className,
 }: SelectProps) {
+  const customStyle: ViewStyle = className
+    ? { width: 275, height: 45 }
+    : { width: 275, height: 45 };
+
   return (
-    <View className="flex-col items-center gap-[25px]">
+    <View style={styles.container}>
       {options.map((option) => {
         const isSelected = selected === option.id;
         const disabled = option.disabled ?? false;
-
-        const borderColor = isSelected ? "border-jila-400" : "border-gray-300";
-        const opacityClass = disabled ? "opacity-100" : "";
-        const textColor = disabled ? "text-gray-300" : "";
 
         const handlePress = () => {
           if (!disabled) {
@@ -48,18 +49,23 @@ export default function Select({
             disabled={disabled}
           >
             <View
-              className={`flex-col items-center justify-center rounded-[10px] border border-[1px] ${borderColor} ${opacityClass} ${className}`}
+              style={[
+                styles.option,
+                isSelected ? styles.optionSelected : styles.optionUnselected,
+                disabled && styles.optionDisabled,
+                customStyle,
+              ]}
             >
-              <View className="flex-row p-[15px]">
-                <View className="flex-1 flex-row items-center">
-                  <View className="pr-[10px]">
+              <View style={styles.optionContent}>
+                <View style={styles.leftContent}>
+                  <View style={styles.titleContainer}>
                     <JilaText
-                      className={`text-base font-semibold ${textColor}`}
+                      style={[styles.title, disabled && styles.titleDisabled]}
                     >
                       {option.title}
                     </JilaText>
                   </View>
-                  <View className="flex-row">
+                  <View style={styles.audioContainer}>
                     <AudioButton
                       audioSource={option.audioSource}
                       disabled={disabled}
@@ -67,8 +73,8 @@ export default function Select({
                   </View>
                 </View>
                 {isSelected && (
-                  <View className="ml-[15px]">
-                    <Check size={25} color="#7E0601" />
+                  <View style={styles.checkContainer}>
+                    <Check size={25} color={colors.jila[400]} />
                   </View>
                 )}
               </View>
@@ -79,3 +85,52 @@ export default function Select({
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: "column",
+    alignItems: "center",
+    gap: 25,
+  },
+  option: {
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 10,
+    borderWidth: 1,
+  },
+  optionSelected: {
+    borderColor: colors.jila[400],
+  },
+  optionUnselected: {
+    borderColor: colors.gray[300],
+  },
+  optionDisabled: {
+    opacity: 1,
+  },
+  optionContent: {
+    flexDirection: "row",
+    padding: 15,
+  },
+  leftContent: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  titleContainer: {
+    paddingRight: 10,
+  },
+  title: {
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  titleDisabled: {
+    color: colors.gray[300],
+  },
+  audioContainer: {
+    flexDirection: "row",
+  },
+  checkContainer: {
+    marginLeft: 15,
+  },
+});

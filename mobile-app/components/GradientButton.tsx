@@ -1,6 +1,8 @@
-import { View, Text, Pressable } from "react-native";
+import { View, Text, Pressable, StyleSheet } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { icons } from "lucide-react-native";
+import { colors } from "@/colors";
+
 const Icons = icons;
 
 interface GradientButtonProps {
@@ -92,26 +94,41 @@ function GradientButton({
 }: GradientButtonProps) {
   const LucideIcon = Icons[icon];
   return (
-    <Pressable className="rounded-lg">
+    <Pressable style={styles.pressable}>
       <LinearGradient
         colors={[bottomColor, topColor]}
         start={{ x: 0, y: 1 }}
         end={{ x: 1, y: 0 }}
-        style={{
-          flex: 1,
-          width: 180,
-          height: 180,
-          borderRadius: 20,
-          justifyContent: "flex-end",
-        }}
+        style={styles.gradient}
       >
-        <View className="flex flex-col items-start p-3 gap-3">
+        <View style={styles.content}>
           <LucideIcon color={iconColor} strokeWidth={2.5} size={40} />
-          <Text style={{ fontSize: 22 }} className="text-white-400">
-            {text}
-          </Text>
+          <Text style={styles.text}>{text}</Text>
         </View>
       </LinearGradient>
     </Pressable>
   );
 }
+
+const styles = StyleSheet.create({
+  pressable: {
+    borderRadius: 8,
+  },
+  gradient: {
+    flex: 1,
+    width: 180,
+    height: 180,
+    borderRadius: 20,
+    justifyContent: "flex-end",
+  },
+  content: {
+    flexDirection: "column",
+    alignItems: "flex-start",
+    padding: 12,
+    gap: 12,
+  },
+  text: {
+    fontSize: 22,
+    color: colors.white[400],
+  },
+});

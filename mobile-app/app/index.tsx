@@ -1,7 +1,14 @@
 import { useUser, useAuth } from "@clerk/clerk-expo";
 import { useRouter, Link } from "expo-router";
 import React, { useEffect } from "react";
-import { Text, View, TouchableOpacity, ActivityIndicator } from "react-native";
+import {
+  Text,
+  View,
+  TouchableOpacity,
+  ActivityIndicator,
+  StyleSheet,
+} from "react-native";
+import { colors } from "@/colors";
 
 export default function App() {
   const { user, isLoaded } = useUser();
@@ -18,8 +25,8 @@ export default function App() {
   // Show loading state
   if (!isLoaded) {
     return (
-      <View className="flex-1 justify-center items-center bg-cream-300">
-        <ActivityIndicator size="large" color="#7E0601" />
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color={colors.jila[400]} />
       </View>
     );
   }
@@ -27,8 +34,8 @@ export default function App() {
   // If not signed in, show loading while redirecting
   if (!user) {
     return (
-      <View className="flex-1 justify-center items-center bg-cream-300">
-        <ActivityIndicator size="large" color="#7E0601" />
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color={colors.jila[400]} />
       </View>
     );
   }
@@ -39,43 +46,104 @@ export default function App() {
   };
 
   return (
-    <View className="flex-1 justify-center items-center bg-cream-300 p-6">
-      <View className="bg-white rounded-2xl p-8 shadow-lg w-full max-w-md">
-        <Text className="text-4xl font-bold text-jila-400 mb-4 text-center">
-          Hello, {user.username}!
-        </Text>
+    <View style={styles.container}>
+      <View style={styles.card}>
+        <Text style={styles.title}>Hello, {user.username}!</Text>
 
-        <View className="bg-gray-200 rounded-lg p-4 mb-6">
-          <Text className="text-type-400 text-base mb-2">
-            <Text className="font-bold">Username:</Text> {user.username}
+        <View style={styles.infoBox}>
+          <Text style={styles.infoText}>
+            <Text style={styles.bold}>Username:</Text> {user.username}
           </Text>
-          <Text className="text-type-400 text-base mb-2">
-            <Text className="font-bold">User Type:</Text>{" "}
+          <Text style={styles.infoTextWithMargin}>
+            <Text style={styles.bold}>User Type:</Text>{" "}
             {user.publicMetadata?.userType || "Loading..."}
           </Text>
-          <Text className="text-type-400 text-base">
-            <Text className="font-bold">Member Since:</Text>{" "}
+          <Text style={styles.infoText}>
+            <Text style={styles.bold}>Member Since:</Text>{" "}
             {new Date(user.createdAt).toLocaleDateString()}
           </Text>
         </View>
 
         <Link href="/dev" asChild>
-          <TouchableOpacity className="bg-teal-400 rounded-lg p-4 mb-4">
-            <Text className="text-white-400 text-center font-bold text-base">
-              Dev Page
-            </Text>
+          <TouchableOpacity style={styles.devButton}>
+            <Text style={styles.buttonText}>Dev Page</Text>
           </TouchableOpacity>
         </Link>
 
-        <TouchableOpacity
-          onPress={handleSignOut}
-          className="bg-error-400 rounded-lg p-4"
-        >
-          <Text className="text-white-400 text-center font-bold text-base">
-            Sign Out
-          </Text>
+        <TouchableOpacity onPress={handleSignOut} style={styles.signOutButton}>
+          <Text style={styles.buttonText}>Sign Out</Text>
         </TouchableOpacity>
       </View>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: colors.cream[300],
+  },
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: colors.cream[300],
+    padding: 24,
+  },
+  card: {
+    backgroundColor: colors.white[400],
+    borderRadius: 16,
+    padding: 32,
+    shadowColor: colors.black,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 5,
+    width: "100%",
+    maxWidth: 448,
+  },
+  title: {
+    fontSize: 36,
+    fontWeight: "700",
+    color: colors.jila[400],
+    marginBottom: 16,
+    textAlign: "center",
+  },
+  infoBox: {
+    backgroundColor: colors.gray[200],
+    borderRadius: 8,
+    padding: 16,
+    marginBottom: 24,
+  },
+  infoText: {
+    color: colors.type[400],
+    fontSize: 16,
+  },
+  infoTextWithMargin: {
+    color: colors.type[400],
+    fontSize: 16,
+    marginBottom: 8,
+  },
+  bold: {
+    fontWeight: "700",
+  },
+  devButton: {
+    backgroundColor: colors.teal[400],
+    borderRadius: 8,
+    padding: 16,
+    marginBottom: 16,
+  },
+  signOutButton: {
+    backgroundColor: colors.error[400],
+    borderRadius: 8,
+    padding: 16,
+  },
+  buttonText: {
+    color: colors.white[400],
+    textAlign: "center",
+    fontWeight: "700",
+    fontSize: 16,
+  },
+});
