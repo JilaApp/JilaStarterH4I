@@ -23,12 +23,15 @@ import LikeDislike from "@/components/LikeDislike";
 import Dropdown from "@/components/Dropdown";
 import { ResourceCard } from "@/components/FlipCard";
 import Select from "@/components/Select";
+import Checkbox from "@/components/Checkbox";
 
 export default function DevPage() {
   const [selectedDropdown, setSelectedDropdown] = useState<string | null>(null);
   const dropdownOptions = ["PA", "TX", "NJ", "IL", "CA"];
 
   const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null);
+  const [smallChecked, setSmallChecked] = useState(false);
+  const [largeChecked, setLargeChecked] = useState(false);
   const languageOptions = [
     {
       id: "english",
@@ -54,6 +57,7 @@ export default function DevPage() {
   const [numLikesUp, setNumLikesUp] = useState(0);
   const [isClickedUp, setIsClickedUp] = useState(false);
   const [isClickedDown, setIsClickedDown] = useState(false);
+
   const handleLikeClick = (clicked: boolean) => {
     setIsClickedUp(clicked);
     if (clicked) {
@@ -93,6 +97,19 @@ export default function DevPage() {
           options={languageOptions}
           selected={selectedLanguage}
           onSelect={setSelectedLanguage}
+        />
+      </View>
+      <View className="flex-col items-center py-[10px] gap-[25px]">
+        <Checkbox
+          size={"small"}
+          checked={smallChecked}
+          onCheckedChange={setSmallChecked}
+        />
+
+        <Checkbox
+          size={"large"}
+          checked={largeChecked}
+          onCheckedChange={setLargeChecked}
         />
       </View>
 
