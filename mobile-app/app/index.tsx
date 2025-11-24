@@ -1,7 +1,17 @@
 import { useUser, useAuth } from "@clerk/clerk-expo";
-import { useRouter, Link } from "expo-router";
+import { useRouter } from "expo-router";
 import React, { useEffect } from "react";
-import { Text, View, TouchableOpacity, ActivityIndicator } from "react-native";
+import { View, ActivityIndicator, StyleSheet } from "react-native";
+import { colors } from "@/colors";
+import Header from "@/components/Header";
+import {
+  CareerButton,
+  LegalButton,
+  MedicalButton,
+  TransportButton,
+  EducationButton,
+  OtherButton,
+} from "@/components/GradientButton";
 
 export default function App() {
   const { user, isLoaded } = useUser();
@@ -18,8 +28,8 @@ export default function App() {
   // Show loading state
   if (!isLoaded) {
     return (
-      <View className="flex-1 justify-center items-center bg-cream-300">
-        <ActivityIndicator size="large" color="#7E0601" />
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color={colors.jila[400]} />
       </View>
     );
   }
@@ -27,55 +37,64 @@ export default function App() {
   // If not signed in, show loading while redirecting
   if (!user) {
     return (
-      <View className="flex-1 justify-center items-center bg-cream-300">
-        <ActivityIndicator size="large" color="#7E0601" />
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color={colors.jila[400]} />
       </View>
     );
   }
 
-  const handleSignOut = async () => {
-    await signOut();
-    router.replace("/auth/sign-in");
+  const navigateToCategory = (category: string) => {
+    router.push({
+      pathname: "/video-router",
+      params: { category },
+    });
   };
 
   return (
-    <View className="flex-1 justify-center items-center bg-cream-300 p-6">
-      <View className="bg-white rounded-2xl p-8 shadow-lg w-full max-w-md">
-        <Text className="text-4xl font-bold text-jila-400 mb-4 text-center">
-          Hello, {user.username}!
-        </Text>
-
-        <View className="bg-gray-200 rounded-lg p-4 mb-6">
-          <Text className="text-type-400 text-base mb-2">
-            <Text className="font-bold">Username:</Text> {user.username}
-          </Text>
-          <Text className="text-type-400 text-base mb-2">
-            <Text className="font-bold">User Type:</Text>{" "}
-            {user.publicMetadata?.userType || "Loading..."}
-          </Text>
-          <Text className="text-type-400 text-base">
-            <Text className="font-bold">Member Since:</Text>{" "}
-            {new Date(user.createdAt).toLocaleDateString()}
-          </Text>
+    <>
+      <Header
+        text={`Hi ${user.username}, What would you like to learn today?`}
+        toggleSearch={true}
+      />
+      <View style={styles.container}>
+        <View style={styles.buttonGrid}>
+          <View style={styles.buttonRow}>
+            <CareerButton onPress={() => navigateToCategory("Career")} />
+            <LegalButton onPress={() => navigateToCategory("Legal")} />
+          </View>
+          <View style={styles.buttonRow}>
+            <MedicalButton onPress={() => navigateToCategory("Medical")} />
+            <TransportButton onPress={() => navigateToCategory("Transport")} />
+          </View>
+          <View style={styles.buttonRow}>
+            <EducationButton onPress={() => navigateToCategory("Education")} />
+            <OtherButton onPress={() => navigateToCategory("Other")} />
+          </View>
         </View>
-
-        <Link href="/dev" asChild>
-          <TouchableOpacity className="bg-teal-400 rounded-lg p-4 mb-4">
-            <Text className="text-white-400 text-center font-bold text-base">
-              Dev Page
-            </Text>
-          </TouchableOpacity>
-        </Link>
-
-        <TouchableOpacity
-          onPress={handleSignOut}
-          className="bg-error-400 rounded-lg p-4"
-        >
-          <Text className="text-white-400 text-center font-bold text-base">
-            Sign Out
-          </Text>
-        </TouchableOpacity>
       </View>
-    </View>
+    </>
   );
 }
+
+const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: colors.cream[300],
+  },
+  container: {
+    flex: 1,
+    backgroundColor: colors.cream[300],
+    paddingTop: 40,
+    paddingHorizontal: 16,
+  },
+  buttonGrid: {
+    gap: 16,
+  },
+  buttonRow: {
+    flexDirection: "row",
+    justifyContent: "center",
+    gap: 16,
+  },
+});

@@ -29,7 +29,6 @@ export function PasswordInput({
         <Pressable
           onPress={togglePasswordVisibility}
           disabled={props.disabled}
-          className="text-gray-300 group-focus-within:text-type-400 hover:text-type-400 transition-colors disabled:cursor-not-allowed"
           aria-label={showPassword ? "Hide password" : "Show password"}
         >
           {showPassword ? (

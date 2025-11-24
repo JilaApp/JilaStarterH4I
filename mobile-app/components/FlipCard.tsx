@@ -11,6 +11,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AudioButton from "./AudioButton";
+import { colors } from "@/colors";
 
 interface ResourceCardProps {
   title: string;
@@ -20,13 +21,13 @@ interface ResourceCardProps {
 }
 const ResourceCardBack = ({ description }: ResourceCardProps) => {
   return (
-    <View className="p-7 h-full items-center justify-between border-gray-300 border-[1px] rounded-xl flex-row">
-      <View className="flex-1">
-        <Text className="text-lg">{description}</Text>
+    <View style={cardStyles.cardContainer}>
+      <View style={cardStyles.cardContentLeft}>
+        <Text style={cardStyles.descriptionText}>{description}</Text>
       </View>
       <View>
         <AudioButton
-          audioSource={require("../components/sample.mp3")}
+          audioSource={require("../assets/audio/sample.mp3")}
           variant={"default"}
         />
       </View>
@@ -36,23 +37,23 @@ const ResourceCardBack = ({ description }: ResourceCardProps) => {
 
 const ResourceCardFront = ({ title, phone, address }: ResourceCardProps) => {
   return (
-    <View className="p-7 h-full justify-between border-gray-300 border-[1px] rounded-xl flex-row">
-      <View className="flex-1">
-        <Text className="text-3xl font-semibold">{title}</Text>
-        <View className="text-jila-400 flex flex-row items-center">
-          <Phone color="#7E0601" />
-          <Text className="ml-2 text-jila-400">{phone}</Text>
+    <View style={cardStyles.cardContainer}>
+      <View style={cardStyles.cardContentLeft}>
+        <Text style={cardStyles.titleText}>{title}</Text>
+        <View style={cardStyles.infoRow}>
+          <Phone color={colors.jila[400]} />
+          <Text style={cardStyles.infoText}>{phone}</Text>
         </View>
         {address && (
-          <View className="text-jila-400 flex flex-row items-center pt-1">
-            <MapPin color="#7E0601" />
-            <Text className="ml-2 text-jila-400">{address}</Text>
+          <View style={[cardStyles.infoRow, cardStyles.addressRow]}>
+            <MapPin color={colors.jila[400]} />
+            <Text style={cardStyles.infoText}>{address}</Text>
           </View>
         )}
       </View>
       <View>
         <AudioButton
-          audioSource={require("../components/sample.mp3")}
+          audioSource={require("../assets/audio/sample.mp3")}
           variant={"default"}
         />
       </View>
@@ -123,7 +124,7 @@ const FlipCard = ({
 
   return (
     <Pressable onPress={handlePress}>
-      <View style={{ position: "relative" }}>
+      <View style={flipCardStyles.relativeContainer}>
         <Animated.View style={[cardStyle, regularCardAnimatedStyle]}>
           {RegularContent}
         </Animated.View>
@@ -142,12 +143,49 @@ const FlipCard = ({
 };
 
 const flipCardStyles = StyleSheet.create({
+  relativeContainer: {
+    position: "relative",
+  },
   flippedCard: {
     position: "absolute",
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
+  },
+});
+
+const cardStyles = StyleSheet.create({
+  cardContainer: {
+    padding: 28,
+    height: "100%",
+    alignItems: "center",
+    justifyContent: "space-between",
+    borderColor: colors.gray[300],
+    borderWidth: 1,
+    borderRadius: 12,
+    flexDirection: "row",
+  },
+  cardContentLeft: {
+    flex: 1,
+  },
+  titleText: {
+    fontSize: 30,
+    fontWeight: "600",
+  },
+  descriptionText: {
+    fontSize: 18,
+  },
+  infoRow: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  addressRow: {
+    paddingTop: 4,
+  },
+  infoText: {
+    marginLeft: 8,
+    color: colors.jila[400],
   },
 });
 
