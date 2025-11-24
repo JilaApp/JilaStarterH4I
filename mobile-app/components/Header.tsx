@@ -4,15 +4,12 @@ import Text from "@/components/JilaText";
 import SearchBar from "./SearchBar";
 import React, { useState } from "react";
 import { Volume2, CircleHelp, Menu } from "lucide-react-native";
-import Svg, { Path } from "react-native-svg";
 import { colors } from "@/colors";
 
 interface HeaderProps {
   text?: string;
   toggleSearch: boolean;
 }
-
-const { width: screenWidth } = Dimensions.get("window");
 
 export default function Header({ text, toggleSearch }: HeaderProps) {
   const [searchValue, setSearchValue] = useState("");
