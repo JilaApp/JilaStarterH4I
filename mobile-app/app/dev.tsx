@@ -16,10 +16,14 @@ import { UsernameInput, PasswordInput } from "@/components/Input";
 import { colors } from "@/colors";
 
 import AudioButton from "@/components/AudioButton";
+import { Ambulance, Apple, Bus, House } from "lucide-react-native";
 import { Button } from "@/components/Button";
 import LikeDislike from "@/components/LikeDislike";
 import { SquareArrowOutUpRight } from "lucide-react-native";
 import Dropdown from "@/components/Dropdown";
+import SocialServicesCategories, {
+  SocialService,
+} from "@/components/SocialServicesCategories";
 import { ResourceCard } from "@/components/FlipCard";
 import VideoDropdown from "@/components/VideoDropdown";
 import JobDropdown from "@/components/JobDropdown";
@@ -29,6 +33,30 @@ import Header from "@/components/Header";
 import Link from "@/components/Link";
 
 export default function DevPage() {
+  const [
+    currentSocialServicesCategoriesIndex,
+    setCurrentSocialServicesCategoriesIndex,
+  ] = useState<number>(0);
+
+  const socialServices: SocialService[] = [
+    {
+      icon: Ambulance,
+      name: "Emergency",
+    },
+    {
+      icon: House,
+      name: "Shelters",
+    },
+    {
+      icon: Apple,
+      name: "Food",
+    },
+    {
+      icon: Bus,
+      name: "Transport",
+    },
+  ];
+
   const [selectedDropdown, setSelectedDropdown] = useState<string | null>(null);
   const dropdownOptions = ["PA", "TX", "NJ", "IL", "CA"];
 
@@ -173,6 +201,11 @@ export default function DevPage() {
             </View>
           </JobDropdown>
         </View>
+        <SocialServicesCategories
+          socialServices={socialServices}
+          currentIndex={currentSocialServicesCategoriesIndex}
+          onSelect={setCurrentSocialServicesCategoriesIndex}
+        />
         <Button text="Sign up" onPress={myOnPress} preset="outline-cream" />
         <Button text="Clear all" onPress={myOnPress} preset="outline" />
         <Button
