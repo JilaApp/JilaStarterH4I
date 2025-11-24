@@ -94,7 +94,12 @@ function GradientButton({
 }: GradientButtonProps) {
   const LucideIcon = Icons[icon];
   return (
-    <Pressable style={styles.pressable}>
+    <Pressable
+      style={({ pressed }) => [
+        styles.pressable,
+        pressed && styles.pressablePressed,
+      ]}
+    >
       <LinearGradient
         colors={[bottomColor, topColor]}
         start={{ x: 0, y: 1 }}
@@ -113,6 +118,9 @@ function GradientButton({
 const styles = StyleSheet.create({
   pressable: {
     borderRadius: 8,
+  },
+  pressablePressed: {
+    opacity: 0.7,
   },
   gradient: {
     flex: 1,
