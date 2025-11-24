@@ -1,61 +1,81 @@
 import { View, TouchableOpacity } from "react-native";
-import { useState } from "react";
 import AudioButton from "@/components/AudioButton";
 import JilaText from "@/components/JilaText";
 import { Check } from "lucide-react-native";
 
 type AudioSource = number | { uri: string };
 
-interface SelectProps {
-  defaultToggled: boolean;
-  disabled: boolean;
+interface SelectOption {
+  id: string;
   title: string;
-  description?: string;
   audioSource: AudioSource;
+  disabled?: boolean;
+}
+
+interface SelectProps {
+  options: SelectOption[];
+  selected: string | null;
+  onSelect: (id: string) => void;
+  className?: string;
 }
 
 export default function Select({
-  defaultToggled,
-  disabled,
-  title,
-  description,
-  audioSource,
+  options,
+  selected,
+  onSelect,
+  className = "w-[275px] h-[45px]",
 }: SelectProps) {
-  const [isToggled, setIsToggled] = useState(defaultToggled);
-
-  const handlePress = () => {
-    if (!disabled) {
-      setIsToggled(!isToggled);
-    }
-  };
-
-  const borderColor = isToggled ? "border-jila-400" : "border-gray-300";
-  const opacityClass = disabled ? "opacity-100" : "";
-  const textColor = disabled ? "text-gray-300" : "";
-
   return (
-    <TouchableOpacity onPress={handlePress} disabled={disabled}>
-      <View
-        className={`"flex-col items-center w-[275px] h-[45px] justify-center rounded-[10px] border border-[1px]" ${borderColor} ${opacityClass}`}
-      >
-        <View className="flex-row p-[15px]">
-          <View className="flex-1 flex-row items-center">
-            <View className="pr-[10px]">
-              <JilaText className={`text-base font-semibold ${textColor}`}>
-                {title}
-              </JilaText>
+    <View className="flex-col items-center gap-[25px]">
+      {options.map((option) => {
+        const isSelected = selected === option.id;
+        const disabled = option.disabled ?? false;
+
+        const borderColor = isSelected ? "border-jila-400" : "border-gray-300";
+        const opacityClass = disabled ? "opacity-100" : "";
+        const textColor = disabled ? "text-gray-300" : "";
+
+        const handlePress = () => {
+          if (!disabled) {
+            onSelect(option.id);
+          }
+        };
+
+        return (
+          <TouchableOpacity
+            key={option.id}
+            onPress={handlePress}
+            disabled={disabled}
+          >
+            <View
+              className={`flex-col items-center justify-center rounded-[10px] border border-[1px] ${borderColor} ${opacityClass} ${className}`}
+            >
+              <View className="flex-row p-[15px]">
+                <View className="flex-1 flex-row items-center">
+                  <View className="pr-[10px]">
+                    <JilaText
+                      className={`text-base font-semibold ${textColor}`}
+                    >
+                      {option.title}
+                    </JilaText>
+                  </View>
+                  <View className="flex-row">
+                    <AudioButton
+                      audioSource={option.audioSource}
+                      disabled={disabled}
+                    />
+                  </View>
+                </View>
+                {isSelected && (
+                  <View className="ml-[15px]">
+                    <Check size={25} color="#7E0601" />
+                  </View>
+                )}
+              </View>
             </View>
-            <View className="flex-row">
-              <AudioButton audioSource={audioSource} disabled={disabled} />
-            </View>
-          </View>
-          {isToggled && (
-            <View className="ml-[15px]">
-              <Check size={25} color="#7E0601" />
-            </View>
-          )}
-        </View>
-      </View>
-    </TouchableOpacity>
+          </TouchableOpacity>
+        );
+      })}
+    </View>
   );
 }
