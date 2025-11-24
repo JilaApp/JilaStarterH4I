@@ -8,15 +8,15 @@ interface DisplayBoxProps {
   maxHeight?: number;
 }
 
-export default function DisplayBox({ 
-  children, 
+export default function DisplayBox({
+  children,
   minHeight = 400,
-  maxHeight = 600
+  maxHeight = 600,
 }: DisplayBoxProps) {
   return (
     <View style={styles.container}>
       <View style={[styles.innerBox, { minHeight, maxHeight }]}>
-        <ScrollView 
+        <ScrollView
           style={styles.scrollView}
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={true}
@@ -49,10 +49,10 @@ const styles = StyleSheet.create({
     shadowRadius: 80,
     elevation: 10,
     zIndex: 2,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   scrollView: {
-    width: '100%',
+    width: "100%",
   },
   scrollContent: {
     padding: 24,

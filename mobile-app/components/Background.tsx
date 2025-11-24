@@ -9,7 +9,6 @@ interface BackgroundProps {
 
 const { height: screenHeight } = Dimensions.get("window");
 
-const DARK_RED = "#7E0601"; 
 const TOP_SECTION_HEIGHT_PCT = 0.55;
 
 function LogoPanel() {
@@ -29,7 +28,7 @@ export default function Background({ children }: BackgroundProps) {
     <View style={styles.container}>
       <View style={styles.redRevealLayer} />
       <LinearGradient
-        colors={["#E8965B", DARK_RED]}
+        colors={[colors.orange[400], colors.jila[400]]}
         start={{ x: 0, y: 0 }}
         end={{ x: 0, y: 1 }}
         style={styles.topHalf}
@@ -53,7 +52,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: DARK_RED,
+    backgroundColor: colors.jila[400],
   },
   topHalf: {
     height: screenHeight * TOP_SECTION_HEIGHT_PCT,
