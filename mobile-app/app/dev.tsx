@@ -136,7 +136,7 @@ export default function DevPage() {
         toggleSearch={true}
       />
       <ScrollView>
-        <View style={{ backgroundColor: "#f2f2f2", gap: 10, padding: 10 }}>
+        <View style={{ backgroundColor: colors.cream[300], gap: 10, padding: 10 }}>
           <Text style={styles.sectionTitle}>
             VideoDropdown - Multiple Videos (Cream)
           </Text>

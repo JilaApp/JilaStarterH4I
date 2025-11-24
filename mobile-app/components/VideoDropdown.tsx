@@ -1,15 +1,7 @@
-import { useState, useRef } from "react";
-import {
-  View,
-  TouchableOpacity,
-  Text,
-  StyleSheet,
-  Animated,
-} from "react-native";
-import { ChevronRight } from "lucide-react-native";
-import AudioButton from "@/components/AudioButton";
+import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
 import { colors } from "@/colors";
 import { useRouter } from "expo-router";
+import Accordion from "@/components/Accordion";
 
 type VideoDropdownPart = {
   videoUrl: string;
@@ -31,135 +23,66 @@ export default function VideoDropdown({
   type = "default",
 }: VideoDropdownProps) {
   const router = useRouter();
-  const [contentHeight, setContentHeight] = useState(0);
-  const [open, setOpen] = useState(false);
-  const anim = useRef(new Animated.Value(0)).current;
 
   const isSingleVideo = parts.length === 1;
+  const bgColor = type === "cream" ? colors.cream[300] : colors.white[400];
 
   const handlePress = () => {
     if (isSingleVideo) {
       // Navigate directly to video page with the single video URL
       router.push(`/video?url=${encodeURIComponent(parts[0].videoUrl)}`);
-    } else {
-      // Toggle dropdown for multiple videos
-      toggle();
     }
   };
-
-  const toggle = () => {
-    const newOpen = !open;
-    setOpen(newOpen);
-    Animated.timing(anim, {
-      toValue: newOpen ? 1 : 0,
-      duration: 200,
-      useNativeDriver: false,
-    }).start();
-  };
-
-  const arrowRotation = anim.interpolate({
-    inputRange: [0, 1],
-    outputRange: ["0deg", "90deg"],
-  });
-
-  const animatedHeight = anim.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0, contentHeight],
-  });
 
   const handlePartPress = (videoUrl: string) => {
     router.push(`/video?url=${encodeURIComponent(videoUrl)}`);
   };
 
-  const bgColor = type === "cream" ? colors.cream[300] : colors.white[400];
+  const headerContent = !isSingleVideo && (
+    <Text style={styles.partCountText}>{`(${parts.length} parts)`}</Text>
+  );
 
-  return (
-    <View style={{ backgroundColor: colors.gray[200] }}>
-      <TouchableOpacity
-        onPress={handlePress}
-        activeOpacity={0.7}
-        style={[
-          styles.parentRow,
-          {
-            backgroundColor: bgColor,
-          },
-        ]}
-      >
-        <Text style={styles.parentText}>{text}</Text>
-        {!isSingleVideo && (
-          <Text style={styles.partCountText}>{`(${parts.length} parts)`}</Text>
-        )}
-
-        {ttsUrl ? <AudioButton audioSource={{ uri: ttsUrl }} /> : null}
-        <View style={styles.iconWrap}>
-          <Animated.View style={{ transform: [{ rotate: arrowRotation }] }}>
-            <ChevronRight color="#000" size={20} />
-          </Animated.View>
-        </View>
-      </TouchableOpacity>
-      {!isSingleVideo && (
-        <Animated.View style={{ height: animatedHeight, overflow: "hidden" }}>
+  const dropdownContent = (
+    <View style={styles.dropdownContent}>
+      {parts.map((part, idx) => (
+        <TouchableOpacity
+          key={idx}
+          onPress={() => handlePartPress(part.videoUrl)}
+          activeOpacity={0.7}
+          style={styles.dropdownItemWrapper}
+        >
           <View
-            style={{ position: "absolute", opacity: 0 }}
-            onLayout={(e) => {
-              const height = e.nativeEvent.layout.height;
-              if (contentHeight !== height && height > 0) {
-                setContentHeight(height);
-              }
-            }}
+            style={[
+              styles.dropdownItem,
+              {
+                backgroundColor: bgColor,
+              },
+            ]}
           >
-            <View style={styles.dropdownContent}>
-              {parts.map((part, idx) => (
-                <View key={idx} style={styles.dropdownItemWrapper}>
-                  <View
-                    style={[
-                      styles.dropdownItem,
-                      {
-                        backgroundColor: bgColor,
-                      },
-                    ]}
-                  >
-                    <Text style={styles.dropdownItemText}>{part.name}</Text>
-                    <View style={styles.timer}>
-                      <Text style={styles.timerText}>
-                        {formatDuration(part.duration)}
-                      </Text>
-                    </View>
-                  </View>
-                </View>
-              ))}
+            <Text style={styles.dropdownItemText}>{part.name}</Text>
+            <View style={styles.timer}>
+              <Text style={styles.timerText}>
+                {formatDuration(part.duration)}
+              </Text>
             </View>
           </View>
-          {open && (
-            <View style={styles.dropdownContent}>
-              {parts.map((part, idx) => (
-                <TouchableOpacity
-                  key={idx}
-                  onPress={() => handlePartPress(part.videoUrl)}
-                  activeOpacity={0.7}
-                  style={styles.dropdownItemWrapper}
-                >
-                  <View
-                    style={[
-                      styles.dropdownItem,
-                      {
-                        backgroundColor: bgColor,
-                      },
-                    ]}
-                  >
-                    <Text style={styles.dropdownItemText}>{part.name}</Text>
-                    <View style={styles.timer}>
-                      <Text style={styles.timerText}>
-                        {formatDuration(part.duration)}
-                      </Text>
-                    </View>
-                  </View>
-                </TouchableOpacity>
-              ))}
-            </View>
-          )}
-        </Animated.View>
-      )}
+        </TouchableOpacity>
+      ))}
+    </View>
+  );
+
+  return (
+    <View style={{ backgroundColor: colors.cream[300] }}>
+      <Accordion
+        text={text}
+        ttsUrl={ttsUrl}
+        backgroundColor={bgColor}
+        headerContent={headerContent}
+        onPress={isSingleVideo ? handlePress : undefined}
+        disabled={isSingleVideo}
+      >
+        {dropdownContent}
+      </Accordion>
     </View>
   );
 }
@@ -173,22 +96,6 @@ function formatDuration(duration: number) {
 }
 
 const styles = StyleSheet.create({
-  parentRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderTopWidth: 1,
-    borderBottomWidth: 1,
-    borderTopColor: colors.gray[300],
-    borderBottomColor: colors.gray[300],
-    gap: 10,
-  },
-  parentText: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: "black",
-  },
   partCountText: {
     fontSize: 12,
     fontWeight: "400",
@@ -197,6 +104,7 @@ const styles = StyleSheet.create({
   dropdownContent: {
     gap: 0,
     paddingHorizontal: 20,
+    marginTop: -1,
   },
   dropdownItemWrapper: {
     width: "100%",
@@ -206,10 +114,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 20,
     paddingVertical: 9,
-    borderTopWidth: 1,
     borderBottomWidth: 1,
-    borderTopColor: colors.gray[300],
-    borderBottomColor: colors.gray[300],
+    borderBottomColor: colors.gray[200],
   },
   dropdownItemText: {
     fontSize: 18,
@@ -231,11 +137,5 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "300",
     color: "black",
-  },
-  iconWrap: {
-    marginHorizontal: 8,
-    marginLeft: "auto",
-    alignItems: "center",
-    justifyContent: "center",
   },
 });
