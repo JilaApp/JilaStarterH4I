@@ -30,6 +30,8 @@ export default function DevPage() {
   const dropdownOptions = ["PA", "TX", "NJ", "IL", "CA"];
 
   const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null);
+  const [smallChecked, setSmallChecked] = useState(false);
+  const [largeChecked, setLargeChecked] = useState(false);
   const languageOptions = [
     {
       id: "english",
@@ -98,9 +100,17 @@ export default function DevPage() {
         />
       </View>
       <View className="flex-col items-center py-[10px] gap-[25px]">
-        <Checkbox size={"small"} />
+        <Checkbox
+          size={"small"}
+          checked={smallChecked}
+          onCheckedChange={setSmallChecked}
+        />
 
-        <Checkbox size={"large"} />
+        <Checkbox
+          size={"large"}
+          checked={largeChecked}
+          onCheckedChange={setLargeChecked}
+        />
       </View>
 
       <Link href="/auth/sign-up">sign in</Link>
