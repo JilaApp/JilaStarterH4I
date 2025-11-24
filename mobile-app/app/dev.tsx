@@ -20,6 +20,7 @@ import LikeDislike from "@/components/LikeDislike";
 
 import Dropdown from "@/components/Dropdown";
 import { ResourceCard } from "@/components/FlipCard";
+import VideoDropdown from "@/components/VideoDropdown";
 
 export default function DevPage() {
   const [selected, setSelected] = useState<string | null>(null);
@@ -37,11 +38,71 @@ export default function DevPage() {
     }
   };
 
+  const videoDropdownSampleData = {
+    text: "Riding the Bus",
+    ttsUrl: "https://example.com/tts.mp3",
+    parts: [
+      {
+        videoUrl: "https://example.com/video1.mp4",
+        name: "Introduction",
+        duration: 45,
+      },
+      {
+        videoUrl: "https://example.com/video2.mp4",
+        name: "Getting on the Bus",
+        duration: 75,
+      },
+      {
+        videoUrl: "https://example.com/video3.mp4",
+        name: "Paying the Fare",
+        duration: 30,
+      },
+      {
+        videoUrl: "https://example.com/video4.mp4",
+        name: "Finding a Seat",
+        duration: 55,
+      },
+      {
+        videoUrl: "https://example.com/video5.mp4",
+        name: "Following Rules",
+        duration: 42,
+      },
+      {
+        videoUrl: "https://example.com/video6.mp4",
+        name: "Getting Off",
+        duration: 37,
+      },
+      {
+        videoUrl: "https://example.com/video7.mp4",
+        name: "Transfer Tips",
+        duration: 63,
+      },
+      {
+        videoUrl: "https://example.com/video8.mp4",
+        name: "Arriving Safely",
+        duration: 51,
+      },
+    ],
+  };
+
   return (
     <ScrollView>
       <BaseInput />
       <UsernameInput />
       <PasswordInput />
+      <View style={{ backgroundColor: "#f2f2f2", gap: 10 }}>
+        <VideoDropdown
+          text={videoDropdownSampleData.text}
+          ttsUrl={videoDropdownSampleData.ttsUrl}
+          parts={videoDropdownSampleData.parts}
+        />
+        <VideoDropdown
+          text={videoDropdownSampleData.text}
+          ttsUrl={videoDropdownSampleData.ttsUrl}
+          parts={videoDropdownSampleData.parts}
+          type="cream"
+        />
+      </View>
       <AudioButton
         audioSource={require("../components/sample.mp3")}
         variant={"default"}
