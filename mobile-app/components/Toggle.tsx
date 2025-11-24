@@ -106,16 +106,19 @@ export function Toggle() {
           flexDirection: "row",
           alignItems: "center",
           justifyContent: "center",
+          gap: 5,
         }}
       >
         <Switch value={isOn} onPress={handlePress} style={styles.switch} />
-        <Text>Enable Text-to-speech?</Text>
+        <Text style={{ fontSize: 22, fontWeight: "bold" }}>
+          Enable Text-to-speech?
+        </Text>
         <AudioButton
           audioSource={require("../assets/audio/sample.mp3")}
           variant={"default"}
         />
       </View>
-      <Text>
+      <Text style={{ textAlign: "center" }}>
         When enabled, you may click the speaker icons to read words out loud
       </Text>
     </SafeAreaView>
@@ -124,13 +127,15 @@ export function Toggle() {
 
 const styles = StyleSheet.create({
   switch: {
-    width: 60,
+    width: 55,
     height: 40,
     padding: 5,
   },
   container: {
     flex: 1,
     height: 300,
+    width: 250,
+    margin: "auto",
     alignItems: "center",
     justifyContent: "center",
   },
