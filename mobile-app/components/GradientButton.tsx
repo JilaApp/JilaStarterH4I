@@ -1,4 +1,4 @@
-import { View, Text, Pressable, StyleSheet } from "react-native";
+import { View, Text, Pressable, StyleSheet, Dimensions } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { icons } from "lucide-react-native";
 import { colors } from "@/colors";
@@ -11,9 +11,10 @@ interface GradientButtonProps {
   topColor: string;
   text: string;
   iconColor?: string;
+  onPress?: () => void;
 }
 
-export function EducationButton() {
+export function EducationButton({ onPress }: { onPress?: () => void }) {
   return (
     <GradientButton
       icon="GraduationCap"
@@ -21,11 +22,12 @@ export function EducationButton() {
       topColor={colors.purple[400]}
       text="Education"
       iconColor={colors.purple[300]}
+      onPress={onPress}
     />
   );
 }
 
-export function MedicalButton() {
+export function MedicalButton({ onPress }: { onPress?: () => void }) {
   return (
     <GradientButton
       icon="HeartPulse"
@@ -33,11 +35,12 @@ export function MedicalButton() {
       topColor={colors.orange[400]}
       text="Medical"
       iconColor={colors.orange[300]}
+      onPress={onPress}
     />
   );
 }
 
-export function TransportButton() {
+export function TransportButton({ onPress }: { onPress?: () => void }) {
   return (
     <GradientButton
       icon="Bus"
@@ -45,11 +48,12 @@ export function TransportButton() {
       topColor={colors.green[300]}
       text="Transport"
       iconColor={colors.teal[300]}
+      onPress={onPress}
     />
   );
 }
 
-export function OtherButton() {
+export function OtherButton({ onPress }: { onPress?: () => void }) {
   return (
     <GradientButton
       icon="CircleEllipsis"
@@ -57,11 +61,12 @@ export function OtherButton() {
       topColor={colors.gray[300]}
       text="Other"
       iconColor={colors.gray[200]}
+      onPress={onPress}
     />
   );
 }
 
-export function LegalButton() {
+export function LegalButton({ onPress }: { onPress?: () => void }) {
   return (
     <GradientButton
       icon="Scale"
@@ -69,11 +74,12 @@ export function LegalButton() {
       topColor={colors.orange[400]}
       text="Legal"
       iconColor={colors.jila[300]}
+      onPress={onPress}
     />
   );
 }
 
-export function CareerButton() {
+export function CareerButton({ onPress }: { onPress?: () => void }) {
   return (
     <GradientButton
       icon="BriefcaseBusiness"
@@ -81,6 +87,7 @@ export function CareerButton() {
       topColor={colors.yellow[400]}
       text="Career"
       iconColor={colors.green[300]}
+      onPress={onPress}
     />
   );
 }
@@ -91,20 +98,25 @@ function GradientButton({
   topColor,
   text,
   iconColor,
+  onPress,
 }: GradientButtonProps) {
   const LucideIcon = Icons[icon];
+  const screenWidth = Dimensions.get("window").width;
+  const buttonSize = screenWidth * 0.41; // I know this is a magic number :wilted:
+
   return (
     <Pressable
       style={({ pressed }) => [
         styles.pressable,
         pressed && styles.pressablePressed,
       ]}
+      onPress={onPress}
     >
       <LinearGradient
         colors={[bottomColor, topColor]}
         start={{ x: 0, y: 1 }}
         end={{ x: 1, y: 0 }}
-        style={styles.gradient}
+        style={[styles.gradient, { width: buttonSize, height: buttonSize }]}
       >
         <View style={styles.content}>
           <LucideIcon color={iconColor} strokeWidth={2.5} size={40} />
@@ -123,9 +135,6 @@ const styles = StyleSheet.create({
     opacity: 0.7,
   },
   gradient: {
-    flex: 1,
-    width: 180,
-    height: 180,
     borderRadius: 20,
     justifyContent: "flex-end",
   },
