@@ -65,10 +65,9 @@ export default function VideoDropdown({
           },
         ]}
       >
-        <Text className={`text-[18px] font-[600] text-black`}>{text}</Text>
-        <Text
-          className={`text-[12px] font-[400] text-black`}
-        >{`(${parts.length} parts)`}</Text>
+        <Text style={styles.parentText}>{text}</Text>
+        <Text style={styles.partCountText}>{`(${parts.length} parts)`}</Text>
+
         {ttsUrl ? <AudioButton audioSource={{ uri: ttsUrl }} /> : null}
         <View style={styles.iconWrap}>
           <Animated.View style={{ transform: [{ rotate: arrowRotation }] }}>
@@ -95,9 +94,9 @@ export default function VideoDropdown({
                 },
               ]}
             >
-              <Text className="text-[18px] flex-1 font-[600]">{part.name}</Text>
+              <Text style={styles.dropdownItemText}>{part.name}</Text>
               <View style={styles.timer}>
-                <Text className="font-[300] text-black text-[14px]">
+                <Text style={styles.timerText}>
                   {formatDuration(part.duration)}
                 </Text>
               </View>
@@ -129,11 +128,15 @@ const styles = StyleSheet.create({
     borderBottomColor: colors.gray[300],
     gap: 10,
   },
-  iconWrap: {
-    marginHorizontal: 8,
-    marginLeft: "auto",
-    alignItems: "center",
-    justifyContent: "center",
+  parentText: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: "black",
+  },
+  partCountText: {
+    fontSize: 12,
+    fontWeight: "400",
+    color: "black",
   },
   dropdownContent: {
     paddingVertical: 8,
@@ -144,13 +147,18 @@ const styles = StyleSheet.create({
   dropdownItem: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: colors.cream[300],
     paddingHorizontal: 20,
-    paddingVertical: 10,
+    paddingVertical: 9,
     borderTopWidth: 1,
     borderBottomWidth: 1,
     borderTopColor: colors.gray[300],
     borderBottomColor: colors.gray[300],
+  },
+  dropdownItemText: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: "black",
+    flex: 1,
   },
   timer: {
     backgroundColor: colors.jila[300],
@@ -161,5 +169,16 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     width: 58,
     height: 25,
+  },
+  timerText: {
+    fontSize: 14,
+    fontWeight: "300",
+    color: "black",
+  },
+  iconWrap: {
+    marginHorizontal: 8,
+    marginLeft: "auto",
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
