@@ -3,12 +3,13 @@ import { Text, TextProps } from "react-native";
 
 export default function JilaText({
   children,
+  style,
   ...props
 }: {
   children: ReactNode;
 } & TextProps) {
   return (
-    <Text {...props} style={{ fontFamily: "Fustat" }}>
+    <Text {...props} style={[{ fontFamily: "Fustat" }, style]}>
       {children}
     </Text>
   );

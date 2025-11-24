@@ -1,7 +1,8 @@
-import { View, TouchableOpacity } from "react-native";
+import { View, TouchableOpacity, StyleSheet } from "react-native";
 import { Volume2 } from "lucide-react-native";
 import { Audio, InterruptionModeAndroid, InterruptionModeIOS } from "expo-av";
 import { useRef, useState } from "react";
+import { colors } from "@/colors";
 
 type AudioSource = number | { uri: string };
 
@@ -9,12 +10,6 @@ type AudioButtonProps = {
   audioSource: AudioSource;
   variant?: "default" | "light";
   disabled?: boolean;
-};
-
-const BG_COLOR_MAP = {
-  playing: "bg-jila-400",
-  default: "bg-jila-300",
-  disabled: "bg-gray-300",
 };
 
 export default function AudioButton({
@@ -66,15 +61,29 @@ export default function AudioButton({
     await sound.playAsync();
   }
 
-  const bgColor = disabled ? BG_COLOR_MAP.disabled : BG_COLOR_MAP[variant];
+  const getBackgroundColor = () => {
+    if (disabled) return colors.gray[300];
+    if (variant === "playing") return colors.jila[400];
+    return colors.jila[300];
+  };
 
   return (
     <TouchableOpacity onPress={playSound} disabled={disabled}>
       <View
-        className={`w-[20px] h-[20px] rounded-full ${bgColor} justify-center items-center ${disabled && "bg-gray-300"}`}
+        style={[styles.container, { backgroundColor: getBackgroundColor() }]}
       >
-        <Volume2 size={11} color="#FFF" />
+        <Volume2 size={11} color={colors.white[400]} />
       </View>
     </TouchableOpacity>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+});

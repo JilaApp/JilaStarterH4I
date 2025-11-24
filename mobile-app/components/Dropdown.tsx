@@ -1,6 +1,13 @@
 import React, { useState } from "react";
-import { View, TouchableOpacity, Text, Pressable } from "react-native";
+import {
+  View,
+  TouchableOpacity,
+  Text,
+  Pressable,
+  StyleSheet,
+} from "react-native";
 import { ChevronDown, ChevronRight } from "lucide-react-native";
+import { colors } from "@/colors";
 
 interface DropdownProps {
   text: string;
@@ -18,47 +25,34 @@ const Dropdown: React.FC<DropdownProps> = ({
   const [open, setOpen] = useState(false);
 
   return (
-    <View className="relative w-80 rounded-xl">
+    <View style={styles.container}>
       <TouchableOpacity
         onPress={() => setOpen((prev) => !prev)}
         activeOpacity={0.7}
       >
         <View
-          className={`flex-row items-center justify-between w-80 border rounded-xl px-4 py-3 bg-white ${
-            open ? "border-jila-400" : "border-gray-400"
-          }`}
+          style={[
+            styles.trigger,
+            open ? styles.triggerOpen : styles.triggerClosed,
+          ]}
         >
-          <Text className={`${selected ? "text-gray-800" : "text-gray-400"}`}>
+          <Text style={selected ? styles.textSelected : styles.textPlaceholder}>
             {selected || text}
           </Text>
           {open ? (
-            <ChevronDown size={20} color="#000000" />
+            <ChevronDown size={20} color={colors.black} />
           ) : (
-            <ChevronRight size={20} color="#000000" />
+            <ChevronRight size={20} color={colors.black} />
           )}
         </View>
       </TouchableOpacity>
 
       {open && (
-        <View
-          className="absolute left-0 mt-4 w-80 bg-white z-50 overflow-hidden"
-          style={{
-            top: "100%",
-            position: "absolute",
-          }}
-        >
+        <View style={styles.dropdown}>
           {options.map((option, index) => {
             const isSelected = option === selected;
             const isFirst = index === 0;
             const isLast = index === options.length - 1;
-
-            let roundingClasses = "";
-            if (isFirst) {
-              roundingClasses += "rounded-t-xl";
-            }
-            if (isLast) {
-              roundingClasses += " rounded-b-xl";
-            }
 
             return (
               <Pressable
@@ -69,11 +63,15 @@ const Dropdown: React.FC<DropdownProps> = ({
                 }}
               >
                 <View
-                  className={`px-4 py-3 ${
-                    !isFirst ? "border-t border-gray-400" : ""
-                  } ${
-                    isSelected ? "bg-gray-300" : "bg-white-400"
-                  } ${roundingClasses}`}
+                  style={[
+                    styles.option,
+                    !isFirst && styles.optionBorderTop,
+                    isSelected
+                      ? styles.optionSelected
+                      : styles.optionUnselected,
+                    isFirst && styles.optionRoundedTop,
+                    isLast && styles.optionRoundedBottom,
+                  ]}
                 >
                   <Text>{option}</Text>
                 </View>
@@ -85,5 +83,68 @@ const Dropdown: React.FC<DropdownProps> = ({
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    position: "relative",
+    width: 320,
+    borderRadius: 12,
+  },
+  trigger: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    width: 320,
+    borderWidth: 1,
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: colors.white[400],
+  },
+  triggerOpen: {
+    borderColor: colors.jila[400],
+  },
+  triggerClosed: {
+    borderColor: colors.gray[400],
+  },
+  textSelected: {
+    color: colors.gray[800],
+  },
+  textPlaceholder: {
+    color: colors.gray[400],
+  },
+  dropdown: {
+    position: "absolute",
+    left: 0,
+    marginTop: 16,
+    width: 320,
+    backgroundColor: colors.white[400],
+    zIndex: 50,
+    overflow: "hidden",
+    top: "100%",
+  },
+  option: {
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+  },
+  optionBorderTop: {
+    borderTopWidth: 1,
+    borderTopColor: colors.gray[400],
+  },
+  optionSelected: {
+    backgroundColor: colors.gray[300],
+  },
+  optionUnselected: {
+    backgroundColor: colors.white[400],
+  },
+  optionRoundedTop: {
+    borderTopLeftRadius: 12,
+    borderTopRightRadius: 12,
+  },
+  optionRoundedBottom: {
+    borderBottomLeftRadius: 12,
+    borderBottomRightRadius: 12,
+  },
+});
 
 export default Dropdown;

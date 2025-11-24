@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { View, TextInput } from "react-native";
+import { View, TextInput, StyleSheet } from "react-native";
 import type { TextInput as RNTextInput } from "react-native";
 import { BaseInputProps } from "./types";
 import { colors } from "@/colors";
@@ -38,30 +38,28 @@ export function BaseInput({
     onBlur?.(e);
   };
 
-  const containerClass = [
-    "flex-row items-center border-[1px] rounded-[10px] px-[15px] py-[10px] max-w-[275px]",
-    "h-[60px]",
-    disabled ? "border-gray-300 bg-gray-200" : "border-gray-200 bg-white",
-    !disabled && state === "error" ? "border-error-400 bg-white" : null,
-    !disabled && isFocused && state !== "error"
-      ? "border-jila-400 bg-white"
-      : null,
-    className,
-  ]
-    .filter(Boolean)
-    .join(" ");
+  const getContainerStyle = () => {
+    if (disabled) {
+      return [styles.container, styles.containerDisabled];
+    }
+    if (state === "error") {
+      return [styles.container, styles.containerError];
+    }
+    if (isFocused && state !== "error") {
+      return [styles.container, styles.containerFocused];
+    }
+    return [styles.container, styles.containerDefault];
+  };
 
-  const inputClass = [
-    "flex-1 text-black font-[500] pl-1",
-    disabled ? "text-gray-400" : null,
-    !isFocused && value ? "text-gray-400" : null,
-  ]
-    .filter(Boolean)
-    .join(" ");
+  const getInputColor = () => {
+    if (disabled) return colors.gray[400];
+    if (!isFocused && value) return colors.gray[400];
+    return colors.black;
+  };
 
   return (
-    <View accessible accessibilityRole="text" className={containerClass}>
-      {icon && <View className="pr-[8px] text-gray-300">{icon}</View>}
+    <View accessible accessibilityRole="text" style={getContainerStyle()}>
+      {icon && <View style={styles.iconContainer}>{icon}</View>}
 
       <TextInput
         underlineColorAndroid="transparent"
@@ -74,22 +72,64 @@ export function BaseInput({
         onFocus={handleFocus}
         onBlur={handleBlur}
         editable={!disabled}
-        placeholderTextColor="#9CA3AF"
+        placeholderTextColor={colors.gray[400]}
         autoComplete={autoComplete as any}
         testID={id}
-        className={`${inputClass} focus:outline-none`}
+        style={[styles.input, { color: getInputColor() }]}
         scrollEnabled={false}
         multiline={false}
         autoCapitalize="none"
-        style={{ textAlignVertical: "center", paddingVertical: 0 }}
         {...inputProps}
       />
 
       {rightElement && (
-        <View className="flex-row items-center pl-2 pr-2 text-gray-300">
-          {rightElement}
-        </View>
+        <View style={styles.rightElementContainer}>{rightElement}</View>
       )}
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderWidth: 1,
+    borderRadius: 10,
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    maxWidth: 275,
+    height: 60,
+  },
+  containerDefault: {
+    borderColor: colors.gray[200],
+    backgroundColor: colors.white[400],
+  },
+  containerDisabled: {
+    borderColor: colors.gray[300],
+    backgroundColor: colors.gray[200],
+  },
+  containerError: {
+    borderColor: colors.error[400],
+    backgroundColor: colors.white[400],
+  },
+  containerFocused: {
+    borderColor: colors.jila[400],
+    backgroundColor: colors.white[400],
+  },
+  iconContainer: {
+    paddingRight: 8,
+  },
+  input: {
+    flex: 1,
+    fontWeight: "500",
+    paddingLeft: 4,
+    textAlignVertical: "center",
+    paddingVertical: 0,
+  },
+  rightElementContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingLeft: 8,
+    paddingRight: 8,
+  },
+});

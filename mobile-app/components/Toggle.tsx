@@ -111,7 +111,7 @@ export function Toggle() {
         <Switch value={isOn} onPress={handlePress} style={styles.switch} />
         <Text>Enable Text-to-speech?</Text>
         <AudioButton
-          audioSource={require("../components/sample.mp3")}
+          audioSource={require("../assets/audio/sample.mp3")}
           variant={"default"}
         />
       </View>
