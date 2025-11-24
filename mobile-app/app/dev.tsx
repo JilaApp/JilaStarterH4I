@@ -20,13 +20,33 @@ import ClearButton from "@/components/ClearAll";
 import SignUpButton from "@/components/SignUpButton";
 import ApplyButton from "@/components/ApplyButton";
 import LikeDislike from "@/components/LikeDislike";
-
 import Dropdown from "@/components/Dropdown";
 import { ResourceCard } from "@/components/FlipCard";
+import Select from "@/components/Select";
 
 export default function DevPage() {
-  const [selected, setSelected] = useState<string | null>(null);
-  const options = ["PA", "TX", "NJ", "IL", "CA"];
+  const [selectedDropdown, setSelectedDropdown] = useState<string | null>(null);
+  const dropdownOptions = ["PA", "TX", "NJ", "IL", "CA"];
+
+  const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null);
+  const languageOptions = [
+    {
+      id: "english",
+      title: "English",
+      audioSource: require("../components/sample.mp3"),
+    },
+    {
+      id: "qanjobal",
+      title: "Q'anjob'al",
+      audioSource: require("../components/sample.mp3"),
+    },
+    {
+      id: "disabled",
+      title: "English",
+      audioSource: require("../components/sample.mp3"),
+      disabled: true,
+    },
+  ];
 
   const myOnPress = () => {
     console.log("cleared");
@@ -68,6 +88,14 @@ export default function DevPage() {
         setIsClicked={handleLikeClick}
         type="like"
       />
+      <View className="py-[20px]">
+        <Select
+          options={languageOptions}
+          selected={selectedLanguage}
+          onSelect={setSelectedLanguage}
+        />
+      </View>
+
       <Link href="/auth/sign-up">sign in</Link>
       <Text className="text-3xl font-bold">Nativewind Styles:</Text>
       <Text className="page-title-text">page-title-text</Text>
@@ -76,13 +104,13 @@ export default function DevPage() {
 
       <View className="m-10">
         <Text className="text-gray-700">
-          You chose: <Text className="font-semibold">{selected}</Text>
+          You chose: <Text className="font-semibold">{selectedDropdown}</Text>
         </Text>
         <Dropdown
           text={"--Select State--"}
-          options={options}
-          selected={selected}
-          onSelect={setSelected}
+          options={dropdownOptions}
+          selected={selectedDropdown}
+          onSelect={setSelectedDropdown}
         />
       </View>
 
