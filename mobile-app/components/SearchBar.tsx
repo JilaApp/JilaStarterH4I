@@ -1,0 +1,81 @@
+import React from "react";
+import { View, TextInput, TouchableOpacity, StyleSheet } from "react-native";
+import { Search, X } from "lucide-react-native";
+import { colors } from "@/colors";
+
+interface SearchBarProps {
+  placeholder?: string;
+  value: string;
+  onChange: (value: string) => void;
+  isFocused: boolean;
+  onFocus: () => void;
+  onBlur: () => void;
+}
+
+export default function SearchBar({
+  placeholder = "Search",
+  value,
+  onChange,
+  isFocused,
+  onFocus,
+  onBlur,
+}: SearchBarProps) {
+  return (
+    <View
+      style={[
+        styles.container,
+        isFocused ? styles.containerFocused : styles.containerUnfocused,
+      ]}
+    >
+      <Search size={24} color={colors.gray[300]} />
+      <TextInput
+        placeholder={placeholder}
+        placeholderTextColor={colors.gray[300]}
+        value={value}
+        onChangeText={onChange}
+        onFocus={onFocus}
+        onBlur={onBlur}
+        style={styles.input}
+        selectionColor={colors.jila[400]}
+        scrollEnabled={false}
+        multiline={false}
+      />
+      {value.length > 0 && (
+        <TouchableOpacity
+          onPress={() => onChange("")}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+        >
+          <X size={22} color={colors.black} />
+        </TouchableOpacity>
+      )}
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: colors.white[400],
+    paddingHorizontal: 20,
+    height: 50,
+    width: 360,
+    borderRadius: 20,
+    borderWidth: 1,
+  },
+  containerFocused: {
+    borderColor: colors.jila[400],
+  },
+  containerUnfocused: {
+    borderColor: colors.gray[200],
+  },
+  input: {
+    marginLeft: 8,
+    flex: 1,
+    backgroundColor: colors.white[400],
+    color: colors.black,
+    fontWeight: "700",
+    fontSize: 18,
+    paddingVertical: 0,
+  },
+});

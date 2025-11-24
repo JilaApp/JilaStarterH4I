@@ -1,8 +1,7 @@
-import "./global.css";
 import { Slot, usePathname, SplashScreen } from "expo-router";
 import NavBar from "@/components/NavBar";
 import { useMemo, useEffect } from "react";
-import { View } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { ClerkProvider } from "@clerk/clerk-expo";
 import { tokenCache } from "@clerk/clerk-expo/token-cache";
 import { useFonts } from "expo-font";
@@ -26,8 +25,8 @@ export default function RootLayout() {
 
   return (
     <ClerkProvider tokenCache={tokenCache}>
-      <View style={{ flex: 1 }}>
-        <View style={{ flex: 1 }}>
+      <View style={styles.container}>
+        <View style={styles.content}>
           <Slot />
         </View>
 
@@ -36,3 +35,12 @@ export default function RootLayout() {
     </ClerkProvider>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  content: {
+    flex: 1,
+  },
+});

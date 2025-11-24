@@ -1,6 +1,8 @@
-import { View, Text, Pressable } from "react-native";
+import { View, Text, Pressable, StyleSheet } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { icons } from "lucide-react-native";
+import { colors } from "@/colors";
+
 const Icons = icons;
 
 interface GradientButtonProps {
@@ -15,10 +17,10 @@ export function EducationButton() {
   return (
     <GradientButton
       icon="GraduationCap"
-      bottomColor="#8F65AC"
-      topColor="#EED4FF"
+      bottomColor={colors.purple[500]}
+      topColor={colors.purple[400]}
       text="Education"
-      iconColor="#F3E0FF"
+      iconColor={colors.purple[300]}
     />
   );
 }
@@ -27,10 +29,10 @@ export function MedicalButton() {
   return (
     <GradientButton
       icon="HeartPulse"
-      bottomColor="#EFBF6A"
-      topColor="#E8965B"
+      bottomColor={colors.yellow[400]}
+      topColor={colors.orange[400]}
       text="Medical"
-      iconColor="#F9E9DD"
+      iconColor={colors.orange[300]}
     />
   );
 }
@@ -39,10 +41,10 @@ export function TransportButton() {
   return (
     <GradientButton
       icon="Bus"
-      bottomColor="#577590"
-      topColor="#CDE6B9"
+      bottomColor={colors.teal[400]}
+      topColor={colors.green[300]}
       text="Transport"
-      iconColor="#BDD0E2"
+      iconColor={colors.teal[300]}
     />
   );
 }
@@ -51,10 +53,10 @@ export function OtherButton() {
   return (
     <GradientButton
       icon="CircleEllipsis"
-      bottomColor="#A1A1A1"
-      topColor="#A1A1A1"
+      bottomColor={colors.gray[300]}
+      topColor={colors.gray[300]}
       text="Other"
-      iconColor="#E8E8E8"
+      iconColor={colors.gray[200]}
     />
   );
 }
@@ -63,10 +65,10 @@ export function LegalButton() {
   return (
     <GradientButton
       icon="Scale"
-      bottomColor="#7E0601"
-      topColor="#E8965B"
+      bottomColor={colors.jila[400]}
+      topColor={colors.orange[400]}
       text="Legal"
-      iconColor="#D4928F"
+      iconColor={colors.jila[300]}
     />
   );
 }
@@ -75,10 +77,10 @@ export function CareerButton() {
   return (
     <GradientButton
       icon="BriefcaseBusiness"
-      bottomColor="#90BE6D"
-      topColor="#FFE078"
+      bottomColor={colors.green[400]}
+      topColor={colors.yellow[400]}
       text="Career"
-      iconColor="#CDE6B9"
+      iconColor={colors.green[300]}
     />
   );
 }
@@ -92,26 +94,41 @@ function GradientButton({
 }: GradientButtonProps) {
   const LucideIcon = Icons[icon];
   return (
-    <Pressable className="rounded-lg">
+    <Pressable style={styles.pressable}>
       <LinearGradient
         colors={[bottomColor, topColor]}
         start={{ x: 0, y: 1 }}
         end={{ x: 1, y: 0 }}
-        style={{
-          flex: 1,
-          width: 180,
-          height: 180,
-          borderRadius: 20,
-          justifyContent: "flex-end",
-        }}
+        style={styles.gradient}
       >
-        <View className="flex flex-col items-start p-3 gap-3">
+        <View style={styles.content}>
           <LucideIcon color={iconColor} strokeWidth={2.5} size={40} />
-          <Text style={{ fontSize: 22 }} className="text-white-400">
-            {text}
-          </Text>
+          <Text style={styles.text}>{text}</Text>
         </View>
       </LinearGradient>
     </Pressable>
   );
 }
+
+const styles = StyleSheet.create({
+  pressable: {
+    borderRadius: 8,
+  },
+  gradient: {
+    flex: 1,
+    width: 180,
+    height: 180,
+    borderRadius: 20,
+    justifyContent: "flex-end",
+  },
+  content: {
+    flexDirection: "column",
+    alignItems: "flex-start",
+    padding: 12,
+    gap: 12,
+  },
+  text: {
+    fontSize: 22,
+    color: colors.white[400],
+  },
+});
