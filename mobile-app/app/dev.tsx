@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
 import {
   CareerButton,
@@ -31,6 +31,7 @@ import Select from "@/components/Select";
 import Checkbox from "@/components/Checkbox";
 import Header from "@/components/Header";
 import Link from "@/components/Link";
+import VideoEmbed from "@/components/VideoEmbed";
 
 export default function DevPage() {
   const [
@@ -157,6 +158,11 @@ export default function DevPage() {
     ],
   };
 
+  const videoEmbedYoutubeURL = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
+
+  const videoEmbedGoogleDriveURL =
+    "https://drive.google.com/file/d/1OqRpiJnv6jykHuMxv1pJM6FqPzdgW4VD/view?usp=sharing";
+
   return (
     <>
       <Header
@@ -164,6 +170,8 @@ export default function DevPage() {
         toggleSearch={true}
       />
       <ScrollView>
+        <VideoEmbed uri={videoEmbedYoutubeURL} type="youtube" />
+        <VideoEmbed uri={videoEmbedGoogleDriveURL} type="google-drive" />
         <View
           style={{ backgroundColor: colors.cream[300], gap: 10, padding: 10 }}
         >
