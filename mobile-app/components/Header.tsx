@@ -1,4 +1,4 @@
-import { View, Image, Dimensions, StyleSheet } from "react-native";
+import { View, Image, StyleSheet } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import Text from "@/components/JilaText";
 import SearchBar from "./SearchBar";
