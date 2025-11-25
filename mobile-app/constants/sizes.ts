@@ -55,7 +55,7 @@ export const sizes = {
 // Component-specific sizes that build on base sizes
 export const componentSizes = {
   displayBox: {
-    minHeight: sizes.screen.height * 0.5,
+    minHeight: sizes.screen.height * 0.4,
     maxHeight: sizes.screen.height * 0.75,
     tailSize: sizes.spacing.xl * 5, // 160
   },

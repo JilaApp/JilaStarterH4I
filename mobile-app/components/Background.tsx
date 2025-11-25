@@ -1,16 +1,13 @@
 import React from "react";
-import { View, Image, StyleSheet, Dimensions } from "react-native";
+import { View, Image, StyleSheet } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { colors } from "@/colors";
 import { sizes, componentSizes } from "@/constants/sizes";
+import BottomBackground from "./BottomBackground";
 
 interface BackgroundProps {
   children: React.ReactNode;
 }
-
-const { height: screenHeight } = Dimensions.get("window");
-
-const TOP_SECTION_HEIGHT_PCT = 0.55;
 
 function LogoPanel() {
   return (
@@ -36,7 +33,7 @@ export default function Background({ children }: BackgroundProps) {
       >
         <LogoPanel />
       </LinearGradient>
-      <View style={styles.bottomHalf} />
+      <BottomBackground />
       <View style={styles.contentContainer}>{children}</View>
     </View>
   );
@@ -49,35 +46,25 @@ const styles = StyleSheet.create({
   },
   redRevealLayer: {
     position: "absolute",
-    top: screenHeight * TOP_SECTION_HEIGHT_PCT,
+    top: sizes.screen.height * 0.55,
     bottom: 0,
     left: 0,
     right: 0,
     backgroundColor: colors.jila[400],
   },
   topHalf: {
-    height: screenHeight * TOP_SECTION_HEIGHT_PCT,
+    height: sizes.screen.height * 0.55,
     width: "100%",
-    justifyContent: "center",
+    justifyContent: "flex-start",
     alignItems: "center",
     borderBottomLeftRadius: sizes.borderRadius.curved,
     overflow: "hidden",
     zIndex: 1,
   },
-  bottomHalf: {
-    position: "absolute",
-    top: screenHeight * TOP_SECTION_HEIGHT_PCT,
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: colors.cream[300],
-    borderTopRightRadius: sizes.borderRadius.curved,
-    zIndex: 2,
-  },
   logoContainer: {
     justifyContent: "center",
     alignItems: "center",
-    marginTop: sizes.spacing.xl,
+    marginTop: sizes.screen.height * 0.1,
   },
   logo: {
     width: componentSizes.logo.background.width,
@@ -85,12 +72,12 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     position: "absolute",
-    top: 0,
+    top: sizes.screen.height * 0.3,
     left: 0,
     right: 0,
     bottom: 0,
     zIndex: 3,
-    justifyContent: "center",
+    justifyContent: "flex-start",
     alignItems: "center",
     paddingHorizontal: sizes.spacing.xxl,
   },
