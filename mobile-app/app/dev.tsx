@@ -164,7 +164,10 @@ export default function DevPage() {
 
   return (
     <>
-      <Header toggleSearch={true} />
+      <Header
+        // text="Hello Anna! What would you like to learn today?"
+        toggleSearch={true}
+      />
       <ScrollView>
         <View
           style={{ backgroundColor: colors.cream[300], gap: 10, padding: 10 }}

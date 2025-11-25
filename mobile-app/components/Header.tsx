@@ -16,17 +16,10 @@ interface HeaderProps {
 export default function Header({
   text,
   toggleSearch,
-  searchValue: externalSearchValue,
+  searchValue = "",
   onSearchChange,
 }: HeaderProps) {
-  const [internalSearchValue, setInternalSearchValue] = useState("");
   const [searchFocused, setSearchFocused] = useState(false);
-
-  const searchValue =
-    externalSearchValue !== undefined
-      ? externalSearchValue
-      : internalSearchValue;
-  const handleSearchChange = onSearchChange || setInternalSearchValue;
 
   const getGradientPaddingBottom = () => {
     if (toggleSearch) {
@@ -68,7 +61,7 @@ export default function Header({
         <View style={styles.searchBarContainer}>
           <SearchBar
             value={searchValue}
-            onChange={handleSearchChange}
+            onChange={onSearchChange || (() => {})}
             isFocused={searchFocused}
             onFocus={() => setSearchFocused(true)}
             onBlur={() => setSearchFocused(false)}

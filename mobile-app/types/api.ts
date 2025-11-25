@@ -1,10 +1,3 @@
-// This file imports types from the admin-dashboard
-// In a real setup, you'd either:
-// 1. Share types through a monorepo
-// 2. Generate types from the API
-// 3. Define them manually here
-
-// For now, we'll manually define the AppRouter type based on the admin-dashboard
 import type { inferRouterOutputs } from "@trpc/server";
 
 export enum SocialServiceCategory {
@@ -31,7 +24,6 @@ export type SocialService = {
   descriptionAudioFile?: string | null;
 };
 
-// Define the AppRouter type structure based on the admin-dashboard router
 export type AppRouter = {
   socialServices: {
     getAllSocialServices: {
