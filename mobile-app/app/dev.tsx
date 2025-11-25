@@ -193,24 +193,7 @@ export default function DevPage() {
             parts={videoDropdownMultipleVideos.parts}
             type="cream"
           />
-
-          <LikeDislike
-            isClicked={isClickedDown}
-            setIsClicked={setIsClickedDown}
-            type="dislike"
-          />
-          <LikeDislike
-            numLikes={numLikesUp}
-            isClicked={isClickedUp}
-            setIsClicked={handleLikeClick}
-            type="like"
-          />
           <Toggle />
-          <Link href="/auth/sign-up">sign in</Link>
-          <Text className="text-3xl font-bold">Nativewind Styles:</Text>
-          <Text className="page-title-text">page-title-text</Text>
-          <Text className="components-text">components-text</Text>
-          <Text className="link-text">link-text</Text>
           <Text style={styles.sectionTitle}>
             VideoDropdown - Single Video (Cream)
           </Text>
