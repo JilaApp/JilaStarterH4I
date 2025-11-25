@@ -10,8 +10,8 @@ export type SocialService = {
 
 type SocialServicesCategoriesProps = {
   socialServices: SocialService[];
-  currentIndex: number;
-  onSelect?: (index: number) => void;
+  currentIndex: number | null;
+  onSelect?: (index: number | null) => void;
 };
 
 export default function SocialServicesCategories({
@@ -21,35 +21,39 @@ export default function SocialServicesCategories({
 }: SocialServicesCategoriesProps) {
   return (
     <View style={styles.container}>
-      {socialServices.map((service, idx) => (
-        <TouchableOpacity
-          key={service.name}
-          onPress={() => onSelect?.(idx)}
-          activeOpacity={0.8}
-          style={styles.button}
-        >
-          {idx === currentIndex ? (
-            <LinearGradient
-              style={styles.gradientContainer}
-              colors={[colors.jila[400], colors.orange[400]]}
-              start={{ x: 0, y: 1 }}
-              end={{ x: 0, y: 0 }}
-            >
-              <View style={styles.iconContainer}>
-                <service.icon color={colors.white[400]} size={24} />
+      {socialServices.map((service, idx) => {
+        const isSelected = idx === currentIndex;
+
+        return (
+          <TouchableOpacity
+            key={service.name}
+            onPress={() => onSelect?.(isSelected ? null : idx)}
+            activeOpacity={0.8}
+            style={styles.button}
+          >
+            {isSelected ? (
+              <LinearGradient
+                style={styles.gradientContainer}
+                colors={[colors.jila[400], colors.orange[400]]}
+                start={{ x: 0, y: 1 }}
+                end={{ x: 0, y: 0 }}
+              >
+                <View style={styles.iconContainer}>
+                  <service.icon color={colors.white[400]} size={24} />
+                </View>
+                <Text style={styles.activeText}>{service.name}</Text>
+              </LinearGradient>
+            ) : (
+              <View style={styles.inactiveContainer}>
+                <View style={styles.iconContainer}>
+                  <service.icon color={colors.jila[400]} size={24} />
+                </View>
+                <Text style={styles.inactiveText}>{service.name}</Text>
               </View>
-              <Text style={styles.activeText}>{service.name}</Text>
-            </LinearGradient>
-          ) : (
-            <>
-              <View style={styles.iconContainer}>
-                <service.icon color={colors.jila[400]} size={24} />
-              </View>
-              <Text style={styles.inactiveText}>{service.name}</Text>
-            </>
-          )}
-        </TouchableOpacity>
-      ))}
+            )}
+          </TouchableOpacity>
+        );
+      })}
     </View>
   );
 }
@@ -70,6 +74,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
+    minHeight: 50,
   },
   gradientContainer: {
     flexDirection: "column",
@@ -77,17 +82,26 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 9999,
-    paddingVertical: 3,
+    paddingVertical: 4,
+    minHeight: 50,
+  },
+  inactiveContainer: {
+    flexDirection: "column",
+    width: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: 4,
+    minHeight: 50,
   },
   iconContainer: {
-    marginBottom: 2,
+    marginBottom: 1,
   },
   activeText: {
     color: colors.white[400],
-    fontSize: 14,
+    fontSize: 12,
   },
   inactiveText: {
     color: colors.black,
-    fontSize: 14,
+    fontSize: 12,
   },
 });

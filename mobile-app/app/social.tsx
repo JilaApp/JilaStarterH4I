@@ -1,23 +1,215 @@
-import { View, Text, StyleSheet } from "react-native";
+import { View, ScrollView, StyleSheet, ActivityIndicator } from "react-native";
 import { colors } from "@/colors";
+import Header from "@/components/Header";
+import Title from "@/components/Title";
+import SocialServicesCategories, {
+  SocialService as CategoryService,
+} from "@/components/SocialServicesCategories";
+import { ResourceCard } from "@/components/FlipCard";
+import { useState } from "react";
+import { Ambulance, Apple, Bus, House } from "lucide-react-native";
+import { trpc } from "@/lib/trpc";
+import { SocialServiceCategory } from "@/types/api";
+import JilaText from "@/components/JilaText";
+import BottomBackground from "@/components/BottomBackground";
+
+// Map category enum to display data (excluding OTHER)
+const CATEGORY_MAP: Record<
+  Exclude<SocialServiceCategory, SocialServiceCategory.OTHER>,
+  { icon: typeof Ambulance; name: string }
+> = {
+  [SocialServiceCategory.EMERGENCIA]: {
+    icon: Ambulance,
+    name: "Emergency",
+  },
+  [SocialServiceCategory.SHELTERS]: {
+    icon: House,
+    name: "Shelters",
+  },
+  [SocialServiceCategory.FOOD]: {
+    icon: Apple,
+    name: "Food",
+  },
+  [SocialServiceCategory.TRANSPORTATION]: {
+    icon: Bus,
+    name: "Transport",
+  },
+};
+
+// Categories to display (excluding OTHER)
+const DISPLAY_CATEGORIES = [
+  SocialServiceCategory.EMERGENCIA,
+  SocialServiceCategory.SHELTERS,
+  SocialServiceCategory.FOOD,
+  SocialServiceCategory.TRANSPORTATION,
+];
 
 export default function SocialServices() {
+  const [currentCategoryIndex, setCurrentCategoryIndex] = useState<
+    number | null
+  >(null);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+
+  // Fetch all social services from the API
+  const {
+    data: socialServices,
+    isLoading,
+    error,
+  } = trpc.socialServices.getAllSocialServices.useQuery();
+
+  // Get categories from the display categories (excluding OTHER)
+  const categories: CategoryService[] = DISPLAY_CATEGORIES.map((category) => ({
+    icon: CATEGORY_MAP[category].icon,
+    name: CATEGORY_MAP[category].name,
+  }));
+
+  // Get current category from display categories (null means show all)
+  const currentCategory =
+    currentCategoryIndex !== null
+      ? DISPLAY_CATEGORIES[currentCategoryIndex]
+      : null;
+
+  // Filter services by selected category and search query
+  const filteredServices =
+    socialServices?.filter((service) => {
+      // Filter by category if one is selected
+      const matchesCategory =
+        currentCategory === null || service.category === currentCategory;
+
+      // Filter by search query if one exists
+      const matchesSearch =
+        !searchQuery ||
+        service.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        service.description
+          ?.toLowerCase()
+          .includes(searchQuery.toLowerCase()) ||
+        service.phone_number.includes(searchQuery) ||
+        service.address?.toLowerCase().includes(searchQuery.toLowerCase());
+
+      return matchesCategory && matchesSearch;
+    }) || [];
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Social Services</Text>
-    </View>
+    <>
+      <Header
+        toggleSearch={true}
+        searchValue={searchQuery}
+        onSearchChange={setSearchQuery}
+      />
+      <BottomBackground>
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollContent}
+        >
+          <Title
+            text="Social Services Resources"
+            audioSource={require("../assets/audio/sample.mp3")}
+          />
+
+          <SocialServicesCategories
+            socialServices={categories}
+            currentIndex={currentCategoryIndex}
+            onSelect={setCurrentCategoryIndex}
+          />
+
+          {error ? (
+            <View style={styles.errorContainer}>
+              <JilaText style={styles.errorText}>
+                Error loading services: {error.message}
+              </JilaText>
+              <JilaText style={styles.errorDetails}>
+                Check console for details
+              </JilaText>
+            </View>
+          ) : isLoading ? (
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="large" color={colors.jila[400]} />
+              <JilaText style={styles.loadingText}>
+                Loading social services...
+              </JilaText>
+            </View>
+          ) : filteredServices.length === 0 ? (
+            <View style={styles.emptyContainer}>
+              <JilaText style={styles.emptyText}>
+                No services available in this category
+              </JilaText>
+            </View>
+          ) : (
+            <View style={styles.cardsContainer}>
+              {filteredServices.map((service) => (
+                <ResourceCard
+                  key={service.id}
+                  title={service.title}
+                  phone={service.phone_number}
+                  address={service.address || undefined}
+                  description={
+                    service.description || "No description available"
+                  }
+                />
+              ))}
+            </View>
+          )}
+        </ScrollView>
+      </BottomBackground>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingHorizontal: 20,
+    paddingTop: 32,
+    paddingBottom: 20,
+    gap: 16,
+  },
+  categoriesContainer: {
+    width: "100%",
+  },
+  loadingContainer: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: colors.white[400],
+    paddingVertical: 40,
+    gap: 12,
   },
-  title: {
-    fontSize: 20,
-    fontWeight: "700",
+  loadingText: {
+    fontSize: 14,
+    color: colors.gray[400],
+  },
+  errorContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 40,
+    paddingHorizontal: 20,
+    gap: 8,
+  },
+  errorText: {
+    fontSize: 16,
+    color: colors.error[400],
+    textAlign: "center",
+    fontWeight: "600",
+  },
+  errorDetails: {
+    fontSize: 12,
+    color: colors.gray[400],
+    textAlign: "center",
+  },
+  emptyContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 40,
+  },
+  emptyText: {
+    fontSize: 16,
+    color: colors.gray[400],
+    textAlign: "center",
+  },
+  cardsContainer: {
+    gap: 16,
   },
 });
