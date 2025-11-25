@@ -4,6 +4,7 @@ import React, { useEffect } from "react";
 import { View, ActivityIndicator, StyleSheet } from "react-native";
 import { colors } from "@/colors";
 import Header from "@/components/Header";
+import BottomBackground from "@/components/BottomBackground";
 import {
   CareerButton,
   LegalButton,
@@ -56,7 +57,7 @@ export default function App() {
         text={`Hi ${user.username}, What would you like to learn today?`}
         toggleSearch={true}
       />
-      <View style={styles.container}>
+      <BottomBackground contentStyle={styles.container}>
         <View style={styles.buttonGrid}>
           <View style={styles.buttonRow}>
             <CareerButton onPress={() => navigateToCategory("Career")} />
@@ -71,7 +72,7 @@ export default function App() {
             <OtherButton onPress={() => navigateToCategory("Other")} />
           </View>
         </View>
-      </View>
+      </BottomBackground>
     </>
   );
 }
@@ -84,8 +85,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.cream[300],
   },
   container: {
-    flex: 1,
-    backgroundColor: colors.cream[300],
     paddingTop: 40,
     paddingHorizontal: 16,
   },
