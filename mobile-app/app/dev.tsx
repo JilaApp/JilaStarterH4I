@@ -16,10 +16,15 @@ import { UsernameInput, PasswordInput } from "@/components/Input";
 import { colors } from "@/colors";
 
 import AudioButton from "@/components/AudioButton";
-import { Ambulance, Apple, Bus, House } from "lucide-react-native";
+import {
+  Ambulance,
+  Apple,
+  Bus,
+  House,
+  SquareArrowOutUpRight,
+} from "lucide-react-native";
 import { Button } from "@/components/Button";
 import LikeDislike from "@/components/LikeDislike";
-import { SquareArrowOutUpRight } from "lucide-react-native";
 import Dropdown from "@/components/Dropdown";
 import SocialServicesCategories, {
   SocialService,

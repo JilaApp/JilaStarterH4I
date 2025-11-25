@@ -68,7 +68,11 @@ export default function AudioButton({
   };
 
   return (
-    <TouchableOpacity onPress={playSound} disabled={disabled}>
+    <TouchableOpacity
+      onPress={playSound}
+      disabled={disabled}
+      hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+    >
       <View
         style={[styles.container, { backgroundColor: getBackgroundColor() }]}
       >

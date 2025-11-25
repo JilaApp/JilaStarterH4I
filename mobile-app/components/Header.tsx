@@ -9,10 +9,16 @@ import { colors } from "@/colors";
 interface HeaderProps {
   text?: string;
   toggleSearch: boolean;
+  searchValue?: string;
+  onSearchChange?: (value: string) => void;
 }
 
-export default function Header({ text, toggleSearch }: HeaderProps) {
-  const [searchValue, setSearchValue] = useState("");
+export default function Header({
+  text,
+  toggleSearch,
+  searchValue = "",
+  onSearchChange,
+}: HeaderProps) {
   const [searchFocused, setSearchFocused] = useState(false);
 
   const getGradientPaddingBottom = () => {
@@ -55,7 +61,7 @@ export default function Header({ text, toggleSearch }: HeaderProps) {
         <View style={styles.searchBarContainer}>
           <SearchBar
             value={searchValue}
-            onChange={setSearchValue}
+            onChange={onSearchChange || (() => {})}
             isFocused={searchFocused}
             onFocus={() => setSearchFocused(true)}
             onBlur={() => setSearchFocused(false)}
