@@ -1,10 +1,25 @@
 import YoutubeIframe from "react-native-youtube-iframe";
-import { Video } from "expo-av";
+import { VideoView, useVideoPlayer } from "expo-video";
+import { StyleSheet } from "react-native";
+
+export enum VideoType {
+  YouTube = "youtube",
+  GoogleDrive = "google-drive",
+}
 
 type VideoEmbedProps = {
   uri: string;
-  type: "youtube" | "google-drive";
+  type: VideoType;
   height?: number;
+};
+
+type YoutubeEmbedProps = {
+  uri: string;
+  height: number;
+};
+
+type GoogleDriveEmbedProps = {
+  uri: string;
 };
 
 function extractYoutubeId(url: string) {
@@ -26,32 +41,46 @@ function getGoogleDriveDirectUrl(url: string) {
   return url;
 }
 
+function YoutubeEmbed({ uri, height }: YoutubeEmbedProps) {
+  const videoId = extractYoutubeId(uri);
+
+  if (!videoId) {
+    console.error("Invalid YouTube URL:", uri);
+    return null;
+  }
+
+  return <YoutubeIframe videoId={videoId} height={height} />;
+}
+
+function GoogleDriveEmbed({ uri }: GoogleDriveEmbedProps) {
+  const player = useVideoPlayer(getGoogleDriveDirectUrl(uri), (player) => {
+    player.loop = false;
+  });
+
+  return (
+    <VideoView player={player} style={styles.video} allowsPictureInPicture />
+  );
+}
+
 export default function VideoEmbed({
   uri,
   type,
   height = 220,
 }: VideoEmbedProps) {
-  if (type === "youtube") {
-    const videoId = extractYoutubeId(uri);
-
-    if (!videoId) {
-      console.error("Invalid YouTube URL:", uri);
-      return null;
-    }
-
-    return <YoutubeIframe videoId={videoId} height={height} />;
+  if (type === VideoType.YouTube) {
+    return <YoutubeEmbed uri={uri} height={height} />;
   }
 
-  if (type === "google-drive") {
-    return (
-      <Video
-        source={{ uri: getGoogleDriveDirectUrl(uri) }}
-        style={{ width: "100%", aspectRatio: 16 / 9 }}
-        useNativeControls
-        resizeMode="contain"
-      />
-    );
+  if (type === VideoType.GoogleDrive) {
+    return <GoogleDriveEmbed uri={uri} />;
   }
 
   return null;
 }
+
+const styles = StyleSheet.create({
+  video: {
+    width: "100%",
+    aspectRatio: 16 / 9,
+  },
+});

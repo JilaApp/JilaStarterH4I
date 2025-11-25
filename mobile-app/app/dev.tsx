@@ -36,7 +36,7 @@ import Select from "@/components/Select";
 import Checkbox from "@/components/Checkbox";
 import Header from "@/components/Header";
 import Link from "@/components/Link";
-import VideoEmbed from "@/components/VideoEmbed";
+import VideoEmbed, { VideoType } from "@/components/VideoEmbed";
 
 export default function DevPage() {
   const [
@@ -175,8 +175,11 @@ export default function DevPage() {
         toggleSearch={true}
       />
       <ScrollView>
-        <VideoEmbed uri={videoEmbedYoutubeURL} type="youtube" />
-        <VideoEmbed uri={videoEmbedGoogleDriveURL} type="google-drive" />
+        <VideoEmbed uri={videoEmbedYoutubeURL} type={VideoType.YouTube} />
+        <VideoEmbed
+          uri={videoEmbedGoogleDriveURL}
+          type={VideoType.GoogleDrive}
+        />
         <View
           style={{ backgroundColor: colors.cream[300], gap: 10, padding: 10 }}
         >

@@ -1,4 +1,4 @@
-import { useUser, useAuth } from "@clerk/clerk-expo";
+import { useUser } from "@clerk/clerk-expo";
 import { useRouter } from "expo-router";
 import React, { useEffect } from "react";
 import { View, ActivityIndicator, StyleSheet } from "react-native";
@@ -16,7 +16,6 @@ import {
 
 export default function App() {
   const { user, isLoaded } = useUser();
-  const { signOut } = useAuth();
   const router = useRouter();
 
   // Handle redirect in useEffect to avoid render-time navigation
