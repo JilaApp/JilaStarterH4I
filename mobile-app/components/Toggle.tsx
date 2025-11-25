@@ -1,5 +1,5 @@
 import React from "react";
-import { Pressable, View, StyleSheet, Button } from "react-native";
+import { Pressable, View, StyleSheet } from "react-native";
 import Animated, {
   interpolate,
   interpolateColor,
@@ -100,36 +100,30 @@ export function Toggle() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: 5,
-        }}
-      >
-        <Switch value={isOn} onPress={handlePress} style={styles.switch} />
-        <Text style={{ fontSize: 22, fontWeight: "bold" }}>
-          Enable Text-to-speech?
-        </Text>
-        <AudioButton
-          audioSource={require("../assets/audio/sample.mp3")}
-          variant={"default"}
-        />
+      <View style={styles.content}>
+        <View style={styles.toggleRow}>
+          <Switch value={isOn} onPress={handlePress} style={styles.switch} />
+          <Text style={styles.titleText}>Enable Text-to-speech?</Text>
+          <AudioButton
+            audioSource={require("../assets/audio/sample.mp3")}
+            variant={"default"}
+          />
+        </View>
+        <View style={styles.descriptionContainer}>
+          <Text style={styles.descriptionText}>
+            When enabled, you may click the speaker icons to read words out loud
+          </Text>
+        </View>
       </View>
-      <Text style={{ textAlign: "center" }}>
-        When enabled, you may click the speaker icons to read words out loud
-      </Text>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   switch: {
-    width: 55,
-    height: 40,
-    padding: 5,
+    width: 43,
+    height: 32,
+    padding: 3,
   },
   container: {
     flex: 1,
@@ -139,11 +133,22 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  buttonContainer: {
-    paddingTop: "10px",
-    display: "flex",
+  content: {
+    alignItems: "flex-start",
+  },
+  toggleRow: {
     flexDirection: "row",
-    justifyContent: "center",
     alignItems: "center",
+    gap: 10,
+  },
+  titleText: {
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+  descriptionContainer: {
+    alignSelf: "stretch",
+  },
+  descriptionText: {
+    textAlign: "center",
   },
 });
