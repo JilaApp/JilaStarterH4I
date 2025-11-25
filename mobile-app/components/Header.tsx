@@ -5,6 +5,7 @@ import SearchBar from "./SearchBar";
 import React, { useState } from "react";
 import { Volume2, CircleHelp, Menu } from "lucide-react-native";
 import { colors } from "@/colors";
+import { sizes, componentSizes } from "@/constants/sizes";
 
 interface HeaderProps {
   text?: string;
@@ -23,9 +24,9 @@ export default function Header({
 
   const getGradientPaddingBottom = () => {
     if (toggleSearch) {
-      return text ? 50 : 30;
+      return text ? sizes.spacing.xxl : sizes.spacing.xl;
     }
-    return 38;
+    return sizes.spacing.xl + sizes.spacing.sm;
   };
 
   return (
@@ -45,12 +46,12 @@ export default function Header({
 
           <View style={styles.iconRow}>
             <View style={styles.audioIconContainer}>
-              <Volume2 size={12} color={colors.white[400]} />
+              <Volume2 size={sizes.icon.xs} color={colors.white[400]} />
             </View>
 
-            <CircleHelp size={24} color={colors.white[400]} />
+            <CircleHelp size={sizes.icon.md} color={colors.white[400]} />
 
-            <Menu size={26} color={colors.white[400]} />
+            <Menu size={sizes.icon.md} color={colors.white[400]} />
           </View>
         </View>
 
@@ -77,31 +78,30 @@ const styles = StyleSheet.create({
     position: "relative",
   },
   gradient: {
-    paddingHorizontal: 32,
-    paddingTop: 50,
-    borderBottomLeftRadius: 35,
+    paddingHorizontal: sizes.spacing.xl,
+    paddingTop: sizes.spacing.xxl,
+    borderBottomLeftRadius: sizes.borderRadius.xxl,
   },
   topRow: {
     flexDirection: "row",
     alignItems: "flex-start",
     justifyContent: "space-between",
     width: "100%",
-    paddingLeft: 0,
   },
   logo: {
-    width: 125,
-    height: 65,
+    width: componentSizes.logo.header.width,
+    height: componentSizes.logo.header.height,
   },
   iconRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 12,
-    paddingTop: 16,
+    gap: sizes.spacing.md,
+    paddingTop: sizes.spacing.md,
   },
   audioIconContainer: {
-    width: 24,
-    height: 24,
-    borderRadius: 24,
+    width: sizes.icon.md,
+    height: sizes.icon.md,
+    borderRadius: sizes.icon.md / 2,
     borderWidth: 2,
     borderColor: colors.white[400],
     alignItems: "center",
@@ -109,17 +109,19 @@ const styles = StyleSheet.create({
   },
   headerText: {
     color: colors.white[400],
-    fontSize: 24,
+    fontSize: sizes.fontSize.xl,
     fontWeight: "700",
-    lineHeight: 28,
-    marginTop: 20,
-    width: 312,
-    marginLeft: 10,
+    lineHeight: sizes.fontSize.xxl,
+    marginTop: sizes.spacing.lg,
+    width: "90%",
+    marginLeft: sizes.spacing.sm,
   },
   searchBarContainer: {
     position: "absolute",
-    bottom: -20,
+    bottom: -sizes.spacing.lg,
     alignSelf: "center",
+    width: "90%",
+    alignItems: "center",
     zIndex: 10,
   },
 });

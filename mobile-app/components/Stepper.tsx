@@ -1,5 +1,6 @@
 import { View, StyleSheet } from "react-native";
 import { colors } from "@/colors";
+import { sizes } from "@/constants/sizes";
 
 interface StepperProps {
   totalSteps: number;
@@ -26,12 +27,12 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
+    gap: sizes.spacing.xs,
     width: "100%",
   },
   step: {
     flex: 1,
-    height: 4,
+    height: sizes.spacing.xs,
   },
   stepActive: {
     backgroundColor: colors.jila[400],

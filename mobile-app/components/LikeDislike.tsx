@@ -1,6 +1,7 @@
 import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
 import { ThumbsUpIcon, ThumbsDownIcon } from "lucide-react-native";
 import { colors } from "@/colors";
+import { sizes } from "@/constants/sizes";
 
 type LikeDislikeProps = {
   numLikes?: number;
@@ -24,7 +25,7 @@ export default function LikeDislike({
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={handlePress}>
-        <Icon width={24} height={24} fill={isClicked ? colors.black : "none"} />
+        <Icon size={sizes.icon.md} fill={isClicked ? colors.black : "none"} />
       </TouchableOpacity>
 
       {type === "like" && numLikes !== undefined && <Text>{numLikes}</Text>}

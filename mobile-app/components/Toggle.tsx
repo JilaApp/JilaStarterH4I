@@ -11,13 +11,27 @@ import Animated, {
 import { SafeAreaView } from "react-native-safe-area-context";
 import Text from "./JilaText";
 import AudioButton from "./AudioButton";
+import { sizes } from "@/constants/sizes";
+
+// Toggle-specific constants
+const SWITCH_BORDER_WIDTH = 2.5;
+const SWITCH_TRACK_WIDTH = 50;
+const SWITCH_WIDTH = 48;
+
+// Toggle colors (rgba doesn't work with reanimated...)
+const SWITCH_COLORS = {
+  trackOn: "#D4928F",
+  trackOff: "#E8E8E8",
+  border: "#7E0601",
+  thumb: "#FFFFFF",
+};
 
 const Switch = ({
   value,
   onPress,
   style,
   duration = 400,
-  trackColors = { on: "#D4928F", off: "#E8E8E8" },
+  trackColors = { on: SWITCH_COLORS.trackOn, off: SWITCH_COLORS.trackOff },
 }: {
   value: SharedValue<number>;
   onPress: () => void;
@@ -76,18 +90,18 @@ const Switch = ({
 const switchStyles = StyleSheet.create({
   track: {
     alignItems: "flex-start",
-    width: 50,
-    height: 20,
-    padding: 1,
-    borderWidth: 2.5,
-    borderColor: "#7E0601",
+    width: SWITCH_TRACK_WIDTH,
+    height: sizes.icon.md,
+    padding: sizes.spacing.xxs,
+    borderWidth: SWITCH_BORDER_WIDTH,
+    borderColor: SWITCH_COLORS.border,
   },
   thumb: {
     height: "100%",
     aspectRatio: 1,
-    backgroundColor: "white",
-    borderWidth: 2.5,
-    borderColor: "#7E0601",
+    backgroundColor: SWITCH_COLORS.thumb,
+    borderWidth: SWITCH_BORDER_WIDTH,
+    borderColor: SWITCH_COLORS.border,
   },
 });
 
@@ -121,17 +135,16 @@ export function Toggle() {
 
 const styles = StyleSheet.create({
   switch: {
-    width: 43,
-    height: 32,
-    padding: 3,
+    width: SWITCH_WIDTH,
+    height: sizes.spacing.xl,
+    padding: sizes.spacing.xxs,
   },
   container: {
     flex: 1,
-    height: 300,
-    width: 250,
     margin: "auto",
     alignItems: "center",
     justifyContent: "center",
+    paddingHorizontal: sizes.spacing.lg,
   },
   content: {
     alignItems: "flex-start",
@@ -139,10 +152,10 @@ const styles = StyleSheet.create({
   toggleRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 10,
+    gap: sizes.spacing.md,
   },
   titleText: {
-    fontSize: 20,
+    fontSize: sizes.fontSize.lg,
     fontWeight: "bold",
   },
   descriptionContainer: {

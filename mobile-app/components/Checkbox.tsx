@@ -1,6 +1,7 @@
 import { View, TouchableOpacity, StyleSheet } from "react-native";
 import { Check } from "lucide-react-native";
 import { colors } from "@/colors";
+import { sizes } from "@/constants/sizes";
 
 interface CheckboxProps {
   size: "small" | "large";
@@ -26,7 +27,7 @@ export default function Checkbox({
           checked && styles.checked,
         ]}
       >
-        {checked && <Check size={14} color={colors.white[400]} />}
+        {checked && <Check size={sizes.icon.xs} color={colors.white[400]} />}
       </View>
     </TouchableOpacity>
   );
@@ -39,15 +40,15 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     borderWidth: 1,
     borderColor: colors.jila[400],
-    borderRadius: 3.13,
+    borderRadius: sizes.borderRadius.xs,
   },
   small: {
-    width: 16,
-    height: 16,
+    width: sizes.icon.sm,
+    height: sizes.icon.sm,
   },
   large: {
-    width: 20,
-    height: 20,
+    width: sizes.icon.md,
+    height: sizes.icon.md,
   },
   checked: {
     backgroundColor: colors.jila[400],

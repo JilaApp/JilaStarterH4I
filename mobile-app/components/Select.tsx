@@ -3,6 +3,7 @@ import AudioButton from "@/components/AudioButton";
 import JilaText from "@/components/JilaText";
 import { Check } from "lucide-react-native";
 import { colors } from "@/colors";
+import { sizes } from "@/constants/sizes";
 
 type AudioSource = number | { uri: string };
 
@@ -26,9 +27,10 @@ export default function Select({
   onSelect,
   className,
 }: SelectProps) {
-  const customStyle: ViewStyle = className
-    ? { width: 275, height: 45 }
-    : { width: 275, height: 45 };
+  const customStyle: ViewStyle = {
+    width: "100%",
+    minHeight: sizes.touch.minTarget,
+  };
 
   return (
     <View style={styles.container}>
@@ -74,7 +76,7 @@ export default function Select({
                 </View>
                 {isSelected && (
                   <View style={styles.checkContainer}>
-                    <Check size={25} color={colors.jila[400]} />
+                    <Check size={sizes.icon.md} color={colors.jila[400]} />
                   </View>
                 )}
               </View>
@@ -90,14 +92,16 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "column",
     alignItems: "center",
-    gap: 25,
+    gap: sizes.spacing.lg,
+    width: "100%",
   },
   option: {
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: 10,
+    borderRadius: sizes.borderRadius.md,
     borderWidth: 1,
+    width: "100%",
   },
   optionSelected: {
     borderColor: colors.jila[400],
@@ -110,7 +114,8 @@ const styles = StyleSheet.create({
   },
   optionContent: {
     flexDirection: "row",
-    padding: 15,
+    padding: sizes.spacing.md,
+    width: "100%",
   },
   leftContent: {
     flex: 1,
@@ -118,10 +123,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   titleContainer: {
-    paddingRight: 10,
+    paddingRight: sizes.spacing.sm,
   },
   title: {
-    fontSize: 16,
+    fontSize: sizes.fontSize.md,
     fontWeight: "600",
   },
   titleDisabled: {
@@ -131,6 +136,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   checkContainer: {
-    marginLeft: 15,
+    marginLeft: sizes.spacing.md,
   },
 });

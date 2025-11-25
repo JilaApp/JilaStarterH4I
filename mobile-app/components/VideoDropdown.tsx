@@ -2,6 +2,7 @@ import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
 import { colors } from "@/colors";
 import { useRouter } from "expo-router";
 import Accordion from "@/components/Accordion";
+import { sizes } from "@/constants/sizes";
 
 type VideoDropdownPart = {
   videoUrl: string;
@@ -97,13 +98,13 @@ function formatDuration(duration: number) {
 
 const styles = StyleSheet.create({
   partCountText: {
-    fontSize: 12,
+    fontSize: sizes.fontSize.xs,
     fontWeight: "400",
-    color: "black",
+    color: colors.black,
   },
   dropdownContent: {
     gap: 0,
-    paddingHorizontal: 20,
+    paddingHorizontal: sizes.spacing.lg,
     marginTop: -1,
   },
   dropdownItemWrapper: {
@@ -112,30 +113,29 @@ const styles = StyleSheet.create({
   dropdownItem: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 20,
-    paddingVertical: 9,
+    paddingHorizontal: sizes.spacing.lg,
+    paddingVertical: sizes.spacing.sm,
     borderBottomWidth: 1,
     borderBottomColor: colors.gray[200],
   },
   dropdownItemText: {
-    fontSize: 18,
+    fontSize: sizes.fontSize.base,
     fontWeight: "600",
-    color: "black",
+    color: colors.black,
     flex: 1,
   },
   timer: {
     backgroundColor: colors.jila[300],
-    borderRadius: 10,
-    paddingHorizontal: 8,
-    paddingVertical: 2,
+    borderRadius: sizes.borderRadius.md,
+    paddingHorizontal: sizes.spacing.sm,
+    paddingVertical: sizes.spacing.xxs,
     alignItems: "center",
     justifyContent: "center",
-    width: 58,
-    height: 25,
+    minWidth: 58,
   },
   timerText: {
-    fontSize: 14,
+    fontSize: sizes.fontSize.sm,
     fontWeight: "300",
-    color: "black",
+    color: colors.black,
   },
 });

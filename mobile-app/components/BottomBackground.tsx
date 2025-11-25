@@ -1,6 +1,7 @@
 import React from "react";
 import { View, StyleSheet, ViewStyle } from "react-native";
 import { colors } from "@/colors";
+import { sizes } from "@/constants/sizes";
 
 interface BottomBackgroundProps {
   children: React.ReactNode;
@@ -38,7 +39,7 @@ const styles = StyleSheet.create({
   creamLayer: {
     flex: 1,
     backgroundColor: colors.cream[300],
-    borderTopRightRadius: 70,
+    borderTopRightRadius: sizes.borderRadius.curved,
     zIndex: 1,
   },
   content: {

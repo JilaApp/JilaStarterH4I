@@ -3,6 +3,7 @@ import { View, TextInput, StyleSheet } from "react-native";
 import type { TextInput as RNTextInput } from "react-native";
 import { BaseInputProps } from "./types";
 import { colors } from "@/colors";
+import { sizes } from "@/constants/sizes";
 
 export function BaseInput({
   type = "text",
@@ -94,11 +95,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     borderWidth: 1,
-    borderRadius: 10,
-    paddingHorizontal: 15,
-    paddingVertical: 10,
-    maxWidth: 275,
-    height: 60,
+    borderRadius: sizes.borderRadius.md,
+    paddingHorizontal: sizes.spacing.md,
+    paddingVertical: sizes.spacing.sm,
+    width: "100%",
+    minHeight: sizes.touch.minTarget + sizes.spacing.md,
   },
   containerDefault: {
     borderColor: colors.gray[200],
@@ -117,19 +118,19 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white[400],
   },
   iconContainer: {
-    paddingRight: 8,
+    paddingRight: sizes.spacing.sm,
   },
   input: {
     flex: 1,
     fontWeight: "500",
-    paddingLeft: 4,
+    paddingLeft: sizes.spacing.xs,
     textAlignVertical: "center",
     paddingVertical: 0,
   },
   rightElementContainer: {
     flexDirection: "row",
     alignItems: "center",
-    paddingLeft: 8,
-    paddingRight: 8,
+    paddingLeft: sizes.spacing.sm,
+    paddingRight: sizes.spacing.sm,
   },
 });
