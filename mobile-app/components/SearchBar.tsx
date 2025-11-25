@@ -2,6 +2,7 @@ import React from "react";
 import { View, TextInput, TouchableOpacity, StyleSheet } from "react-native";
 import { Search, X } from "lucide-react-native";
 import { colors } from "@/colors";
+import { sizes } from "@/constants/sizes";
 
 interface SearchBarProps {
   placeholder?: string;
@@ -27,7 +28,7 @@ export default function SearchBar({
         isFocused ? styles.containerFocused : styles.containerUnfocused,
       ]}
     >
-      <Search size={24} color={colors.gray[300]} />
+      <Search size={sizes.icon.md} color={colors.gray[300]} />
       <TextInput
         placeholder={placeholder}
         placeholderTextColor={colors.gray[300]}
@@ -45,7 +46,7 @@ export default function SearchBar({
           onPress={() => onChange("")}
           hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
         >
-          <X size={22} color={colors.black} />
+          <X size={sizes.icon.md} color={colors.black} />
         </TouchableOpacity>
       )}
     </View>
@@ -57,10 +58,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: colors.white[400],
-    paddingHorizontal: 20,
-    height: 50,
-    width: 360,
-    borderRadius: 20,
+    paddingHorizontal: sizes.spacing.lg,
+    minHeight: sizes.touch.minTarget,
+    width: "100%",
+    borderRadius: sizes.borderRadius.lg,
     borderWidth: 1,
   },
   containerFocused: {
@@ -70,12 +71,12 @@ const styles = StyleSheet.create({
     borderColor: colors.gray[200],
   },
   input: {
-    marginLeft: 8,
+    marginLeft: sizes.spacing.sm,
     flex: 1,
     backgroundColor: colors.white[400],
     color: colors.black,
     fontWeight: "700",
-    fontSize: 18,
+    fontSize: sizes.fontSize.base,
     paddingVertical: 0,
   },
 });

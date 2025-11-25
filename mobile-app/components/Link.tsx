@@ -1,6 +1,7 @@
 import { Text, StyleSheet, TouchableOpacity } from "react-native";
 import { colors } from "@/colors";
 import { useRouter } from "expo-router";
+import { sizes } from "@/constants/sizes";
 
 type LinkProps = {
   path: string;
@@ -25,8 +26,8 @@ const styles = StyleSheet.create({
   linkText: {
     fontFamily: "Fustat",
     fontWeight: "700",
-    fontSize: 18,
-    lineHeight: 25,
+    fontSize: sizes.fontSize.base,
+    lineHeight: sizes.fontSize.xl + 1,
     color: colors.jila[400],
     textAlign: "center",
     textDecorationLine: "underline",

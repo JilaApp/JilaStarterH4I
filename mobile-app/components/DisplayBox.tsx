@@ -1,6 +1,7 @@
 import React from "react";
 import { View, StyleSheet, Image, ScrollView } from "react-native";
 import { colors } from "@/colors";
+import { sizes, componentSizes } from "@/constants/sizes";
 
 interface DisplayBoxProps {
   children: React.ReactNode;
@@ -10,8 +11,8 @@ interface DisplayBoxProps {
 
 export default function DisplayBox({
   children,
-  minHeight = 400,
-  maxHeight = 600,
+  minHeight = componentSizes.displayBox.minHeight,
+  maxHeight = componentSizes.displayBox.maxHeight,
 }: DisplayBoxProps) {
   return (
     <View style={styles.container}>
@@ -38,13 +39,12 @@ const styles = StyleSheet.create({
   container: {
     position: "relative",
     width: "100%",
-    maxWidth: 400,
   },
   innerBox: {
     backgroundColor: colors.white[400],
-    borderRadius: 24,
+    borderRadius: sizes.borderRadius.xl,
     shadowColor: colors.black,
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: { width: 0, height: sizes.spacing.xs },
     shadowOpacity: 0.1,
     shadowRadius: 80,
     elevation: 10,
@@ -55,15 +55,15 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   scrollContent: {
-    padding: 24,
+    padding: sizes.spacing.xl,
     flexGrow: 1,
   },
   tail: {
     position: "absolute",
-    bottom: -100,
-    right: -50,
-    width: 160,
-    height: 160,
+    bottom: "-25%",
+    right: "-12%",
+    width: componentSizes.displayBox.tailSize,
+    height: componentSizes.displayBox.tailSize,
     zIndex: 1,
   },
 });

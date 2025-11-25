@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import { ChevronDown, ChevronRight } from "lucide-react-native";
 import { colors } from "@/colors";
+import { sizes } from "@/constants/sizes";
 
 interface DropdownProps {
   text: string;
@@ -40,9 +41,9 @@ const Dropdown: React.FC<DropdownProps> = ({
             {selected || text}
           </Text>
           {open ? (
-            <ChevronDown size={20} color={colors.black} />
+            <ChevronDown size={sizes.icon.md} color={colors.black} />
           ) : (
-            <ChevronRight size={20} color={colors.black} />
+            <ChevronRight size={sizes.icon.md} color={colors.black} />
           )}
         </View>
       </TouchableOpacity>
@@ -87,18 +88,18 @@ const Dropdown: React.FC<DropdownProps> = ({
 const styles = StyleSheet.create({
   container: {
     position: "relative",
-    width: 320,
-    borderRadius: 12,
+    width: "100%",
+    borderRadius: sizes.borderRadius.md,
   },
   trigger: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    width: 320,
+    width: "100%",
     borderWidth: 1,
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    borderRadius: sizes.borderRadius.md,
+    paddingHorizontal: sizes.spacing.md,
+    paddingVertical: sizes.spacing.sm,
     backgroundColor: colors.white[400],
   },
   triggerOpen: {
@@ -116,16 +117,17 @@ const styles = StyleSheet.create({
   dropdown: {
     position: "absolute",
     left: 0,
-    marginTop: 16,
-    width: 320,
+    marginTop: sizes.spacing.md,
+    width: "100%",
     backgroundColor: colors.white[400],
     zIndex: 50,
     overflow: "hidden",
     top: "100%",
+    borderRadius: sizes.borderRadius.md,
   },
   option: {
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingHorizontal: sizes.spacing.md,
+    paddingVertical: sizes.spacing.sm,
   },
   optionBorderTop: {
     borderTopWidth: 1,
@@ -138,12 +140,12 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white[400],
   },
   optionRoundedTop: {
-    borderTopLeftRadius: 12,
-    borderTopRightRadius: 12,
+    borderTopLeftRadius: sizes.borderRadius.md,
+    borderTopRightRadius: sizes.borderRadius.md,
   },
   optionRoundedBottom: {
-    borderBottomLeftRadius: 12,
-    borderBottomRightRadius: 12,
+    borderBottomLeftRadius: sizes.borderRadius.md,
+    borderBottomRightRadius: sizes.borderRadius.md,
   },
 });
 

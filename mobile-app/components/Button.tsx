@@ -2,6 +2,7 @@ import { Pressable, StyleSheet } from "react-native";
 import { colors } from "@/colors";
 import { LucideIcon } from "lucide-react-native";
 import Text from "./JilaText";
+import { sizes } from "@/constants/sizes";
 
 type ButtonPreset = "primary" | "secondary" | "outline" | "outline-cream";
 
@@ -31,47 +32,46 @@ interface ButtonProps {
 
 const buttonPresets: Record<ButtonPreset, ButtonStyle> = {
   primary: {
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 10,
+    paddingHorizontal: sizes.spacing.lg,
+    paddingVertical: sizes.spacing.md,
+    borderRadius: sizes.borderRadius.md,
     backgroundColor: colors.jila[400],
     borderWidth: 0,
     borderColor: "transparent",
-    fontSize: 18,
+    fontSize: sizes.fontSize.base,
     fontWeight: "bold",
-    lineHeight: 40,
     textColor: colors.white[400],
   },
   secondary: {
-    width: 116,
-    height: 41,
-    borderRadius: 20.5,
+    paddingHorizontal: sizes.spacing.xl,
+    paddingVertical: sizes.spacing.md,
+    borderRadius: sizes.borderRadius.xl,
     backgroundColor: colors.jila[400],
     borderWidth: 2,
     borderColor: colors.jila[400],
-    fontSize: 14,
+    fontSize: sizes.fontSize.sm,
     fontWeight: "600",
     textColor: colors.white[400],
   },
   outline: {
-    width: 105,
-    height: 41,
-    borderRadius: 20.5,
+    paddingHorizontal: sizes.spacing.xl,
+    paddingVertical: sizes.spacing.md,
+    borderRadius: sizes.borderRadius.xl,
     backgroundColor: "transparent",
     borderWidth: 1,
     borderColor: colors.jila[400],
-    fontSize: 14,
+    fontSize: sizes.fontSize.sm,
     fontWeight: "600",
     textColor: colors.jila[400],
   },
   "outline-cream": {
-    width: 225,
-    height: 78,
-    borderRadius: 39,
+    paddingHorizontal: sizes.spacing.xxl,
+    paddingVertical: sizes.spacing.xl,
+    borderRadius: sizes.borderRadius.xxl + sizes.borderRadius.sm,
     backgroundColor: "transparent",
     borderWidth: 2,
     borderColor: colors.gray[300],
-    fontSize: 28,
+    fontSize: sizes.fontSize.xxl,
     fontWeight: "600",
     textColor: colors.type[400],
   },
@@ -82,7 +82,7 @@ export function Button({
   onPress,
   preset = "primary",
   icon: Icon,
-  iconSize = 14,
+  iconSize = sizes.icon.sm,
   customStyle = {},
 }: ButtonProps) {
   const buttonStyle = { ...buttonPresets[preset], ...customStyle };
@@ -91,20 +91,14 @@ export function Button({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: Icon ? 5 : 0,
+    gap: Icon ? sizes.spacing.xs : 0,
     backgroundColor: buttonStyle.backgroundColor,
     borderRadius: buttonStyle.borderRadius,
     borderWidth: buttonStyle.borderWidth,
     borderColor: buttonStyle.borderColor,
+    paddingHorizontal: buttonStyle.paddingHorizontal,
+    paddingVertical: buttonStyle.paddingVertical,
   };
-
-  if (buttonStyle.width) {
-    containerStyle.width = buttonStyle.width;
-    containerStyle.height = buttonStyle.height;
-  } else {
-    containerStyle.paddingHorizontal = buttonStyle.paddingHorizontal;
-    containerStyle.paddingVertical = buttonStyle.paddingVertical;
-  }
 
   const textStyle: any = {
     color: buttonStyle.textColor,

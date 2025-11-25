@@ -2,6 +2,7 @@ import { LucideIcon } from "lucide-react-native";
 import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { colors } from "@/colors";
+import { sizes } from "@/constants/sizes";
 
 export type SocialService = {
   icon: LucideIcon;
@@ -39,14 +40,17 @@ export default function SocialServicesCategories({
                 end={{ x: 0, y: 0 }}
               >
                 <View style={styles.iconContainer}>
-                  <service.icon color={colors.white[400]} size={24} />
+                  <service.icon
+                    color={colors.white[400]}
+                    size={sizes.icon.md}
+                  />
                 </View>
                 <Text style={styles.activeText}>{service.name}</Text>
               </LinearGradient>
             ) : (
               <View style={styles.inactiveContainer}>
                 <View style={styles.iconContainer}>
-                  <service.icon color={colors.jila[400]} size={24} />
+                  <service.icon color={colors.jila[400]} size={sizes.icon.md} />
                 </View>
                 <Text style={styles.inactiveText}>{service.name}</Text>
               </View>
@@ -65,43 +69,43 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: colors.white[400],
-    borderRadius: 9999,
-    paddingVertical: 3,
-    paddingHorizontal: 5,
+    borderRadius: sizes.borderRadius.full,
+    paddingVertical: sizes.spacing.xxs,
+    paddingHorizontal: sizes.spacing.xs,
   },
   button: {
     flex: 1,
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
-    minHeight: 50,
+    minHeight: sizes.touch.minTarget,
   },
   gradientContainer: {
     flexDirection: "column",
     width: "100%",
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: 9999,
-    paddingVertical: 4,
-    minHeight: 50,
+    borderRadius: sizes.borderRadius.full,
+    paddingVertical: sizes.spacing.xs,
+    minHeight: sizes.touch.minTarget,
   },
   inactiveContainer: {
     flexDirection: "column",
     width: "100%",
     justifyContent: "center",
     alignItems: "center",
-    paddingVertical: 4,
-    minHeight: 50,
+    paddingVertical: sizes.spacing.xs,
+    minHeight: sizes.touch.minTarget,
   },
   iconContainer: {
     marginBottom: 1,
   },
   activeText: {
     color: colors.white[400],
-    fontSize: 12,
+    fontSize: sizes.fontSize.xs,
   },
   inactiveText: {
     color: colors.black,
-    fontSize: 12,
+    fontSize: sizes.fontSize.xs,
   },
 });

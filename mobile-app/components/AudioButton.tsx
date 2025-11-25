@@ -1,8 +1,9 @@
 import { View, TouchableOpacity, StyleSheet } from "react-native";
 import { Volume2 } from "lucide-react-native";
-import { useAudioPlayer } from "expo-audio";
+import { useAudioPlayer, useAudioPlayerStatus } from "expo-audio";
 import { useState, useEffect } from "react";
 import { colors } from "@/colors";
+import { sizes } from "@/constants/sizes";
 
 type AudioSource = number | { uri: string };
 
@@ -17,23 +18,16 @@ export default function AudioButton({
   disabled = false,
 }: AudioButtonProps) {
   const player = useAudioPlayer(audioSource);
+  const status = useAudioPlayerStatus(player);
   const [isPlaying, setIsPlaying] = useState(false);
 
   useEffect(() => {
-    const checkStatus = () => {
-      setIsPlaying(player.playing);
-    };
-
-    checkStatus();
-    const interval = setInterval(checkStatus, 100);
-
-    return () => {
-      clearInterval(interval);
-    };
-  }, [player]);
+    setIsPlaying(status.playing);
+  }, [status.playing]);
 
   function playSound() {
-    if (player.playing) {
+    if (!status.isLoaded) return;
+    if (status.playing) {
       player.pause();
     } else {
       player.play();
@@ -55,7 +49,7 @@ export default function AudioButton({
       <View
         style={[styles.container, { backgroundColor: getBackgroundColor() }]}
       >
-        <Volume2 size={11} color={colors.white[400]} />
+        <Volume2 size={sizes.icon.xs} color={colors.white[400]} />
       </View>
     </TouchableOpacity>
   );
@@ -63,9 +57,9 @@ export default function AudioButton({
 
 const styles = StyleSheet.create({
   container: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
+    width: sizes.icon.md,
+    height: sizes.icon.md,
+    borderRadius: sizes.icon.md / 2,
     justifyContent: "center",
     alignItems: "center",
   },

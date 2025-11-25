@@ -2,6 +2,7 @@ import React from "react";
 import { View, Image, StyleSheet, Dimensions } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { colors } from "@/colors";
+import { sizes, componentSizes } from "@/constants/sizes";
 
 interface BackgroundProps {
   children: React.ReactNode;
@@ -59,7 +60,7 @@ const styles = StyleSheet.create({
     width: "100%",
     justifyContent: "center",
     alignItems: "center",
-    borderBottomLeftRadius: 70,
+    borderBottomLeftRadius: sizes.borderRadius.curved,
     overflow: "hidden",
     zIndex: 1,
   },
@@ -70,17 +71,17 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     backgroundColor: colors.cream[300],
-    borderTopRightRadius: 100,
+    borderTopRightRadius: sizes.borderRadius.curved,
     zIndex: 2,
   },
   logoContainer: {
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 40,
+    marginTop: sizes.spacing.xl,
   },
   logo: {
-    width: 172,
-    height: 172,
+    width: componentSizes.logo.background.width,
+    height: componentSizes.logo.background.height,
   },
   contentContainer: {
     position: "absolute",
@@ -91,6 +92,6 @@ const styles = StyleSheet.create({
     zIndex: 3,
     justifyContent: "center",
     alignItems: "center",
-    paddingHorizontal: 44,
+    paddingHorizontal: sizes.spacing.xxl,
   },
 });

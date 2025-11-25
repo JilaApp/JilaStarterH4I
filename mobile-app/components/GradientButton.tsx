@@ -1,7 +1,8 @@
-import { View, Text, Pressable, StyleSheet, Dimensions } from "react-native";
+import { View, Text, Pressable, StyleSheet } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { icons } from "lucide-react-native";
 import { colors } from "@/colors";
+import { sizes, componentSizes } from "@/constants/sizes";
 
 const Icons = icons;
 
@@ -101,8 +102,7 @@ function GradientButton({
   onPress,
 }: GradientButtonProps) {
   const LucideIcon = Icons[icon];
-  const screenWidth = Dimensions.get("window").width;
-  const buttonSize = screenWidth * 0.41; // I know this is a magic number :wilted:
+  const buttonSize = componentSizes.gradientButton.size;
 
   return (
     <Pressable
@@ -119,7 +119,11 @@ function GradientButton({
         style={[styles.gradient, { width: buttonSize, height: buttonSize }]}
       >
         <View style={styles.content}>
-          <LucideIcon color={iconColor} strokeWidth={2.5} size={40} />
+          <LucideIcon
+            color={iconColor}
+            strokeWidth={2.5}
+            size={sizes.icon.xl}
+          />
           <Text style={styles.text}>{text}</Text>
         </View>
       </LinearGradient>
@@ -129,23 +133,23 @@ function GradientButton({
 
 const styles = StyleSheet.create({
   pressable: {
-    borderRadius: 8,
+    borderRadius: sizes.borderRadius.sm,
   },
   pressablePressed: {
     opacity: 0.7,
   },
   gradient: {
-    borderRadius: 20,
+    borderRadius: sizes.borderRadius.lg,
     justifyContent: "flex-end",
   },
   content: {
     flexDirection: "column",
     alignItems: "flex-start",
-    padding: 12,
-    gap: 12,
+    padding: sizes.spacing.md,
+    gap: sizes.spacing.md,
   },
   text: {
-    fontSize: 22,
+    fontSize: sizes.fontSize.lg,
     color: colors.white[400],
   },
 });

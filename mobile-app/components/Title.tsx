@@ -2,6 +2,7 @@ import { View, StyleSheet, TextStyle } from "react-native";
 import JilaText from "./JilaText";
 import AudioButton from "./AudioButton";
 import { colors } from "@/colors";
+import { sizes } from "@/constants/sizes";
 
 type AudioSource = number | { uri: string };
 
@@ -27,12 +28,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: 12,
+    gap: sizes.spacing.md,
   },
   text: {
-    fontSize: 24,
+    fontSize: sizes.fontSize.xl,
     fontWeight: "600",
-    lineHeight: 28,
+    lineHeight: sizes.fontSize.xxl,
     color: colors.black,
     textAlign: "center",
   },

@@ -1,6 +1,7 @@
 import YoutubeIframe from "react-native-youtube-iframe";
 import { VideoView, useVideoPlayer } from "expo-video";
 import { StyleSheet } from "react-native";
+import { componentSizes } from "@/constants/sizes";
 
 export enum VideoType {
   YouTube = "youtube",
@@ -65,7 +66,7 @@ function GoogleDriveEmbed({ uri }: GoogleDriveEmbedProps) {
 export default function VideoEmbed({
   uri,
   type,
-  height = 220,
+  height = componentSizes.video.defaultHeight,
 }: VideoEmbedProps) {
   if (type === VideoType.YouTube) {
     return <YoutubeEmbed uri={uri} height={height} />;
@@ -81,6 +82,6 @@ export default function VideoEmbed({
 const styles = StyleSheet.create({
   video: {
     width: "100%",
-    aspectRatio: 16 / 9,
+    aspectRatio: componentSizes.video.aspectRatio,
   },
 });

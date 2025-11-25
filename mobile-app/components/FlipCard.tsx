@@ -11,6 +11,7 @@ import Animated, {
 } from "react-native-reanimated";
 import AudioButton from "./AudioButton";
 import { colors } from "@/colors";
+import { sizes } from "@/constants/sizes";
 
 interface ResourceCardProps {
   title: string;
@@ -54,14 +55,14 @@ const ResourceCardFront = ({ title, phone, address }: ResourceCardProps) => {
           </View>
         </View>
       </View>
-      <View style={styles.rightContainer}>
+      <View style={styles.rightContainer} pointerEvents="box-none">
         <AudioButton
           audioSource={require("../assets/audio/sample.mp3")}
           variant={"default"}
         />
       </View>
       <View style={styles.pointerContainer}>
-        <Pointer size={24} color={colors.gray[400]} />
+        <Pointer size={sizes.icon.md} color={colors.gray[400]} />
       </View>
     </View>
   );
@@ -110,8 +111,11 @@ const FlipCard = ({
   FlippedContent,
   onLayout,
 }: FlipCardProps) => {
+  const [isFlippedState, setIsFlippedState] = useState(false);
+
   const handlePress = () => {
     isFlipped.value = !isFlipped.value;
+    setIsFlippedState(!isFlippedState);
   };
 
   const isDirectionX = direction === "x";
@@ -139,24 +143,24 @@ const FlipCard = ({
   });
 
   return (
-    <Pressable onPress={handlePress}>
-      <View style={flipCardStyles.relativeContainer}>
-        <Animated.View
-          style={[cardStyle, regularCardAnimatedStyle]}
-          onLayout={onLayout}
-        >
-          {RegularContent}
-        </Animated.View>
-        <Animated.View
-          style={[
-            flipCardStyles.flippedCard,
-            cardStyle,
-            flippedCardAnimatedStyle,
-          ]}
-        >
-          {FlippedContent}
-        </Animated.View>
-      </View>
+    <Pressable onPress={handlePress} style={flipCardStyles.relativeContainer}>
+      <Animated.View
+        style={[cardStyle, regularCardAnimatedStyle]}
+        onLayout={onLayout}
+        pointerEvents={isFlippedState ? "none" : "auto"}
+      >
+        {RegularContent}
+      </Animated.View>
+      <Animated.View
+        style={[
+          flipCardStyles.flippedCard,
+          cardStyle,
+          flippedCardAnimatedStyle,
+        ]}
+        pointerEvents={isFlippedState ? "auto" : "none"}
+      >
+        {FlippedContent}
+      </Animated.View>
     </Pressable>
   );
 };
@@ -176,16 +180,16 @@ const flipCardStyles = StyleSheet.create({
 
 const cardStyles = StyleSheet.create({
   cardContainer: {
-    padding: 28,
+    padding: sizes.spacing.xl,
     alignItems: "stretch",
     justifyContent: "space-between",
     borderColor: colors.gray[300],
     borderWidth: 1,
-    borderRadius: 24,
+    borderRadius: sizes.borderRadius.xl,
     flexDirection: "row",
     width: "100%",
     position: "relative",
-    gap: 8,
+    gap: sizes.spacing.sm,
     flex: 1,
     backgroundColor: colors.white[400],
   },
@@ -200,13 +204,13 @@ const cardStyles = StyleSheet.create({
     justifyContent: "center",
   },
   titleText: {
-    fontSize: 24,
+    fontSize: sizes.fontSize.xl,
     fontWeight: "600",
-    lineHeight: 28,
+    lineHeight: sizes.fontSize.xxl,
     alignSelf: "flex-start",
   },
   descriptionText: {
-    fontSize: 18,
+    fontSize: sizes.fontSize.base,
     alignSelf: "flex-start",
   },
   infoSection: {
@@ -222,10 +226,10 @@ const cardStyles = StyleSheet.create({
     alignItems: "center",
   },
   addressRow: {
-    paddingTop: 4,
+    paddingTop: sizes.spacing.xs,
   },
   infoText: {
-    marginLeft: 8,
+    marginLeft: sizes.spacing.sm,
     color: colors.jila[400],
     flexShrink: 1,
   },
@@ -245,7 +249,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "flex-start",
     alignItems: "center",
-    gap: 16,
+    gap: sizes.spacing.md,
   },
   rightContainerBack: {
     flexDirection: "column",
@@ -254,7 +258,7 @@ const styles = StyleSheet.create({
   },
   pointerContainer: {
     position: "absolute",
-    bottom: 28,
-    right: 28,
+    bottom: sizes.spacing.xl,
+    right: sizes.spacing.xl,
   },
 });

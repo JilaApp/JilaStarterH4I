@@ -5,6 +5,7 @@ import { CommonInputProps } from "./types";
 import { inputVariants } from "./variants";
 import { TextInputProps, Pressable } from "react-native";
 import { colors } from "@/colors";
+import { sizes } from "@/constants/sizes";
 
 export function PasswordInput({
   placeholder = inputVariants.password.placeholder,
@@ -22,7 +23,7 @@ export function PasswordInput({
     <BaseInput
       type={showPassword ? "text" : "password"}
       placeholder={placeholder}
-      icon={<Icon size={20} color={colors.gray[300]} />}
+      icon={<Icon size={sizes.icon.md} color={colors.gray[300]} />}
       rightElement={
         <Pressable
           onPress={togglePasswordVisibility}
@@ -30,9 +31,9 @@ export function PasswordInput({
           aria-label={showPassword ? "Hide password" : "Show password"}
         >
           {showPassword ? (
-            <Eye size={20} color={colors.gray[300]} />
+            <Eye size={sizes.icon.md} color={colors.gray[300]} />
           ) : (
-            <EyeOff size={20} color={colors.gray[300]} />
+            <EyeOff size={sizes.icon.md} color={colors.gray[300]} />
           )}
         </Pressable>
       }

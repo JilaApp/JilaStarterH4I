@@ -9,6 +9,7 @@ import {
 import { ChevronRight } from "lucide-react-native";
 import AudioButton from "@/components/AudioButton";
 import { colors } from "@/colors";
+import { sizes } from "@/constants/sizes";
 
 type AccordionProps = {
   text: string;
@@ -76,7 +77,7 @@ export default function Accordion({
         {ttsUrl ? <AudioButton audioSource={{ uri: ttsUrl }} /> : null}
         <View style={styles.iconWrap}>
           <Animated.View style={{ transform: [{ rotate: arrowRotation }] }}>
-            <ChevronRight color="#000" size={20} />
+            <ChevronRight color={colors.black} size={sizes.icon.md} />
           </Animated.View>
         </View>
       </TouchableOpacity>
@@ -104,21 +105,21 @@ const styles = StyleSheet.create({
   parentRow: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: 10,
-    paddingHorizontal: 20,
+    paddingVertical: sizes.spacing.sm,
+    paddingHorizontal: sizes.spacing.lg,
     borderTopWidth: 1,
     borderBottomWidth: 1,
     borderTopColor: colors.gray[200],
     borderBottomColor: colors.gray[200],
-    gap: 10,
+    gap: sizes.spacing.sm,
   },
   parentText: {
-    fontSize: 18,
+    fontSize: sizes.fontSize.base,
     fontWeight: "600",
-    color: "black",
+    color: colors.black,
   },
   iconWrap: {
-    marginHorizontal: 8,
+    marginHorizontal: sizes.spacing.sm,
     marginLeft: "auto",
     alignItems: "center",
     justifyContent: "center",
