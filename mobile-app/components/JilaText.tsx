@@ -8,7 +8,6 @@ export default function JilaText({
 }: {
   children: ReactNode;
 } & TextProps) {
-  // Extract fontWeight from style if it exists
   const fontFamily = useMemo(() => {
     const flatStyle = Array.isArray(style)
       ? Object.assign({}, ...style.filter(Boolean))
@@ -18,7 +17,6 @@ export default function JilaText({
     const weight =
       typeof fontWeight === "string" ? fontWeight : String(fontWeight);
 
-    // Map fontWeight to the correct font family variant
     switch (weight) {
       case "200":
         return "Fustat-ExtraLight";

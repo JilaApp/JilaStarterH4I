@@ -13,7 +13,6 @@ import { SocialServiceCategory } from "@/types/api";
 import JilaText from "@/components/JilaText";
 import BottomBackground from "@/components/BottomBackground";
 
-// Map category enum to display data (excluding OTHER)
 const CATEGORY_MAP: Record<
   Exclude<SocialServiceCategory, SocialServiceCategory.OTHER>,
   { icon: typeof Ambulance; name: string }
@@ -36,7 +35,6 @@ const CATEGORY_MAP: Record<
   },
 };
 
-// Categories to display (excluding OTHER)
 const DISPLAY_CATEGORIES = [
   SocialServiceCategory.EMERGENCIA,
   SocialServiceCategory.SHELTERS,
@@ -50,33 +48,27 @@ export default function SocialServices() {
   >(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
 
-  // Fetch all social services from the API
   const {
     data: socialServices,
     isLoading,
     error,
   } = trpc.socialServices.getAllSocialServices.useQuery();
 
-  // Get categories from the display categories (excluding OTHER)
   const categories: CategoryService[] = DISPLAY_CATEGORIES.map((category) => ({
     icon: CATEGORY_MAP[category].icon,
     name: CATEGORY_MAP[category].name,
   }));
 
-  // Get current category from display categories (null means show all)
   const currentCategory =
     currentCategoryIndex !== null
       ? DISPLAY_CATEGORIES[currentCategoryIndex]
       : null;
 
-  // Filter services by selected category and search query
   const filteredServices =
     socialServices?.filter((service) => {
-      // Filter by category if one is selected
       const matchesCategory =
         currentCategory === null || service.category === currentCategory;
 
-      // Filter by search query if one exists
       const matchesSearch =
         !searchQuery ||
         service.title.toLowerCase().includes(searchQuery.toLowerCase()) ||

@@ -3,11 +3,7 @@ import { httpBatchLink } from "@trpc/client";
 import React, { useState } from "react";
 import { trpc } from "@/lib/trpc";
 
-// Update this URL to point to your admin-dashboard API
-// For local development, use your local server URL
-// For production, use your deployed API URL
-const API_URL =
-  process.env.EXPO_PUBLIC_API_URL || "https://jila-starter.vercel.app";
+const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
 export default function TRPCProvider({
   children,
