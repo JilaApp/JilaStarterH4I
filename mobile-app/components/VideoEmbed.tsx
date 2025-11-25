@@ -48,6 +48,7 @@ export default function VideoEmbed({
         source={{ uri: getGoogleDriveDirectUrl(uri) }}
         style={{ width: "100%", aspectRatio: 16 / 9 }}
         useNativeControls
+        resizeMode="contain"
       />
     );
   }
