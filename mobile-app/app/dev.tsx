@@ -30,6 +30,7 @@ import SocialServicesCategories, {
   SocialService,
 } from "@/components/SocialServicesCategories";
 import { ResourceCard } from "@/components/FlipCard";
+import { Toggle } from "@/components/Toggle";
 import VideoDropdown from "@/components/VideoDropdown";
 import JobDropdown from "@/components/JobDropdown";
 import Select from "@/components/Select";
@@ -192,7 +193,7 @@ export default function DevPage() {
             parts={videoDropdownMultipleVideos.parts}
             type="cream"
           />
-
+          <Toggle />
           <Text style={styles.sectionTitle}>
             VideoDropdown - Single Video (Cream)
           </Text>

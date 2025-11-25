@@ -14,8 +14,6 @@ export function PasswordInput({
   const [showPassword, setShowPassword] = useState(false);
   const { icon: Icon } = inputVariants.password;
 
-  console.log(showPassword);
-
   const togglePasswordVisibility = () => {
     setShowPassword((prev) => !prev);
   };
