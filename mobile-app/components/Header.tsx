@@ -7,6 +7,7 @@ import { Volume2, CircleHelp, Menu } from "lucide-react-native";
 import { colors } from "@/colors";
 import { sizes, componentSizes } from "@/constants/sizes";
 import { hp } from "@/utils/responsive";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface HeaderProps {
   text?: string;
@@ -22,19 +23,24 @@ export default function Header({
   onSearchChange,
 }: HeaderProps) {
   const [searchFocused, setSearchFocused] = useState(false);
+  const insets = useSafeAreaInsets();
 
   const getContainerHeight = () => {
-    if (toggleSearch) {
-      return text ? hp(25) : hp(16);
-    }
-    return text ? hp(18) : hp(12);
+    const baseHeight = toggleSearch
+      ? text
+        ? hp(18)
+        : hp(12)
+      : text
+        ? hp(12)
+        : hp(10);
+    return baseHeight + insets.top;
   };
 
   const getGradientPaddingBottom = () => {
     if (toggleSearch) {
-      return text ? hp(3) : hp(1.5);
+      return text ? hp(1) : hp(0.5);
     }
-    return text ? hp(2) : hp(1);
+    return text ? hp(1.5) : hp(0.75);
   };
 
   return (
@@ -43,7 +49,10 @@ export default function Header({
         colors={[colors.orange[400], colors.jila[400]]}
         start={{ x: 0, y: 0 }}
         end={{ x: 0, y: 1 }}
-        style={[styles.gradient, { paddingBottom: getGradientPaddingBottom() }]}
+        style={[
+          styles.gradient,
+          { paddingTop: insets.top, paddingBottom: getGradientPaddingBottom() },
+        ]}
       >
         <View style={styles.topRow}>
           <Image
@@ -87,7 +96,6 @@ const styles = StyleSheet.create({
   },
   gradient: {
     paddingHorizontal: sizes.spacing.xl,
-    paddingTop: hp(5.5),
     borderBottomLeftRadius: sizes.borderRadius.xxl,
     height: "100%",
   },
@@ -98,6 +106,7 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   logo: {
+    marginLeft: -sizes.spacing.md,
     width: componentSizes.logo.header.width,
     height: componentSizes.logo.header.height,
   },
@@ -122,7 +131,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     lineHeight: sizes.fontSize.xxl,
     marginTop: hp(1),
-    width: "90%",
+    width: "100%",
     marginLeft: sizes.spacing.sm,
   },
   searchBarContainer: {

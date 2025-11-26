@@ -58,18 +58,24 @@ export default function App() {
         toggleSearch={true}
       />
       <BottomBackground contentStyle={styles.container}>
-        <View style={styles.buttonGrid}>
-          <View style={styles.buttonRow}>
-            <CareerButton onPress={() => navigateToCategory("Career")} />
-            <LegalButton onPress={() => navigateToCategory("Legal")} />
-          </View>
-          <View style={styles.buttonRow}>
-            <MedicalButton onPress={() => navigateToCategory("Medical")} />
-            <TransportButton onPress={() => navigateToCategory("Transport")} />
-          </View>
-          <View style={styles.buttonRow}>
-            <EducationButton onPress={() => navigateToCategory("Education")} />
-            <OtherButton onPress={() => navigateToCategory("Other")} />
+        <View style={styles.buttonGridWrapper}>
+          <View style={styles.buttonGrid}>
+            <View style={styles.buttonRow}>
+              <CareerButton onPress={() => navigateToCategory("Career")} />
+              <LegalButton onPress={() => navigateToCategory("Legal")} />
+            </View>
+            <View style={styles.buttonRow}>
+              <MedicalButton onPress={() => navigateToCategory("Medical")} />
+              <TransportButton
+                onPress={() => navigateToCategory("Transport")}
+              />
+            </View>
+            <View style={styles.buttonRow}>
+              <EducationButton
+                onPress={() => navigateToCategory("Education")}
+              />
+              <OtherButton onPress={() => navigateToCategory("Other")} />
+            </View>
           </View>
         </View>
       </BottomBackground>
@@ -89,6 +95,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: wp(4),
+  },
+  buttonGridWrapper: {
+    marginTop: hp(3),
   },
   buttonGrid: {
     gap: hp(2),
