@@ -33,7 +33,7 @@ export default function NavBar() {
     <View
       style={[
         styles.container,
-        { height: hp(10) + insets.bottom, paddingBottom: insets.bottom },
+        { height: hp(7) + insets.bottom, paddingBottom: insets.bottom },
       ]}
     >
       <Pressable
