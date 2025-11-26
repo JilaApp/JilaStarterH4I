@@ -3,6 +3,7 @@ import { Pressable, View, StyleSheet } from "react-native";
 import { House, Briefcase, BookOpen } from "lucide-react-native";
 import { colors } from "@/colors";
 import { sizes } from "@/constants/sizes";
+import { hp } from "@/utils/responsive";
 
 export default function NavBar() {
   const router = useRouter();
@@ -57,7 +58,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-evenly",
     width: "100%",
-    paddingVertical: sizes.spacing.lg,
+    height: hp(10),
     alignItems: "center",
     backgroundColor: colors.jila[400],
   },

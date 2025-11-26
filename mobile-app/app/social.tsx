@@ -12,6 +12,7 @@ import { trpc } from "@/lib/trpc";
 import { SocialServiceCategory } from "@/types/api";
 import JilaText from "@/components/JilaText";
 import BottomBackground from "@/components/BottomBackground";
+import { sizes } from "@/constants/sizes";
 
 const CATEGORY_MAP: Record<
   Exclude<SocialServiceCategory, SocialServiceCategory.OTHER>,
@@ -152,10 +153,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingHorizontal: 20,
-    paddingTop: 32,
-    paddingBottom: 20,
-    gap: 16,
+    paddingHorizontal: sizes.spacing.lg,
+    paddingTop: sizes.spacing.xl,
+    paddingBottom: sizes.spacing.lg,
+    gap: sizes.spacing.md,
   },
   categoriesContainer: {
     width: "100%",
@@ -164,29 +165,29 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 40,
-    gap: 12,
+    paddingVertical: sizes.spacing.xxl,
+    gap: sizes.spacing.md,
   },
   loadingText: {
-    fontSize: 14,
+    fontSize: sizes.fontSize.sm,
     color: colors.gray[400],
   },
   errorContainer: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 40,
-    paddingHorizontal: 20,
-    gap: 8,
+    paddingVertical: sizes.spacing.xxl,
+    paddingHorizontal: sizes.spacing.lg,
+    gap: sizes.spacing.sm,
   },
   errorText: {
-    fontSize: 16,
+    fontSize: sizes.fontSize.md,
     color: colors.error[400],
     textAlign: "center",
     fontWeight: "600",
   },
   errorDetails: {
-    fontSize: 12,
+    fontSize: sizes.fontSize.xs,
     color: colors.gray[400],
     textAlign: "center",
   },
@@ -194,14 +195,14 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 40,
+    paddingVertical: sizes.spacing.xxl,
   },
   emptyText: {
-    fontSize: 16,
+    fontSize: sizes.fontSize.md,
     color: colors.gray[400],
     textAlign: "center",
   },
   cardsContainer: {
-    gap: 16,
+    gap: sizes.spacing.md,
   },
 });

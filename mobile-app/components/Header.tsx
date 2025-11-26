@@ -6,6 +6,7 @@ import React, { useState } from "react";
 import { Volume2, CircleHelp, Menu } from "lucide-react-native";
 import { colors } from "@/colors";
 import { sizes, componentSizes } from "@/constants/sizes";
+import { hp } from "@/utils/responsive";
 
 interface HeaderProps {
   text?: string;
@@ -22,15 +23,22 @@ export default function Header({
 }: HeaderProps) {
   const [searchFocused, setSearchFocused] = useState(false);
 
+  const getContainerHeight = () => {
+    if (toggleSearch) {
+      return text ? hp(25) : hp(16);
+    }
+    return text ? hp(18) : hp(12);
+  };
+
   const getGradientPaddingBottom = () => {
     if (toggleSearch) {
-      return text ? sizes.spacing.xxl : sizes.spacing.xl;
+      return text ? hp(3) : hp(1.5);
     }
-    return sizes.spacing.xl + sizes.spacing.sm;
+    return text ? hp(2) : hp(1);
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { height: getContainerHeight() }]}>
       <LinearGradient
         colors={[colors.orange[400], colors.jila[400]]}
         start={{ x: 0, y: 0 }}
@@ -79,8 +87,9 @@ const styles = StyleSheet.create({
   },
   gradient: {
     paddingHorizontal: sizes.spacing.xl,
-    paddingTop: sizes.spacing.xxl,
+    paddingTop: hp(5.5),
     borderBottomLeftRadius: sizes.borderRadius.xxl,
+    height: "100%",
   },
   topRow: {
     flexDirection: "row",
@@ -110,15 +119,15 @@ const styles = StyleSheet.create({
   headerText: {
     color: colors.white[400],
     fontSize: sizes.fontSize.xl,
-    fontWeight: "700",
+    fontWeight: "600",
     lineHeight: sizes.fontSize.xxl,
-    marginTop: sizes.spacing.lg,
+    marginTop: hp(1),
     width: "90%",
     marginLeft: sizes.spacing.sm,
   },
   searchBarContainer: {
     position: "absolute",
-    bottom: -sizes.spacing.lg,
+    bottom: hp(-2),
     alignSelf: "center",
     width: "90%",
     alignItems: "center",

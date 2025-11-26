@@ -3,6 +3,7 @@ import { useRouter } from "expo-router";
 import React, { useEffect } from "react";
 import { View, ActivityIndicator, StyleSheet } from "react-native";
 import { colors } from "@/colors";
+import { hp, wp } from "@/utils/responsive";
 import Header from "@/components/Header";
 import BottomBackground from "@/components/BottomBackground";
 import {
@@ -84,15 +85,17 @@ const styles = StyleSheet.create({
     backgroundColor: colors.cream[300],
   },
   container: {
-    paddingTop: 40,
-    paddingHorizontal: 16,
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: wp(4),
   },
   buttonGrid: {
-    gap: 16,
+    gap: hp(2),
   },
   buttonRow: {
     flexDirection: "row",
     justifyContent: "center",
-    gap: 16,
+    gap: wp(4),
   },
 });
