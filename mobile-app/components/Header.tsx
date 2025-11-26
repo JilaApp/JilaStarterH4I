@@ -83,6 +83,7 @@ export default function Header({
 const styles = StyleSheet.create({
   container: {
     position: "relative",
+    backgroundColor: colors.cream[300],
   },
   gradient: {
     paddingHorizontal: sizes.spacing.xl,
