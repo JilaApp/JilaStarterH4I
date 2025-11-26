@@ -3,6 +3,7 @@ import { View, StyleSheet } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import Text from "@/components/JilaText";
 import { colors } from "@/colors";
+import { sizes } from "@/constants/sizes";
 
 export default function VideoPage() {
   const { url } = useLocalSearchParams<{ url: string }>();
@@ -22,36 +23,36 @@ export default function VideoPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    padding: sizes.spacing.lg,
     backgroundColor: colors.white[400],
   },
   title: {
-    fontSize: 24,
+    fontSize: sizes.fontSize.xl,
     fontWeight: "700",
-    marginBottom: 20,
+    marginBottom: sizes.spacing.lg,
     color: colors.type[400],
   },
   urlText: {
-    fontSize: 16,
+    fontSize: sizes.fontSize.md,
     fontWeight: "600",
-    marginBottom: 8,
+    marginBottom: sizes.spacing.sm,
     color: colors.gray[700],
   },
   url: {
-    fontSize: 14,
+    fontSize: sizes.fontSize.sm,
     color: colors.gray[600],
-    marginBottom: 20,
+    marginBottom: sizes.spacing.lg,
   },
   placeholder: {
     width: "100%",
-    height: 200,
+    height: sizes.screen.height * 0.25,
     backgroundColor: colors.gray[200],
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: 8,
+    borderRadius: sizes.borderRadius.sm,
   },
   placeholderText: {
-    fontSize: 16,
+    fontSize: sizes.fontSize.md,
     color: colors.gray[600],
   },
 });

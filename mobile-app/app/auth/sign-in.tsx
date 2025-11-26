@@ -11,6 +11,7 @@ import { useSignIn } from "@clerk/clerk-expo";
 import { useRouter } from "expo-router";
 import { Eye, EyeOff } from "lucide-react-native";
 import { colors } from "@/colors";
+import { sizes } from "@/constants/sizes";
 
 export default function SignInScreen() {
   const { isLoaded, signIn, setActive } = useSignIn();
@@ -124,34 +125,34 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
-    padding: 24,
+    padding: sizes.spacing.lg,
     minHeight: "100%",
   },
   card: {
     backgroundColor: colors.white[400],
-    borderRadius: 16,
-    padding: 24,
+    borderRadius: sizes.borderRadius.lg,
+    padding: sizes.spacing.lg,
     shadowColor: colors.black,
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: { width: 0, height: sizes.spacing.xs },
     shadowOpacity: 0.1,
-    shadowRadius: 8,
+    shadowRadius: sizes.spacing.sm,
     elevation: 5,
   },
   pageTitle: {
-    fontSize: 32,
+    fontSize: sizes.fontSize.xxxl,
     fontWeight: "700",
-    marginBottom: 24,
+    marginBottom: sizes.spacing.lg,
   },
   titleColor: {
     color: colors.jila[400],
   },
   formContainer: {
-    gap: 16,
+    gap: sizes.spacing.md,
   },
   label: {
-    fontSize: 18,
+    fontSize: sizes.fontSize.base,
     fontWeight: "600",
-    marginBottom: 8,
+    marginBottom: sizes.spacing.sm,
   },
   labelColor: {
     color: colors.type[400],
@@ -159,34 +160,34 @@ const styles = StyleSheet.create({
   input: {
     borderWidth: 1,
     borderColor: colors.gray[300],
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 16,
+    borderRadius: sizes.borderRadius.sm,
+    padding: sizes.spacing.md,
+    fontSize: sizes.fontSize.md,
   },
   passwordContainer: {
     flexDirection: "row",
     alignItems: "center",
     borderWidth: 1,
     borderColor: colors.gray[300],
-    borderRadius: 8,
+    borderRadius: sizes.borderRadius.sm,
   },
   passwordInput: {
     flex: 1,
-    padding: 12,
-    fontSize: 16,
+    padding: sizes.spacing.md,
+    fontSize: sizes.fontSize.md,
   },
   eyeButton: {
-    paddingRight: 12,
+    paddingRight: sizes.spacing.md,
   },
   errorText: {
     color: colors.error[400],
-    fontSize: 14,
+    fontSize: sizes.fontSize.sm,
   },
   signInButton: {
     backgroundColor: colors.jila[400],
-    borderRadius: 8,
-    padding: 16,
-    marginTop: 16,
+    borderRadius: sizes.borderRadius.sm,
+    padding: sizes.spacing.md,
+    marginTop: sizes.spacing.md,
   },
   buttonDisabled: {
     opacity: 0.5,
@@ -195,12 +196,12 @@ const styles = StyleSheet.create({
     color: colors.white[400],
     textAlign: "center",
     fontWeight: "700",
-    fontSize: 16,
+    fontSize: sizes.fontSize.md,
   },
   signUpContainer: {
     flexDirection: "row",
     justifyContent: "center",
-    marginTop: 16,
+    marginTop: sizes.spacing.md,
   },
   signUpText: {
     color: colors.gray[400],
