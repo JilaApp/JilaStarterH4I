@@ -36,23 +36,13 @@ export default function Header({
     return baseHeight + insets.top;
   };
 
-  const getGradientPaddingBottom = () => {
-    if (toggleSearch) {
-      return text ? hp(1) : hp(0.5);
-    }
-    return text ? hp(1.5) : hp(0.75);
-  };
-
   return (
     <View style={[styles.container, { height: getContainerHeight() }]}>
       <LinearGradient
         colors={[colors.orange[400], colors.jila[400]]}
         start={{ x: 0, y: 0 }}
         end={{ x: 0, y: 1 }}
-        style={[
-          styles.gradient,
-          { paddingTop: insets.top, paddingBottom: getGradientPaddingBottom() },
-        ]}
+        style={[styles.gradient, { paddingTop: insets.top }]}
       >
         <View style={styles.topRow}>
           <Image

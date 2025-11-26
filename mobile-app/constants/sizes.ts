@@ -77,7 +77,7 @@ export const componentSizes = {
     },
   },
   gradientButton: {
-    size: sizes.screen.width * 0.41,
+    size: sizes.screen.height * 0.175,
   },
   video: {
     defaultHeight: sizes.screen.height * 0.25,
