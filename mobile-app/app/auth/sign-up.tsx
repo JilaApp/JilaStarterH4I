@@ -5,11 +5,14 @@ import {
   TouchableOpacity,
   View,
   ScrollView,
+  StyleSheet,
 } from "react-native";
 import { useSignUp } from "@clerk/clerk-expo";
 import { useRouter } from "expo-router";
 import { Picker } from "@react-native-picker/picker";
 import { Eye, EyeOff } from "lucide-react-native";
+import { colors } from "@/colors";
+import { sizes } from "@/constants/sizes";
 
 const COMMUNITY_ORGS = [
   "Community Org 1",
@@ -88,80 +91,79 @@ export default function SignUpScreen() {
   };
 
   return (
-    <ScrollView className="flex-1 bg-cream-300">
-      <View className="flex-1 justify-center p-6 min-h-screen">
-        <View className="bg-white rounded-2xl p-6 shadow-lg">
-          <Text className="page-title-text text-jila-400 mb-6">Sign Up</Text>
+    <ScrollView style={styles.scrollView}>
+      <View style={styles.container}>
+        <View style={styles.card}>
+          <Text style={[styles.pageTitle, styles.titleColor]}>Sign Up</Text>
 
-          <View className="space-y-4">
+          <View style={styles.formContainer}>
             <View>
-              <Text className="components-text text-type-400 mb-2">
-                Username
-              </Text>
+              <Text style={[styles.label, styles.labelColor]}>Username</Text>
               <TextInput
-                className="border border-gray-300 rounded-lg p-3 text-base"
+                style={styles.input}
                 autoCapitalize="none"
                 value={username}
                 placeholder="Enter username"
                 onChangeText={setUsername}
+                selectionColor={colors.jila[400]}
               />
             </View>
 
             <View>
-              <Text className="components-text text-type-400 mb-2">
-                Password
-              </Text>
-              <View className="flex-row items-center border border-gray-300 rounded-lg">
+              <Text style={[styles.label, styles.labelColor]}>Password</Text>
+              <View style={styles.passwordContainer}>
                 <TextInput
-                  className="flex-1 p-3 text-base"
+                  style={styles.passwordInput}
                   value={password}
                   placeholder="Enter password"
                   secureTextEntry={!showPassword}
                   onChangeText={setPassword}
+                  selectionColor={colors.jila[400]}
                 />
                 <TouchableOpacity
                   onPress={() => setShowPassword(!showPassword)}
-                  className="pr-3"
+                  style={styles.eyeButton}
                 >
                   {showPassword ? (
-                    <EyeOff size={24} color="#9C9C9C" />
+                    <EyeOff size={24} color={colors.gray[400]} />
                   ) : (
-                    <Eye size={24} color="#9C9C9C" />
+                    <Eye size={24} color={colors.gray[400]} />
                   )}
                 </TouchableOpacity>
               </View>
             </View>
 
             <View>
-              <Text className="components-text text-type-400 mb-2">
+              <Text style={[styles.label, styles.labelColor]}>
                 Confirm Password
               </Text>
-              <View className="flex-row items-center border border-gray-300 rounded-lg">
+              <View style={styles.passwordContainer}>
                 <TextInput
-                  className="flex-1 p-3 text-base"
+                  style={styles.passwordInput}
                   value={confirmPassword}
                   placeholder="Confirm password"
                   secureTextEntry={!showConfirmPassword}
                   onChangeText={setConfirmPassword}
+                  selectionColor={colors.jila[400]}
                 />
                 <TouchableOpacity
                   onPress={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="pr-3"
+                  style={styles.eyeButton}
                 >
                   {showConfirmPassword ? (
-                    <EyeOff size={24} color="#9C9C9C" />
+                    <EyeOff size={24} color={colors.gray[400]} />
                   ) : (
-                    <Eye size={24} color="#9C9C9C" />
+                    <Eye size={24} color={colors.gray[400]} />
                   )}
                 </TouchableOpacity>
               </View>
             </View>
 
             <View>
-              <Text className="components-text text-type-400 mb-2">
+              <Text style={[styles.label, styles.labelColor]}>
                 Community Organization
               </Text>
-              <View className="border border-gray-300 rounded-lg">
+              <View style={styles.pickerContainer}>
                 <Picker selectedValue={communityOrg} onChange={setCommunityOrg}>
                   {COMMUNITY_ORGS.map((org) => (
                     <Picker.Item key={org} label={org} value={org} />
@@ -171,10 +173,8 @@ export default function SignUpScreen() {
             </View>
 
             <View>
-              <Text className="components-text text-type-400 mb-2">
-                Language
-              </Text>
-              <View className="border border-gray-300 rounded-lg">
+              <Text style={[styles.label, styles.labelColor]}>Language</Text>
+              <View style={styles.pickerContainer}>
                 <Picker selectedValue={language} onChange={setLanguage}>
                   {LANGUAGES.map((lang) => (
                     <Picker.Item key={lang} label={lang} value={lang} />
@@ -183,24 +183,22 @@ export default function SignUpScreen() {
               </View>
             </View>
 
-            {error ? (
-              <Text className="text-error-400 text-sm">{error}</Text>
-            ) : null}
+            {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
             <TouchableOpacity
               onPress={onSignUpPress}
               disabled={loading}
-              className={`bg-jila-400 rounded-lg p-4 ${loading ? "opacity-50" : ""}`}
+              style={[styles.signUpButton, loading && styles.buttonDisabled]}
             >
-              <Text className="text-white-400 text-center font-bold text-base">
+              <Text style={styles.buttonText}>
                 {loading ? "Creating account..." : "Sign Up"}
               </Text>
             </TouchableOpacity>
 
-            <View className="flex-row justify-center mt-4">
-              <Text className="text-gray-400">Already have an account? </Text>
+            <View style={styles.signInContainer}>
+              <Text style={styles.signInText}>Already have an account? </Text>
               <TouchableOpacity onPress={() => router.push("/auth/sign-in")}>
-                <Text className="text-jila-400 font-bold">Sign In</Text>
+                <Text style={styles.signInLink}>Sign In</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -209,3 +207,102 @@ export default function SignUpScreen() {
     </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  scrollView: {
+    flex: 1,
+    backgroundColor: colors.cream[300],
+  },
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    padding: sizes.spacing.lg,
+    minHeight: "100%",
+  },
+  card: {
+    backgroundColor: colors.white[400],
+    borderRadius: sizes.borderRadius.lg,
+    padding: sizes.spacing.lg,
+    shadowColor: colors.black,
+    shadowOffset: { width: 0, height: sizes.spacing.xs },
+    shadowOpacity: 0.1,
+    shadowRadius: sizes.spacing.sm,
+    elevation: 5,
+  },
+  pageTitle: {
+    fontSize: sizes.fontSize.xxxl,
+    fontWeight: "700",
+    marginBottom: sizes.spacing.lg,
+  },
+  titleColor: {
+    color: colors.jila[400],
+  },
+  formContainer: {
+    gap: sizes.spacing.md,
+  },
+  label: {
+    fontSize: sizes.fontSize.base,
+    fontWeight: "600",
+    marginBottom: sizes.spacing.sm,
+  },
+  labelColor: {
+    color: colors.type[400],
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: colors.gray[300],
+    borderRadius: sizes.borderRadius.sm,
+    padding: sizes.spacing.md,
+    fontSize: sizes.fontSize.md,
+  },
+  passwordContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: colors.gray[300],
+    borderRadius: sizes.borderRadius.sm,
+  },
+  passwordInput: {
+    flex: 1,
+    padding: sizes.spacing.md,
+    fontSize: sizes.fontSize.md,
+  },
+  eyeButton: {
+    paddingRight: sizes.spacing.md,
+  },
+  pickerContainer: {
+    borderWidth: 1,
+    borderColor: colors.gray[300],
+    borderRadius: sizes.borderRadius.sm,
+  },
+  errorText: {
+    color: colors.error[400],
+    fontSize: sizes.fontSize.sm,
+  },
+  signUpButton: {
+    backgroundColor: colors.jila[400],
+    borderRadius: sizes.borderRadius.sm,
+    padding: sizes.spacing.md,
+  },
+  buttonDisabled: {
+    opacity: 0.5,
+  },
+  buttonText: {
+    color: colors.white[400],
+    textAlign: "center",
+    fontWeight: "700",
+    fontSize: sizes.fontSize.md,
+  },
+  signInContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginTop: sizes.spacing.md,
+  },
+  signInText: {
+    color: colors.gray[400],
+  },
+  signInLink: {
+    color: colors.jila[400],
+    fontWeight: "700",
+  },
+});

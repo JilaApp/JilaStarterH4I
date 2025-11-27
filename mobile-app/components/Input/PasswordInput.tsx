@@ -5,6 +5,7 @@ import { CommonInputProps } from "./types";
 import { inputVariants } from "./variants";
 import { TextInputProps, Pressable } from "react-native";
 import { colors } from "@/colors";
+import { sizes } from "@/constants/sizes";
 
 export function PasswordInput({
   placeholder = inputVariants.password.placeholder,
@@ -14,8 +15,6 @@ export function PasswordInput({
   const [showPassword, setShowPassword] = useState(false);
   const { icon: Icon } = inputVariants.password;
 
-  console.log(showPassword);
-
   const togglePasswordVisibility = () => {
     setShowPassword((prev) => !prev);
   };
@@ -24,18 +23,17 @@ export function PasswordInput({
     <BaseInput
       type={showPassword ? "text" : "password"}
       placeholder={placeholder}
-      icon={<Icon size={20} color={colors.gray[300]} />}
+      icon={<Icon size={sizes.icon.md} color={colors.gray[300]} />}
       rightElement={
         <Pressable
           onPress={togglePasswordVisibility}
           disabled={props.disabled}
-          className="text-gray-300 group-focus-within:text-type-400 hover:text-type-400 transition-colors disabled:cursor-not-allowed"
           aria-label={showPassword ? "Hide password" : "Show password"}
         >
           {showPassword ? (
-            <Eye size={20} color={colors.gray[300]} />
+            <Eye size={sizes.icon.md} color={colors.gray[300]} />
           ) : (
-            <EyeOff size={20} color={colors.gray[300]} />
+            <EyeOff size={sizes.icon.md} color={colors.gray[300]} />
           )}
         </Pressable>
       }

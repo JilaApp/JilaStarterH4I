@@ -28,9 +28,15 @@ export default function RadioButtonGroup({
   };
 
   const renderIcon = (isSelected: boolean, isDisabled: boolean) => {
-    if (isSelected && !isDisabled) {
+    if (isSelected) {
       return (
-        <SquareCheck size={30} className="stroke-white-400 fill-jila-400" />
+        <SquareCheck
+          size={30}
+          className={clsx("stroke-white-400", {
+            "fill-jila-400": !isDisabled,
+            "fill-gray-300": isDisabled,
+          })}
+        />
       );
     }
     if (isDisabled) {

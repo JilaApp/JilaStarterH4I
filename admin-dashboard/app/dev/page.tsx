@@ -25,6 +25,8 @@ import Link from "@/components/Link";
 import { useForm, createField } from "@/hooks/useForm";
 import { validateEmail, validatePassword } from "@/lib/validators";
 import Pagination from "@/components/Pagination";
+import JobFilter from "@/components/JobFilter";
+import SearchBar from "@/components/SearchBar";
 
 interface ServiceData extends DataRow {
   id: number | string;
@@ -185,8 +187,11 @@ export default function DevPage() {
     return "default";
   };
 
+  const value = "";
+
   return (
     <>
+      <JobFilter onClose={() => {}} onApply={() => {}} />
       <div className="bg-[#FFFBF3] p-[24px]">
         <SocialServiceForm />
       </div>

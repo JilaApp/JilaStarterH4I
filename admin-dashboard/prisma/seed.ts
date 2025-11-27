@@ -2,6 +2,9 @@ import {
   PrismaClient,
   VideoTopic,
   SocialServiceCategory,
+  JobType,
+  LocationType,
+  JobStatus,
 } from "@prisma/client";
 import fs from "fs";
 import path from "path";
@@ -193,6 +196,152 @@ async function main() {
     });
   }
   console.log("Successfully seeded 8 social services.");
+
+  console.log("Seeding job postings...");
+  const jobsData = [
+    {
+      titleEnglish: "Software Engineer",
+      titleQanjobal: "Ingeniero de Software",
+      companyName: "Tech Solutions Inc.",
+      businessContactEmail: "hiring@techsolutions.com",
+      jobType: JobType.FULLTIME,
+      acceptedLanguages: ["Non-English", "Spanish"],
+      locationType: LocationType.HYBRID,
+      city: "San Francisco",
+      state: "California",
+      url: "https://techsolutions.com/jobs/software-engineer-1",
+      salary: 120000,
+      expirationDate: new Date("2025-12-31"),
+      descriptionEnglish:
+        "We are looking for a talented software engineer to join our team. Experience with React and Node.js required.",
+      descriptionQanjobal:
+        "Kaẍi q'omal jun ingeniero de software yul ka department. K'ulal yul React yet' Node.js.",
+      status: JobStatus.ACTIVE,
+    },
+    {
+      titleEnglish: "Restaurant Server",
+      titleQanjobal: "Mesero/a de Restaurante",
+      companyName: "The Golden Plate",
+      businessContactEmail: "jobs@goldenplate.com",
+      jobType: JobType.PARTTIME,
+      acceptedLanguages: ["Non-English", "Spanish", "Q'anjob'al"],
+      locationType: LocationType.INPERSON,
+      city: "Los Angeles",
+      state: "California",
+      url: "https://goldenplate.com/careers/server",
+      salary: 35000,
+      expirationDate: new Date("2025-06-30"),
+      descriptionEnglish:
+        "Join our friendly team as a part-time server. No experience necessary, we will train. Bilingual speakers encouraged to apply.",
+      descriptionQanjobal:
+        "Chex yul ka equipo. Man k'ulal mulnaj, oj ka colonab'il. K'ulal yul kab' k'anel.",
+      status: JobStatus.ACTIVE,
+    },
+    {
+      titleEnglish: "Construction Worker",
+      titleQanjobal: "Trabajador de Construcción",
+      companyName: "Metro Builders LLC",
+      businessContactEmail: "careers@metrobuilders.com",
+      jobType: JobType.FULLTIME,
+      acceptedLanguages: ["Non-English", "Spanish", "Q'anjob'al"],
+      locationType: LocationType.INPERSON,
+      city: "Austin",
+      state: "Texas",
+      url: "https://metrobuilders.com/jobs/construction-worker",
+      salary: 45000,
+      expirationDate: new Date("2025-08-15"),
+      descriptionEnglish:
+        "Seeking experienced construction workers for residential projects. Must be able to work outdoors and lift heavy materials.",
+      descriptionQanjobal:
+        "Kaẍi q'omal trabajadores yet' construcción. K'ulal mulnaj yul construcción.",
+      status: JobStatus.ACTIVE,
+    },
+    {
+      titleEnglish: "Data Entry Clerk",
+      titleQanjobal: "Oficinista de Entrada de Datos",
+      companyName: "AdminPro Services",
+      businessContactEmail: "hr@adminpro.com",
+      jobType: JobType.TEMPORARY,
+      acceptedLanguages: ["Non-English"],
+      locationType: LocationType.REMOTE,
+      city: "New York",
+      state: "New York",
+      url: "https://adminpro.com/jobs/data-entry-temp",
+      salary: 38000,
+      expirationDate: new Date("2025-05-01"),
+      descriptionEnglish:
+        "Temporary position for data entry work. 3-month contract with possibility of extension. Work from home.",
+      descriptionQanjobal:
+        "Mulnaj temporal yet' entrada de datos. 3 mes yet' contrato.",
+      status: JobStatus.ARCHIVED,
+    },
+    {
+      titleEnglish: "Marketing Intern",
+      titleQanjobal: "Practicante de Marketing",
+      companyName: "Bright Future Marketing",
+      businessContactEmail: "internships@brightfuture.com",
+      jobType: JobType.INTERNSHIP,
+      acceptedLanguages: ["Non-English", "Spanish"],
+      locationType: LocationType.HYBRID,
+      city: "Chicago",
+      state: "Illinois",
+      url: "https://brightfuture.com/careers/marketing-intern",
+      salary: 25000,
+      expirationDate: new Date("2025-09-30"),
+      descriptionEnglish:
+        "Paid internship opportunity for students interested in digital marketing. Flexible schedule.",
+      descriptionQanjobal:
+        "Oportunidad yet' práctica yet' estudiantes. Horario flexible.",
+      status: JobStatus.ACTIVE,
+    },
+    {
+      titleEnglish: "Freelance Graphic Designer",
+      titleQanjobal: "Diseñador Gráfico Independiente",
+      companyName: "Creative Studio Co.",
+      businessContactEmail: "projects@creativestudio.com",
+      jobType: JobType.FREELANCE,
+      acceptedLanguages: ["Non-English"],
+      locationType: LocationType.REMOTE,
+      city: "Seattle",
+      state: "Washington",
+      url: "https://creativestudio.com/freelance/graphic-designer",
+      salary: 60000,
+      expirationDate: new Date("2025-07-20"),
+      descriptionEnglish:
+        "Looking for talented freelance graphic designers for ongoing projects. Portfolio required.",
+      descriptionQanjobal:
+        "Kaẍi diseñadores gráficos yet' proyectos. Portfolio k'ulal.",
+      status: JobStatus.ACTIVE,
+    },
+    {
+      titleEnglish: "Warehouse Associate",
+      titleQanjobal: "Asociado de Almacén",
+      companyName: "QuickShip Logistics",
+      businessContactEmail: "jobs@quickship.com",
+      jobType: JobType.SEASONAL,
+      acceptedLanguages: ["Non-English", "Spanish", "Q'anjob'al"],
+      locationType: LocationType.INPERSON,
+      city: "Phoenix",
+      state: "Arizona",
+      url: "https://quickship.com/jobs/warehouse-seasonal",
+      salary: 32000,
+      expirationDate: new Date("2025-12-25"),
+      descriptionEnglish:
+        "Seasonal warehouse position for holiday season. Training provided. Evening and weekend shifts available.",
+      descriptionQanjobal:
+        "Mulnaj temporal yet' almacén. Oj ka colonab'il. Turnos yet' noche yet' fin de semana.",
+      status: JobStatus.ARCHIVED,
+    },
+  ];
+
+  for (const job of jobsData) {
+    await prisma.jobs.upsert({
+      where: { url: job.url },
+      update: {},
+      create: job,
+    });
+  }
+  console.log("Successfully seeded 7 job postings.");
 
   console.log("Seeding finished.");
 }

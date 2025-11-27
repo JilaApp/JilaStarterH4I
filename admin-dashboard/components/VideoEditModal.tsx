@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useRef } from "react";
 import { X } from "lucide-react";
 import FormField from "@/components/FormField";
 import { TextInput } from "@/components/Input";
@@ -12,6 +12,7 @@ import { VIDEO_TOPIC_OPTIONS } from "@/lib/constants";
 import { useForm, createField } from "@/hooks/useForm";
 import { validateRequired, validateURL } from "@/lib/validators";
 import { formatFileSize } from "@/lib/utils";
+import { useClickOutside } from "@/hooks/useClickOutside";
 
 type SaveStatus = "idle" | "saving" | "success" | "error";
 
@@ -55,8 +56,15 @@ export default function VideoEditModal({
 
   const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
   const [clearExistingFile, setClearExistingFile] = useState(false);
+  const modalRef = useRef<HTMLDivElement>(null);
 
   const updateVideoMutation = trpc.videos.updateVideo.useMutation();
+
+  useClickOutside(modalRef, () => {
+    if (saveStatus !== "saving") {
+      onClose();
+    }
+  });
 
   const existingFileMetadata = useMemo(() => {
     if (videoData?.audioFilename && videoData?.audioFileSize) {
@@ -201,7 +209,10 @@ export default function VideoEditModal({
 
   return (
     <div className="fixed y-40 inset-0 z-50 flex items-center justify-center bg-[rgb(83,83,83,0.19)]">
-      <div className="relative flex flex-col bg-white rounded-[10px] w-[49%] h-[90%] p-[26.48px]">
+      <div
+        ref={modalRef}
+        className="relative flex flex-col bg-white rounded-[10px] w-[49%] h-[90%] p-[26.48px]"
+      >
         <div className="flex justify-between items-center mb-[20px]">
           <div className="components-text">
             {isEditing ? "Edit resource" : "View resource"}
@@ -227,7 +238,7 @@ export default function VideoEditModal({
                   <TextInput
                     {...props}
                     id="english-input"
-                    className="w-full h-[46px]"
+                    className="w-full h-[60px]"
                     disabled={!isEditing}
                   />
                 )}
@@ -247,7 +258,7 @@ export default function VideoEditModal({
                   <TextInput
                     {...props}
                     id="qanjobal-input"
-                    className="w-full h-[46px]"
+                    className="w-full h-[60px]"
                     disabled={!isEditing}
                   />
                 )}
@@ -307,7 +318,8 @@ export default function VideoEditModal({
               {(props) => (
                 <TextInput
                   {...props}
-                  id="video-input w-full"
+                  id="video-input"
+                  className="w-full h-[60px]"
                   disabled={!isEditing}
                 />
               )}

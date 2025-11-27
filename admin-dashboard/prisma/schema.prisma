@@ -60,6 +60,27 @@ model SocialServices {
   descriptionAudioFile String?
 }
 
+model Jobs {
+  id                   Int              @id @default(autoincrement())
+  titleEnglish         String
+  titleQanjobal        String
+  companyName          String
+  businessContactEmail String
+  jobType              JobType
+  acceptedLanguages    String[]         @default([])
+  locationType         LocationType
+  city                 String
+  state                String
+  url                  String           @unique
+  salary               Int
+  expirationDate       DateTime
+  descriptionEnglish   String
+  descriptionQanjobal  String
+  status               JobStatus        @default(ACTIVE)
+  createdAt            DateTime         @default(now())
+  updatedAt            DateTime         @updatedAt
+}
+
 enum VideoTopic {
   TRANSPORT
   LEGAL
@@ -75,4 +96,25 @@ enum SocialServiceCategory {
   FOOD
   TRANSPORTATION
   OTHER
+}
+
+enum JobType {
+  INTERNSHIP
+  FULLTIME
+  QANJOBAL
+  PARTTIME
+  TEMPORARY
+  FREELANCE
+  SEASONAL
+}
+
+enum LocationType {
+  REMOTE
+  HYBRID
+  INPERSON
+}
+
+enum JobStatus {
+  ACTIVE
+  ARCHIVED
 }

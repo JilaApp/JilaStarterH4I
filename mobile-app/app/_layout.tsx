@@ -1,11 +1,12 @@
-import "./global.css";
 import { Slot, usePathname, SplashScreen } from "expo-router";
 import NavBar from "@/components/NavBar";
 import { useMemo, useEffect } from "react";
-import { View } from "react-native";
+import { View, StyleSheet, StatusBar } from "react-native";
 import { ClerkProvider } from "@clerk/clerk-expo";
 import { tokenCache } from "@clerk/clerk-expo/token-cache";
 import { useFonts } from "expo-font";
+import TRPCProvider from "@/components/TRPCProvider";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 const NAV_ROUTES = new Set(["/", "/job", "/social", "/dev"]);
 
@@ -13,7 +14,13 @@ export default function RootLayout() {
   const pathname = usePathname();
   const shouldShowNav = useMemo(() => NAV_ROUTES.has(pathname), [pathname]);
   const [fontsLoaded, error] = useFonts({
-    Fustat: require("../assets/fonts/Fustat.ttf"),
+    Fustat: require("../assets/fonts/Fustat-Regular.ttf"),
+    "Fustat-ExtraLight": require("../assets/fonts/Fustat-ExtraLight.ttf"),
+    "Fustat-Light": require("../assets/fonts/Fustat-Light.ttf"),
+    "Fustat-Medium": require("../assets/fonts/Fustat-Medium.ttf"),
+    "Fustat-SemiBold": require("../assets/fonts/Fustat-SemiBold.ttf"),
+    "Fustat-Bold": require("../assets/fonts/Fustat-Bold.ttf"),
+    "Fustat-ExtraBold": require("../assets/fonts/Fustat-ExtraBold.ttf"),
   });
   useEffect(() => {
     if (fontsLoaded || error) {
@@ -25,14 +32,32 @@ export default function RootLayout() {
   }
 
   return (
-    <ClerkProvider tokenCache={tokenCache}>
-      <View style={{ flex: 1 }}>
-        <View style={{ flex: 1 }}>
-          <Slot />
-        </View>
+    <SafeAreaProvider>
+      <ClerkProvider tokenCache={tokenCache}>
+        <TRPCProvider>
+          <StatusBar
+            barStyle="light-content"
+            backgroundColor="transparent"
+            translucent
+          />
+          <View style={styles.container}>
+            <View style={styles.content}>
+              <Slot />
+            </View>
 
-        {shouldShowNav && <NavBar />}
-      </View>
-    </ClerkProvider>
+            {shouldShowNav && <NavBar />}
+          </View>
+        </TRPCProvider>
+      </ClerkProvider>
+    </SafeAreaProvider>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  content: {
+    flex: 1,
+  },
+});

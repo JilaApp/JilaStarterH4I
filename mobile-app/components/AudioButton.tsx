@@ -1,7 +1,9 @@
-import { View, TouchableOpacity } from "react-native";
+import { View, TouchableOpacity, StyleSheet } from "react-native";
 import { Volume2 } from "lucide-react-native";
-import { Audio, InterruptionModeAndroid, InterruptionModeIOS } from "expo-av";
-import { useRef, useState } from "react";
+import { useAudioPlayer, useAudioPlayerStatus } from "expo-audio";
+import { useState, useEffect } from "react";
+import { colors } from "@/colors";
+import { sizes } from "@/constants/sizes";
 
 type AudioSource = number | { uri: string };
 
@@ -11,70 +13,54 @@ type AudioButtonProps = {
   disabled?: boolean;
 };
 
-const BG_COLOR_MAP = {
-  playing: "bg-jila-400",
-  default: "bg-jila-300",
-  disabled: "bg-gray-300",
-};
-
 export default function AudioButton({
   audioSource,
   disabled = false,
 }: AudioButtonProps) {
-  const soundRef = useRef<Audio.Sound | null>(null);
-  const playingRef = useRef(false);
-  const [variant, setVariant] = useState<"default" | "playing" | "disabled">(
-    "default",
-  );
+  const player = useAudioPlayer(audioSource);
+  const status = useAudioPlayerStatus(player);
+  const [isPlaying, setIsPlaying] = useState(false);
 
-  async function playSound() {
-    // await Audio.requestPermissionsAsync();
-    await Audio.setAudioModeAsync({
-      allowsRecordingIOS: false,
-      staysActiveInBackground: false,
-      playsInSilentModeIOS: true,
-      interruptionModeIOS: InterruptionModeIOS.DoNotMix,
-      shouldDuckAndroid: true,
-      interruptionModeAndroid: InterruptionModeAndroid.DoNotMix,
-    });
+  useEffect(() => {
+    setIsPlaying(status.playing);
+  }, [status.playing]);
 
-    if (playingRef.current && soundRef.current) {
-      await soundRef.current.stopAsync();
-      await soundRef.current.unloadAsync();
-      playingRef.current = false;
-      setVariant("default");
-      return;
+  function playSound() {
+    if (!status.isLoaded) return;
+    if (status.playing) {
+      player.pause();
+    } else {
+      player.play();
     }
-
-    const { sound } = await Audio.Sound.createAsync(audioSource, {
-      shouldPlay: true,
-    });
-
-    soundRef.current = sound;
-    playingRef.current = true;
-    setVariant("playing");
-
-    sound.setOnPlaybackStatusUpdate((status) => {
-      if (!status.isLoaded) return;
-      if (status.didJustFinish) {
-        playingRef.current = false;
-        setVariant("default");
-        sound.unloadAsync();
-      }
-    });
-
-    await sound.playAsync();
   }
 
-  const bgColor = disabled ? BG_COLOR_MAP.disabled : BG_COLOR_MAP[variant];
+  const getBackgroundColor = () => {
+    if (disabled) return colors.gray[300];
+    if (isPlaying) return colors.jila[400];
+    return colors.jila[300];
+  };
 
   return (
-    <TouchableOpacity onPress={playSound} disabled={disabled}>
+    <TouchableOpacity
+      onPress={playSound}
+      disabled={disabled}
+      hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+    >
       <View
-        className={`w-[20px] h-[20px] rounded-full ${bgColor} justify-center items-center ${disabled && "bg-gray-300"}`}
+        style={[styles.container, { backgroundColor: getBackgroundColor() }]}
       >
-        <Volume2 size={11} color="#FFF" />
+        <Volume2 size={sizes.icon.xs} color={colors.white[400]} />
       </View>
     </TouchableOpacity>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    width: sizes.icon.md,
+    height: sizes.icon.md,
+    borderRadius: sizes.icon.md / 2,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+});

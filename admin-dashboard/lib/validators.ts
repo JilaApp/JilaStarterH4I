@@ -78,3 +78,17 @@ export const validateFileSize = (maxSizeMB: number) => {
     return null;
   };
 };
+
+export const validateNumber = (value: string): string | null => {
+  if (!value || !value.trim()) {
+    return "This field is required";
+  }
+  const num = parseInt(value);
+  if (isNaN(num)) {
+    return "Please enter a valid number";
+  }
+  if (num < 0) {
+    return "Number must be positive";
+  }
+  return null;
+};

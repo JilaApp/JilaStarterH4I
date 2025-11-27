@@ -33,3 +33,12 @@ export type TopicVariant =
   | "Food"
   | "Emergencia"
   | "Transportation";
+
+export interface JobFilters {
+  speakerTags?: string[];
+  locationTypes?: string[];
+  jobTypes?: string[];
+  minSalary?: number;
+  maxSalary?: number;
+  locationSearch?: string;
+}
