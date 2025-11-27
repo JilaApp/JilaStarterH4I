@@ -2,7 +2,11 @@
 
 import { useSignIn, useUser, useClerk } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
-import { EmailInput, PasswordInput, TextInput } from "@/components/forms/inputs";
+import {
+  EmailInput,
+  PasswordInput,
+  TextInput,
+} from "@/components/forms/inputs";
 import Button from "@/components/common/Button";
 import DisplayBox from "@/components/data-display/DisplayBox";
 import Notification from "@/components/common/Notification";

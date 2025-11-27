@@ -1,10 +1,4 @@
-import {
-  CircleCheck,
-  CircleX,
-  AlertTriangle,
-  Info,
-  X,
-} from "lucide-react";
+import { CircleCheck, CircleX, AlertTriangle, Info, X } from "lucide-react";
 import { NOTIFICATION_TYPES, type NotificationType } from "@/lib/constants";
 
 interface NotificationProps {
@@ -52,7 +46,11 @@ export default function Notification({
       </div>
       <span>{message}</span>
 
-      <button onClick={onClose} className="cursor-pointer" aria-label="Close notification">
+      <button
+        onClick={onClose}
+        className="cursor-pointer"
+        aria-label="Close notification"
+      >
         <X size={20} />
       </button>
     </div>
