@@ -23,11 +23,15 @@ export default function ParagraphInput({
         className={clsx(
           `
           w-full min-h-[120px] p-3 rounded-lg
-          border border-gray-200 outline-none resize-none
-          text-lg leading-[22px]
-        placeholder:text-gray-300 placeholder:font-[500]
+          border border-gray-300 outline-none resize-none
+          text-lg leading-[22px] font-semibold
+        placeholder:text-gray-300 placeholder:font-semibold
         focus:border-jila-400 `,
-          disabled && "border-gray-300 bg-gray-200 cursor-not-allowed",
+          {
+            "border-gray-300 bg-gray-200 cursor-not-allowed text-gray-300":
+              disabled,
+            "text-type-400": !disabled,
+          },
         )}
         placeholder={placeholder}
         value={value}

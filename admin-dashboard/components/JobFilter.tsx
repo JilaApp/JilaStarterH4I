@@ -1,194 +1,337 @@
 import RadioButtonGroup from "./RadioButtonGroup";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { TextInput } from "./Input";
 import SearchBar from "./SearchBar";
 import { trpc } from "@/lib/trpc";
+import { X, Search } from "lucide-react";
+import { JobFilters } from "@/lib/types";
 
-export default function JobFilter ({}) {
+interface JobFilterProps {
+  onClose: () => void;
+  onApply: (filters: JobFilters) => void;
+  initialFilters?: JobFilters | null;
+}
 
-    const speakerOptions = [
-        { name: "Non-English" },
-        { name: "Spanish"},
-        { name: "Q'anjob'al" },
-    ];
-    const [selectedSpeakerOptions, setSelectedSpeakerOptions] = useState([""]);
+export default function JobFilter({
+  onClose,
+  onApply,
+  initialFilters,
+}: JobFilterProps) {
+  const speakerOptions = [
+    { name: "Non-English" },
+    { name: "Spanish" },
+    { name: "Q'anjob'al" },
+  ];
+  const [selectedSpeakerOptions, setSelectedSpeakerOptions] = useState<
+    string[]
+  >(initialFilters?.speakerTags || [""]);
 
-    const locationOptions = [
-        { name: "Remote" },
-        { name: "Hybrid"},
-        { name: "In person" },
-    ];
-    const [selectedLocationOptions, setSelectedLocationOptions] = useState([""]);
+  const locationOptions = [
+    { name: "Remote" },
+    { name: "Hybrid" },
+    { name: "In person" },
+  ];
+  const [selectedLocationOptions, setSelectedLocationOptions] = useState<
+    string[]
+  >(initialFilters?.locationTypes || [""]);
 
-    const jobTypeOptions = [
-        { name: "Internship" },
-        { name: "Full-time"},
-        { name: "Q'anjob'al" },
-        { name: "Part-time" },
-        { name: "Temporary" },
-        { name: "Freelance" },
-        { name: "Seasonal" },
-    ];
-    const [selectedJobTypeOptions, setSelectedJobTypeOptions] = useState([""]);
+  const jobTypeOptions = [
+    { name: "Internship" },
+    { name: "Full-time" },
+    { name: "Part-time" },
+    { name: "Temporary" },
+    { name: "Freelance" },
+    { name: "Seasonal" },
+  ];
+  const [selectedJobTypeOptions, setSelectedJobTypeOptions] = useState<
+    string[]
+  >(initialFilters?.jobTypes || [""]);
 
-    const [minInput, setMinInput] = useState(10000);
-    const [maxInput, setMaxInput] = useState(100000);
+  const [minInput, setMinInput] = useState(initialFilters?.minSalary || 10000);
+  const [maxInput, setMaxInput] = useState(initialFilters?.maxSalary || 100000);
 
-    const handleMaxChange = (stringValue: string) => {
-        const numberValue = parseInt(stringValue);
+  const handleMaxChange = (stringValue: string) => {
+    const numberValue = parseInt(stringValue);
 
-        if (isNaN(numberValue)) {
-            setMaxInput(100000);
-        } else {
-            setMaxInput(numberValue);
-        }
-    };
+    if (isNaN(numberValue)) {
+      setMaxInput(100000);
+    } else {
+      setMaxInput(numberValue);
+    }
+  };
 
-    const handleMinChange = (stringValue: string) => {
-        const numberValue = parseInt(stringValue);
+  const handleMinChange = (stringValue: string) => {
+    const numberValue = parseInt(stringValue);
 
-        if (isNaN(numberValue)) {
-            setMinInput(10000);
-        } else {
-            setMinInput(numberValue);
-        }
-    };
+    if (isNaN(numberValue)) {
+      setMinInput(10000);
+    } else {
+      setMinInput(numberValue);
+    }
+  };
 
-    const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState(
+    initialFilters?.locationSearch || "",
+  );
+  const [showLocationDropdown, setShowLocationDropdown] = useState(false);
 
-    const { data: allJobs } = trpc.jobs.getAllJobs.useQuery();
+  const { data: allJobs } = trpc.jobs.getAllJobs.useQuery();
 
-    const filteredJobCount = useMemo(() => {
-        if (!allJobs) return 0;
+  const uniqueLocations = useMemo(() => {
+    if (!allJobs) return [];
+    const locations = new Set<string>();
+    allJobs.forEach((job: { city: string; state: string }) => {
+      locations.add(`${job.city}, ${job.state}`);
+    });
+    return Array.from(locations).sort();
+  }, [allJobs]);
 
-        return allJobs.filter((job: { locationType: string; jobType: string; salary: number; city: string; state: string; }) => {
-            if (selectedLocationOptions.length > 0 && selectedLocationOptions[0] !== "") {
-                const locationMatch = selectedLocationOptions.some(loc => {
-                    if (loc === "Remote") return job.locationType === "REMOTE";
-                    if (loc === "Hybrid") return job.locationType === "HYBRID";
-                    if (loc === "In person") return job.locationType === "IN-PERSON";
-                    return false;
-                });
-                if (!locationMatch) return false;
-            }
-
-            if (selectedJobTypeOptions.length > 0 && selectedJobTypeOptions[0] !== "") {
-                const jobTypeMatch = selectedJobTypeOptions.some(type => {
-                    const typeUpper = type.toUpperCase().replace(/-/g, "-");
-                    return job.jobType === typeUpper;
-                });
-                if (!jobTypeMatch) return false;
-            }
-
-            if (job.salary < minInput || job.salary > maxInput) {
-                return false;
-            }
-
-            if (searchQuery) {
-                const query = searchQuery.toLowerCase();
-                const cityMatch = job.city.toLowerCase().includes(query);
-                const stateMatch = job.state.toLowerCase().includes(query);
-                if (!cityMatch && !stateMatch) return false;
-            }
-
-            return true;
-        }).length;
-    }, [allJobs, selectedLocationOptions, selectedJobTypeOptions, minInput, maxInput, searchQuery]);
-
-    return (
-        <div className="h-[full] w-[47.55%] rounded-l-[15px] pr-[25px] pl-[25px] pt-[25px] flex flex-col gap-[14px] relative">
-            <div className="border-b-[1px] border-b-gray-200 flex flex-col gap-[16px]">
-
-                <div className="text-bold">Speaker tags</div>
-                
-                <div className="pb-[30px]">
-                    <RadioButtonGroup
-                        options={speakerOptions}
-                        selectedOptions={selectedSpeakerOptions}
-                        setSelectedOptions={setSelectedSpeakerOptions}
-                    />
-                </div>
-
-            </div>
-
-            <div className="border-b-[1px] border-b-gray-200 flex flex-col gap-[16px]">
-
-                <div className="text-bold">Location type</div>
-
-                <div className="pb-[30px]">
-                    <RadioButtonGroup
-                        options={locationOptions}
-                        selectedOptions={selectedLocationOptions}
-                        setSelectedOptions={setSelectedLocationOptions}
-                    />
-                </div>
-            </div>
-
-            <div className="border-b-[1px] border-b-gray-200 flex flex-col gap-[16px]">
-
-                <div className="text-bold">Job type</div>
-                
-                <div className="pb-[30px]">
-                    <RadioButtonGroup
-                        options={jobTypeOptions}
-                        selectedOptions={selectedJobTypeOptions}
-                        setSelectedOptions={setSelectedJobTypeOptions}
-                    />
-                </div>
-
-            </div>
-
-            <div>
-            <div>Location</div>
-            <SearchBar value={searchQuery} onChange={setSearchQuery} placeholder="Search by city, state, or zip code"/>
-
-            </div>
-
-            <div className="flex flex-col">
-                <div className="text-bold mb-[1px]">Salary range</div>
-                <div>Enter desired annual salary (e.g. 50000)</div>
-
-                <div className="flex flex-row gap-[25px]">
-                    <div className="flex flex-col">
-                        <div>Minimum</div>
-                        <TextInput onChange={handleMinChange} value={minInput.toString()} placeholder={"10000"}/>
-                    </div>
-                    <div className="flex flex-col">
-                        <div>Maximum</div>
-                        <TextInput onChange={handleMaxChange} value={maxInput.toString()} placeholder={"100000"}/>
-                    </div>
-                </div>
-            </div>
-
-            <div className="sticky bottom-0 w-full h-[100px] bg-white border-t border-gray-200 flex items-center justify-between px-[25px] -mx-[25px]">
-                <div className="text-gray-600">
-                    {filteredJobCount} results
-                </div>
-                
-                <div className="flex gap-[16px]">
-                    <button
-                        onClick={() => {
-                            setSelectedSpeakerOptions([""]);
-                            setSelectedLocationOptions([""]);
-                            setSelectedJobTypeOptions([""]);
-                            setMinInput(10000);
-                            setMaxInput(100000);
-                            setSearchQuery("");
-                        }}
-                        className="text-gray-600 hover:text-gray-800 font-medium"
-                    >
-                        Clear all
-                    </button>
-                    
-                    <button
-                        onClick={() => {}}
-                        className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium px-[32px] py-[12px] rounded-[8px]"
-                    >
-                        Apply
-                    </button>
-                </div>
-            </div>
-
-        </div>
+  const filteredLocations = useMemo(() => {
+    if (!searchQuery) return uniqueLocations;
+    return uniqueLocations.filter((location) =>
+      location.toLowerCase().includes(searchQuery.toLowerCase()),
     );
+  }, [uniqueLocations, searchQuery]);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (!target.closest(".location-search-container")) {
+        setShowLocationDropdown(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const filteredJobCount = useMemo(() => {
+    if (!allJobs) return 0;
+
+    return allJobs.filter(
+      (job: {
+        locationType: string;
+        jobType: string;
+        salary: number;
+        city: string;
+        state: string;
+      }) => {
+        if (
+          selectedLocationOptions.length > 0 &&
+          selectedLocationOptions[0] !== ""
+        ) {
+          const locationMatch = selectedLocationOptions.some((loc) => {
+            if (loc === "Remote") return job.locationType === "REMOTE";
+            if (loc === "Hybrid") return job.locationType === "HYBRID";
+            if (loc === "In person") return job.locationType === "INPERSON";
+            return false;
+          });
+          if (!locationMatch) return false;
+        }
+
+        if (
+          selectedJobTypeOptions.length > 0 &&
+          selectedJobTypeOptions[0] !== ""
+        ) {
+          const jobTypeMatch = selectedJobTypeOptions.some((type) => {
+            const typeUpper = type.toUpperCase().replace(/-/g, "");
+            return job.jobType === typeUpper;
+          });
+          if (!jobTypeMatch) return false;
+        }
+
+        if (job.salary < minInput || job.salary > maxInput) {
+          return false;
+        }
+
+        if (searchQuery) {
+          const query = searchQuery.toLowerCase();
+          const fullLocation = `${job.city}, ${job.state}`.toLowerCase();
+          if (
+            !fullLocation.includes(query) &&
+            !job.city.toLowerCase().includes(query) &&
+            !job.state.toLowerCase().includes(query)
+          ) {
+            return false;
+          }
+        }
+
+        return true;
+      },
+    ).length;
+  }, [
+    allJobs,
+    selectedLocationOptions,
+    selectedJobTypeOptions,
+    minInput,
+    maxInput,
+    searchQuery,
+  ]);
+
+  const handleApply = () => {
+    onApply({
+      speakerTags: selectedSpeakerOptions.filter((opt) => opt !== ""),
+      locationTypes: selectedLocationOptions.filter((opt) => opt !== ""),
+      jobTypes: selectedJobTypeOptions.filter((opt) => opt !== ""),
+      minSalary: minInput,
+      maxSalary: maxInput,
+      locationSearch: searchQuery,
+    });
+    onClose();
+  };
+
+  const handleClearAll = () => {
+    setSelectedSpeakerOptions([""]);
+    setSelectedLocationOptions([""]);
+    setSelectedJobTypeOptions([""]);
+    setMinInput(10000);
+    setMaxInput(100000);
+    setSearchQuery("");
+
+    // Apply empty filters and close modal - don't include salary to avoid filtering
+    onApply({
+      speakerTags: [],
+      locationTypes: [],
+      jobTypes: [],
+      locationSearch: "",
+    });
+    onClose();
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex justify-end" onClick={onClose}>
+      <div
+        className="w-[47.55%] h-full bg-white shadow-[-4px_0px_80px_0px_rgba(109,15,0,0.1)] flex flex-col overflow-y-auto"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between px-[25px] pt-[25px] pb-[15px] border-b border-gray-200 sticky top-0 bg-white z-10">
+          <div className="flex items-center gap-[10px]">
+            <button onClick={onClose} className="cursor-pointer">
+              <X size={24} className="text-type-400" />
+            </button>
+            <h2 className="font-bold text-[20px] text-type-400">Filters</h2>
+          </div>
+        </div>
+
+        {/* Scrollable Content */}
+        <div className="flex-1 px-[25px] pt-[25px] pb-[120px] flex flex-col gap-[14px]">
+          {/* Speaker tags */}
+          <div className="border-b border-gray-200 flex flex-col gap-[16px] pb-[30px]">
+            <div className="font-bold text-lg text-black">Speaker tags</div>
+            <RadioButtonGroup
+              options={speakerOptions}
+              selectedOptions={selectedSpeakerOptions}
+              setSelectedOptions={setSelectedSpeakerOptions}
+            />
+          </div>
+
+          {/* Location type */}
+          <div className="border-b border-gray-200 flex flex-col gap-[16px] pb-[30px]">
+            <div className="font-bold text-lg text-black">Location type</div>
+            <RadioButtonGroup
+              options={locationOptions}
+              selectedOptions={selectedLocationOptions}
+              setSelectedOptions={setSelectedLocationOptions}
+            />
+          </div>
+
+          {/* Job type */}
+          <div className="border-b border-gray-200 flex flex-col gap-[16px] pb-[30px]">
+            <div className="font-bold text-lg text-black">Job type</div>
+            <RadioButtonGroup
+              options={jobTypeOptions}
+              selectedOptions={selectedJobTypeOptions}
+              setSelectedOptions={setSelectedJobTypeOptions}
+            />
+          </div>
+
+          {/* Location search */}
+          <div className="flex flex-col gap-[16px] relative location-search-container">
+            <div className="font-bold text-lg text-black">Location</div>
+            <div className="relative w-full">
+              <div
+                className="bg-white border border-gray-300 flex items-center gap-[7px] h-[60px] px-[16px] rounded-[10px] cursor-text w-full"
+                onClick={() => setShowLocationDropdown(true)}
+              >
+                <Search size={24} className="text-gray-300 shrink-0" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onFocus={() => setShowLocationDropdown(true)}
+                  placeholder="Search by city, state, or zip code"
+                  className="flex-1 bg-transparent outline-none font-bold text-lg text-type-400 placeholder:text-gray-300"
+                />
+              </div>
+              {showLocationDropdown && filteredLocations.length > 0 && (
+                <div className="absolute top-[calc(100%+4px)] left-0 right-0 bg-white border border-gray-200 rounded-[10px] shadow-lg max-h-[200px] overflow-y-auto z-20">
+                  {filteredLocations.map((location) => (
+                    <div
+                      key={location}
+                      onClick={() => {
+                        setSearchQuery(location);
+                        setShowLocationDropdown(false);
+                      }}
+                      className="px-[10px] py-[8px] hover:bg-gray-100 cursor-pointer text-lg font-bold"
+                    >
+                      {location}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Salary range */}
+          <div className="flex flex-col gap-[19px]">
+            <div className="flex flex-col gap-[1px]">
+              <div className="font-bold text-lg text-black">Salary range</div>
+              <div className="text-lg text-black">
+                Enter desired annual salary (e.g. 50000)
+              </div>
+            </div>
+            <div className="flex flex-row gap-[25px]">
+              <div className="flex flex-col w-[110px]">
+                <div className="text-lg text-type-400 h-[30px]">Minimum</div>
+                <TextInput
+                  onChange={handleMinChange}
+                  value={minInput.toString()}
+                  placeholder={"10000"}
+                />
+              </div>
+              <div className="flex flex-col w-[110px]">
+                <div className="text-lg text-type-400 h-[30px]">Maximum</div>
+                <TextInput
+                  onChange={handleMaxChange}
+                  value={maxInput.toString()}
+                  placeholder={"100000"}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="sticky bottom-0 w-full bg-white border-t border-gray-200 flex items-center justify-between px-[25px] py-[20px]">
+          <div className="text-gray-600">{filteredJobCount} results</div>
+
+          <div className="flex gap-[16px]">
+            <button
+              onClick={handleClearAll}
+              className="text-type-400 hover:text-jila-400 font-medium cursor-pointer"
+            >
+              Clear all
+            </button>
+
+            <button
+              onClick={handleApply}
+              className="bg-jila-400 hover:bg-type-400 text-white font-bold px-[32px] py-[12px] rounded-[10px] cursor-pointer"
+            >
+              Apply
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }

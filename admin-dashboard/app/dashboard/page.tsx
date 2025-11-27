@@ -15,6 +15,7 @@ import SearchBar from "@/components/SearchBar";
 import Tabs from "@/components/Tabs";
 import VideoUploadForm from "@/components/VideoUploadForm";
 import SocialServiceForm from "@/components/SocialServiceForm";
+import JobPostingForm from "@/components/JobPostingForm";
 import AuthWrapper from "../AuthWrapper";
 import { trpc } from "@/lib/trpc";
 import VideoEditModal from "@/components/VideoEditModal";
@@ -23,6 +24,8 @@ import DeleteModal from "@/components/DeleteModal";
 import { Videos } from "@prisma/client";
 import { TOPIC_MAP } from "@/lib/constants";
 import SocialServiceEditModal from "@/components/SocialServiceModal";
+import JobPostings from "@/components/JobPostings";
+import { useNotification } from "@/hooks/useNotification";
 
 type FullVideoType = Omit<Videos, "audioFile">;
 
@@ -45,6 +48,7 @@ interface SocialServiceData extends DataRow {
 export default function DashboardDev() {
   const { user } = useUser();
   const { signOut } = useClerk();
+  const { showNotification, NotificationContainer } = useNotification();
 
   const [activeView, setActiveView] = useState<string>("dashboard");
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
@@ -95,7 +99,7 @@ export default function DashboardDev() {
     },
     onError: (error) => {
       console.error("Failed to delete video:", error);
-      alert(`Error: ${error.message}`);
+      showNotification(`Error: ${error.message}`);
     },
   });
 
@@ -106,7 +110,7 @@ export default function DashboardDev() {
       },
       onError: (error) => {
         console.error("Failed to delete social service:", error);
-        alert(`Error: ${error.message}`);
+        showNotification(`Error: ${error.message}`);
       },
     });
 
@@ -347,6 +351,8 @@ export default function DashboardDev() {
         return "Upload";
       case "jobs":
         return "Job board management";
+      case "job-add":
+        return "Job board management";
       case "job-requests":
         return "Job requests";
       case "metrics":
@@ -392,8 +398,22 @@ export default function DashboardDev() {
         );
       case "jobs":
         return (
-          <div className="flex-1 px-10 py-6">
-            <p>jobs</p>
+          <div className="flex-1 px-10 py-6 overflow-hidden flex flex-col min-h-0 mb-7">
+            <JobPostings
+              onNavigateToUpload={() => {
+                setActiveView("job-add");
+              }}
+            />
+          </div>
+        );
+      case "job-add":
+        return (
+          <div className="flex-1 px-10 py-6 overflow-y-auto">
+            <JobPostingForm
+              onBack={() => {
+                setActiveView("jobs");
+              }}
+            />
           </div>
         );
       case "job-requests":
@@ -450,6 +470,9 @@ export default function DashboardDev() {
         isEditing={isEditingSocialService}
         serviceData={selectedSocialService}
       />
+
+      {/* Notification */}
+      <NotificationContainer />
     </AuthWrapper>
   );
 }

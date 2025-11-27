@@ -61,19 +61,24 @@ model SocialServices {
 }
 
 model Jobs {
-  id                  Int      @id @default(autoincrement())
-  titleEnglish        String
-  titleQanjobal       String
-  companyName         String
-  jobType             JobType
-  locationType        LocationType
-  city                String
-  state               String
-  url                 String   @unique
-  salary              Int
-  expirationDate      DateTime
-  descriptionEnglish  String
-  descriptionQanjobal String
+  id                   Int              @id @default(autoincrement())
+  titleEnglish         String
+  titleQanjobal        String
+  companyName          String
+  businessContactEmail String
+  jobType              JobType
+  acceptedLanguages    String[]         @default([])
+  locationType         LocationType
+  city                 String
+  state                String
+  url                  String           @unique
+  salary               Int
+  expirationDate       DateTime
+  descriptionEnglish   String
+  descriptionQanjobal  String
+  status               JobStatus        @default(ACTIVE)
+  createdAt            DateTime         @default(now())
+  updatedAt            DateTime         @updatedAt
 }
 
 enum VideoTopic {
@@ -107,4 +112,9 @@ enum LocationType {
   REMOTE
   HYBRID
   INPERSON
+}
+
+enum JobStatus {
+  ACTIVE
+  ARCHIVED
 }

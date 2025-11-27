@@ -2,21 +2,24 @@ import { router, publicProcedure } from "../trpc";
 import prisma from "@/lib/prisma";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { JobType, LocationType } from "@prisma/client";
+import { JobType, LocationType, JobStatus } from "@prisma/client";
 
 const addJobInput = z.object({
   titleEnglish: z.string(),
   titleQanjobal: z.string(),
   companyName: z.string(),
+  businessContactEmail: z.union([z.string().email(), z.literal("")]).optional(),
   jobType: z.nativeEnum(JobType),
+  acceptedLanguages: z.array(z.string()).default([]),
   locationType: z.nativeEnum(LocationType),
   city: z.string(),
   state: z.string(),
   url: z.string(),
   salary: z.number(),
-  expirationDate: z.date(),
+  expirationDate: z.coerce.date(),
   descriptionEnglish: z.string(),
   descriptionQanjobal: z.string(),
+  status: z.nativeEnum(JobStatus).optional().default(JobStatus.ACTIVE),
 });
 
 const removeJobInput = z.object({
@@ -28,15 +31,18 @@ const updateJobInput = z.object({
   titleEnglish: z.string().optional(),
   titleQanjobal: z.string().optional(),
   companyName: z.string().optional(),
+  businessContactEmail: z.union([z.string().email(), z.literal("")]).optional(),
   jobType: z.nativeEnum(JobType).optional(),
+  acceptedLanguages: z.array(z.string()).optional(),
   locationType: z.nativeEnum(LocationType).optional(),
   city: z.string().optional(),
   state: z.string().optional(),
   url: z.string().optional(),
   salary: z.number().optional(),
-  expirationDate: z.date().optional(),
+  expirationDate: z.coerce.date().optional(),
   descriptionEnglish: z.string().optional(),
   descriptionQanjobal: z.string().optional(),
+  status: z.nativeEnum(JobStatus).optional(),
 });
 
 type AddJobInput = z.infer<typeof addJobInput>;
@@ -62,7 +68,9 @@ async function addJob(input: AddJobInput) {
         titleEnglish: input.titleEnglish,
         titleQanjobal: input.titleQanjobal,
         companyName: input.companyName,
+        businessContactEmail: input.businessContactEmail || "",
         jobType: input.jobType,
+        acceptedLanguages: input.acceptedLanguages,
         locationType: input.locationType,
         city: input.city,
         state: input.state,
@@ -71,6 +79,7 @@ async function addJob(input: AddJobInput) {
         expirationDate: input.expirationDate,
         descriptionEnglish: input.descriptionEnglish,
         descriptionQanjobal: input.descriptionQanjobal,
+        status: input.status || JobStatus.ACTIVE,
       },
     });
   } catch (err: any) {
@@ -133,7 +142,9 @@ async function getAllJobs() {
       titleEnglish: true,
       titleQanjobal: true,
       companyName: true,
+      businessContactEmail: true,
       jobType: true,
+      acceptedLanguages: true,
       locationType: true,
       city: true,
       state: true,
@@ -142,6 +153,12 @@ async function getAllJobs() {
       expirationDate: true,
       descriptionEnglish: true,
       descriptionQanjobal: true,
+      status: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+    orderBy: {
+      createdAt: "desc",
     },
   });
   return jobs;
