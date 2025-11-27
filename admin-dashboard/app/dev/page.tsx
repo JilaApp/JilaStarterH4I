@@ -24,6 +24,9 @@ import SocialServiceForm from "@/components/SocialServiceForm";
 import Link from "@/components/Link";
 import { useForm, createField } from "@/hooks/useForm";
 import { validateEmail, validatePassword } from "@/lib/validators";
+import Pagination from "@/components/Pagination";
+import JobFilter from "@/components/JobFilter";
+import SearchBar from "@/components/SearchBar";
 
 interface ServiceData extends DataRow {
   id: number | string;
@@ -45,6 +48,8 @@ export default function DevPage() {
     },
   ];
   const [currentTabIndex, setCurrentTabIndex] = useState(1);
+
+  const [pageNum, setPageNum] = useState(3);
 
   const { fields, setFieldValue, setFieldError } = useForm({
     textInput: createField(""),
@@ -182,8 +187,11 @@ export default function DevPage() {
     return "default";
   };
 
+  const value = "";
+
   return (
     <>
+      <JobFilter onClose={() => {}} onApply={() => {}} />
       <div className="bg-[#FFFBF3] p-[24px]">
         <SocialServiceForm />
       </div>
@@ -198,6 +206,11 @@ export default function DevPage() {
           onSignOut={() => console.log("Sign out...")}
         />
       </div>
+      <Pagination
+        numOptions={13}
+        selectedOption={pageNum}
+        onChange={setPageNum}
+      />
 
       <div className="flex gap-2.5">
         <Button text="Delete" onClick={() => handleDeleteClick(67)} />

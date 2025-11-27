@@ -2,6 +2,7 @@ import React, { useState, useRef } from "react";
 import { MoreVertical } from "lucide-react";
 import type { DataRow, ColumnDefinition } from "@/lib/types";
 import { useClickOutside } from "@/hooks/useClickOutside";
+import clsx from "clsx";
 
 interface TableProps<T extends DataRow> {
   data: T[];
@@ -9,6 +10,8 @@ interface TableProps<T extends DataRow> {
   handleEdit: (id: T["id"]) => void;
   handleDelete: (id: T["id"]) => void;
   handleRowClick: (id: T["id"]) => void;
+  selectedRows?: (number | string)[];
+  onSelectedRowsChange?: (selectedRows: (number | string)[]) => void;
 }
 
 export default function Table<T extends DataRow>({
@@ -17,8 +20,17 @@ export default function Table<T extends DataRow>({
   handleEdit,
   handleDelete,
   handleRowClick,
+  selectedRows: externalSelectedRows,
+  onSelectedRowsChange,
 }: TableProps<T>) {
-  const [selectedRows, setSelectedRows] = useState<(number | string)[]>([]);
+  const [internalSelectedRows, setInternalSelectedRows] = useState<
+    (number | string)[]
+  >([]);
+
+  const selectedRows =
+    externalSelectedRows !== undefined
+      ? externalSelectedRows
+      : internalSelectedRows;
   const [openMenu, setOpenMenu] = useState<number | string | null>(null);
   const [menuPosition, setMenuPosition] = useState<{
     top: number;
@@ -30,15 +42,22 @@ export default function Table<T extends DataRow>({
   useClickOutside(menuRef, () => setOpenMenu(null));
 
   const handleCheckboxChange = (id: number | string) => {
-    setSelectedRows((prevSelectedRows) => {
-      if (prevSelectedRows.includes(id)) {
-        console.log("Unselected," + id);
-        return prevSelectedRows.filter((rowId) => rowId !== id);
-      } else {
-        console.log("Selected, " + id);
-        return [...prevSelectedRows, id];
-      }
-    });
+    if (onSelectedRowsChange) {
+      const newSelection = selectedRows.includes(id)
+        ? selectedRows.filter((rowId: number | string) => rowId !== id)
+        : [...selectedRows, id];
+      onSelectedRowsChange(newSelection);
+    } else {
+      setInternalSelectedRows((prevSelectedRows: (number | string)[]) => {
+        if (prevSelectedRows.includes(id)) {
+          return prevSelectedRows.filter(
+            (rowId: number | string) => rowId !== id,
+          );
+        } else {
+          return [...prevSelectedRows, id];
+        }
+      });
+    }
   };
 
   return (
@@ -67,7 +86,12 @@ export default function Table<T extends DataRow>({
               <tr
                 key={row.id}
                 onClick={() => handleRowClick(row.id)}
-                className="bg-white-400 hover:bg-gray-200 cursor-pointer"
+                className={clsx("cursor-pointer border-t", {
+                  "bg-cream-400 border-error-200 border-b":
+                    selectedRows.includes(row.id),
+                  "bg-white-400 hover:bg-gray-200 border-transparent":
+                    !selectedRows.includes(row.id),
+                })}
               >
                 {columns.map((col, cellIndex) => {
                   const value = row[col.accessorKey];
@@ -86,7 +110,7 @@ export default function Table<T extends DataRow>({
                           checked={selectedRows.includes(row.id)}
                           onClick={(e) => e.stopPropagation()}
                           onChange={() => handleCheckboxChange(row.id)}
-                          className="w-4 h-4 mr-6 align-middle"
+                          className="w-4 h-4 mr-6 align-middle accent-jila-400 cursor-pointer"
                         />
                       )}
                       <span className="align-middle">

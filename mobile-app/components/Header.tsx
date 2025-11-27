@@ -6,6 +6,8 @@ import React, { useState } from "react";
 import { Volume2, CircleHelp, Menu } from "lucide-react-native";
 import { colors } from "@/colors";
 import { sizes, componentSizes } from "@/constants/sizes";
+import { hp } from "@/utils/responsive";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface HeaderProps {
   text?: string;
@@ -21,21 +23,26 @@ export default function Header({
   onSearchChange,
 }: HeaderProps) {
   const [searchFocused, setSearchFocused] = useState(false);
+  const insets = useSafeAreaInsets();
 
-  const getGradientPaddingBottom = () => {
-    if (toggleSearch) {
-      return text ? sizes.spacing.xxl : sizes.spacing.xl;
-    }
-    return sizes.spacing.xl + sizes.spacing.sm;
+  const getContainerHeight = () => {
+    const baseHeight = toggleSearch
+      ? text
+        ? hp(18)
+        : hp(12)
+      : text
+        ? hp(12)
+        : hp(10);
+    return baseHeight + insets.top;
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { height: getContainerHeight() }]}>
       <LinearGradient
         colors={[colors.orange[400], colors.jila[400]]}
         start={{ x: 0, y: 0 }}
         end={{ x: 0, y: 1 }}
-        style={[styles.gradient, { paddingBottom: getGradientPaddingBottom() }]}
+        style={[styles.gradient, { paddingTop: insets.top }]}
       >
         <View style={styles.topRow}>
           <Image
@@ -76,11 +83,12 @@ export default function Header({
 const styles = StyleSheet.create({
   container: {
     position: "relative",
+    backgroundColor: colors.cream[300],
   },
   gradient: {
     paddingHorizontal: sizes.spacing.xl,
-    paddingTop: sizes.spacing.xxl,
     borderBottomLeftRadius: sizes.borderRadius.xxl,
+    height: "100%",
   },
   topRow: {
     flexDirection: "row",
@@ -89,6 +97,7 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   logo: {
+    marginLeft: -sizes.spacing.md,
     width: componentSizes.logo.header.width,
     height: componentSizes.logo.header.height,
   },
@@ -110,15 +119,15 @@ const styles = StyleSheet.create({
   headerText: {
     color: colors.white[400],
     fontSize: sizes.fontSize.xl,
-    fontWeight: "700",
+    fontWeight: "600",
     lineHeight: sizes.fontSize.xxl,
-    marginTop: sizes.spacing.lg,
-    width: "90%",
+    marginTop: hp(1),
+    width: "100%",
     marginLeft: sizes.spacing.sm,
   },
   searchBarContainer: {
     position: "absolute",
-    bottom: -sizes.spacing.lg,
+    bottom: hp(-2),
     alignSelf: "center",
     width: "90%",
     alignItems: "center",

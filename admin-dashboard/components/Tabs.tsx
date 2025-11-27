@@ -42,7 +42,7 @@ export default function Tabs({
               <button
                 key={index}
                 onClick={() => onTabChange(index)}
-                className={`relative flex items-center gap-2 pt-2 pb-6 transition-colors ${
+                className={`relative flex items-center gap-2 pt-2 pb-6 transition-colors cursor-pointer ${
                   activeIndex === index
                     ? "text-type-400"
                     : "text-gray-400 hover:text-gray-500"

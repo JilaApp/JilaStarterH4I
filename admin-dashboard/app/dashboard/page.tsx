@@ -15,6 +15,7 @@ import SearchBar from "@/components/SearchBar";
 import Tabs from "@/components/Tabs";
 import VideoUploadForm from "@/components/VideoUploadForm";
 import SocialServiceForm from "@/components/SocialServiceForm";
+import JobPostingForm from "@/components/JobPostingForm";
 import AuthWrapper from "../AuthWrapper";
 import { trpc } from "@/lib/trpc";
 import VideoEditModal from "@/components/VideoEditModal";
@@ -23,6 +24,9 @@ import DeleteModal from "@/components/DeleteModal";
 import { Videos } from "@prisma/client";
 import { TOPIC_MAP } from "@/lib/constants";
 import SocialServiceEditModal from "@/components/SocialServiceModal";
+import JobPostings from "@/components/JobPostings";
+import { useNotification } from "@/hooks/useNotification";
+import Pagination from "@/components/Pagination";
 
 type FullVideoType = Omit<Videos, "audioFile">;
 
@@ -45,11 +49,16 @@ interface SocialServiceData extends DataRow {
 export default function DashboardDev() {
   const { user } = useUser();
   const { signOut } = useClerk();
+  const { showNotification, NotificationContainer } = useNotification();
 
   const [activeView, setActiveView] = useState<string>("dashboard");
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
   const [currentTabIndex, setCurrentTabIndex] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
+
+  const [videoCurrentPage, setVideoCurrentPage] = useState(1);
+  const [socialCurrentPage, setSocialCurrentPage] = useState(1);
+  const itemsPerPage = 8;
 
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
   const [isEditingMode, setIsEditingMode] = useState(false);
@@ -95,7 +104,7 @@ export default function DashboardDev() {
     },
     onError: (error) => {
       console.error("Failed to delete video:", error);
-      alert(`Error: ${error.message}`);
+      showNotification(`Error: ${error.message}`);
     },
   });
 
@@ -106,7 +115,7 @@ export default function DashboardDev() {
       },
       onError: (error) => {
         console.error("Failed to delete social service:", error);
-        alert(`Error: ${error.message}`);
+        showNotification(`Error: ${error.message}`);
       },
     });
 
@@ -116,6 +125,11 @@ export default function DashboardDev() {
       refetchSocialServices();
     }
   }, [activeView, refetchVideos, refetchSocialServices]);
+
+  useEffect(() => {
+    setVideoCurrentPage(1);
+    setSocialCurrentPage(1);
+  }, [selectedFilters, searchQuery]);
 
   const videoResourcesData: VideoResourceData[] = useMemo(
     () =>
@@ -171,6 +185,28 @@ export default function DashboardDev() {
           item.title.toLowerCase().includes(searchQuery.toLowerCase()),
         ),
     [socialServicesResourcesData, selectedFilters, searchQuery],
+  );
+
+  const videoTotalPages = Math.ceil(filteredVideoData.length / itemsPerPage);
+  const paginatedVideoData = useMemo(
+    () =>
+      filteredVideoData.slice(
+        (videoCurrentPage - 1) * itemsPerPage,
+        videoCurrentPage * itemsPerPage,
+      ),
+    [filteredVideoData, videoCurrentPage],
+  );
+
+  const socialTotalPages = Math.ceil(
+    filteredSocialServicesData.length / itemsPerPage,
+  );
+  const paginatedSocialData = useMemo(
+    () =>
+      filteredSocialServicesData.slice(
+        (socialCurrentPage - 1) * itemsPerPage,
+        socialCurrentPage * itemsPerPage,
+      ),
+    [filteredSocialServicesData, socialCurrentPage],
   );
 
   const videoColumns: ColumnDefinition<VideoResourceData>[] = [
@@ -299,7 +335,7 @@ export default function DashboardDev() {
         </div>
       ) : (
         <Table
-          data={filteredVideoData}
+          data={paginatedVideoData}
           columns={videoColumns}
           handleEdit={handleVideoEdit}
           handleDelete={handleVideoDelete}
@@ -315,7 +351,7 @@ export default function DashboardDev() {
         </div>
       ) : (
         <Table
-          data={filteredSocialServicesData}
+          data={paginatedSocialData}
           columns={socialColumns}
           handleEdit={handleSocialEdit}
           handleDelete={handleSocialDelete}
@@ -347,6 +383,8 @@ export default function DashboardDev() {
         return "Upload";
       case "jobs":
         return "Job board management";
+      case "job-add":
+        return "Job board management";
       case "job-requests":
         return "Job requests";
       case "metrics":
@@ -361,7 +399,7 @@ export default function DashboardDev() {
       case "dashboard":
         return (
           <>
-            <div className="flex-shrink-0 px-10 mt-6">
+            <div className="flex-shrink-0 px-10">
               <FilterBar
                 options={["Career", "Legal", "Medical", "Transport"]}
                 selectedOptions={selectedFilters}
@@ -377,6 +415,24 @@ export default function DashboardDev() {
                   <SearchBar value={searchQuery} onChange={setSearchQuery} />
                 }
               />
+              {currentTabIndex === 0 && videoTotalPages > 0 && (
+                <div className="mt-4">
+                  <Pagination
+                    numOptions={videoTotalPages}
+                    selectedOption={videoCurrentPage}
+                    onChange={setVideoCurrentPage}
+                  />
+                </div>
+              )}
+              {currentTabIndex === 1 && socialTotalPages > 0 && (
+                <div className="mt-4">
+                  <Pagination
+                    numOptions={socialTotalPages}
+                    selectedOption={socialCurrentPage}
+                    onChange={setSocialCurrentPage}
+                  />
+                </div>
+              )}
             </div>
           </>
         );
@@ -392,8 +448,22 @@ export default function DashboardDev() {
         );
       case "jobs":
         return (
-          <div className="flex-1 px-10 py-6">
-            <p>jobs</p>
+          <div className="flex-1 px-10 py-6 overflow-hidden flex flex-col min-h-0 mb-7">
+            <JobPostings
+              onNavigateToUpload={() => {
+                setActiveView("job-add");
+              }}
+            />
+          </div>
+        );
+      case "job-add":
+        return (
+          <div className="flex-1 px-10 py-6 overflow-y-auto">
+            <JobPostingForm
+              onBack={() => {
+                setActiveView("jobs");
+              }}
+            />
           </div>
         );
       case "job-requests":
@@ -450,6 +520,9 @@ export default function DashboardDev() {
         isEditing={isEditingSocialService}
         serviceData={selectedSocialService}
       />
+
+      {/* Notification */}
+      <NotificationContainer />
     </AuthWrapper>
   );
 }

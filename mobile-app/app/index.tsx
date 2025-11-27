@@ -3,6 +3,7 @@ import { useRouter } from "expo-router";
 import React, { useEffect } from "react";
 import { View, ActivityIndicator, StyleSheet } from "react-native";
 import { colors } from "@/colors";
+import { hp, wp } from "@/utils/responsive";
 import Header from "@/components/Header";
 import BottomBackground from "@/components/BottomBackground";
 import {
@@ -57,18 +58,24 @@ export default function App() {
         toggleSearch={true}
       />
       <BottomBackground contentStyle={styles.container}>
-        <View style={styles.buttonGrid}>
-          <View style={styles.buttonRow}>
-            <CareerButton onPress={() => navigateToCategory("Career")} />
-            <LegalButton onPress={() => navigateToCategory("Legal")} />
-          </View>
-          <View style={styles.buttonRow}>
-            <MedicalButton onPress={() => navigateToCategory("Medical")} />
-            <TransportButton onPress={() => navigateToCategory("Transport")} />
-          </View>
-          <View style={styles.buttonRow}>
-            <EducationButton onPress={() => navigateToCategory("Education")} />
-            <OtherButton onPress={() => navigateToCategory("Other")} />
+        <View style={styles.buttonGridWrapper}>
+          <View style={styles.buttonGrid}>
+            <View style={styles.buttonRow}>
+              <CareerButton onPress={() => navigateToCategory("Career")} />
+              <LegalButton onPress={() => navigateToCategory("Legal")} />
+            </View>
+            <View style={styles.buttonRow}>
+              <MedicalButton onPress={() => navigateToCategory("Medical")} />
+              <TransportButton
+                onPress={() => navigateToCategory("Transport")}
+              />
+            </View>
+            <View style={styles.buttonRow}>
+              <EducationButton
+                onPress={() => navigateToCategory("Education")}
+              />
+              <OtherButton onPress={() => navigateToCategory("Other")} />
+            </View>
           </View>
         </View>
       </BottomBackground>
@@ -84,15 +91,20 @@ const styles = StyleSheet.create({
     backgroundColor: colors.cream[300],
   },
   container: {
-    paddingTop: 40,
-    paddingHorizontal: 16,
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: wp(4),
+  },
+  buttonGridWrapper: {
+    marginTop: hp(3),
   },
   buttonGrid: {
-    gap: 16,
+    gap: hp(2),
   },
   buttonRow: {
     flexDirection: "row",
     justifyContent: "center",
-    gap: 16,
+    gap: wp(4),
   },
 });

@@ -53,10 +53,11 @@ export function BaseInput({
 
   const getInputClasses = () => {
     return clsx(
-      "focus:outline-none link-text w-full h-full pl-[18px] rounded-[10px]",
+      "focus:outline-none link-text font-semibold w-full h-full pl-[18px] rounded-[10px]",
       {
-        "cursor-not-allowed text-gray-400": disabled,
-        "text-gray-400": !isFocused && value,
+        "cursor-not-allowed text-gray-300": disabled,
+        "text-type-400": !disabled && value,
+        "text-gray-300": !disabled && !value,
       },
     );
   };
