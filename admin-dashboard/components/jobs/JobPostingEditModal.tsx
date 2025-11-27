@@ -1,12 +1,12 @@
 import React, { useEffect, useState, useMemo, useRef } from "react";
 import { X } from "lucide-react";
-import FormField from "@/components/FormField";
-import { TextInput } from "@/components/Input";
-import Dropdown from "@/components/Dropdown";
-import Button from "@/components/Button";
-import ParagraphInput from "./ParagraphInput";
-import RadioButtonGroup from "./RadioButtonGroup";
-import CalendarInput from "./CalendarInput";
+import FormField from "@/components/forms/FormField";
+import { TextInput } from "@/components/forms/inputs";
+import Dropdown from "@/components/forms/Dropdown";
+import Button from "@/components/common/Button";
+import ParagraphInput from "@/components/forms/ParagraphInput";
+import RadioButtonGroup from "@/components/forms/RadioButtonGroup";
+import CalendarInput from "@/components/forms/CalendarInput";
 import { trpc } from "@/lib/trpc";
 import { JobType, LocationType, JobStatus } from "@prisma/client";
 import { US_STATES } from "@/lib/constants";
@@ -16,7 +16,7 @@ import {
   validateURL,
   validateNumber,
 } from "@/lib/validators";
-import SubmitButton from "./SubmitButton";
+import SubmitButton from "@/components/forms/SubmitButton";
 import { useClickOutside } from "@/hooks/useClickOutside";
 
 const JOB_TYPE_OPTIONS = [
@@ -187,8 +187,9 @@ export default function JobPostingEditModal({
   }, [isOpen]);
 
   const handleSave = async () => {
-    // Only require businessContactEmail if job was created by a business (has existing email)
-    const validationRules: any = {
+    type ValidationRules = Record<string, (value: any) => string | null>;
+
+    const validationRules: ValidationRules = {
       jobTitleEnglish: validateRequired,
       jobTitleQanjobal: validateRequired,
       companyName: validateRequired,
@@ -203,7 +204,6 @@ export default function JobPostingEditModal({
       descriptionQanjobal: validateRequired,
     };
 
-    // Only validate businessContactEmail if it's a business-created job
     if (jobData?.businessContactEmail) {
       validationRules.businessContactEmail = validateRequired;
     }
@@ -226,11 +226,11 @@ export default function JobPostingEditModal({
         ? new Date(fields.expirationDate.value + "T00:00:00.000Z")
         : new Date();
 
-      const jobPayload: any = {
+      const jobPayload = {
         titleEnglish: fields.jobTitleEnglish.value,
         titleQanjobal: fields.jobTitleQanjobal.value,
         companyName: fields.companyName.value,
-        businessContactEmail: fields.businessContactEmail.value || "", // Empty string if no business email
+        businessContactEmail: fields.businessContactEmail.value || "",
         jobType: JOB_TYPE_TO_ENUM[jobTypeString],
         acceptedLanguages: fields.acceptedLanguages.value,
         locationType: LOCATION_TYPE_TO_ENUM[locationTypeString],
@@ -238,7 +238,7 @@ export default function JobPostingEditModal({
         state: US_STATES[fields.stateIndex.value!],
         url: fields.applicationLink.value,
         salary: salaryValue,
-        expirationDate: expirationDateValue as any, // tRPC will handle Date serialization
+        expirationDate: expirationDateValue,
         descriptionEnglish: fields.descriptionEnglish.value,
         descriptionQanjobal: fields.descriptionQanjobal.value,
       };

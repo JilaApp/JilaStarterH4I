@@ -1,7 +1,7 @@
-import RadioButtonGroup from "./RadioButtonGroup";
+import RadioButtonGroup from "@/components/forms/RadioButtonGroup";
 import { useState, useMemo, useEffect } from "react";
-import { TextInput } from "./Input";
-import SearchBar from "./SearchBar";
+import { TextInput } from "@/components/forms/inputs";
+import SearchBar from "@/components/data-display/SearchBar";
 import { trpc } from "@/lib/trpc";
 import { X, Search } from "lucide-react";
 import { JobFilters } from "@/lib/types";

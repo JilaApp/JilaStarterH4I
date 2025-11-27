@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useMemo, useRef } from "react";
 import { X } from "lucide-react";
-import FormField from "@/components/FormField";
-import { TextInput } from "@/components/Input";
-import FileUpload from "@/components/FileUpload";
-import Dropdown from "@/components/Dropdown";
-import Button from "@/components/Button";
-import ParagraphInput from "./ParagraphInput";
+import FormField from "@/components/forms/FormField";
+import { TextInput } from "@/components/forms/inputs";
+import FileUpload from "@/components/forms/FileUpload";
+import Dropdown from "@/components/forms/Dropdown";
+import Button from "@/components/common/Button";
+import ParagraphInput from "@/components/forms/ParagraphInput";
 import { trpc } from "@/lib/trpc";
 import { SocialServiceCategory } from "@/lib/types";
 import {
@@ -16,7 +16,7 @@ import {
 import { useForm, createField } from "@/hooks/useForm";
 import { validateRequired, validateURL } from "@/lib/validators";
 import { formatFileSize } from "@/lib/utils";
-import SubmitButton from "./SubmitButton";
+import SubmitButton from "@/components/forms/SubmitButton";
 import { useClickOutside } from "@/hooks/useClickOutside";
 
 interface SocialServiceData {

@@ -59,11 +59,11 @@ async function addJob(input: AddJobInput) {
     if (existing) {
       throw new TRPCError({
         code: "CONFLICT",
-        message: `Job with url ${input.url} already exists`,
+        message: "A job with this URL already exists",
       });
     }
 
-    await prisma.jobs.create({
+    const job = await prisma.jobs.create({
       data: {
         titleEnglish: input.titleEnglish,
         titleQanjobal: input.titleQanjobal,
@@ -82,86 +82,121 @@ async function addJob(input: AddJobInput) {
         status: input.status || JobStatus.ACTIVE,
       },
     });
+
+    return job;
   } catch (err: any) {
-    throw err;
+    if (err instanceof TRPCError) {
+      throw err;
+    }
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Failed to create job posting",
+    });
   }
 }
 
 async function removeJob(input: RemoveJobInput) {
-  const numericId =
-    typeof input.id === "string" ? parseInt(input.id, 10) : input.id;
+  try {
+    const numericId =
+      typeof input.id === "string" ? parseInt(input.id, 10) : input.id;
 
-  if (isNaN(numericId)) {
+    if (isNaN(numericId)) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "Invalid job ID",
+      });
+    }
+
+    const existing = await prisma.jobs.findUnique({
+      where: { id: numericId },
+    });
+
+    if (!existing) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "Job posting not found",
+      });
+    }
+
+    await prisma.jobs.delete({
+      where: {
+        id: numericId,
+      },
+    });
+  } catch (err: any) {
+    if (err instanceof TRPCError) {
+      throw err;
+    }
     throw new TRPCError({
-      code: "BAD_REQUEST",
-      message: `Invalid job ID provided: ${input.id}`,
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Failed to delete job posting",
     });
   }
-
-  const existing = await prisma.jobs.findUnique({
-    where: { id: numericId },
-  });
-
-  if (!existing) {
-    throw new TRPCError({
-      code: "NOT_FOUND",
-      message: `Job with id ${numericId} does not exist`,
-    });
-  }
-
-  await prisma.jobs.delete({
-    where: {
-      id: numericId,
-    },
-  });
 }
 
 async function updateJob(input: UpdateJobInput) {
-  const { id, ...rest } = input;
-  const existing = await prisma.jobs.findUnique({
-    where: { id },
-  });
+  try {
+    const { id, ...rest } = input;
+    const existing = await prisma.jobs.findUnique({
+      where: { id },
+    });
 
-  if (!existing) {
+    if (!existing) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "Job posting not found",
+      });
+    }
+
+    return await prisma.jobs.update({
+      where: { id },
+      data: rest,
+    });
+  } catch (err: any) {
+    if (err instanceof TRPCError) {
+      throw err;
+    }
     throw new TRPCError({
-      code: "NOT_FOUND",
-      message: `Job with id ${id} does not exist`,
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Failed to update job posting",
     });
   }
-
-  return await prisma.jobs.update({
-    where: { id },
-    data: rest,
-  });
 }
 
 async function getAllJobs() {
-  const jobs = await prisma.jobs.findMany({
-    select: {
-      id: true,
-      titleEnglish: true,
-      titleQanjobal: true,
-      companyName: true,
-      businessContactEmail: true,
-      jobType: true,
-      acceptedLanguages: true,
-      locationType: true,
-      city: true,
-      state: true,
-      url: true,
-      salary: true,
-      expirationDate: true,
-      descriptionEnglish: true,
-      descriptionQanjobal: true,
-      status: true,
-      createdAt: true,
-      updatedAt: true,
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
-  return jobs;
+  try {
+    const jobs = await prisma.jobs.findMany({
+      select: {
+        id: true,
+        titleEnglish: true,
+        titleQanjobal: true,
+        companyName: true,
+        businessContactEmail: true,
+        jobType: true,
+        acceptedLanguages: true,
+        locationType: true,
+        city: true,
+        state: true,
+        url: true,
+        salary: true,
+        expirationDate: true,
+        descriptionEnglish: true,
+        descriptionQanjobal: true,
+        status: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+    return jobs;
+  } catch (err: any) {
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Failed to fetch job postings",
+    });
+  }
 }
 
 export const jobsRouter = router({

@@ -3,12 +3,12 @@
 import { useEffect, useState, useCallback } from "react";
 import { useSignUp, useUser } from "@clerk/nextjs";
 import { useSearchParams, useRouter } from "next/navigation";
-import { EmailInput, PasswordInput } from "@/components/Input";
-import Button from "@/components/Button";
-import DisplayBox from "@/components/DisplayBox";
-import FormField from "@/components/FormField";
-import PageBackground from "@/components/PageBackground";
-import Link from "@/components/Link";
+import { EmailInput, PasswordInput } from "@/components/forms/inputs";
+import Button from "@/components/common/Button";
+import DisplayBox from "@/components/data-display/DisplayBox";
+import FormField from "@/components/forms/FormField";
+import PageBackground from "@/components/layout/PageBackground";
+import Link from "@/components/common/Link";
 import { trpc } from "@/lib/trpc";
 import { useForm, createField } from "@/hooks/useForm";
 import { validatePassword } from "@/lib/validators";

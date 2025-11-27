@@ -2,7 +2,7 @@ import { Upload, CircleCheck, CircleAlert, File, X } from "lucide-react";
 import { useRef } from "react";
 import type { FormInputState } from "@/lib/types";
 import { formatFileSize } from "@/lib/utils";
-import Spinner from "./Spinner";
+import Spinner from "@/components/common/Spinner";
 import clsx from "clsx";
 
 interface FileUploadProps {

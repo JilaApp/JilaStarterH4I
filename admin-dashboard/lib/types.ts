@@ -1,6 +1,13 @@
 import type React from "react";
 
-export { VideoTopic, SocialServiceCategory } from "@prisma/client";
+export {
+  VideoTopic,
+  SocialServiceCategory,
+  JobType,
+  LocationType,
+  JobStatus,
+} from "@prisma/client";
+export type { Videos, SocialServices, Jobs } from "@prisma/client";
 
 export type FormInputState = "default" | "error" | "pending" | "complete";
 

@@ -1,10 +1,10 @@
-import FormField from "./FormField";
-import { TextInput } from "./Input/TextInput";
-import Dropdown from "./Dropdown";
-import RadioButtonGroup from "./RadioButtonGroup";
-import ParagraphInput from "./ParagraphInput";
-import CalendarInput from "./CalendarInput";
-import SubmitButton from "./SubmitButton";
+import FormField from "@/components/forms/FormField";
+import { TextInput } from "@/components/forms/inputs";
+import Dropdown from "@/components/forms/Dropdown";
+import RadioButtonGroup from "@/components/forms/RadioButtonGroup";
+import ParagraphInput from "@/components/forms/ParagraphInput";
+import CalendarInput from "@/components/forms/CalendarInput";
+import SubmitButton from "@/components/forms/SubmitButton";
 import { useForm, createField } from "@/hooks/useForm";
 import { useNotification } from "@/hooks/useNotification";
 import {

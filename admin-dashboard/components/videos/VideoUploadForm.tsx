@@ -1,9 +1,9 @@
-import { TextInput } from "@/components/Input";
-import FileUpload from "@/components/FileUpload";
-import ParagraphInput from "@/components/ParagraphInput";
-import FormField from "@/components/FormField";
-import Dropdown from "@/components/Dropdown";
-import SubmitButton from "@/components/SubmitButton";
+import { TextInput } from "@/components/forms/inputs";
+import FileUpload from "@/components/forms/FileUpload";
+import ParagraphInput from "@/components/forms/ParagraphInput";
+import FormField from "@/components/forms/FormField";
+import Dropdown from "@/components/forms/Dropdown";
+import SubmitButton from "@/components/forms/SubmitButton";
 import { trpc } from "@/lib/trpc";
 import { VideoTopic } from "@/lib/types";
 import { VIDEO_TOPIC_DISPLAY_OPTIONS } from "@/lib/constants";

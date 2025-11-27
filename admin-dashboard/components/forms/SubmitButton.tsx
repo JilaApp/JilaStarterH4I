@@ -1,4 +1,4 @@
-import Button from "./Button";
+import Button from "@/components/common/Button";
 
 interface SubmitButtonProps {
   isLoading: boolean;

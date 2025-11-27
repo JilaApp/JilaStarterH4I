@@ -1,12 +1,28 @@
 "use client";
 
-import { trpc } from "@/lib/trpc";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useUser } from "@clerk/nextjs";
 
 export default function Home() {
-  const { data, isLoading, error } = trpc.hello.greet.useQuery();
+  const router = useRouter();
+  const { isSignedIn, isLoaded } = useUser();
 
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error.message}</div>;
+  useEffect(() => {
+    if (isLoaded) {
+      if (isSignedIn) {
+        router.push("/dashboard");
+      } else {
+        router.push("/sign-in");
+      }
+    }
+  }, [isLoaded, isSignedIn, router]);
 
-  return <div>{data}</div>;
+  return (
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="text-center">
+        <div className="text-4xl mb-4">Loading...</div>
+      </div>
+    </div>
+  );
 }

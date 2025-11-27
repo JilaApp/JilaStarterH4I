@@ -1,9 +1,9 @@
-import FormField from "./FormField";
-import { TextInput } from "./Input/TextInput";
-import FileUpload from "./FileUpload";
-import Dropdown from "./Dropdown";
-import ParagraphInput from "./ParagraphInput";
-import SubmitButton from "./SubmitButton";
+import FormField from "@/components/forms/FormField";
+import { TextInput } from "@/components/forms/inputs";
+import FileUpload from "@/components/forms/FileUpload";
+import Dropdown from "@/components/forms/Dropdown";
+import ParagraphInput from "@/components/forms/ParagraphInput";
+import SubmitButton from "@/components/forms/SubmitButton";
 import { trpc } from "@/lib/trpc";
 import { SocialServiceCategory } from "@/lib/types";
 import {

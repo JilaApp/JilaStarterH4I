@@ -92,3 +92,13 @@ export const validateNumber = (value: string): string | null => {
   }
   return null;
 };
+
+export const validateOptionalURL = (value: string): string | null => {
+  if (!value || !value.trim()) {
+    return null;
+  }
+  if (!isValidURL(value)) {
+    return "Please enter a valid URL (e.g., https://example.com)";
+  }
+  return null;
+};

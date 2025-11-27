@@ -1,4 +1,5 @@
 import { Archive, Trash2 } from "lucide-react";
+import { Z_INDEX } from "@/lib/constants";
 
 interface BulkActionBarProps {
   selectedCount: number;
@@ -14,7 +15,10 @@ export default function BulkActionBar({
   if (selectedCount === 0) return null;
 
   return (
-    <div className="fixed bottom-[40px] left-1/2 transform -translate-x-1/2 z-50">
+    <div
+      className="fixed bottom-[40px] left-1/2 transform -translate-x-1/2"
+      style={{ zIndex: Z_INDEX.MODAL }}
+    >
       <div className="bg-jila-400 flex items-center gap-[23px] px-[20px] py-[20px] rounded-[10px] shadow-lg">
         <div className="text-jila-300 text-lg font-normal">
           Selected: {selectedCount}

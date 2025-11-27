@@ -47,14 +47,14 @@ async function addVideo(input: AddVideoInput) {
     if (existing) {
       throw new TRPCError({
         code: "CONFLICT",
-        message: `Video with url ${input.url} already exists`,
+        message: "A video with this URL already exists",
       });
     }
 
     const buffer = Buffer.from(input.audioFile, "base64");
     const audioBytes = new Uint8Array(buffer);
 
-    await prisma.videos.create({
+    const video = await prisma.videos.create({
       data: {
         titleEnglish: input.titleEnglish,
         titleQanjobal: input.titleQanjobal,
@@ -68,90 +68,125 @@ async function addVideo(input: AddVideoInput) {
         descriptionQanjobal: input.descriptionQanjobal,
       },
     });
+
+    return video;
   } catch (err: any) {
-    throw err;
+    if (err instanceof TRPCError) {
+      throw err;
+    }
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Failed to create video resource",
+    });
   }
 }
 
 async function removeVideo(input: RemoveVideoInput) {
-  const numericId =
-    typeof input.id === "string" ? parseInt(input.id, 10) : input.id;
+  try {
+    const numericId =
+      typeof input.id === "string" ? parseInt(input.id, 10) : input.id;
 
-  if (isNaN(numericId)) {
+    if (isNaN(numericId)) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "Invalid video ID",
+      });
+    }
+
+    const existing = await prisma.videos.findUnique({
+      where: { id: numericId },
+    });
+
+    if (!existing) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "Video resource not found",
+      });
+    }
+
+    await prisma.videos.delete({
+      where: {
+        id: numericId,
+      },
+    });
+  } catch (err: any) {
+    if (err instanceof TRPCError) {
+      throw err;
+    }
     throw new TRPCError({
-      code: "BAD_REQUEST",
-      message: `Invalid video ID provided: ${input.id}`,
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Failed to delete video resource",
     });
   }
-
-  const existing = await prisma.videos.findUnique({
-    where: { id: numericId },
-  });
-
-  if (!existing) {
-    throw new TRPCError({
-      code: "NOT_FOUND",
-      message: `Video with id ${numericId} does not exist`,
-    });
-  }
-
-  await prisma.videos.delete({
-    where: {
-      id: numericId,
-    },
-  });
 }
 
 async function updateVideo(input: UpdateVideoInput) {
-  const { id, audioFile, audioFilename, audioFileSize, ...rest } = input;
-  const existing = await prisma.videos.findUnique({
-    where: { id },
-  });
+  try {
+    const { id, audioFile, audioFilename, audioFileSize, ...rest } = input;
+    const existing = await prisma.videos.findUnique({
+      where: { id },
+    });
 
-  if (!existing) {
+    if (!existing) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "Video resource not found",
+      });
+    }
+
+    const dataToUpdate: any = { ...rest };
+
+    if (audioFile !== undefined) {
+      if (audioFile === "") {
+        dataToUpdate.audioFile = null;
+        dataToUpdate.audioFilename = null;
+        dataToUpdate.audioFileSize = null;
+      } else {
+        const buffer = Buffer.from(audioFile, "base64");
+        dataToUpdate.audioFile = new Uint8Array(buffer);
+        dataToUpdate.audioFilename = audioFilename;
+        dataToUpdate.audioFileSize = audioFileSize;
+      }
+    }
+
+    return await prisma.videos.update({
+      where: { id },
+      data: dataToUpdate,
+    });
+  } catch (err: any) {
+    if (err instanceof TRPCError) {
+      throw err;
+    }
     throw new TRPCError({
-      code: "NOT_FOUND",
-      message: `Video with id ${id} does not exist`,
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Failed to update video resource",
     });
   }
-
-  const dataToUpdate: any = { ...rest };
-
-  if (audioFile !== undefined) {
-    if (audioFile === "") {
-      dataToUpdate.audioFile = null;
-      dataToUpdate.audioFilename = null;
-      dataToUpdate.audioFileSize = null;
-    } else {
-      const buffer = Buffer.from(audioFile, "base64");
-      dataToUpdate.audioFile = new Uint8Array(buffer);
-      dataToUpdate.audioFilename = audioFilename;
-      dataToUpdate.audioFileSize = audioFileSize;
-    }
-  }
-
-  return await prisma.videos.update({
-    where: { id },
-    data: dataToUpdate,
-  });
 }
 
 async function getAllVideos() {
-  const videos = await prisma.videos.findMany({
-    select: {
-      id: true,
-      titleEnglish: true,
-      titleQanjobal: true,
-      topic: true,
-      url: true,
-      uploadDate: true,
-      descriptionEnglish: true,
-      descriptionQanjobal: true,
-      audioFilename: true,
-      audioFileSize: true,
-    },
-  });
-  return videos;
+  try {
+    const videos = await prisma.videos.findMany({
+      select: {
+        id: true,
+        titleEnglish: true,
+        titleQanjobal: true,
+        topic: true,
+        url: true,
+        uploadDate: true,
+        descriptionEnglish: true,
+        descriptionQanjobal: true,
+        audioFilename: true,
+        audioFileSize: true,
+      },
+    });
+    return videos;
+  } catch (err: any) {
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Failed to fetch video resources",
+    });
+  }
 }
 
 export const videosRouter = router({

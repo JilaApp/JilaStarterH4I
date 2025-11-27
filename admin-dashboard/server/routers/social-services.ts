@@ -44,87 +44,123 @@ type RemoveSocialServiceInput = z.infer<typeof removeSocialServiceInput>;
 type EditSocialServiceInput = z.infer<typeof editSocialServiceInput>;
 
 async function addSocialService(input: AddSocialServiceInput) {
-  const existing = await prisma.socialServices.findUnique({
-    where: { phone_number: input.phone_number },
-    select: { id: true },
-  });
+  try {
+    const existing = await prisma.socialServices.findUnique({
+      where: { phone_number: input.phone_number },
+      select: { id: true },
+    });
 
-  if (existing) {
+    if (existing) {
+      throw new TRPCError({
+        code: "CONFLICT",
+        message: "This phone number is already registered",
+      });
+    }
+
+    const service = await prisma.socialServices.create({
+      data: {
+        title: input.title,
+        category: input.category,
+        phone_number: input.phone_number,
+        address: input.address,
+        description: input.description,
+        url: input.url,
+        titleAudioFile: input.titleAudioFile,
+        titleAudioFilename: input.titleAudioFilename,
+        titleAudioFileSize: input.titleAudioFileSize,
+        descriptionAudioFile: input.descriptionAudioFile,
+        descriptionAudioFilename: input.descriptionAudioFilename,
+        descriptionAudioFileSize: input.descriptionAudioFileSize,
+      },
+    });
+
+    return service;
+  } catch (err: any) {
+    if (err instanceof TRPCError) {
+      throw err;
+    }
     throw new TRPCError({
-      code: "CONFLICT",
-      message: `Social Service with phone number ${input.phone_number} already exists`,
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Failed to create social service",
     });
   }
-
-  await prisma.socialServices.create({
-    data: {
-      title: input.title,
-      category: input.category,
-      phone_number: input.phone_number,
-      address: input.address,
-      description: input.description,
-      url: input.url,
-    },
-  });
 }
 
 async function removeSocialService(input: RemoveSocialServiceInput) {
-  const existing = await prisma.socialServices.findUnique({
-    where: { id: input.id },
-  });
+  try {
+    const existing = await prisma.socialServices.findUnique({
+      where: { id: input.id },
+    });
 
-  if (!existing) {
+    if (!existing) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "Social service not found",
+      });
+    }
+
+    await prisma.socialServices.delete({
+      where: {
+        id: input.id,
+      },
+    });
+  } catch (err: any) {
+    if (err instanceof TRPCError) {
+      throw err;
+    }
     throw new TRPCError({
-      code: "NOT_FOUND",
-      message: `Social Service with id ${input.id} does not exist`,
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Failed to delete social service",
     });
   }
-
-  await prisma.socialServices.delete({
-    where: {
-      id: input.id,
-    },
-  });
 }
 
 async function editSocialService(input: EditSocialServiceInput) {
-  const existing = await prisma.socialServices.findUnique({
-    where: { id: input.id },
-  });
+  try {
+    const existing = await prisma.socialServices.findUnique({
+      where: { id: input.id },
+    });
 
-  if (!existing) {
+    if (!existing) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "Social service not found",
+      });
+    }
+
+    const { id, ...rest } = input;
+
+    const data = Object.fromEntries(
+      Object.entries(rest).filter(([_, value]) => value !== undefined),
+    );
+
+    return await prisma.socialServices.update({
+      where: {
+        id: input.id,
+      },
+      data,
+    });
+  } catch (err: any) {
+    if (err instanceof TRPCError) {
+      throw err;
+    }
     throw new TRPCError({
-      code: "NOT_FOUND",
-      message: `Social Service with id ${input.id} does not exist`,
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Failed to update social service",
     });
   }
-
-  const removing_undefined_vals = {
-    title: input.title,
-    category: input.category,
-    phone_number: input.phone_number,
-    address: input.address,
-    description: input.description,
-    url: input.url,
-  };
-
-  const data = Object.fromEntries(
-    Object.entries(removing_undefined_vals).filter(
-      ([_, value]) => value !== undefined,
-    ),
-  );
-
-  await prisma.socialServices.update({
-    where: {
-      id: input.id,
-    },
-    data,
-  });
 }
 
 async function getAllSocialServices() {
-  const services = await prisma.socialServices.findMany();
-  return services;
+  try {
+    const services = await prisma.socialServices.findMany();
+    return services;
+  } catch (err: any) {
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Failed to fetch social services",
+    });
+  }
 }
 
 export const socialServicesRouter = router({

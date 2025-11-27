@@ -1,6 +1,48 @@
 import { VideoTopic, SocialServiceCategory } from "@/lib/types";
 import type { TopicVariant } from "@/lib/types";
 
+// File size limits (in MB)
+export const FILE_SIZE_LIMITS = {
+  AUDIO: 30,
+  IMAGE: 5,
+  VIDEO: 100,
+} as const;
+
+// Z-index scale for layering
+export const Z_INDEX = {
+  DROPDOWN: 10,
+  CONTEXT_MENU: 30,
+  MODAL: 50,
+  NOTIFICATION: 9999,
+} as const;
+
+// Timing constants (in milliseconds)
+export const TIMINGS = {
+  NOTIFICATION_AUTO_CLOSE: 3000,
+  REDIRECT_DELAY: 2000,
+  DEBOUNCE_SEARCH: 300,
+} as const;
+
+// Supported languages
+export const LANGUAGES = {
+  ENGLISH: "English",
+  SPANISH: "Spanish",
+  QANJOBAL: "Qanjobal",
+} as const;
+
+export const LANGUAGE_OPTIONS = Object.values(LANGUAGES);
+
+// Notification types
+export const NOTIFICATION_TYPES = {
+  SUCCESS: "success",
+  ERROR: "error",
+  WARNING: "warning",
+  INFO: "info",
+} as const;
+
+export type NotificationType =
+  (typeof NOTIFICATION_TYPES)[keyof typeof NOTIFICATION_TYPES];
+
 // Topic colors for UI display
 export const TOPIC_COLORS: Record<TopicVariant, string> = {
   Career: "#CDE6B9",

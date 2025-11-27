@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useMemo, useRef } from "react";
 import { X } from "lucide-react";
-import FormField from "@/components/FormField";
-import { TextInput } from "@/components/Input";
-import FileUpload from "@/components/FileUpload";
-import Dropdown from "@/components/Dropdown";
-import Button from "@/components/Button";
-import ParagraphInput from "./ParagraphInput";
+import FormField from "@/components/forms/FormField";
+import { TextInput } from "@/components/forms/inputs";
+import FileUpload from "@/components/forms/FileUpload";
+import Dropdown from "@/components/forms/Dropdown";
+import Button from "@/components/common/Button";
+import ParagraphInput from "@/components/forms/ParagraphInput";
 import { trpc } from "@/lib/trpc";
 import { VideoTopic } from "@/lib/types";
 import { VIDEO_TOPIC_OPTIONS } from "@/lib/constants";

@@ -1,7 +1,8 @@
 import React, { useEffect, useRef } from "react";
 import { X, Trash } from "lucide-react";
-import Button from "./Button";
+import Button from "@/components/common/Button";
 import { useClickOutside } from "@/hooks/useClickOutside";
+import { Z_INDEX } from "@/lib/constants";
 
 interface ModalProps {
   isOpen: boolean;
@@ -31,7 +32,10 @@ export default function DeleteModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[rgb(83,83,83,0.19)]">
+    <div
+      className="fixed inset-0 flex items-center justify-center bg-[rgb(83,83,83,0.19)]"
+      style={{ zIndex: Z_INDEX.MODAL }}
+    >
       <div
         ref={modalRef}
         className="relative bg-white rounded-[10px] w-[368px] h-[277px] p-6"

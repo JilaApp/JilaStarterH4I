@@ -2,17 +2,17 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { Plus, SlidersHorizontal } from "lucide-react";
-import Table from "@/components/Table";
+import Table from "@/components/data-display/Table";
 import { ColumnDefinition, DataRow, JobFilters } from "@/lib/types";
-import SearchBar from "@/components/SearchBar";
+import SearchBar from "@/components/data-display/SearchBar";
 import { trpc } from "@/lib/trpc";
-import JobPostingEditModal from "@/components/JobPostingEditModal";
-import DeleteModal from "@/components/DeleteModal";
+import JobPostingEditModal from "@/components/jobs/JobPostingEditModal";
+import DeleteModal from "@/components/modals/DeleteModal";
 import { Jobs, JobStatus } from "@prisma/client";
-import Link from "@/components/Link";
-import JobFilter from "@/components/JobFilter";
-import Tabs from "@/components/Tabs";
-import BulkActionBar from "@/components/BulkActionBar";
+import Link from "@/components/common/Link";
+import JobFilter from "@/components/jobs/JobFilter";
+import Tabs from "@/components/data-display/Tabs";
+import BulkActionBar from "@/components/data-display/BulkActionBar";
 import { useNotification } from "@/hooks/useNotification";
 
 type FullJobType = Jobs;

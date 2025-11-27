@@ -2,13 +2,13 @@
 
 import { useSignIn, useUser, useClerk } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
-import { EmailInput, PasswordInput, TextInput } from "@/components/Input";
-import Button from "@/components/Button";
-import DisplayBox from "@/components/DisplayBox";
-import Notification from "@/components/Notification";
-import Link from "@/components/Link";
-import FormField from "@/components/FormField";
-import PageBackground from "@/components/PageBackground";
+import { EmailInput, PasswordInput, TextInput } from "@/components/forms/inputs";
+import Button from "@/components/common/Button";
+import DisplayBox from "@/components/data-display/DisplayBox";
+import Notification from "@/components/common/Notification";
+import Link from "@/components/common/Link";
+import FormField from "@/components/forms/FormField";
+import PageBackground from "@/components/layout/PageBackground";
 import { useRouter } from "next/navigation";
 import { useForm, createField } from "@/hooks/useForm";
 import { validateEmail, validatePassword } from "@/lib/validators";
