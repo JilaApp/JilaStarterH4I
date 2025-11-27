@@ -188,7 +188,7 @@ export default function DevPage() {
 
   return (
     <>
-      <JobFilter />
+      <JobFilter onClose={() => {}} onApply={() => {}} />
       <div className="bg-[#FFFBF3] p-[24px]">
         <SocialServiceForm />
       </div>
