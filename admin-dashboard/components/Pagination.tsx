@@ -1,5 +1,5 @@
 import { ChevronFirst, ChevronLeft, ChevronRight } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface PaginationProps {
   numOptions: number;
@@ -16,6 +16,11 @@ export default function Pagination({
   const [disabledRight, setDisabledRight] = useState(
     selectedOption == numOptions,
   );
+
+  useEffect(() => {
+    setDisabledLeft(selectedOption <= 1);
+    setDisabledRight(selectedOption >= numOptions);
+  }, [selectedOption, numOptions]);
 
   const handleClick = (newSelection: number) => {
     onChange(newSelection);
