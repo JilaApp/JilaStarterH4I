@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useRef } from "react";
 import { X } from "lucide-react";
 import FormField from "@/components/FormField";
 import { TextInput } from "@/components/Input";
@@ -17,6 +17,7 @@ import { useForm, createField } from "@/hooks/useForm";
 import { validateRequired, validateURL } from "@/lib/validators";
 import { formatFileSize } from "@/lib/utils";
 import SubmitButton from "./SubmitButton";
+import { useClickOutside } from "@/hooks/useClickOutside";
 
 interface SocialServiceData {
   id: string | number;
@@ -67,9 +68,16 @@ export default function SocialServiceEditModal({
   const [clearExistingDescriptionFile, setClearExistingDescriptionFile] =
     useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const modalRef = useRef<HTMLDivElement>(null);
 
   const updateSocialServiceMutation =
     trpc.socialServices.editSocialService.useMutation();
+
+  useClickOutside(modalRef, () => {
+    if (!isSaving) {
+      onClose();
+    }
+  });
 
   const existingTitleFileMetadata = useMemo(() => {
     if (serviceData?.titleAudioFilename && serviceData?.titleAudioFileSize) {
@@ -298,7 +306,10 @@ export default function SocialServiceEditModal({
 
   return (
     <div className="fixed y-40 inset-0 z-50 flex items-center justify-center  bg-[rgb(83,83,83,0.19)]">
-      <div className="relative flex flex-col bg-white rounded-[10px] w-[49%] h-[90%] p-[26.48px] overflow-y-auto">
+      <div
+        ref={modalRef}
+        className="relative flex flex-col bg-white rounded-[10px] w-[49%] h-[90%] p-[26.48px] overflow-y-auto"
+      >
         <div className="flex justify-between items-center mb-[20px]">
           <div className="components-text">
             {isEditing ? "Edit resource" : "View resource"}

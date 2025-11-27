@@ -1,44 +1,58 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { X, Trash } from "lucide-react";
 import Button from "./Button";
+import { useClickOutside } from "@/hooks/useClickOutside";
 
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
+  title?: string;
+  description?: string;
+  icon?: React.ReactNode;
 }
 
 export default function DeleteModal({
   isOpen,
   onClose,
   onConfirm,
+  title = "Delete",
+  description = "This action cannot be undone.",
+  icon,
 }: ModalProps) {
+  const modalRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     document.body.style.overflow = isOpen ? "hidden" : "auto";
   }, [isOpen]);
+
+  useClickOutside(modalRef, onClose);
 
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-[rgb(83,83,83,0.19)]">
-      <div className="relative bg-white rounded-[10px] w-[368px] h-[277px] p-6">
+      <div
+        ref={modalRef}
+        className="relative bg-white rounded-[10px] w-[368px] h-[277px] p-6"
+      >
         <div className="flex justify-end">
           <X onClick={onClose} className="cursor-pointer" />
         </div>
 
         <div className="flex justify-center items-center mt-[-12px]">
           <div className="w-[45px] h-[44px] bg-error-200 rounded-[10px] flex justify-center items-center">
-            <Trash className="text-error-400" />
+            {icon || <Trash className="text-error-400" />}
           </div>
         </div>
 
         <div className="flex flex-col justify-center items-center gap-[4px]">
           <div className="text-2xl mt-[26px] body1-desktop-semi-text text-type-400">
-            Delete
+            {title}
           </div>
           <div className="flex flex-col justify-center items-center w-[308px] h-[32px]">
             <div className="text-lg text-gray-300 body2-desktop-text">
-              This action cannot be undone.
+              {description}
             </div>
           </div>
         </div>
