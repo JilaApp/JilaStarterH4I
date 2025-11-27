@@ -14,6 +14,7 @@ import JobFilter from "@/components/JobFilter";
 import Tabs from "@/components/Tabs";
 import BulkActionBar from "@/components/BulkActionBar";
 import { useNotification } from "@/hooks/useNotification";
+import Pagination from "@/components/Pagination";
 
 type FullJobType = Jobs;
 
@@ -36,6 +37,11 @@ export default function JobPostings({
   const [searchQuery, setSearchQuery] = useState("");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [appliedFilters, setAppliedFilters] = useState<JobFilters | null>(null);
+
+  const [allJobsCurrentPage, setAllJobsCurrentPage] = useState(1);
+  const [activeJobsCurrentPage, setActiveJobsCurrentPage] = useState(1);
+  const [archivedJobsCurrentPage, setArchivedJobsCurrentPage] = useState(1);
+  const itemsPerPage = 8;
 
   const [isJobModalOpen, setIsJobModalOpen] = useState(false);
   const [isEditingMode, setIsEditingMode] = useState(false);
@@ -338,6 +344,44 @@ export default function JobPostings({
     [jobResourcesData, searchQuery, appliedFilters, jobsData],
   );
 
+  const allJobsTotalPages = Math.ceil(allJobsData.length / itemsPerPage);
+  const paginatedAllJobsData = useMemo(
+    () =>
+      allJobsData.slice(
+        (allJobsCurrentPage - 1) * itemsPerPage,
+        allJobsCurrentPage * itemsPerPage,
+      ),
+    [allJobsData, allJobsCurrentPage],
+  );
+
+  const activeJobsTotalPages = Math.ceil(activeJobsData.length / itemsPerPage);
+  const paginatedActiveJobsData = useMemo(
+    () =>
+      activeJobsData.slice(
+        (activeJobsCurrentPage - 1) * itemsPerPage,
+        activeJobsCurrentPage * itemsPerPage,
+      ),
+    [activeJobsData, activeJobsCurrentPage],
+  );
+
+  const archivedJobsTotalPages = Math.ceil(
+    archivedJobsData.length / itemsPerPage,
+  );
+  const paginatedArchivedJobsData = useMemo(
+    () =>
+      archivedJobsData.slice(
+        (archivedJobsCurrentPage - 1) * itemsPerPage,
+        archivedJobsCurrentPage * itemsPerPage,
+      ),
+    [archivedJobsData, archivedJobsCurrentPage],
+  );
+
+  useEffect(() => {
+    setAllJobsCurrentPage(1);
+    setActiveJobsCurrentPage(1);
+    setArchivedJobsCurrentPage(1);
+  }, [searchQuery, appliedFilters]);
+
   const tabs = [
     {
       header: {
@@ -350,7 +394,7 @@ export default function JobPostings({
         </div>
       ) : (
         <Table
-          data={allJobsData}
+          data={paginatedAllJobsData}
           columns={jobColumns}
           handleEdit={handleJobEdit}
           handleDelete={handleJobDelete}
@@ -371,7 +415,7 @@ export default function JobPostings({
         </div>
       ) : (
         <Table
-          data={activeJobsData}
+          data={paginatedActiveJobsData}
           columns={jobColumns}
           handleEdit={handleJobEdit}
           handleDelete={handleJobDelete}
@@ -392,7 +436,7 @@ export default function JobPostings({
         </div>
       ) : (
         <Table
-          data={archivedJobsData}
+          data={paginatedArchivedJobsData}
           columns={jobColumns}
           handleEdit={handleJobEdit}
           handleDelete={handleJobDelete}
@@ -445,6 +489,35 @@ export default function JobPostings({
             </button>
           }
         />
+
+        {/* Pagination below tabs */}
+        {activeTabIndex === 0 && allJobsTotalPages > 0 && (
+          <div className="mt-4">
+            <Pagination
+              numOptions={allJobsTotalPages}
+              selectedOption={allJobsCurrentPage}
+              onChange={setAllJobsCurrentPage}
+            />
+          </div>
+        )}
+        {activeTabIndex === 1 && activeJobsTotalPages > 0 && (
+          <div className="mt-4">
+            <Pagination
+              numOptions={activeJobsTotalPages}
+              selectedOption={activeJobsCurrentPage}
+              onChange={setActiveJobsCurrentPage}
+            />
+          </div>
+        )}
+        {activeTabIndex === 2 && archivedJobsTotalPages > 0 && (
+          <div className="mt-4">
+            <Pagination
+              numOptions={archivedJobsTotalPages}
+              selectedOption={archivedJobsCurrentPage}
+              onChange={setArchivedJobsCurrentPage}
+            />
+          </div>
+        )}
       </div>
 
       {/* Filter Panel Overlay */}
