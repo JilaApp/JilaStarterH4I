@@ -7,6 +7,8 @@ import { colors } from "@/colors";
 import { trpc } from "@/lib/trpc";
 import VideoDropdown from "@/components/VideoDropdown";
 import { VideoData } from "@/types/api";
+import { sizes } from "@/constants/sizes";
+import { wp } from "@/utils/responsive";
 
 export default function VideoRouter() {
   const { category } = useLocalSearchParams<{ category: string }>();
@@ -70,10 +72,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: colors.cream[300],
-    padding: 24,
+    padding: wp(6),
   },
   categoryText: {
-    fontSize: 32,
+    fontSize: sizes.fontSize.xxxl,
     fontWeight: "700",
     color: colors.type[400],
   },

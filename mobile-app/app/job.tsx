@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet } from "react-native";
 import { useState } from "react";
 import { colors } from "@/colors";
+import { sizes } from "@/constants/sizes";
 import Background from "@/components/Background";
 import DisplayBox from "@/components/DisplayBox";
 import { Stepper } from "@/components/Stepper";
@@ -41,13 +42,13 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white[400],
   },
   title: {
-    fontSize: 20,
+    fontSize: sizes.fontSize.lg,
     fontWeight: "700",
   },
   exampleContainer: {
     width: "100%",
-    marginTop: 20,
-    paddingHorizontal: 20,
-    gap: 16,
+    marginTop: sizes.spacing.lg,
+    paddingHorizontal: sizes.spacing.lg,
+    gap: sizes.spacing.md,
   },
 });
