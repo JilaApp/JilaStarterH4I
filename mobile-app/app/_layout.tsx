@@ -7,7 +7,14 @@ import { tokenCache } from "@clerk/clerk-expo/token-cache";
 import { useFonts } from "expo-font";
 import TRPCProvider from "@/components/TRPCProvider";
 
-const NAV_ROUTES = new Set(["/", "/job", "/social", "/dev"]);
+const NAV_ROUTES = new Set([
+  "/",
+  "/job",
+  "/social",
+  "/dev",
+  "/video-router",
+  "/video",
+]);
 
 export default function RootLayout() {
   const pathname = usePathname();
