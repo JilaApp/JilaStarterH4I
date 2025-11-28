@@ -63,7 +63,7 @@ export default function DashboardDev() {
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
   const [isEditingMode, setIsEditingMode] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState<FullVideoType | null>(
-    null,
+    null
   );
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -139,10 +139,10 @@ export default function DashboardDev() {
           title: video.titleEnglish,
           topic: TOPIC_MAP[video.topic] || "Other",
           phoneNumber: "N/A",
-          link: video.url,
+          link: video.urls[0],
         }))
         .sort((a, b) => a.title.localeCompare(b.title)) || [],
-    [videosData],
+    [videosData]
   );
 
   const socialServicesResourcesData: SocialServiceData[] = useMemo(
@@ -156,7 +156,7 @@ export default function DashboardDev() {
           link: service.url || "N/A",
         }))
         .sort((a, b) => a.title.localeCompare(b.title)) || [],
-    [socialServicesData],
+    [socialServicesData]
   );
 
   const filteredVideoData = useMemo(
@@ -164,13 +164,12 @@ export default function DashboardDev() {
       videoResourcesData
         .filter(
           (item) =>
-            selectedFilters.length === 0 ||
-            selectedFilters.includes(item.topic),
+            selectedFilters.length === 0 || selectedFilters.includes(item.topic)
         )
         .filter((item) =>
-          item.title.toLowerCase().includes(searchQuery.toLowerCase()),
+          item.title.toLowerCase().includes(searchQuery.toLowerCase())
         ),
-    [videoResourcesData, selectedFilters, searchQuery],
+    [videoResourcesData, selectedFilters, searchQuery]
   );
 
   const filteredSocialServicesData = useMemo(
@@ -178,13 +177,12 @@ export default function DashboardDev() {
       socialServicesResourcesData
         .filter(
           (item) =>
-            selectedFilters.length === 0 ||
-            selectedFilters.includes(item.topic),
+            selectedFilters.length === 0 || selectedFilters.includes(item.topic)
         )
         .filter((item) =>
-          item.title.toLowerCase().includes(searchQuery.toLowerCase()),
+          item.title.toLowerCase().includes(searchQuery.toLowerCase())
         ),
-    [socialServicesResourcesData, selectedFilters, searchQuery],
+    [socialServicesResourcesData, selectedFilters, searchQuery]
   );
 
   const videoTotalPages = Math.ceil(filteredVideoData.length / itemsPerPage);
@@ -192,21 +190,21 @@ export default function DashboardDev() {
     () =>
       filteredVideoData.slice(
         (videoCurrentPage - 1) * itemsPerPage,
-        videoCurrentPage * itemsPerPage,
+        videoCurrentPage * itemsPerPage
       ),
-    [filteredVideoData, videoCurrentPage],
+    [filteredVideoData, videoCurrentPage]
   );
 
   const socialTotalPages = Math.ceil(
-    filteredSocialServicesData.length / itemsPerPage,
+    filteredSocialServicesData.length / itemsPerPage
   );
   const paginatedSocialData = useMemo(
     () =>
       filteredSocialServicesData.slice(
         (socialCurrentPage - 1) * itemsPerPage,
-        socialCurrentPage * itemsPerPage,
+        socialCurrentPage * itemsPerPage
       ),
-    [filteredSocialServicesData, socialCurrentPage],
+    [filteredSocialServicesData, socialCurrentPage]
   );
 
   const videoColumns: ColumnDefinition<VideoResourceData>[] = [
