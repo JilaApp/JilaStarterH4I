@@ -73,7 +73,7 @@ export default function VideoDropdown({
   );
 
   return (
-    <View style={{ backgroundColor: colors.cream[300] }}>
+    <View style={{ backgroundColor: colors.cream[300], width: "100%" }}>
       <Accordion
         text={text}
         ttsUrl={ttsUrl}

@@ -103,6 +103,7 @@ export default function Accordion({
 
 const styles = StyleSheet.create({
   parentRow: {
+    width: "100%",
     flexDirection: "row",
     alignItems: "center",
     paddingVertical: sizes.spacing.sm,
