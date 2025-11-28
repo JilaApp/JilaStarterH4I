@@ -296,7 +296,7 @@ async function main() {
 
   for (const video of videosData) {
     await prisma.videos.upsert({
-      where: { url: video.url },
+      where: { urls: [video.url] },
       update: {},
       create: {
         ...video,

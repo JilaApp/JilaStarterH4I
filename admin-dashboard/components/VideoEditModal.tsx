@@ -82,18 +82,19 @@ export default function VideoEditModal({
       setFieldValue("qanjobalTitle", videoData.titleQanjobal || "");
       setFieldValue(
         "videoLinks",
-        videoData.urls && videoData.urls.length > 0 ? videoData.urls : [""]
+        videoData.urls && videoData.urls.length > 0 ? videoData.urls : [""],
       );
       setFieldValue("englishDescription", videoData.descriptionEnglish || "");
       setFieldValue("qanjobalDescription", videoData.descriptionQanjobal || "");
 
       const topicIndex = VIDEO_TOPIC_OPTIONS.findIndex(
         (option) =>
-          String(option).toUpperCase() === (videoData.topic || "").toUpperCase()
+          String(option).toUpperCase() ===
+          (videoData.topic || "").toUpperCase(),
       );
       setFieldValue(
         "dropdownIndex",
-        topicIndex !== -1 ? topicIndex : undefined
+        topicIndex !== -1 ? topicIndex : undefined,
       );
 
       setSaveStatus("idle");
@@ -169,7 +170,7 @@ export default function VideoEditModal({
     };
 
     const executeMutation = async (
-      payload: typeof mutationPayload
+      payload: typeof mutationPayload,
     ): Promise<void> => {
       try {
         await updateVideoMutation.mutateAsync(payload);
