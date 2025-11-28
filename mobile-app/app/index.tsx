@@ -54,7 +54,7 @@ export default function App() {
   return (
     <>
       <Header
-        text={`Hi ${user.username}, What would you like to learn today?`}
+        text={`Hi ${user.username}, what would you like to learn today?`}
         toggleSearch={true}
       />
       <BottomBackground contentStyle={styles.container}>

@@ -27,6 +27,7 @@ import SocialServiceEditModal from "@/components/SocialServiceModal";
 import JobPostings from "@/components/JobPostings";
 import JobRequests from "@/components/JobRequests";
 import { useNotification } from "@/hooks/useNotification";
+import Pagination from "@/components/Pagination";
 
 type FullVideoType = Omit<Videos, "audioFile">;
 
@@ -55,6 +56,10 @@ export default function DashboardDev() {
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
   const [currentTabIndex, setCurrentTabIndex] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
+
+  const [videoCurrentPage, setVideoCurrentPage] = useState(1);
+  const [socialCurrentPage, setSocialCurrentPage] = useState(1);
+  const itemsPerPage = 8;
 
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
   const [isEditingMode, setIsEditingMode] = useState(false);
@@ -122,6 +127,11 @@ export default function DashboardDev() {
     }
   }, [activeView, refetchVideos, refetchSocialServices]);
 
+  useEffect(() => {
+    setVideoCurrentPage(1);
+    setSocialCurrentPage(1);
+  }, [selectedFilters, searchQuery]);
+
   const videoResourcesData: VideoResourceData[] = useMemo(
     () =>
       videosData
@@ -130,7 +140,7 @@ export default function DashboardDev() {
           title: video.titleEnglish,
           topic: TOPIC_MAP[video.topic] || "Other",
           phoneNumber: "N/A",
-          link: video.url,
+          link: video.urls[0],
         }))
         .sort((a, b) => a.title.localeCompare(b.title)) || [],
     [videosData],
@@ -176,6 +186,28 @@ export default function DashboardDev() {
           item.title.toLowerCase().includes(searchQuery.toLowerCase()),
         ),
     [socialServicesResourcesData, selectedFilters, searchQuery],
+  );
+
+  const videoTotalPages = Math.ceil(filteredVideoData.length / itemsPerPage);
+  const paginatedVideoData = useMemo(
+    () =>
+      filteredVideoData.slice(
+        (videoCurrentPage - 1) * itemsPerPage,
+        videoCurrentPage * itemsPerPage,
+      ),
+    [filteredVideoData, videoCurrentPage],
+  );
+
+  const socialTotalPages = Math.ceil(
+    filteredSocialServicesData.length / itemsPerPage,
+  );
+  const paginatedSocialData = useMemo(
+    () =>
+      filteredSocialServicesData.slice(
+        (socialCurrentPage - 1) * itemsPerPage,
+        socialCurrentPage * itemsPerPage,
+      ),
+    [filteredSocialServicesData, socialCurrentPage],
   );
 
   const videoColumns: ColumnDefinition<VideoResourceData>[] = [
@@ -304,7 +336,7 @@ export default function DashboardDev() {
         </div>
       ) : (
         <Table
-          data={filteredVideoData}
+          data={paginatedVideoData}
           columns={videoColumns}
           handleEdit={handleVideoEdit}
           handleDelete={handleVideoDelete}
@@ -320,7 +352,7 @@ export default function DashboardDev() {
         </div>
       ) : (
         <Table
-          data={filteredSocialServicesData}
+          data={paginatedSocialData}
           columns={socialColumns}
           handleEdit={handleSocialEdit}
           handleDelete={handleSocialDelete}
@@ -368,7 +400,7 @@ export default function DashboardDev() {
       case "dashboard":
         return (
           <>
-            <div className="flex-shrink-0 px-10 mt-6">
+            <div className="flex-shrink-0 px-10">
               <FilterBar
                 options={["Career", "Legal", "Medical", "Transport"]}
                 selectedOptions={selectedFilters}
@@ -384,6 +416,24 @@ export default function DashboardDev() {
                   <SearchBar value={searchQuery} onChange={setSearchQuery} />
                 }
               />
+              {currentTabIndex === 0 && videoTotalPages > 0 && (
+                <div className="mt-4">
+                  <Pagination
+                    numOptions={videoTotalPages}
+                    selectedOption={videoCurrentPage}
+                    onChange={setVideoCurrentPage}
+                  />
+                </div>
+              )}
+              {currentTabIndex === 1 && socialTotalPages > 0 && (
+                <div className="mt-4">
+                  <Pagination
+                    numOptions={socialTotalPages}
+                    selectedOption={socialCurrentPage}
+                    onChange={setSocialCurrentPage}
+                  />
+                </div>
+              )}
             </div>
           </>
         );
