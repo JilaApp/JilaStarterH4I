@@ -300,6 +300,7 @@ async function main() {
       update: {},
       create: {
         ...video,
+        urls: [video.url],
         audioFile: audioBuffer,
         audioFilename: "sample.mp3",
         audioFileSize: audioBuffer.length,
