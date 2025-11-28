@@ -11,6 +11,7 @@ import {
   validateRequired,
   validateURL,
   validateNumber,
+  validateDropdownIndex,
 } from "@/lib/validators";
 import { US_STATES } from "@/lib/constants";
 import { trpc } from "@/lib/trpc";
@@ -79,10 +80,10 @@ export default function JobPostingForm({ onBack }: JobPostingFormProps = {}) {
       jobTitleEnglish: validateRequired,
       jobTitleQanjobal: validateRequired,
       companyName: validateRequired,
-      jobTypeIndex: validateRequired,
-      locationTypeIndex: validateRequired,
+      jobTypeIndex: validateDropdownIndex,
+      locationTypeIndex: validateDropdownIndex,
       city: validateRequired,
-      stateIndex: validateRequired,
+      stateIndex: validateDropdownIndex,
       applicationLink: validateURL,
       salary: validateNumber,
       expirationDate: validateRequired,

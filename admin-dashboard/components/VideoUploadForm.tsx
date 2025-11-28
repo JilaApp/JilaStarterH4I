@@ -13,6 +13,7 @@ import {
   validateRequired,
   validateURL,
   validateFileSize,
+  validateDropdownIndex,
 } from "@/lib/validators";
 import { Plus, Trash2 } from "lucide-react";
 
@@ -52,7 +53,7 @@ export default function VideoUploadForm() {
       resourceTitleEnglish: validateRequired,
       resourceTitleQanjobal: validateRequired,
       audioFile: validateFileSize(30),
-      topicDropdownIndex: validateRequired,
+      topicDropdownIndex: validateDropdownIndex,
       videoLinks: validateAll,
     });
 

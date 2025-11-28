@@ -10,7 +10,11 @@ import { trpc } from "@/lib/trpc";
 import { VideoTopic } from "@/lib/types";
 import { VIDEO_TOPIC_OPTIONS } from "@/lib/constants";
 import { useForm, createField } from "@/hooks/useForm";
-import { validateRequired, validateURL } from "@/lib/validators";
+import {
+  validateRequired,
+  validateURL,
+  validateDropdownIndex,
+} from "@/lib/validators";
 import { formatFileSize } from "@/lib/utils";
 import { useClickOutside } from "@/hooks/useClickOutside";
 
@@ -136,7 +140,7 @@ export default function VideoEditModal({
     let isValid = validateAllFields({
       englishTitle: validateRequired,
       qanjobalTitle: validateRequired,
-      dropdownIndex: validateRequired,
+      dropdownIndex: validateDropdownIndex,
     });
 
     const currentLinks = fields.videoLinks.value;

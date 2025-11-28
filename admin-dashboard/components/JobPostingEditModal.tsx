@@ -15,6 +15,7 @@ import {
   validateRequired,
   validateURL,
   validateNumber,
+  validateDropdownIndex,
 } from "@/lib/validators";
 import SubmitButton from "./SubmitButton";
 import { useClickOutside } from "@/hooks/useClickOutside";
@@ -192,10 +193,10 @@ export default function JobPostingEditModal({
       jobTitleEnglish: validateRequired,
       jobTitleQanjobal: validateRequired,
       companyName: validateRequired,
-      jobTypeIndex: validateRequired,
-      locationTypeIndex: validateRequired,
+      jobTypeIndex: validateDropdownIndex,
+      locationTypeIndex: validateDropdownIndex,
       city: validateRequired,
-      stateIndex: validateRequired,
+      stateIndex: validateDropdownIndex,
       applicationLink: validateURL,
       salary: validateNumber,
       expirationDate: validateRequired,
