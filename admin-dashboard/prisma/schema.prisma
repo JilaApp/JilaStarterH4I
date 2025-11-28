@@ -38,7 +38,7 @@ model Videos {
   audioFilename       String?
   audioFileSize       Int?
   topic               VideoTopic
-  url                 String   @unique
+  urls                String[]   @unique
   uploadDate          DateTime
   descriptionEnglish  String?
   descriptionQanjobal String?

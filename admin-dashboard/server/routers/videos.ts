@@ -11,7 +11,7 @@ const addVideoInput = z.object({
   audioFilename: z.string(),
   audioFileSize: z.number(),
   topic: z.nativeEnum(VideoTopic),
-  url: z.string(),
+  urls: z.array(z.string()),
   descriptionEnglish: z.string(),
   descriptionQanjobal: z.string(),
 });
@@ -25,7 +25,7 @@ const updateVideoInput = z.object({
   titleEnglish: z.string().optional(),
   titleQanjobal: z.string().optional(),
   topic: z.nativeEnum(VideoTopic).optional(),
-  url: z.string().optional(),
+  urls: z.array(z.string()).optional(),
   descriptionEnglish: z.string().optional(),
   descriptionQanjobal: z.string().optional(),
   audioFile: z.string().optional(),
@@ -39,18 +39,6 @@ type UpdateVideoInput = z.infer<typeof updateVideoInput>;
 
 async function addVideo(input: AddVideoInput) {
   try {
-    const existing = await prisma.videos.findUnique({
-      where: { url: input.url },
-      select: { id: true },
-    });
-
-    if (existing) {
-      throw new TRPCError({
-        code: "CONFLICT",
-        message: `Video with url ${input.url} already exists`,
-      });
-    }
-
     const buffer = Buffer.from(input.audioFile, "base64");
     const audioBytes = new Uint8Array(buffer);
 
@@ -62,7 +50,7 @@ async function addVideo(input: AddVideoInput) {
         audioFilename: input.audioFilename,
         audioFileSize: input.audioFileSize,
         topic: input.topic,
-        url: input.url,
+        urls: input.urls,
         uploadDate: new Date(),
         descriptionEnglish: input.descriptionEnglish,
         descriptionQanjobal: input.descriptionQanjobal,
@@ -143,7 +131,7 @@ async function getAllVideos() {
       titleEnglish: true,
       titleQanjobal: true,
       topic: true,
-      url: true,
+      urls: true,
       uploadDate: true,
       descriptionEnglish: true,
       descriptionQanjobal: true,

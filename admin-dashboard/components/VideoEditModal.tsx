@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from "react";
-import { X } from "lucide-react";
+import { X, Plus, Trash2 } from "lucide-react";
 import FormField from "@/components/FormField";
 import { TextInput } from "@/components/Input";
 import FileUpload from "@/components/FileUpload";
@@ -20,7 +20,7 @@ interface VideoData {
   titleEnglish: string;
   titleQanjobal: string;
   topic: string;
-  url: string;
+  urls: string[];
   descriptionEnglish: string | null;
   descriptionQanjobal: string | null;
   audioFilename: string | null;
@@ -46,7 +46,7 @@ export default function VideoEditModal({
     useForm({
       englishTitle: createField(""),
       qanjobalTitle: createField(""),
-      videoLink: createField(""),
+      videoLinks: createField<string[]>([""]),
       englishDescription: createField(""),
       qanjobalDescription: createField(""),
       dropdownIndex: createField<number | undefined>(undefined),
@@ -72,18 +72,20 @@ export default function VideoEditModal({
     if (isOpen && videoData) {
       setFieldValue("englishTitle", videoData.titleEnglish || "");
       setFieldValue("qanjobalTitle", videoData.titleQanjobal || "");
-      setFieldValue("videoLink", videoData.url || "");
+      setFieldValue(
+        "videoLinks",
+        videoData.urls && videoData.urls.length > 0 ? videoData.urls : [""]
+      );
       setFieldValue("englishDescription", videoData.descriptionEnglish || "");
       setFieldValue("qanjobalDescription", videoData.descriptionQanjobal || "");
 
       const topicIndex = VIDEO_TOPIC_OPTIONS.findIndex(
         (option) =>
-          String(option).toUpperCase() ===
-          (videoData.topic || "").toUpperCase(),
+          String(option).toUpperCase() === (videoData.topic || "").toUpperCase()
       );
       setFieldValue(
         "dropdownIndex",
-        topicIndex !== -1 ? topicIndex : undefined,
+        topicIndex !== -1 ? topicIndex : undefined
       );
 
       setSaveStatus("idle");
@@ -93,6 +95,21 @@ export default function VideoEditModal({
   useEffect(() => {
     document.body.style.overflow = isOpen ? "hidden" : "auto";
   }, [isOpen]);
+
+  const handleLinkChange = (index: number, value: string) => {
+    const newLinks = [...fields.videoLinks.value];
+    newLinks[index] = value;
+    setFieldValue("videoLinks", newLinks);
+  };
+
+  const handleAddLink = () => {
+    setFieldValue("videoLinks", [...fields.videoLinks.value, ""]);
+  };
+
+  const handleRemoveLink = (index: number) => {
+    const newLinks = fields.videoLinks.value.filter((_, i) => i !== index);
+    setFieldValue("videoLinks", newLinks.length ? newLinks : [""]);
+  };
 
   const handleFileChange = (file: File) => {
     setFieldValue("audioFile", file);
@@ -107,12 +124,22 @@ export default function VideoEditModal({
   const handleSave = async () => {
     if (!videoData) return;
 
-    const isValid = validateAllFields({
+    let isValid = validateAllFields({
       englishTitle: validateRequired,
       qanjobalTitle: validateRequired,
-      videoLink: validateURL,
       dropdownIndex: validateRequired,
     });
+
+    const currentLinks = fields.videoLinks.value;
+    const invalidLinks = currentLinks.some((link) => {
+      if (!link) return true;
+      return !validateURL(link);
+    });
+
+    if (invalidLinks) {
+      setFieldError("videoLinks", "Please enter valid URLs.");
+      isValid = false;
+    }
 
     if (!isValid) return;
 
@@ -124,7 +151,7 @@ export default function VideoEditModal({
       id: videoData.id as number,
       titleEnglish: fields.englishTitle.value,
       titleQanjobal: fields.qanjobalTitle.value,
-      url: fields.videoLink.value,
+      urls: fields.videoLinks.value,
       descriptionEnglish: fields.englishDescription.value,
       descriptionQanjobal: fields.qanjobalDescription.value,
       topic:
@@ -134,7 +161,7 @@ export default function VideoEditModal({
     };
 
     const executeMutation = async (
-      payload: typeof mutationPayload,
+      payload: typeof mutationPayload
     ): Promise<void> => {
       try {
         await updateVideoMutation.mutateAsync(payload);
@@ -294,25 +321,54 @@ export default function VideoEditModal({
               )}
             </FormField>
           </div>
-          <div className="flex mt-[10px]">
-            <FormField
-              title="Video link"
-              defaultClassName="body1-desktop-text text-[15px]"
-              required
-              state={fields.videoLink.state}
-              errorString={fields.videoLink.error}
-              value={fields.videoLink.value}
-              onChange={(val) => setFieldValue("videoLink", val)}
-            >
-              {(props) => (
-                <TextInput
-                  {...props}
-                  id="video-input w-full"
-                  disabled={!isEditing}
-                />
-              )}
-            </FormField>
+
+          <div className="flex flex-col mt-[10px]">
+            <label className="body1-desktop-text text-[15px] mb-2 font-medium">
+              Video links <span className="text-red-500">*</span>
+            </label>
+            {fields.videoLinks.value.map((link, index) => (
+              <div key={index} className="flex gap-2 mb-2 items-center">
+                <div className="flex-1">
+                  <TextInput
+                    id={`video-input-${index}`}
+                    value={link}
+                    onChange={(val) => handleLinkChange(index, val)}
+                    disabled={!isEditing}
+                    className="w-full h-[46px]"
+                    state={fields.videoLinks.state}
+                  />
+                </div>
+                {isEditing && (
+                  <button
+                    onClick={() => handleRemoveLink(index)}
+                    className="p-2 text-gray-500 hover:text-red-500 transition-colors"
+                    type="button"
+                    title="Remove link"
+                  >
+                    <Trash2 className="w-5 h-5" />
+                  </button>
+                )}
+              </div>
+            ))}
+
+            {fields.videoLinks.state === "error" && (
+              <p className="text-red-500 text-sm mt-1 mb-2">
+                {fields.videoLinks.error}
+              </p>
+            )}
+
+            {isEditing && (
+              <button
+                onClick={handleAddLink}
+                className="flex items-center text-sm text-jila-400 hover:text-jila-300 font-medium mt-1 w-fit"
+                type="button"
+              >
+                <Plus className="w-4 h-4 mr-1" />
+                Add another link
+              </button>
+            )}
           </div>
+
           <div className="flex mt-[10px]">
             <FormField
               title="Description (English)"
