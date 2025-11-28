@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { MoreVertical } from "lucide-react";
+import { MoreVertical, Check, X as XIcon } from "lucide-react";
 import type { DataRow, ColumnDefinition } from "@/lib/types";
 import { useClickOutside } from "@/hooks/useClickOutside";
 import clsx from "clsx";
@@ -7,8 +7,10 @@ import clsx from "clsx";
 interface TableProps<T extends DataRow> {
   data: T[];
   columns: ColumnDefinition<T>[];
-  handleEdit: (id: T["id"]) => void;
-  handleDelete: (id: T["id"]) => void;
+  handleEdit?: (id: T["id"]) => void;
+  handleDelete?: (id: T["id"]) => void;
+  handleApprove?: (id: T["id"]) => void;
+  handleDeny?: (id: T["id"]) => void;
   handleRowClick: (id: T["id"]) => void;
   selectedRows?: (number | string)[];
   onSelectedRowsChange?: (selectedRows: (number | string)[]) => void;
@@ -19,6 +21,8 @@ export default function Table<T extends DataRow>({
   columns,
   handleEdit,
   handleDelete,
+  handleApprove,
+  handleDeny,
   handleRowClick,
   selectedRows: externalSelectedRows,
   onSelectedRowsChange,
@@ -120,66 +124,95 @@ export default function Table<T extends DataRow>({
                   );
                 })}
                 <td className="px-6 p-4 relative text-center">
-                  <button
-                    ref={(el) => {
-                      if (el) buttonRefs.current.set(row.id, el);
-                    }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      const rect = e.currentTarget.getBoundingClientRect();
-                      setMenuPosition({
-                        top: rect.bottom + 5,
-                        left: rect.right - 110,
-                      });
-                      setOpenMenu(openMenu === row.id ? null : row.id);
-                    }}
-                    className="p-2 rounded-full hover:bg-gray-300 hover:cursor-pointer"
-                  >
-                    <MoreVertical size={18} />
-                  </button>
-                  {openMenu === row.id && menuPosition && (
-                    <div
-                      ref={menuRef}
-                      className="fixed w-28 bg-white rounded-lg shadow-[0_8px_16px_rgba(0,0,0,0.2)] z-[100]"
-                      onClick={(e) => e.stopPropagation()}
-                      style={{
-                        top: `${menuPosition.top}px`,
-                        left: `${menuPosition.left}px`,
-                      }}
-                    >
-                      <img
-                        src="/table-menu-tail.svg"
-                        alt="tail"
-                        style={{
-                          position: "absolute",
-                          top: "-50px",
-                          right: "-34px",
-                          width: "100px",
-                          height: "100px",
-                          transformOrigin: "center",
-                          display: "block",
-                          pointerEvents: "none",
-                        }}
-                      />
+                  {handleApprove && handleDeny ? (
+                    <div className="flex items-center justify-center gap-[20px]">
                       <button
-                        onClick={() => {
-                          handleEdit(row.id);
-                          setOpenMenu(null);
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleApprove(row.id);
                         }}
-                        className="block w-full text-left px-4 py-2 hover:text-gray-300 cursor-pointer rounded-md"
+                        className="hover:opacity-80 cursor-pointer"
                       >
-                        Edit
+                        <Check size={24} className="text-green-400" />
                       </button>
                       <button
-                        onClick={() => {
-                          handleDelete(row.id);
-                          setOpenMenu(null);
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeny(row.id);
                         }}
-                        className="block w-full text-left px-4 py-2 hover:text-gray-300 cursor-pointer rounded-md"
+                        className="hover:opacity-80 cursor-pointer"
                       >
-                        Delete
+                        <XIcon size={24} className="text-error-400" />
                       </button>
                     </div>
+                  ) : (
+                    <>
+                      <button
+                        ref={(el) => {
+                          if (el) buttonRefs.current.set(row.id, el);
+                        }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          const rect = e.currentTarget.getBoundingClientRect();
+                          setMenuPosition({
+                            top: rect.bottom + 5,
+                            left: rect.right - 110,
+                          });
+                          setOpenMenu(openMenu === row.id ? null : row.id);
+                        }}
+                        className="p-2 rounded-full hover:bg-gray-300 hover:cursor-pointer"
+                      >
+                        <MoreVertical size={18} />
+                      </button>
+                      {openMenu === row.id && menuPosition && (
+                        <div
+                          ref={menuRef}
+                          className="fixed w-28 bg-white rounded-lg shadow-[0_8px_16px_rgba(0,0,0,0.2)] z-[100]"
+                          onClick={(e) => e.stopPropagation()}
+                          style={{
+                            top: `${menuPosition.top}px`,
+                            left: `${menuPosition.left}px`,
+                          }}
+                        >
+                          <img
+                            src="/table-menu-tail.svg"
+                            alt="tail"
+                            style={{
+                              position: "absolute",
+                              top: "-50px",
+                              right: "-34px",
+                              width: "100px",
+                              height: "100px",
+                              transformOrigin: "center",
+                              display: "block",
+                              pointerEvents: "none",
+                            }}
+                          />
+                          {handleEdit && (
+                            <button
+                              onClick={() => {
+                                handleEdit(row.id);
+                                setOpenMenu(null);
+                              }}
+                              className="block w-full text-left px-4 py-2 hover:text-gray-300 cursor-pointer rounded-md"
+                            >
+                              Edit
+                            </button>
+                          )}
+                          {handleDelete && (
+                            <button
+                              onClick={() => {
+                                handleDelete(row.id);
+                                setOpenMenu(null);
+                              }}
+                              className="block w-full text-left px-4 py-2 hover:text-gray-300 cursor-pointer rounded-md"
+                            >
+                              Delete
+                            </button>
+                          )}
+                        </div>
+                      )}
+                    </>
                   )}
                 </td>
               </tr>

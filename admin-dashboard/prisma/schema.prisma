@@ -115,6 +115,7 @@ enum LocationType {
 }
 
 enum JobStatus {
+  PENDING
   ACTIVE
   ARCHIVED
 }

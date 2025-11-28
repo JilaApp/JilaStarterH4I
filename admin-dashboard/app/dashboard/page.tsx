@@ -25,6 +25,7 @@ import { Videos } from "@prisma/client";
 import { TOPIC_MAP } from "@/lib/constants";
 import SocialServiceEditModal from "@/components/SocialServiceModal";
 import JobPostings from "@/components/JobPostings";
+import JobRequests from "@/components/JobRequests";
 import { useNotification } from "@/hooks/useNotification";
 
 type FullVideoType = Omit<Videos, "audioFile">;
@@ -418,8 +419,8 @@ export default function DashboardDev() {
         );
       case "job-requests":
         return (
-          <div className="flex-1 px-10 py-6">
-            <p>job requests</p>
+          <div className="flex-1 px-10 py-6 overflow-hidden flex flex-col min-h-0 mb-7">
+            <JobRequests />
           </div>
         );
       case "metrics":
