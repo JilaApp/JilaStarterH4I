@@ -92,3 +92,12 @@ export const validateNumber = (value: string): string | null => {
   }
   return null;
 };
+
+export const validateDropdownIndex = (
+  value: number | undefined,
+): string | null => {
+  if (value === undefined || value === null) {
+    return "Please select an option";
+  }
+  return null;
+};

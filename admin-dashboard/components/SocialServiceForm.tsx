@@ -17,6 +17,7 @@ import {
   validatePhone,
   validateURL,
   validateFileSize,
+  validateDropdownIndex,
 } from "@/lib/validators";
 
 export default function SocialServiceForm() {
@@ -45,7 +46,7 @@ export default function SocialServiceForm() {
       englishTitle: validateRequired,
       qanjobalTitle: validateRequired,
       titleFile: validateFileSize(30),
-      topicIndex: validateRequired,
+      topicIndex: validateDropdownIndex,
       phoneNumber: validatePhone,
       link: fields.link.value ? validateURL : undefined,
     });

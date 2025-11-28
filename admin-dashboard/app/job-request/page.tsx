@@ -10,11 +10,16 @@ import RadioButtonGroup from "@/components/RadioButtonGroup";
 import { trpc } from "@/lib/trpc";
 import { JobType, LocationType, JobStatus } from "@prisma/client";
 import { useForm, createField } from "@/hooks/useForm";
-import { validateRequired, validateEmail } from "@/lib/validators";
+import {
+  validateRequired,
+  validateEmail,
+  validateDropdownIndex,
+} from "@/lib/validators";
 import SubmitButton from "@/components/SubmitButton";
 import { US_STATES } from "@/lib/constants";
-import { X } from "lucide-react";
+import { X, CheckCircle } from "lucide-react";
 import PageBackground from "@/components/PageBackground";
+import CalendarInput from "@/components/CalendarInput";
 
 const JOB_TYPE_OPTIONS = [
   "Internship",
@@ -51,8 +56,9 @@ const LANGUAGE_OPTIONS = [
 export default function JobRequestPage() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
 
-  const { fields, setFieldValue, validateAllFields } = useForm({
+  const { fields, setFieldValue, validateAllFields, resetForm } = useForm({
     contactEmail: createField(""),
     jobTitleEnglish: createField(""),
     jobTitleQanjobal: createField(""),
@@ -75,7 +81,7 @@ export default function JobRequestPage() {
       jobTitleEnglish: validateRequired,
       jobTitleQanjobal: validateRequired,
       companyName: validateRequired,
-      jobTypeIndex: validateRequired,
+      jobTypeIndex: validateDropdownIndex,
       applicationLink: validateRequired,
     };
 
@@ -115,11 +121,17 @@ export default function JobRequestPage() {
         status: JobStatus.PENDING,
       });
 
-      router.push("/job-request/success");
+      setIsSuccess(true);
+      setIsSubmitting(false);
     } catch (error) {
       console.error("Failed to submit job request:", error);
       setIsSubmitting(false);
     }
+  };
+
+  const handleSubmitAnother = () => {
+    setIsSuccess(false);
+    resetForm();
   };
 
   return (
@@ -129,254 +141,267 @@ export default function JobRequestPage() {
           Submit Job Posting
         </h1>
 
-        <div className="bg-white rounded-[10px] shadow-[0px_4px_80px_0px_rgba(109,15,0,0.1)] w-full max-w-[699px] p-[26.48px] mb-12 relative">
-          <div className="flex flex-col gap-[19.67px]">
-            <p className="body2-desktop-text text-type-400">
-              Submit a request for a job to be posted on the Jila mobile app.
-            </p>
-
-            <FormField
-              title="Contact email"
-              state={fields.contactEmail.state}
-              errorString={fields.contactEmail.error}
-              value={fields.contactEmail.value}
-              onChange={(val) => setFieldValue("contactEmail", val)}
-              defaultClassName="w-full text-[13.62px]"
-              required
-            >
-              {(props) => (
-                <TextInput
-                  {...props}
-                  placeholder="Enter your business email"
-                  className="h-[60px]"
-                />
-              )}
-            </FormField>
-
-            <div className="flex gap-[13.62px]">
-              <FormField
-                title="Job title (English)"
-                state={fields.jobTitleEnglish.state}
-                errorString={fields.jobTitleEnglish.error}
-                value={fields.jobTitleEnglish.value}
-                onChange={(val) => setFieldValue("jobTitleEnglish", val)}
-                defaultClassName="flex-1 text-[13.62px]"
-                required
-              >
-                {(props) => (
-                  <TextInput
-                    {...props}
-                    placeholder="Enter job title"
-                    className="h-[60px]"
-                  />
-                )}
-              </FormField>
-
-              <FormField
-                title="Job title (Q'anjob'al)"
-                state={fields.jobTitleQanjobal.state}
-                errorString={fields.jobTitleQanjobal.error}
-                value={fields.jobTitleQanjobal.value}
-                onChange={(val) => setFieldValue("jobTitleQanjobal", val)}
-                defaultClassName="flex-1 text-[13.62px]"
-                required
-              >
-                {(props) => (
-                  <TextInput
-                    {...props}
-                    placeholder="Enter job title in Q'anjob'al"
-                    className="h-[60px]"
-                  />
-                )}
-              </FormField>
-            </div>
-
-            <FormField
-              title="Company name"
-              state={fields.companyName.state}
-              errorString={fields.companyName.error}
-              value={fields.companyName.value}
-              onChange={(val) => setFieldValue("companyName", val)}
-              defaultClassName="w-full text-[13.62px]"
-              required
-            >
-              {(props) => (
-                <TextInput
-                  {...props}
-                  placeholder="Enter company name"
-                  className="h-[60px]"
-                />
-              )}
-            </FormField>
-
-            <FormField
-              title="Job type"
-              state={fields.jobTypeIndex.state}
-              errorString={fields.jobTypeIndex.error}
-              value={fields.jobTypeIndex.value}
-              onChange={(val) => setFieldValue("jobTypeIndex", val)}
-              defaultClassName="w-full text-[13.62px]"
-              required
-            >
-              {(props) => (
-                <Dropdown
-                  {...props}
-                  options={[...JOB_TYPE_OPTIONS]}
-                  placeholder="-- Select job type --"
-                />
-              )}
-            </FormField>
-
-            <div className="flex flex-col">
-              <div className="h-[22.7px] font-normal text-[13.62px] leading-[18.92px] text-type-400">
-                <span>Accepted languages</span>
-              </div>
-              <p className="font-normal text-[13.62px] leading-[18.92px] text-gray-400 h-[27.24px]">
-                Choose tags to indicate language accessibility for this job
-                posting
+        {isSuccess ? (
+          <div className="bg-white rounded-[10px] shadow-[0px_4px_80px_0px_rgba(109,15,0,0.1)] w-full max-w-[699px] h-[882px] mb-12 flex flex-col items-center justify-center gap-[10px]">
+            <div className="flex items-center gap-[10px]">
+              <CheckCircle className="w-6 h-6 text-green-400" />
+              <p className="body1-desktop-text text-type-400">
+                Thank you for your submission
               </p>
-              <div className="py-[7.57px]">
-                <RadioButtonGroup
-                  options={LANGUAGE_OPTIONS}
-                  selectedOptions={fields.acceptedLanguages.value}
-                  setSelectedOptions={(val) =>
-                    setFieldValue("acceptedLanguages", val)
-                  }
-                />
-              </div>
             </div>
-
-            <FormField
-              title="Location type"
-              state={fields.locationTypeIndex.state}
-              errorString={fields.locationTypeIndex.error}
-              value={fields.locationTypeIndex.value}
-              onChange={(val) => setFieldValue("locationTypeIndex", val)}
-              defaultClassName="w-full text-[13.62px]"
+            <button
+              onClick={handleSubmitAnother}
+              className="body2-desktop-text text-jila-400 underline hover:opacity-80 transition-opacity cursor-pointer"
             >
-              {(props) => (
-                <Dropdown
-                  {...props}
-                  options={[...LOCATION_TYPE_OPTIONS]}
-                  placeholder="-- Select location type --"
-                />
-              )}
-            </FormField>
+              Submit another job
+            </button>
+          </div>
+        ) : (
+          <div className="bg-white rounded-[10px] shadow-[0px_4px_80px_0px_rgba(109,15,0,0.1)] w-full max-w-[699px] p-[26.48px] mb-12 relative">
+            <div className="flex flex-col gap-[19.67px]">
+              <p className="body2-desktop-text text-type-400">
+                Submit a request for a job to be posted on the Jila mobile app.
+              </p>
 
-            <div className="flex gap-[13.62px]">
               <FormField
-                title="City"
-                state={fields.city.state}
-                errorString={fields.city.error}
-                value={fields.city.value}
-                onChange={(val) => setFieldValue("city", val)}
-                defaultClassName="flex-1 text-[13.62px]"
+                title="Contact email"
+                state={fields.contactEmail.state}
+                errorString={fields.contactEmail.error}
+                value={fields.contactEmail.value}
+                onChange={(val) => setFieldValue("contactEmail", val)}
+                defaultClassName="w-full text-[13.62px]"
+                required
               >
                 {(props) => (
                   <TextInput
                     {...props}
-                    placeholder="Enter city"
+                    placeholder="Enter your business email"
+                    className="h-[60px]"
+                  />
+                )}
+              </FormField>
+
+              <div className="flex gap-[13.62px]">
+                <FormField
+                  title="Job title (English)"
+                  state={fields.jobTitleEnglish.state}
+                  errorString={fields.jobTitleEnglish.error}
+                  value={fields.jobTitleEnglish.value}
+                  onChange={(val) => setFieldValue("jobTitleEnglish", val)}
+                  defaultClassName="flex-1 text-[13.62px]"
+                  required
+                >
+                  {(props) => (
+                    <TextInput
+                      {...props}
+                      placeholder="Enter job title"
+                      className="h-[60px]"
+                    />
+                  )}
+                </FormField>
+
+                <FormField
+                  title="Job title (Q'anjob'al)"
+                  state={fields.jobTitleQanjobal.state}
+                  errorString={fields.jobTitleQanjobal.error}
+                  value={fields.jobTitleQanjobal.value}
+                  onChange={(val) => setFieldValue("jobTitleQanjobal", val)}
+                  defaultClassName="flex-1 text-[13.62px]"
+                  required
+                >
+                  {(props) => (
+                    <TextInput
+                      {...props}
+                      placeholder="Enter job title in Q'anjob'al"
+                      className="h-[60px]"
+                    />
+                  )}
+                </FormField>
+              </div>
+
+              <FormField
+                title="Company name"
+                state={fields.companyName.state}
+                errorString={fields.companyName.error}
+                value={fields.companyName.value}
+                onChange={(val) => setFieldValue("companyName", val)}
+                defaultClassName="w-full text-[13.62px]"
+                required
+              >
+                {(props) => (
+                  <TextInput
+                    {...props}
+                    placeholder="Enter company name"
                     className="h-[60px]"
                   />
                 )}
               </FormField>
 
               <FormField
-                title="State"
-                state={fields.stateIndex.state}
-                errorString={fields.stateIndex.error}
-                value={fields.stateIndex.value}
-                onChange={(val) => setFieldValue("stateIndex", val)}
-                defaultClassName="flex-1 text-[13.62px]"
+                title="Job type"
+                state={fields.jobTypeIndex.state}
+                errorString={fields.jobTypeIndex.error}
+                value={fields.jobTypeIndex.value}
+                onChange={(val) => setFieldValue("jobTypeIndex", val)}
+                defaultClassName="w-full text-[13.62px]"
+                required
               >
                 {(props) => (
                   <Dropdown
                     {...props}
-                    options={[...US_STATES]}
-                    placeholder="-- Select state --"
+                    options={[...JOB_TYPE_OPTIONS]}
+                    placeholder="-- Select job type --"
                   />
                 )}
               </FormField>
-            </div>
 
-            <FormField
-              title="Application link"
-              state={fields.applicationLink.state}
-              errorString={fields.applicationLink.error}
-              value={fields.applicationLink.value}
-              onChange={(val) => setFieldValue("applicationLink", val)}
-              defaultClassName="w-full text-[13.62px]"
-              required
-            >
-              {(props) => (
-                <TextInput
-                  {...props}
-                  placeholder="Enter application link"
-                  className="h-[60px]"
-                />
-              )}
-            </FormField>
+              <div className="flex flex-col">
+                <div className="h-[22.7px] font-normal text-[13.62px] leading-[18.92px] text-type-400">
+                  <span>Accepted languages</span>
+                </div>
+                <p className="font-normal text-[13.62px] leading-[18.92px] text-gray-400 h-[27.24px]">
+                  Choose tags to indicate language accessibility for this job
+                  posting
+                </p>
+                <div className="py-[7.57px]">
+                  <RadioButtonGroup
+                    options={LANGUAGE_OPTIONS}
+                    selectedOptions={fields.acceptedLanguages.value}
+                    setSelectedOptions={(val) =>
+                      setFieldValue("acceptedLanguages", val)
+                    }
+                  />
+                </div>
+              </div>
 
-            <div className="flex gap-[13.62px]">
               <FormField
-                title="Salary"
-                state={fields.salary.state}
-                errorString={fields.salary.error}
-                value={fields.salary.value}
-                onChange={(val) => setFieldValue("salary", val)}
-                defaultClassName="flex-1 text-[13.62px]"
+                title="Location type"
+                state={fields.locationTypeIndex.state}
+                errorString={fields.locationTypeIndex.error}
+                value={fields.locationTypeIndex.value}
+                onChange={(val) => setFieldValue("locationTypeIndex", val)}
+                defaultClassName="w-full text-[13.62px]"
               >
                 {(props) => (
-                  <div className="relative">
-                    <span className="absolute left-[18px] top-1/2 -translate-y-1/2 font-bold text-[13.62px] text-type-400">
-                      $
-                    </span>
-                    <TextInput
-                      {...props}
-                      placeholder="Enter salary"
-                      className="h-[60px] pl-[30px]"
-                    />
-                  </div>
+                  <Dropdown
+                    {...props}
+                    options={[...LOCATION_TYPE_OPTIONS]}
+                    placeholder="-- Select location type --"
+                  />
                 )}
               </FormField>
 
+              <div className="flex gap-[13.62px]">
+                <FormField
+                  title="City"
+                  state={fields.city.state}
+                  errorString={fields.city.error}
+                  value={fields.city.value}
+                  onChange={(val) => setFieldValue("city", val)}
+                  defaultClassName="flex-1 text-[13.62px]"
+                >
+                  {(props) => (
+                    <TextInput
+                      {...props}
+                      placeholder="Enter city"
+                      className="h-[60px]"
+                    />
+                  )}
+                </FormField>
+
+                <FormField
+                  title="State"
+                  state={fields.stateIndex.state}
+                  errorString={fields.stateIndex.error}
+                  value={fields.stateIndex.value}
+                  onChange={(val) => setFieldValue("stateIndex", val)}
+                  defaultClassName="flex-1 text-[13.62px]"
+                >
+                  {(props) => (
+                    <Dropdown
+                      {...props}
+                      options={[...US_STATES]}
+                      placeholder="-- Select state --"
+                    />
+                  )}
+                </FormField>
+              </div>
+
               <FormField
-                title="Expiration date"
-                state={fields.expirationDate.state}
-                errorString={fields.expirationDate.error}
-                value={fields.expirationDate.value}
-                onChange={(val) => setFieldValue("expirationDate", val)}
-                defaultClassName="flex-1 text-[13.62px]"
+                title="Application link"
+                state={fields.applicationLink.state}
+                errorString={fields.applicationLink.error}
+                value={fields.applicationLink.value}
+                onChange={(val) => setFieldValue("applicationLink", val)}
+                defaultClassName="w-full text-[13.62px]"
+                required
               >
                 {(props) => (
                   <TextInput
                     {...props}
-                    placeholder="mm/dd/yy"
+                    placeholder="Enter application link"
                     className="h-[60px]"
                   />
                 )}
               </FormField>
+
+              <div className="flex gap-[13.62px]">
+                <FormField
+                  title="Salary"
+                  state={fields.salary.state}
+                  errorString={fields.salary.error}
+                  value={fields.salary.value}
+                  onChange={(val) => setFieldValue("salary", val)}
+                  defaultClassName="flex-1 text-[13.62px]"
+                >
+                  {(props) => (
+                    <div className="relative">
+                      <span className="absolute left-[18px] top-1/2 -translate-y-1/2 font-bold text-[13.62px] text-type-400">
+                        $
+                      </span>
+                      <TextInput
+                        {...props}
+                        placeholder="Enter salary"
+                        className="h-[60px] pl-[30px]"
+                      />
+                    </div>
+                  )}
+                </FormField>
+
+                <FormField
+                  title="Expiration date"
+                  state={fields.expirationDate.state}
+                  errorString={fields.expirationDate.error}
+                  value={fields.expirationDate.value}
+                  onChange={(val) => setFieldValue("expirationDate", val)}
+                  defaultClassName="flex-1 text-[13.62px]"
+                >
+                  {(props) => (
+                    <CalendarInput {...props} placeholder="Select date" />
+                  )}
+                </FormField>
+              </div>
+
+              <div className="flex justify-end mt-[10px]">
+                <SubmitButton
+                  onClick={handleSubmit}
+                  isLoading={isSubmitting}
+                  loadingText="Submitting..."
+                  text="Submit"
+                  defaultClassName="w-[124.84px] h-[60px] rounded-[10px] text-[13.62px]"
+                />
+              </div>
             </div>
 
-            <div className="flex justify-end mt-[10px]">
-              <SubmitButton
-                onClick={handleSubmit}
-                isLoading={isSubmitting}
-                loadingText="Submitting..."
-                text="Submit"
-                defaultClassName="w-[124.84px] h-[60px] rounded-[10px] text-[13.62px]"
-              />
-            </div>
+            {/* Close button (X icon) in top right */}
+            <button
+              onClick={() => router.push("/")}
+              className="absolute top-[26.48px] right-[26.48px] cursor-pointer"
+            >
+              <X className="w-[18.16px] h-[18.16px] text-type-400" />
+            </button>
           </div>
-
-          {/* Close button (X icon) in top right */}
-          <button
-            onClick={() => router.push("/")}
-            className="absolute top-[26.48px] right-[26.48px] cursor-pointer"
-          >
-            <X className="w-[18.16px] h-[18.16px] text-type-400" />
-          </button>
-        </div>
+        )}
       </div>
     </PageBackground>
   );

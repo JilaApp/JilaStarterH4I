@@ -8,7 +8,7 @@ import RadioButtonGroup from "./RadioButtonGroup";
 import { trpc } from "@/lib/trpc";
 import { JobType, LocationType, JobStatus } from "@prisma/client";
 import { useForm, createField } from "@/hooks/useForm";
-import { validateRequired } from "@/lib/validators";
+import { validateRequired, validateDropdownIndex } from "@/lib/validators";
 import SubmitButton from "./SubmitButton";
 import { useClickOutside } from "@/hooks/useClickOutside";
 
@@ -124,10 +124,7 @@ export default function JobRequestModal({
       setFieldValue("jobTitleEnglish", jobData.titleEnglish || "");
       setFieldValue("jobTitleQanjobal", jobData.titleQanjobal || "");
       setFieldValue("companyName", jobData.companyName || "");
-      setFieldValue(
-        "businessContactEmail",
-        jobData.businessContactEmail || "",
-      );
+      setFieldValue("businessContactEmail", jobData.businessContactEmail || "");
       setFieldValue("acceptedLanguages", jobData.acceptedLanguages || []);
 
       const jobTypeIndex = JOB_TYPE_OPTIONS.findIndex(
@@ -160,8 +157,8 @@ export default function JobRequestModal({
       jobTitleQanjobal: validateRequired,
       companyName: validateRequired,
       businessContactEmail: validateRequired,
-      jobTypeIndex: validateRequired,
-      locationTypeIndex: validateRequired,
+      jobTypeIndex: validateDropdownIndex,
+      locationTypeIndex: validateDropdownIndex,
     };
 
     const isValid = validateAllFields(validationRules);
@@ -216,10 +213,7 @@ export default function JobRequestModal({
       setFieldValue("jobTitleEnglish", jobData.titleEnglish || "");
       setFieldValue("jobTitleQanjobal", jobData.titleQanjobal || "");
       setFieldValue("companyName", jobData.companyName || "");
-      setFieldValue(
-        "businessContactEmail",
-        jobData.businessContactEmail || "",
-      );
+      setFieldValue("businessContactEmail", jobData.businessContactEmail || "");
       setFieldValue("acceptedLanguages", jobData.acceptedLanguages || []);
 
       const jobTypeIndex = JOB_TYPE_OPTIONS.findIndex(

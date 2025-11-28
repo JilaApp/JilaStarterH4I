@@ -308,7 +308,7 @@ async function denyJobRequest(input: DenyJobRequestInput) {
 
 async function bulkApproveJobRequests(input: BulkApproveJobRequestsInput) {
   const numericIds = input.ids.map((id) =>
-    typeof id === "string" ? parseInt(id, 10) : id
+    typeof id === "string" ? parseInt(id, 10) : id,
   );
 
   if (numericIds.some((id) => isNaN(id))) {
@@ -328,7 +328,7 @@ async function bulkApproveJobRequests(input: BulkApproveJobRequestsInput) {
 
 async function bulkDenyJobRequests(input: BulkDenyJobRequestsInput) {
   const numericIds = input.ids.map((id) =>
-    typeof id === "string" ? parseInt(id, 10) : id
+    typeof id === "string" ? parseInt(id, 10) : id,
   );
 
   if (numericIds.some((id) => isNaN(id))) {

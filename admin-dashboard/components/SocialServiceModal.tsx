@@ -14,7 +14,11 @@ import {
   US_STATES,
 } from "@/lib/constants";
 import { useForm, createField } from "@/hooks/useForm";
-import { validateRequired, validateURL } from "@/lib/validators";
+import {
+  validateRequired,
+  validateURL,
+  validateDropdownIndex,
+} from "@/lib/validators";
 import { formatFileSize } from "@/lib/utils";
 import SubmitButton from "./SubmitButton";
 import { useClickOutside } from "@/hooks/useClickOutside";
@@ -175,7 +179,7 @@ export default function SocialServiceEditModal({
     const isValid = validateAllFields({
       englishTitle: validateRequired,
       qanjobalTitle: validateRequired,
-      topicIndex: validateRequired,
+      topicIndex: validateDropdownIndex,
       phoneNumber: validateRequired,
     });
 

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Notification, { NotificationType } from "@/components/Notification";
 
 interface NotificationState {
@@ -11,18 +11,42 @@ export function useNotification() {
   const [notification, setNotification] = useState<NotificationState | null>(
     null,
   );
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const showNotification = (
     message: string,
     type?: NotificationType,
     onUndo?: () => void,
   ) => {
+    // Clear any existing timeout
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
     setNotification({ message, type, onUndo });
+
+    // Auto-dismiss after 3 seconds
+    timeoutRef.current = setTimeout(() => {
+      setNotification(null);
+    }, 3000);
   };
 
   const hideNotification = () => {
+    // Clear timeout when manually closing
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
     setNotification(null);
   };
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
 
   const NotificationContainer = () => {
     if (!notification) return null;
