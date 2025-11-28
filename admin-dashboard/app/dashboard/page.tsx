@@ -139,7 +139,7 @@ export default function DashboardDev() {
           title: video.titleEnglish,
           topic: TOPIC_MAP[video.topic] || "Other",
           phoneNumber: "N/A",
-          link: video.url,
+          link: video.urls[0],
         }))
         .sort((a, b) => a.title.localeCompare(b.title)) || [],
     [videosData],

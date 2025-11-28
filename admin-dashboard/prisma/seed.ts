@@ -24,7 +24,7 @@ async function main() {
       titleEnglish: "How to Use the City Bus System",
       titleQanjobal: "Yalel B'eyb'al Yet' Autobus Yet' Konob'",
       topic: VideoTopic.TRANSPORT,
-      url: "https://www.youtube.com/watch?v=video1_transport",
+      urls: ["https://www.youtube.com/watch?v=video1_transport"],
       uploadDate: new Date("2025-01-15T10:00:00Z"),
       descriptionEnglish:
         "A step-by-step guide to reading bus schedules and paying fares.",
@@ -35,7 +35,7 @@ async function main() {
       titleEnglish: "Know Your Tenant Rights",
       titleQanjobal: "Yojtakk'ulal A B'aq'il Yet' Naj",
       topic: VideoTopic.LEGAL,
-      url: "https://www.youtube.com/watch?v=video2_legal",
+      urls: ["https://www.youtube.com/watch?v=video2_legal"],
       uploadDate: new Date("2025-02-20T11:30:00Z"),
       descriptionEnglish:
         "Learn about your rights as a renter and where to find legal help.",
@@ -46,7 +46,7 @@ async function main() {
       titleEnglish: "Scheduling a Doctor's Appointment",
       titleQanjobal: "Yalel Jun Cita Yet' Unin",
       topic: VideoTopic.MEDICAL,
-      url: "https://www.youtube.com/watch?v=video3_medical",
+      urls: ["https://www.youtube.com/watch?v=video3_medical"],
       uploadDate: new Date("2025-03-10T09:00:00Z"),
       descriptionEnglish:
         "A simple guide on how to call and schedule a medical appointment.",
@@ -57,7 +57,7 @@ async function main() {
       titleEnglish: "How to Write a Resume",
       titleQanjobal: "Yalel Tz'ib'anel Jun Curriculum",
       topic: VideoTopic.CAREER,
-      url: "https://www.youtube.com/watch?v=video4_career",
+      urls: ["https://www.youtube.com/watch?v=video4_career"],
       uploadDate: new Date("2025-04-05T14:00:00Z"),
       descriptionEnglish:
         "Tips and tricks for creating a professional resume to land a job.",
@@ -68,7 +68,7 @@ async function main() {
       titleEnglish: "Enrolling Your Child in School",
       titleQanjobal: "Yalel Sk'exel Unin Ti' Escuela",
       topic: VideoTopic.EDUCATION,
-      url: "https://www.youtube.com/watch?v=video5_education",
+      urls: ["https://www.youtube.com/watch?v=video5_education"],
       uploadDate: new Date("2025-05-22T08:45:00Z"),
       descriptionEnglish:
         "A guide to the documents and steps needed for school enrollment.",
@@ -79,7 +79,7 @@ async function main() {
       titleEnglish: "Interview Preparation Tips",
       titleQanjobal: "Consejos Yet' Preparación Yet' Entrevista",
       topic: VideoTopic.CAREER,
-      url: "https://www.youtube.com/watch?v=video6_career_prep",
+      urls: ["https://www.youtube.com/watch?v=video6_career_prep"],
       uploadDate: new Date("2025-06-18T16:00:00Z"),
       descriptionEnglish:
         "How to prepare for common interview questions and make a good impression.",
@@ -90,7 +90,7 @@ async function main() {
       titleEnglish: "Community Resources Overview",
       titleQanjobal: "Slolonej Slak'olal Recursos Yet' Komon",
       topic: VideoTopic.OTHER,
-      url: "https://www.youtube.com/watch?v=video7_other",
+      urls: ["https://www.youtube.com/watch?v=video7_other"],
       uploadDate: new Date("2025-07-02T13:15:00Z"),
       descriptionEnglish:
         "An overview of various community support programs available to you.",
@@ -101,7 +101,7 @@ async function main() {
       titleEnglish: "Understanding Health Insurance",
       titleQanjobal: "Yojtakk'ulal Seguro Yet' Unin",
       topic: VideoTopic.MEDICAL,
-      url: "https://www.youtube.com/watch?v=video8_medical_insurance",
+      urls: ["https://www.youtube.com/watch?v=video8_medical_insurance"],
       uploadDate: new Date("2025-01-20T12:00:00Z"),
       descriptionEnglish:
         "Learn about different types of health insurance and how to apply.",
@@ -112,7 +112,7 @@ async function main() {
       titleEnglish: "Filing Your Taxes",
       titleQanjobal: "Yalel A Impuestos",
       topic: VideoTopic.LEGAL,
-      url: "https://www.youtube.com/watch?v=video9_legal_taxes",
+      urls: ["https://www.youtube.com/watch?v=video9_legal_taxes"],
       uploadDate: new Date("2025-02-01T14:30:00Z"),
       descriptionEnglish:
         "Step-by-step guide to filing your annual tax return.",
@@ -122,7 +122,7 @@ async function main() {
       titleEnglish: "Job Search Strategies",
       titleQanjobal: "Estrategias Yet' B'eyal Mulnaj",
       topic: VideoTopic.CAREER,
-      url: "https://www.youtube.com/watch?v=video10_career_search",
+      urls: ["https://www.youtube.com/watch?v=video10_career_search"],
       uploadDate: new Date("2025-02-15T09:30:00Z"),
       descriptionEnglish:
         "Effective strategies for finding job opportunities in your area.",
@@ -133,7 +133,7 @@ async function main() {
       titleEnglish: "Applying for Food Assistance",
       titleQanjobal: "Yalel Solicitud Yet' Ayuda Yet' Wa'",
       topic: VideoTopic.OTHER,
-      url: "https://www.youtube.com/watch?v=video11_other_food",
+      urls: ["https://www.youtube.com/watch?v=video11_other_food"],
       uploadDate: new Date("2025-03-01T10:15:00Z"),
       descriptionEnglish:
         "How to apply for SNAP benefits and other food assistance programs.",
@@ -144,7 +144,7 @@ async function main() {
       titleEnglish: "Getting a Driver's License",
       titleQanjobal: "Yalel Licencia Yet' Manejo",
       topic: VideoTopic.TRANSPORT,
-      url: "https://www.youtube.com/watch?v=video12_transport_license",
+      urls: ["https://www.youtube.com/watch?v=video12_transport_license"],
       uploadDate: new Date("2025-03-15T11:00:00Z"),
       descriptionEnglish:
         "Requirements and steps for obtaining a driver's license.",
@@ -155,7 +155,7 @@ async function main() {
       titleEnglish: "Understanding Your Rights at Work",
       titleQanjobal: "Yojtakk'ulal A B'aq'il Ti' Mulnaj",
       topic: VideoTopic.LEGAL,
-      url: "https://www.youtube.com/watch?v=video13_legal_work",
+      urls: ["https://www.youtube.com/watch?v=video13_legal_work"],
       uploadDate: new Date("2025-04-01T13:45:00Z"),
       descriptionEnglish:
         "Learn about worker rights and workplace protections.",
@@ -166,7 +166,7 @@ async function main() {
       titleEnglish: "Emergency Room vs Urgent Care",
       titleQanjobal: "Sala de Emergencias vs Cuidado Urgente",
       topic: VideoTopic.MEDICAL,
-      url: "https://www.youtube.com/watch?v=video14_medical_er",
+      urls: ["https://www.youtube.com/watch?v=video14_medical_er"],
       uploadDate: new Date("2025-04-20T15:00:00Z"),
       descriptionEnglish:
         "Understanding when to go to the ER versus urgent care.",
@@ -177,7 +177,7 @@ async function main() {
       titleEnglish: "Financial Literacy Basics",
       titleQanjobal: "Fundamentos Yet' Educación Financiera",
       topic: VideoTopic.OTHER,
-      url: "https://www.youtube.com/watch?v=video15_other_finance",
+      urls: ["https://www.youtube.com/watch?v=video15_other_finance"],
       uploadDate: new Date("2025-05-05T08:30:00Z"),
       descriptionEnglish: "Learn basic budgeting and saving strategies.",
       descriptionQanjobal:
@@ -187,7 +187,7 @@ async function main() {
       titleEnglish: "College Application Process",
       titleQanjobal: "Proceso Yet' Solicitud Yet' Universidad",
       topic: VideoTopic.EDUCATION,
-      url: "https://www.youtube.com/watch?v=video16_education_college",
+      urls: ["https://www.youtube.com/watch?v=video16_education_college"],
       uploadDate: new Date("2025-05-25T10:00:00Z"),
       descriptionEnglish:
         "Guide to applying for college including financial aid.",
@@ -198,7 +198,7 @@ async function main() {
       titleEnglish: "Networking for Career Success",
       titleQanjobal: "Redes Yet' Éxito Profesional",
       topic: VideoTopic.CAREER,
-      url: "https://www.youtube.com/watch?v=video17_career_networking",
+      urls: ["https://www.youtube.com/watch?v=video17_career_networking"],
       uploadDate: new Date("2025-06-10T14:15:00Z"),
       descriptionEnglish:
         "How to build professional connections and network effectively.",
@@ -209,7 +209,7 @@ async function main() {
       titleEnglish: "Using Public Libraries",
       titleQanjobal: "Yalel Bibliotecas Públicas",
       topic: VideoTopic.EDUCATION,
-      url: "https://www.youtube.com/watch?v=video18_education_library",
+      urls: ["https://www.youtube.com/watch?v=video18_education_library"],
       uploadDate: new Date("2025-06-25T09:00:00Z"),
       descriptionEnglish:
         "How to get a library card and access free resources.",
@@ -220,7 +220,7 @@ async function main() {
       titleEnglish: "Navigating Immigration Services",
       titleQanjobal: "Navegando Servicios de Inmigración",
       topic: VideoTopic.LEGAL,
-      url: "https://www.youtube.com/watch?v=video19_legal_immigration",
+      urls: ["https://www.youtube.com/watch?v=video19_legal_immigration"],
       uploadDate: new Date("2025-07-10T11:30:00Z"),
       descriptionEnglish:
         "Understanding immigration processes and where to get help.",
@@ -231,7 +231,7 @@ async function main() {
       titleEnglish: "Mental Health Resources",
       titleQanjobal: "Recursos Yet' Salud Mental",
       topic: VideoTopic.MEDICAL,
-      url: "https://www.youtube.com/watch?v=video20_medical_mental",
+      urls: ["https://www.youtube.com/watch?v=video20_medical_mental"],
       uploadDate: new Date("2025-07-25T13:00:00Z"),
       descriptionEnglish:
         "Where to find mental health support and counseling services.",
@@ -242,7 +242,7 @@ async function main() {
       titleEnglish: "Opening a Bank Account",
       titleQanjobal: "Yalel Jun Cuenta Bancaria",
       topic: VideoTopic.OTHER,
-      url: "https://www.youtube.com/watch?v=video21_other_banking",
+      urls: ["https://www.youtube.com/watch?v=video21_other_banking"],
       uploadDate: new Date("2025-08-05T10:45:00Z"),
       descriptionEnglish:
         "Steps to open your first bank account and manage your money.",
@@ -253,7 +253,7 @@ async function main() {
       titleEnglish: "Car Insurance Basics",
       titleQanjobal: "Fundamentos Yet' Seguro Yet' Carro",
       topic: VideoTopic.TRANSPORT,
-      url: "https://www.youtube.com/watch?v=video22_transport_insurance",
+      urls: ["https://www.youtube.com/watch?v=video22_transport_insurance"],
       uploadDate: new Date("2025-08-20T12:00:00Z"),
       descriptionEnglish:
         "Understanding car insurance requirements and how to get coverage.",
@@ -264,7 +264,7 @@ async function main() {
       titleEnglish: "Workplace Safety Training",
       titleQanjobal: "Capacitación Yet' Seguridad Ti' Trabajo",
       topic: VideoTopic.CAREER,
-      url: "https://www.youtube.com/watch?v=video23_career_safety",
+      urls: ["https://www.youtube.com/watch?v=video23_career_safety"],
       uploadDate: new Date("2025-09-01T09:15:00Z"),
       descriptionEnglish: "Essential workplace safety practices and protocols.",
       descriptionQanjobal:
@@ -274,7 +274,7 @@ async function main() {
       titleEnglish: "Understanding Prescription Medications",
       titleQanjobal: "Yojtakk'ulal Medicamentos Con Receta",
       topic: VideoTopic.MEDICAL,
-      url: "https://www.youtube.com/watch?v=video24_medical_meds",
+      urls: ["https://www.youtube.com/watch?v=video24_medical_meds"],
       uploadDate: new Date("2025-09-15T14:30:00Z"),
       descriptionEnglish:
         "How to read prescriptions and take medications safely.",
@@ -285,7 +285,7 @@ async function main() {
       titleEnglish: "Finding Affordable Housing",
       titleQanjobal: "B'eyal Vivienda Accesible",
       topic: VideoTopic.OTHER,
-      url: "https://www.youtube.com/watch?v=video25_other_housing",
+      urls: ["https://www.youtube.com/watch?v=video25_other_housing"],
       uploadDate: new Date("2025-09-30T11:00:00Z"),
       descriptionEnglish:
         "Resources and tips for finding affordable rental housing.",
@@ -295,16 +295,20 @@ async function main() {
   ];
 
   for (const video of videosData) {
-    await prisma.videos.upsert({
-      where: { url: video.url },
-      update: {},
-      create: {
-        ...video,
-        audioFile: audioBuffer,
-        audioFilename: "sample.mp3",
-        audioFileSize: audioBuffer.length,
-      },
+    const existingVideo = await prisma.videos.findFirst({
+      where: { urls: { has: video.urls[0] } },
     });
+
+    if (!existingVideo) {
+      await prisma.videos.create({
+        data: {
+          ...video,
+          audioFile: audioBuffer,
+          audioFilename: "sample.mp3",
+          audioFileSize: audioBuffer.length,
+        },
+      });
+    }
   }
   console.log("Successfully seeded 25 videos.");
 
