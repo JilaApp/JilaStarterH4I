@@ -1,35 +1,36 @@
 "use client";
 import { useState } from "react";
-import Button from "@/components/Button";
-import Notification from "@/components/Notification";
-import FormField from "@/components/FormField";
-import { TextInput, EmailInput, PasswordInput } from "@/components/Input";
-import Sidebar from "@/components/Sidebar";
-import Dropdown from "@/components/Dropdown";
-import RadioButtonGroup from "@/components/RadioButtonGroup";
+import Button from "@/components/ui/Button";
+import Notification from "@/components/shared/Notification";
+import FormField from "@/components/forms/FormField";
+import { TextInput, EmailInput, PasswordInput } from "@/components/ui/Input";
+import Sidebar from "@/components/layout/Sidebar";
+import Dropdown from "@/components/ui/Dropdown";
+import RadioButtonGroup from "@/components/forms/RadioButtonGroup";
 import { Video, MessageCircle } from "lucide-react";
-import Tabs from "@/components/Tabs";
-import FilterBar from "@/components/FilterBar";
-import ParagraphInput from "@/components/ParagraphInput";
-import TopicTag from "@/components/TopicTag";
+import Tabs from "@/components/shared/Tabs";
+import FilterBar from "@/components/shared/FilterBar";
+import ParagraphInput from "@/components/forms/ParagraphInput";
+import TopicTag from "@/components/shared/TopicTag";
 import type { TopicVariant } from "@/lib/types";
-import Header from "@/components/Header";
-import FileUpload from "@/components/FileUpload";
-import DeleteModal from "@/components/DeleteModal";
-import Table from "@/components/Table";
+import Header from "@/components/layout/Header";
+import FileUpload from "@/components/forms/FileUpload";
+import DeleteModal from "@/components/shared/DeleteModal";
+import Table from "@/components/shared/Table";
 import { ColumnDefinition, DataRow } from "@/lib/types";
-import VideoEditModal from "@/components/VideoEditModal";
-import VideoUploadForm from "@/components/VideoUploadForm";
-import SocialServiceForm from "@/components/SocialServiceForm";
-import Link from "@/components/Link";
+import VideoEditModal from "@/components/videos/VideoEditModal";
+import VideoUploadForm from "@/components/videos/VideoUploadForm";
+import SocialServiceForm from "@/components/social-services/SocialServiceForm";
+import Link from "@/components/shared/Link";
 import { useForm, createField } from "@/hooks/useForm";
 import { validateEmail, validatePassword } from "@/lib/validators";
-import Pagination from "@/components/Pagination";
-import JobFilter from "@/components/JobFilter";
-import SearchBar from "@/components/SearchBar";
+import Pagination from "@/components/shared/Pagination";
+import JobFilter from "@/components/jobs/JobFilter";
+import SearchBar from "@/components/forms/SearchBar";
+import { getFileUploadState } from "@/lib/fileUploadUtils";
 
 interface ServiceData extends DataRow {
-  id: number | string;
+  id: number;
   title: string;
   topic: string;
   phoneNumber: string;
@@ -83,7 +84,7 @@ export default function DevPage() {
       link: "https://leetcode.com/",
     },
     {
-      id: "mtd-bus-system-2",
+      id: 2,
       title: "MTD Bus System",
       topic: "Transport",
       phoneNumber: "217-403-6150",
@@ -127,20 +128,20 @@ export default function DevPage() {
     },
   ];
 
-  const getDataItemById = (id: number | string) =>
+  const getDataItemById = (id: number) =>
     tableData.find((item) => item.id === id);
 
-  const handleRowClick = (id: number | string) => {
+  const handleRowClick = (id: number) => {
     const item = getDataItemById(id);
     console.log("Row Clicked:", item);
   };
 
-  const handleEdit = (id: number | string) => {
+  const handleEdit = (id: number) => {
     const item = getDataItemById(id);
     console.log("Editing:", item);
   };
 
-  const handleDelete = (id: number | string) => {
+  const handleDelete = (id: number) => {
     const item = getDataItemById(id);
     console.log("Deleting:", item);
   };
@@ -179,12 +180,6 @@ export default function DevPage() {
   const handleDeleteModalClose = () => {
     setIsDeleteModalOpen(false);
     setIdToDelete(null);
-  };
-
-  const getFileUploadState = () => {
-    if (fields.file.state === "error") return "error";
-    if (fields.file.value) return "complete";
-    return "default";
   };
 
   const value = "";
@@ -392,7 +387,7 @@ export default function DevPage() {
                 value={props.value}
                 onChange={props.onChange}
                 onDelete={() => setFieldValue("file", undefined)}
-                state={getFileUploadState()}
+                state={getFileUploadState(fields.file.state, fields.file.value)}
                 extendedText="Must be exactly 67MB!"
               />
             )}

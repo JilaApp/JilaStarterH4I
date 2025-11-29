@@ -1,5 +1,8 @@
 import { useState, useEffect, useRef } from "react";
-import Notification, { NotificationType } from "@/components/Notification";
+import Notification, {
+  NotificationType,
+} from "@/components/shared/Notification";
+import { NOTIFICATION_AUTO_DISMISS_MS } from "@/lib/constants";
 
 interface NotificationState {
   message: string;
@@ -28,7 +31,7 @@ export function useNotification() {
     // Auto-dismiss after 3 seconds
     timeoutRef.current = setTimeout(() => {
       setNotification(null);
-    }, 3000);
+    }, NOTIFICATION_AUTO_DISMISS_MS);
   };
 
   const hideNotification = () => {

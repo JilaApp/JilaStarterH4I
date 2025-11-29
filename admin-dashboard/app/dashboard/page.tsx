@@ -4,35 +4,37 @@ import { useState, useEffect, useMemo } from "react";
 import { Video, MessageCircle } from "lucide-react";
 import { useUser, useClerk } from "@clerk/nextjs";
 
-import Sidebar from "@/components/Sidebar";
-import Header from "@/components/Header";
-import Table from "@/components/Table";
+import Sidebar from "@/components/layout/Sidebar";
+import Header from "@/components/layout/Header";
+import Table from "@/components/shared/Table";
 import { ColumnDefinition, DataRow } from "@/lib/types";
-import TopicTag from "@/components/TopicTag";
+import TopicTag from "@/components/shared/TopicTag";
 import type { TopicVariant } from "@/lib/types";
-import FilterBar from "@/components/FilterBar";
-import SearchBar from "@/components/SearchBar";
-import Tabs from "@/components/Tabs";
-import VideoUploadForm from "@/components/VideoUploadForm";
-import SocialServiceForm from "@/components/SocialServiceForm";
-import JobPostingForm from "@/components/JobPostingForm";
+import FilterBar from "@/components/shared/FilterBar";
+import SearchBar from "@/components/forms/SearchBar";
+import Tabs from "@/components/shared/Tabs";
+import VideoUploadForm from "@/components/videos/VideoUploadForm";
+import SocialServiceForm from "@/components/social-services/SocialServiceForm";
+import JobPostingForm from "@/components/jobs/JobPostingForm";
 import AuthWrapper from "../AuthWrapper";
 import { trpc } from "@/lib/trpc";
-import VideoEditModal from "@/components/VideoEditModal";
-import Link from "@/components/Link";
-import DeleteModal from "@/components/DeleteModal";
-import { Videos } from "@prisma/client";
+import VideoEditModal from "@/components/videos/VideoEditModal";
+import Link from "@/components/shared/Link";
+import DeleteModal from "@/components/shared/DeleteModal";
+import { Videos, SocialServices } from "@prisma/client";
 import { TOPIC_MAP } from "@/lib/constants";
-import SocialServiceEditModal from "@/components/SocialServiceModal";
-import JobPostings from "@/components/JobPostings";
-import JobRequests from "@/components/JobRequests";
+import SocialServiceEditModal from "@/components/social-services/SocialServiceModal";
+import JobPostings from "@/components/jobs/JobPostings";
+import JobRequests from "@/components/jobs/JobRequests";
 import { useNotification } from "@/hooks/useNotification";
-import Pagination from "@/components/Pagination";
+import Pagination from "@/components/shared/Pagination";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import { logger } from "@/lib/logger";
 
 type FullVideoType = Omit<Videos, "audioFile">;
 
 interface VideoResourceData extends DataRow {
-  id: number | string;
+  id: number;
   title: string;
   topic: string;
   phoneNumber: string;
@@ -40,7 +42,7 @@ interface VideoResourceData extends DataRow {
 }
 
 interface SocialServiceData extends DataRow {
-  id: number | string;
+  id: number;
   title: string;
   topic: string;
   phoneNumber: string;
@@ -68,16 +70,13 @@ export default function DashboardDev() {
   );
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [videoToDeleteId, setVideoToDeleteId] = useState<
-    string | number | null
-  >(null);
+  const [videoToDeleteId, setVideoToDeleteId] = useState<number | null>(null);
 
   const [isSocialServiceModalOpen, setIsSocialServiceModalOpen] =
     useState(false);
   const [isEditingSocialService, setIsEditingSocialService] = useState(false);
-  const [selectedSocialService, setSelectedSocialService] = useState<
-    any | null
-  >(null);
+  const [selectedSocialService, setSelectedSocialService] =
+    useState<SocialServices | null>(null);
   const [socialServiceToDeleteId, setSocialServiceToDeleteId] = useState<
     number | null
   >(null);
@@ -104,8 +103,8 @@ export default function DashboardDev() {
       refetchVideos();
     },
     onError: (error) => {
-      console.error("Failed to delete video:", error);
-      showNotification(`Error: ${error.message}`);
+      logger.error("[deleteVideoMutation] Failed to delete video", error);
+      showNotification("Failed to delete video. Please try again.");
     },
   });
 
@@ -115,8 +114,11 @@ export default function DashboardDev() {
         refetchSocialServices();
       },
       onError: (error) => {
-        console.error("Failed to delete social service:", error);
-        showNotification(`Error: ${error.message}`);
+        logger.error(
+          "[deleteSocialServiceMutation] Failed to delete social service",
+          error,
+        );
+        showNotification("Failed to delete social service. Please try again.");
       },
     });
 
@@ -257,7 +259,7 @@ export default function DashboardDev() {
     }
   };
 
-  const handleVideoDelete = (id: number | string) => {
+  const handleVideoDelete = (id: number) => {
     setVideoToDeleteId(id);
     setIsDeleteModalOpen(true);
   };
@@ -321,9 +323,8 @@ export default function DashboardDev() {
     }
   };
 
-  const handleSocialDelete = (id: string | number) => {
-    const numericId = typeof id === "string" ? parseInt(id) : id;
-    setSocialServiceToDeleteId(numericId);
+  const handleSocialDelete = (id: number) => {
+    setSocialServiceToDeleteId(id);
     setIsDeleteModalOpen(true);
   };
 
@@ -331,9 +332,7 @@ export default function DashboardDev() {
     {
       header: { logo: <Video size={20} />, text: "Video resources" },
       content: videosLoading ? (
-        <div className="flex items-center justify-center h-full">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-jila-400"></div>
-        </div>
+        <LoadingSpinner />
       ) : (
         <Table
           data={paginatedVideoData}
@@ -347,9 +346,7 @@ export default function DashboardDev() {
     {
       header: { logo: <MessageCircle size={20} />, text: "Social services" },
       content: socialServicesLoading ? (
-        <div className="flex items-center justify-center h-full">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-jila-400"></div>
-        </div>
+        <LoadingSpinner />
       ) : (
         <Table
           data={paginatedSocialData}

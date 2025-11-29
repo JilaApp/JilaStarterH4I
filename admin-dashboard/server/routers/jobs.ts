@@ -3,6 +3,7 @@ import prisma from "@/lib/prisma";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { JobType, LocationType, JobStatus } from "@prisma/client";
+import { logger } from "@/lib/logger";
 
 const addJobInput = z.object({
   titleEnglish: z.string(),
@@ -23,7 +24,7 @@ const addJobInput = z.object({
 });
 
 const removeJobInput = z.object({
-  id: z.union([z.string(), z.number()]),
+  id: z.number(),
 });
 
 const updateJobInput = z.object({
@@ -46,19 +47,19 @@ const updateJobInput = z.object({
 });
 
 const approveJobRequestInput = z.object({
-  id: z.union([z.string(), z.number()]),
+  id: z.number(),
 });
 
 const denyJobRequestInput = z.object({
-  id: z.union([z.string(), z.number()]),
+  id: z.number(),
 });
 
 const bulkApproveJobRequestsInput = z.object({
-  ids: z.array(z.union([z.string(), z.number()])),
+  ids: z.array(z.number()),
 });
 
 const bulkDenyJobRequestsInput = z.object({
-  ids: z.array(z.union([z.string(), z.number()])),
+  ids: z.array(z.number()),
 });
 
 type AddJobInput = z.infer<typeof addJobInput>;
@@ -102,248 +103,305 @@ async function addJob(input: AddJobInput) {
         status: input.status || JobStatus.ACTIVE,
       },
     });
-  } catch (err: any) {
+  } catch (err: unknown) {
     throw err;
   }
 }
 
 async function removeJob(input: RemoveJobInput) {
-  const numericId =
-    typeof input.id === "string" ? parseInt(input.id, 10) : input.id;
+  try {
+    const existing = await prisma.jobs.findUnique({
+      where: { id: input.id },
+    });
 
-  if (isNaN(numericId)) {
+    if (!existing) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "Job not found",
+      });
+    }
+
+    await prisma.jobs.delete({
+      where: {
+        id: input.id,
+      },
+    });
+
+    return { success: true };
+  } catch (error) {
+    if (error instanceof TRPCError) {
+      throw error;
+    }
+
+    logger.error("[removeJob] Database error", error);
+
     throw new TRPCError({
-      code: "BAD_REQUEST",
-      message: `Invalid job ID provided: ${input.id}`,
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Failed to delete job. Please try again.",
     });
   }
-
-  const existing = await prisma.jobs.findUnique({
-    where: { id: numericId },
-  });
-
-  if (!existing) {
-    throw new TRPCError({
-      code: "NOT_FOUND",
-      message: `Job with id ${numericId} does not exist`,
-    });
-  }
-
-  await prisma.jobs.delete({
-    where: {
-      id: numericId,
-    },
-  });
 }
 
 async function updateJob(input: UpdateJobInput) {
-  const { id, ...rest } = input;
-  const existing = await prisma.jobs.findUnique({
-    where: { id },
-  });
+  try {
+    const { id, ...rest } = input;
+    const existing = await prisma.jobs.findUnique({
+      where: { id },
+    });
 
-  if (!existing) {
+    if (!existing) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "Job not found",
+      });
+    }
+
+    return await prisma.jobs.update({
+      where: { id },
+      data: rest,
+    });
+  } catch (error) {
+    if (error instanceof TRPCError) {
+      throw error;
+    }
+
+    logger.error("[updateJob] Database error", error);
+
     throw new TRPCError({
-      code: "NOT_FOUND",
-      message: `Job with id ${id} does not exist`,
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Failed to update job. Please try again.",
     });
   }
-
-  return await prisma.jobs.update({
-    where: { id },
-    data: rest,
-  });
 }
 
 async function getAllJobs() {
-  const jobs = await prisma.jobs.findMany({
-    select: {
-      id: true,
-      titleEnglish: true,
-      titleQanjobal: true,
-      companyName: true,
-      businessContactEmail: true,
-      jobType: true,
-      acceptedLanguages: true,
-      locationType: true,
-      city: true,
-      state: true,
-      url: true,
-      salary: true,
-      expirationDate: true,
-      descriptionEnglish: true,
-      descriptionQanjobal: true,
-      status: true,
-      createdAt: true,
-      updatedAt: true,
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
-  return jobs;
+  try {
+    const jobs = await prisma.jobs.findMany({
+      select: {
+        id: true,
+        titleEnglish: true,
+        titleQanjobal: true,
+        companyName: true,
+        businessContactEmail: true,
+        jobType: true,
+        acceptedLanguages: true,
+        locationType: true,
+        city: true,
+        state: true,
+        url: true,
+        salary: true,
+        expirationDate: true,
+        descriptionEnglish: true,
+        descriptionQanjobal: true,
+        status: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+    return jobs;
+  } catch (error) {
+    logger.error("[getAllJobs] Database error", error);
+
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Failed to fetch jobs. Please try again.",
+    });
+  }
 }
 
 async function getPendingJobRequests() {
-  const jobs = await prisma.jobs.findMany({
-    where: {
-      status: JobStatus.PENDING,
-    },
-    select: {
-      id: true,
-      titleEnglish: true,
-      titleQanjobal: true,
-      companyName: true,
-      businessContactEmail: true,
-      jobType: true,
-      acceptedLanguages: true,
-      locationType: true,
-      city: true,
-      state: true,
-      url: true,
-      salary: true,
-      expirationDate: true,
-      descriptionEnglish: true,
-      descriptionQanjobal: true,
-      status: true,
-      createdAt: true,
-      updatedAt: true,
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
-  return jobs;
+  try {
+    const jobs = await prisma.jobs.findMany({
+      where: {
+        status: JobStatus.PENDING,
+      },
+      select: {
+        id: true,
+        titleEnglish: true,
+        titleQanjobal: true,
+        companyName: true,
+        businessContactEmail: true,
+        jobType: true,
+        acceptedLanguages: true,
+        locationType: true,
+        city: true,
+        state: true,
+        url: true,
+        salary: true,
+        expirationDate: true,
+        descriptionEnglish: true,
+        descriptionQanjobal: true,
+        status: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+    return jobs;
+  } catch (error) {
+    logger.error("[getPendingJobRequests] Database error", error);
+
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Failed to fetch pending job requests. Please try again.",
+    });
+  }
 }
 
 async function getReviewedJobRequests() {
-  const jobs = await prisma.jobs.findMany({
-    where: {
-      status: {
-        in: [JobStatus.ACTIVE, JobStatus.ARCHIVED],
+  try {
+    const jobs = await prisma.jobs.findMany({
+      where: {
+        status: {
+          in: [JobStatus.ACTIVE, JobStatus.ARCHIVED],
+        },
       },
-    },
-    select: {
-      id: true,
-      titleEnglish: true,
-      titleQanjobal: true,
-      companyName: true,
-      businessContactEmail: true,
-      jobType: true,
-      acceptedLanguages: true,
-      locationType: true,
-      city: true,
-      state: true,
-      url: true,
-      salary: true,
-      expirationDate: true,
-      descriptionEnglish: true,
-      descriptionQanjobal: true,
-      status: true,
-      createdAt: true,
-      updatedAt: true,
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
-  return jobs;
+      select: {
+        id: true,
+        titleEnglish: true,
+        titleQanjobal: true,
+        companyName: true,
+        businessContactEmail: true,
+        jobType: true,
+        acceptedLanguages: true,
+        locationType: true,
+        city: true,
+        state: true,
+        url: true,
+        salary: true,
+        expirationDate: true,
+        descriptionEnglish: true,
+        descriptionQanjobal: true,
+        status: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+    return jobs;
+  } catch (error) {
+    logger.error("[getReviewedJobRequests] Database error", error);
+
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Failed to fetch reviewed job requests. Please try again.",
+    });
+  }
 }
 
 async function approveJobRequest(input: ApproveJobRequestInput) {
-  const numericId =
-    typeof input.id === "string" ? parseInt(input.id, 10) : input.id;
+  try {
+    const existing = await prisma.jobs.findUnique({
+      where: { id: input.id },
+    });
 
-  if (isNaN(numericId)) {
+    if (!existing) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "Resource not found",
+      });
+    }
+
+    return await prisma.jobs.update({
+      where: { id: input.id },
+      data: { status: JobStatus.ACTIVE },
+    });
+  } catch (error) {
+    if (error instanceof TRPCError) {
+      throw error;
+    }
+
+    logger.error("[approveJobRequest] Database error", error);
+
     throw new TRPCError({
-      code: "BAD_REQUEST",
-      message: `Invalid job ID provided: ${input.id}`,
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Failed to approve job request. Please try again.",
     });
   }
-
-  const existing = await prisma.jobs.findUnique({
-    where: { id: numericId },
-  });
-
-  if (!existing) {
-    throw new TRPCError({
-      code: "NOT_FOUND",
-      message: `Job with id ${numericId} does not exist`,
-    });
-  }
-
-  return await prisma.jobs.update({
-    where: { id: numericId },
-    data: { status: JobStatus.ACTIVE },
-  });
 }
 
 async function denyJobRequest(input: DenyJobRequestInput) {
-  const numericId =
-    typeof input.id === "string" ? parseInt(input.id, 10) : input.id;
+  try {
+    const existing = await prisma.jobs.findUnique({
+      where: { id: input.id },
+    });
 
-  if (isNaN(numericId)) {
+    if (!existing) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "Resource not found",
+      });
+    }
+
+    await prisma.jobs.delete({
+      where: { id: input.id },
+    });
+  } catch (error) {
+    if (error instanceof TRPCError) {
+      throw error;
+    }
+
+    logger.error("[denyJobRequest] Database error", error);
+
     throw new TRPCError({
-      code: "BAD_REQUEST",
-      message: `Invalid job ID provided: ${input.id}`,
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Failed to deny job request. Please try again.",
     });
   }
-
-  const existing = await prisma.jobs.findUnique({
-    where: { id: numericId },
-  });
-
-  if (!existing) {
-    throw new TRPCError({
-      code: "NOT_FOUND",
-      message: `Job with id ${numericId} does not exist`,
-    });
-  }
-
-  // Delete the job request when denied
-  await prisma.jobs.delete({
-    where: { id: numericId },
-  });
 }
 
 async function bulkApproveJobRequests(input: BulkApproveJobRequestsInput) {
-  const numericIds = input.ids.map((id) =>
-    typeof id === "string" ? parseInt(id, 10) : id,
-  );
+  try {
+    await prisma.jobs.updateMany({
+      where: {
+        id: { in: input.ids },
+      },
+      data: { status: JobStatus.ACTIVE },
+    });
 
-  if (numericIds.some((id) => isNaN(id))) {
+    return { success: true };
+  } catch (error) {
+    if (error instanceof TRPCError) {
+      throw error;
+    }
+
+    logger.error("[bulkApproveJobRequests] Database error", error);
+
     throw new TRPCError({
-      code: "BAD_REQUEST",
-      message: `Invalid job ID(s) provided`,
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Failed to approve job requests. Please try again.",
     });
   }
-
-  await prisma.jobs.updateMany({
-    where: {
-      id: { in: numericIds },
-    },
-    data: { status: JobStatus.ACTIVE },
-  });
 }
 
 async function bulkDenyJobRequests(input: BulkDenyJobRequestsInput) {
-  const numericIds = input.ids.map((id) =>
-    typeof id === "string" ? parseInt(id, 10) : id,
-  );
+  try {
+    await prisma.jobs.deleteMany({
+      where: {
+        id: { in: input.ids },
+      },
+    });
 
-  if (numericIds.some((id) => isNaN(id))) {
+    return { success: true };
+  } catch (error) {
+    if (error instanceof TRPCError) {
+      throw error;
+    }
+
+    logger.error("[bulkDenyJobRequests] Database error", error);
+
     throw new TRPCError({
-      code: "BAD_REQUEST",
-      message: `Invalid job ID(s) provided`,
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Failed to deny job requests. Please try again.",
     });
   }
-
-  // Delete the job requests when denied
-  await prisma.jobs.deleteMany({
-    where: {
-      id: { in: numericIds },
-    },
-  });
 }
 
 export const jobsRouter = router({

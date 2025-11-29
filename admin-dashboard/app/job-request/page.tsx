@@ -2,11 +2,11 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import FormField from "@/components/FormField";
-import { TextInput } from "@/components/Input";
-import Dropdown from "@/components/Dropdown";
-import Button from "@/components/Button";
-import RadioButtonGroup from "@/components/RadioButtonGroup";
+import FormField from "@/components/forms/FormField";
+import { TextInput } from "@/components/ui/Input";
+import Dropdown from "@/components/ui/Dropdown";
+import Button from "@/components/ui/Button";
+import RadioButtonGroup from "@/components/forms/RadioButtonGroup";
 import { trpc } from "@/lib/trpc";
 import { JobType, LocationType, JobStatus } from "@prisma/client";
 import { useForm, createField } from "@/hooks/useForm";
@@ -15,11 +15,11 @@ import {
   validateEmail,
   validateDropdownIndex,
 } from "@/lib/validators";
-import SubmitButton from "@/components/SubmitButton";
+import SubmitButton from "@/components/ui/SubmitButton";
 import { US_STATES } from "@/lib/constants";
 import { X, CheckCircle } from "lucide-react";
-import PageBackground from "@/components/PageBackground";
-import CalendarInput from "@/components/CalendarInput";
+import PageBackground from "@/components/layout/PageBackground";
+import CalendarInput from "@/components/forms/CalendarInput";
 
 const JOB_TYPE_OPTIONS = [
   "Internship",

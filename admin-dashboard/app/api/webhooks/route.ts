@@ -2,6 +2,7 @@ import { verifyWebhook } from "@clerk/nextjs/webhooks";
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { clerkClient } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 
 export async function POST(req: NextRequest) {
   try {
@@ -45,6 +46,7 @@ export async function POST(req: NextRequest) {
             },
           });
         } catch (error) {
+          logger.error("[POST] Failed to create admin user", error);
           throw error;
         }
       } else if (hasUsername) {
@@ -78,6 +80,7 @@ export async function POST(req: NextRequest) {
             },
           });
         } catch (error) {
+          logger.error("[POST] Failed to create app user", error);
           throw error;
         }
       } else {
