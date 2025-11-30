@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useUser, useClerk } from "@clerk/nextjs";
 
 import Sidebar from "@/components/layout/Sidebar";
@@ -18,6 +18,25 @@ export default function DashboardDev() {
 
   const [activeView, setActiveView] = useState<string>("dashboard");
   const [currentTabIndex, setCurrentTabIndex] = useState(0);
+
+  // Listen for notification clicks to navigate to job requests
+  useEffect(() => {
+    const handleNavigateToJobRequests = () => {
+      setActiveView("job-requests");
+    };
+
+    window.addEventListener(
+      "navigateToJobRequests",
+      handleNavigateToJobRequests,
+    );
+
+    return () => {
+      window.removeEventListener(
+        "navigateToJobRequests",
+        handleNavigateToJobRequests,
+      );
+    };
+  }, []);
 
   // Map views to their corresponding sidebar button
   const viewToSidebarButton: Record<string, string> = {

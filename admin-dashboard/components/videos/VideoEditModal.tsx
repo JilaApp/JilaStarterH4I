@@ -18,6 +18,7 @@ import {
 } from "@/lib/validators";
 import { formatFileSize } from "@/lib/utils";
 import { useVideoLinks } from "@/hooks/useVideoLinks";
+import FormError from "@/components/shared/FormError";
 import { logger } from "@/lib/logger";
 import { getFileUploadState } from "@/lib/fileUploadUtils";
 
@@ -63,6 +64,7 @@ export default function VideoEditModal({
 
   const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
   const [clearExistingFile, setClearExistingFile] = useState(false);
+  const [error, setError] = useState("");
 
   const updateVideoMutation = trpc.videos.updateVideo.useMutation();
 
@@ -78,6 +80,7 @@ export default function VideoEditModal({
 
   useEffect(() => {
     if (isOpen && videoData) {
+      setError("");
       setFieldValue("englishTitle", videoData.titleEnglish || "");
       setFieldValue("qanjobalTitle", videoData.titleQanjobal || "");
       setFieldValue(
@@ -163,8 +166,16 @@ export default function VideoEditModal({
         setSaveStatus("success");
         onUpdateComplete?.();
         onClose();
-      } catch (error) {
+      } catch (error: any) {
         logger.error("[executeMutation] Failed to update video", error);
+
+        let errorMessage = "Failed to update video. Please try again.";
+
+        if (error?.message) {
+          errorMessage = error.message;
+        }
+
+        setError(errorMessage);
         setSaveStatus("error");
         setTimeout(() => {
           setSaveStatus("idle");
@@ -182,6 +193,7 @@ export default function VideoEditModal({
       };
       reader.onerror = (error) => {
         logger.error("[handleSave] FileReader error", error);
+        setError("Failed to read audio file. Please try again.");
         setSaveStatus("error");
       };
       reader.readAsDataURL(fields.audioFile.value);
@@ -380,6 +392,7 @@ export default function VideoEditModal({
             {(props) => <ParagraphInput {...props} disabled={!isEditing} />}
           </FormField>
         </div>
+        {error && <FormError message={error} />}
         {isEditing && (
           <div className="flex gap-3 justify-end mt-[26px] gap-x-[26px]">
             <Button

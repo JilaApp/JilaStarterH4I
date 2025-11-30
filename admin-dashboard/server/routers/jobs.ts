@@ -62,6 +62,10 @@ const bulkDenyJobRequestsInput = z.object({
   ids: z.array(z.number()),
 });
 
+const markJobRequestsAsReadInput = z.object({
+  ids: z.array(z.number()),
+});
+
 type AddJobInput = z.infer<typeof addJobInput>;
 type RemoveJobInput = z.infer<typeof removeJobInput>;
 type UpdateJobInput = z.infer<typeof updateJobInput>;
@@ -69,6 +73,7 @@ type ApproveJobRequestInput = z.infer<typeof approveJobRequestInput>;
 type DenyJobRequestInput = z.infer<typeof denyJobRequestInput>;
 type BulkApproveJobRequestsInput = z.infer<typeof bulkApproveJobRequestsInput>;
 type BulkDenyJobRequestsInput = z.infer<typeof bulkDenyJobRequestsInput>;
+type MarkJobRequestsAsReadInput = z.infer<typeof markJobRequestsAsReadInput>;
 
 async function addJob(input: AddJobInput) {
   try {
@@ -235,6 +240,7 @@ async function getPendingJobRequests() {
         descriptionEnglish: true,
         descriptionQanjobal: true,
         status: true,
+        unread: true,
         createdAt: true,
         updatedAt: true,
       },
@@ -404,6 +410,30 @@ async function bulkDenyJobRequests(input: BulkDenyJobRequestsInput) {
   }
 }
 
+async function markJobRequestsAsRead(input: MarkJobRequestsAsReadInput) {
+  try {
+    await prisma.jobs.updateMany({
+      where: {
+        id: { in: input.ids },
+      },
+      data: { unread: false },
+    });
+
+    return { success: true };
+  } catch (error) {
+    if (error instanceof TRPCError) {
+      throw error;
+    }
+
+    logger.error("[markJobRequestsAsRead] Database error", error);
+
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Failed to mark job requests as read. Please try again.",
+    });
+  }
+}
+
 export const jobsRouter = router({
   addJob: publicProcedure
     .input(addJobInput)
@@ -429,4 +459,7 @@ export const jobsRouter = router({
   bulkDenyJobRequests: publicProcedure
     .input(bulkDenyJobRequestsInput)
     .mutation(({ input }) => bulkDenyJobRequests(input)),
+  markJobRequestsAsRead: publicProcedure
+    .input(markJobRequestsAsReadInput)
+    .mutation(({ input }) => markJobRequestsAsRead(input)),
 });

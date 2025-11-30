@@ -29,6 +29,7 @@ import {
 import SubmitButton from "@/components/ui/SubmitButton";
 import { useClickOutside } from "@/hooks/useClickOutside";
 import { useModalOverflow } from "@/hooks/useModalOverflow";
+import FormError from "@/components/shared/FormError";
 import { logger } from "@/lib/logger";
 import { JobData } from "@/lib/types";
 
@@ -66,6 +67,7 @@ export default function JobPostingEditModal({
     });
 
   const [isSaving, setIsSaving] = useState(false);
+  const [error, setError] = useState("");
   const modalRef = useRef<HTMLDivElement>(null);
 
   const updateJobMutation = trpc.jobs.updateJob.useMutation();
@@ -79,6 +81,7 @@ export default function JobPostingEditModal({
 
   useEffect(() => {
     if (isOpen) {
+      setError("");
       if (jobData) {
         setFieldValue("jobTitleEnglish", jobData.titleEnglish || "");
         setFieldValue("jobTitleQanjobal", jobData.titleQanjobal || "");
@@ -197,11 +200,21 @@ export default function JobPostingEditModal({
       setIsSaving(false);
       onUpdateComplete?.();
       onClose();
-    } catch (error) {
+    } catch (error: any) {
       logger.error(
         `[handleSave] Failed to ${jobData ? "update" : "create"} job`,
         error,
       );
+
+      let errorMessage = `Failed to ${jobData ? "update" : "create"} job posting. Please try again.`;
+
+      if (error?.data?.code === "CONFLICT") {
+        errorMessage = "A job with this application link already exists.";
+      } else if (error?.message) {
+        errorMessage = error.message;
+      }
+
+      setError(errorMessage);
       setIsSaving(false);
     }
   };
@@ -477,6 +490,8 @@ export default function JobPostingEditModal({
               />
             )}
           </FormField>
+
+          {error && <FormError message={error} />}
 
           {isEditing && (
             <div className="flex gap-3 justify-end mt-[26px] gap-x-[26px] w-full">

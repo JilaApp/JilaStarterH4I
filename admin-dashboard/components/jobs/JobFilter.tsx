@@ -3,9 +3,10 @@ import { useState, useMemo, useEffect } from "react";
 import { TextInput } from "../ui/Input";
 import SearchBar from "../forms/SearchBar";
 import { trpc } from "@/lib/trpc";
-import { X, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import { JobFilters } from "@/lib/types";
 import { DEFAULT_MIN_SALARY, DEFAULT_MAX_SALARY } from "@/lib/constants";
+import BaseSideModal from "@/components/shared/BaseSideModal";
 
 interface JobFilterProps {
   onClose: () => void;
@@ -202,133 +203,126 @@ export default function JobFilter({
     onClose();
   };
 
+  const footer = (
+    <div className="flex items-center justify-between px-[25px] py-[20px]">
+      <div className="text-gray-600">{filteredJobCount} results</div>
+
+      <div className="flex gap-[16px]">
+        <button
+          onClick={handleClearAll}
+          className="text-type-400 hover:text-jila-400 font-medium cursor-pointer"
+        >
+          Clear all
+        </button>
+
+        <button
+          onClick={handleApply}
+          className="bg-jila-400 hover:bg-type-400 text-white font-bold px-[32px] py-[12px] rounded-[10px] cursor-pointer"
+        >
+          Apply
+        </button>
+      </div>
+    </div>
+  );
+
   return (
-    <div className="fixed inset-0 z-50 flex justify-end" onClick={onClose}>
-      <div
-        className="w-[47.55%] h-full bg-white shadow-[-4px_0px_80px_0px_rgba(109,15,0,0.1)] flex flex-col overflow-y-auto"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="flex items-center justify-between px-[25px] pt-[25px] pb-[15px] border-b border-gray-200 sticky top-0 bg-white z-10">
-          <div className="flex items-center gap-[10px]">
-            <button onClick={onClose} className="cursor-pointer">
-              <X size={24} className="text-type-400" />
-            </button>
-            <h2 className="font-bold text-[20px] text-type-400">Filters</h2>
+    <BaseSideModal
+      isOpen={true}
+      onClose={onClose}
+      title="Filters"
+      footer={footer}
+    >
+      <div className="px-[25px] pt-[25px] pb-[120px] flex flex-col gap-[14px]">
+        <div className="border-b border-gray-200 flex flex-col gap-[16px] pb-[30px]">
+          <div className="font-bold text-lg text-black">Speaker tags</div>
+          <RadioButtonGroup
+            options={speakerOptions}
+            selectedOptions={selectedSpeakerOptions}
+            setSelectedOptions={setSelectedSpeakerOptions}
+          />
+        </div>
+
+        <div className="border-b border-gray-200 flex flex-col gap-[16px] pb-[30px]">
+          <div className="font-bold text-lg text-black">Location type</div>
+          <RadioButtonGroup
+            options={locationOptions}
+            selectedOptions={selectedLocationOptions}
+            setSelectedOptions={setSelectedLocationOptions}
+          />
+        </div>
+
+        <div className="border-b border-gray-200 flex flex-col gap-[16px] pb-[30px]">
+          <div className="font-bold text-lg text-black">Job type</div>
+          <RadioButtonGroup
+            options={jobTypeOptions}
+            selectedOptions={selectedJobTypeOptions}
+            setSelectedOptions={setSelectedJobTypeOptions}
+          />
+        </div>
+
+        <div className="flex flex-col gap-[16px] relative location-search-container">
+          <div className="font-bold text-lg text-black">Location</div>
+          <div className="relative w-full">
+            <div
+              className="bg-white border border-gray-300 flex items-center gap-[7px] h-[60px] px-[16px] rounded-[10px] cursor-text w-full"
+              onClick={() => setShowLocationDropdown(true)}
+            >
+              <Search size={24} className="text-gray-300 shrink-0" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onFocus={() => setShowLocationDropdown(true)}
+                placeholder="Search by city, state, or zip code"
+                className="flex-1 bg-transparent outline-none font-bold text-lg text-type-400 placeholder:text-gray-300"
+              />
+            </div>
+            {showLocationDropdown && filteredLocations.length > 0 && (
+              <div className="absolute top-[calc(100%+4px)] left-0 right-0 bg-white border border-gray-200 rounded-[10px] shadow-lg max-h-[200px] overflow-y-auto z-20">
+                {filteredLocations.map((location) => (
+                  <div
+                    key={location}
+                    onClick={() => {
+                      setSearchQuery(location);
+                      setShowLocationDropdown(false);
+                    }}
+                    className="px-[10px] py-[8px] hover:bg-gray-100 cursor-pointer text-lg font-bold"
+                  >
+                    {location}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
-        <div className="flex-1 px-[25px] pt-[25px] pb-[120px] flex flex-col gap-[14px]">
-          <div className="border-b border-gray-200 flex flex-col gap-[16px] pb-[30px]">
-            <div className="font-bold text-lg text-black">Speaker tags</div>
-            <RadioButtonGroup
-              options={speakerOptions}
-              selectedOptions={selectedSpeakerOptions}
-              setSelectedOptions={setSelectedSpeakerOptions}
-            />
-          </div>
-
-          <div className="border-b border-gray-200 flex flex-col gap-[16px] pb-[30px]">
-            <div className="font-bold text-lg text-black">Location type</div>
-            <RadioButtonGroup
-              options={locationOptions}
-              selectedOptions={selectedLocationOptions}
-              setSelectedOptions={setSelectedLocationOptions}
-            />
-          </div>
-
-          <div className="border-b border-gray-200 flex flex-col gap-[16px] pb-[30px]">
-            <div className="font-bold text-lg text-black">Job type</div>
-            <RadioButtonGroup
-              options={jobTypeOptions}
-              selectedOptions={selectedJobTypeOptions}
-              setSelectedOptions={setSelectedJobTypeOptions}
-            />
-          </div>
-
-          <div className="flex flex-col gap-[16px] relative location-search-container">
-            <div className="font-bold text-lg text-black">Location</div>
-            <div className="relative w-full">
-              <div
-                className="bg-white border border-gray-300 flex items-center gap-[7px] h-[60px] px-[16px] rounded-[10px] cursor-text w-full"
-                onClick={() => setShowLocationDropdown(true)}
-              >
-                <Search size={24} className="text-gray-300 shrink-0" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  onFocus={() => setShowLocationDropdown(true)}
-                  placeholder="Search by city, state, or zip code"
-                  className="flex-1 bg-transparent outline-none font-bold text-lg text-type-400 placeholder:text-gray-300"
-                />
-              </div>
-              {showLocationDropdown && filteredLocations.length > 0 && (
-                <div className="absolute top-[calc(100%+4px)] left-0 right-0 bg-white border border-gray-200 rounded-[10px] shadow-lg max-h-[200px] overflow-y-auto z-20">
-                  {filteredLocations.map((location) => (
-                    <div
-                      key={location}
-                      onClick={() => {
-                        setSearchQuery(location);
-                        setShowLocationDropdown(false);
-                      }}
-                      className="px-[10px] py-[8px] hover:bg-gray-100 cursor-pointer text-lg font-bold"
-                    >
-                      {location}
-                    </div>
-                  ))}
-                </div>
-              )}
+        <div className="flex flex-col gap-[19px]">
+          <div className="flex flex-col gap-[1px]">
+            <div className="font-bold text-lg text-black">Salary range</div>
+            <div className="text-lg text-black">
+              Enter desired annual salary (e.g. 50000)
             </div>
           </div>
-
-          <div className="flex flex-col gap-[19px]">
-            <div className="flex flex-col gap-[1px]">
-              <div className="font-bold text-lg text-black">Salary range</div>
-              <div className="text-lg text-black">
-                Enter desired annual salary (e.g. 50000)
-              </div>
+          <div className="flex flex-row gap-[25px]">
+            <div className="flex flex-col w-[110px]">
+              <div className="text-lg text-type-400 h-[30px]">Minimum</div>
+              <TextInput
+                onChange={handleMinChange}
+                value={minInput.toString()}
+                placeholder={DEFAULT_MIN_SALARY.toString()}
+              />
             </div>
-            <div className="flex flex-row gap-[25px]">
-              <div className="flex flex-col w-[110px]">
-                <div className="text-lg text-type-400 h-[30px]">Minimum</div>
-                <TextInput
-                  onChange={handleMinChange}
-                  value={minInput.toString()}
-                  placeholder={DEFAULT_MIN_SALARY.toString()}
-                />
-              </div>
-              <div className="flex flex-col w-[110px]">
-                <div className="text-lg text-type-400 h-[30px]">Maximum</div>
-                <TextInput
-                  onChange={handleMaxChange}
-                  value={maxInput.toString()}
-                  placeholder={DEFAULT_MAX_SALARY.toString()}
-                />
-              </div>
+            <div className="flex flex-col w-[110px]">
+              <div className="text-lg text-type-400 h-[30px]">Maximum</div>
+              <TextInput
+                onChange={handleMaxChange}
+                value={maxInput.toString()}
+                placeholder={DEFAULT_MAX_SALARY.toString()}
+              />
             </div>
-          </div>
-        </div>
-
-        <div className="sticky bottom-0 w-full bg-white border-t border-gray-200 flex items-center justify-between px-[25px] py-[20px]">
-          <div className="text-gray-600">{filteredJobCount} results</div>
-
-          <div className="flex gap-[16px]">
-            <button
-              onClick={handleClearAll}
-              className="text-type-400 hover:text-jila-400 font-medium cursor-pointer"
-            >
-              Clear all
-            </button>
-
-            <button
-              onClick={handleApply}
-              className="bg-jila-400 hover:bg-type-400 text-white font-bold px-[32px] py-[12px] rounded-[10px] cursor-pointer"
-            >
-              Apply
-            </button>
           </div>
         </div>
       </div>
-    </div>
+    </BaseSideModal>
   );
 }

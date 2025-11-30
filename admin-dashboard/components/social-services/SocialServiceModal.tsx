@@ -22,6 +22,7 @@ import {
 } from "@/lib/validators";
 import { formatFileSize } from "@/lib/utils";
 import { logger } from "@/lib/logger";
+import FormError from "@/components/shared/FormError";
 import { getFileUploadState } from "@/lib/fileUploadUtils";
 
 interface SocialServiceData {
@@ -73,6 +74,7 @@ export default function SocialServiceEditModal({
   const [clearExistingDescriptionFile, setClearExistingDescriptionFile] =
     useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [error, setError] = useState("");
 
   const updateSocialServiceMutation =
     trpc.socialServices.editSocialService.useMutation();
@@ -105,6 +107,7 @@ export default function SocialServiceEditModal({
 
   useEffect(() => {
     if (isOpen && serviceData) {
+      setError("");
       setFieldValue("englishTitle", serviceData.title || "");
       setFieldValue("qanjobalTitle", serviceData.title || "");
       setFieldValue("phoneNumber", serviceData.phone_number || "");
@@ -210,13 +213,20 @@ export default function SocialServiceEditModal({
         setIsSaving(false);
         onUpdateComplete?.();
         onClose();
-      } catch (error) {
+      } catch (error: any) {
         logger.error(
           "[executeMutation] Failed to update social service",
           error,
         );
+
+        let errorMessage = "Failed to update social service. Please try again.";
+
+        if (error?.message) {
+          errorMessage = error.message;
+        }
+
+        setError(errorMessage);
         setIsSaving(false);
-        setTimeout(() => {}, 2000);
       }
     };
 
@@ -264,6 +274,7 @@ export default function SocialServiceEditModal({
         };
         reader.onerror = (error) => {
           logger.error("[handleSave] FileReader error", error);
+          setError("Failed to read audio file. Please try again.");
           setIsSaving(false);
         };
         reader.readAsDataURL(file);
@@ -485,6 +496,8 @@ export default function SocialServiceEditModal({
           />
         )}
       </FormField>
+
+      {error && <FormError message={error} />}
     </BaseModal>
   );
 }

@@ -21,6 +21,7 @@ import { validateRequired, validateDropdownIndex } from "@/lib/validators";
 import SubmitButton from "@/components/ui/SubmitButton";
 import { useClickOutside } from "@/hooks/useClickOutside";
 import { useModalOverflow } from "@/hooks/useModalOverflow";
+import FormError from "@/components/shared/FormError";
 import { logger } from "@/lib/logger";
 import { JobData } from "@/lib/types";
 
@@ -42,6 +43,7 @@ export default function JobRequestModal({
   jobData,
 }: JobRequestModalProps) {
   const [isEditing, setIsEditing] = useState(false);
+  const [error, setError] = useState("");
   const { fields, setFieldValue, setFieldError, resetForm, validateAllFields } =
     useForm({
       jobTitleEnglish: createField(""),
@@ -66,6 +68,7 @@ export default function JobRequestModal({
 
   useEffect(() => {
     if (isOpen && jobData) {
+      setError("");
       setFieldValue("jobTitleEnglish", jobData.titleEnglish || "");
       setFieldValue("jobTitleQanjobal", jobData.titleQanjobal || "");
       setFieldValue("companyName", jobData.companyName || "");
@@ -130,8 +133,16 @@ export default function JobRequestModal({
       setIsEditing(false);
       onUpdateComplete?.();
       onClose();
-    } catch (error) {
+    } catch (error: any) {
       logger.error("[handleSave] Failed to update job request", error);
+
+      let errorMessage = "Failed to update job request. Please try again.";
+
+      if (error?.message) {
+        errorMessage = error.message;
+      }
+
+      setError(errorMessage);
       setIsSaving(false);
     }
   };
@@ -349,6 +360,8 @@ export default function JobRequestModal({
               />
             )}
           </FormField>
+
+          {error && <FormError message={error} />}
 
           {!isEditing ? (
             jobData.status === JobStatus.PENDING ? (

@@ -20,6 +20,7 @@ import { US_STATES } from "@/lib/constants";
 import { X, CheckCircle } from "lucide-react";
 import PageBackground from "@/components/layout/PageBackground";
 import CalendarInput from "@/components/forms/CalendarInput";
+import FormError from "@/components/shared/FormError";
 
 const JOB_TYPE_OPTIONS = [
   "Internship",
@@ -57,6 +58,7 @@ export default function JobRequestPage() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [error, setError] = useState("");
 
   const { fields, setFieldValue, validateAllFields, resetForm } = useForm({
     contactEmail: createField(""),
@@ -121,16 +123,26 @@ export default function JobRequestPage() {
         status: JobStatus.PENDING,
       });
 
+      setError("");
       setIsSuccess(true);
       setIsSubmitting(false);
-    } catch (error) {
-      console.error("Failed to submit job request:", error);
+    } catch (error: any) {
+      let errorMessage = "Failed to submit job request. Please try again.";
+
+      if (error?.data?.code === "CONFLICT") {
+        errorMessage = "A job with this application link already exists.";
+      } else if (error?.message) {
+        errorMessage = error.message;
+      }
+
+      setError(errorMessage);
       setIsSubmitting(false);
     }
   };
 
   const handleSubmitAnother = () => {
     setIsSuccess(false);
+    setError("");
     resetForm();
   };
 
@@ -381,6 +393,8 @@ export default function JobRequestPage() {
                   )}
                 </FormField>
               </div>
+
+              {error && <FormError message={error} />}
 
               <div className="flex justify-end mt-[10px]">
                 <SubmitButton
