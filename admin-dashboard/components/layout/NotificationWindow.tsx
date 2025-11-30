@@ -10,7 +10,7 @@ interface NotificationWindowProps {
 }
 
 // Get time difference in human-readable format
-const getTimeAgo = (date: Date) => {
+const getTimeAgo = (date: Date | string) => {
   const now = Date.now();
   const diffMs = now - new Date(date).getTime();
   const diffMins = Math.floor(diffMs / 60000);
@@ -136,7 +136,7 @@ export default function NotificationWindow({
             No notifications
           </h3>
           <p className="font-normal text-[16px] text-gray-400 text-center">
-            You're all caught up on notifications
+            You&apos;re all caught up on notifications
           </p>
         </div>
       ) : (

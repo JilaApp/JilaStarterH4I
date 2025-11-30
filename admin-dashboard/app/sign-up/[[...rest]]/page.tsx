@@ -75,7 +75,7 @@ export default function InviteSignUpPage() {
     };
 
     createSignUpFromTicket();
-  }, [isLoaded, searchParams, signUp, isTicketProcessed]);
+  }, [isLoaded, searchParams, signUp, isTicketProcessed, setFieldValue]);
 
   const validateConfirmPassword = useCallback(
     (value: string): string | null => {
