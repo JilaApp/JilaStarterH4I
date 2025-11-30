@@ -2,7 +2,7 @@ import { useState, useCallback } from "react";
 
 export type FormInputState = "default" | "error" | "pending" | "complete";
 
-export interface FieldConfig<T = any> {
+export interface FieldConfig<T = unknown> {
   value: T;
   error: string;
   state: FormInputState;
@@ -93,14 +93,22 @@ export function useForm<T extends FormConfig>(initialConfig: T) {
   );
 
   const validateAllFields = useCallback(
-    (
-      validators: Partial<Record<keyof T, (value: any) => string | null>>,
+    <K extends keyof T>(
+      validators: Partial<{
+        [P in K]: (value: T[P]["value"]) => string | null;
+      }>,
     ): boolean => {
       let isValid = true;
       Object.keys(validators).forEach((key) => {
-        const fieldName = key as keyof T;
+        const fieldName = key as K;
         const validator = validators[fieldName];
-        if (validator && !validateField(fieldName, validator)) {
+        if (
+          validator &&
+          !validateField(
+            fieldName,
+            validator as (value: T[K]["value"]) => string | null,
+          )
+        ) {
           isValid = false;
         }
       });

@@ -3,6 +3,8 @@
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { ReactNode, useEffect, useState } from "react";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import { logger } from "@/lib/logger";
 
 const AuthWrapper = ({ children }: { children: ReactNode }) => {
   const { user, isLoaded } = useUser();
@@ -34,7 +36,7 @@ const AuthWrapper = ({ children }: { children: ReactNode }) => {
           setVerificationStatus("failed");
         }
       } catch (error) {
-        console.error("Error reloading user:", error);
+        logger.error("[AuthWrapper] Failed to verify admin status", error);
         setVerificationStatus("failed");
       }
     };
@@ -51,7 +53,7 @@ const AuthWrapper = ({ children }: { children: ReactNode }) => {
   if (verificationStatus !== "success") {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-jila-400"></div>
+        <LoadingSpinner />
       </div>
     );
   }

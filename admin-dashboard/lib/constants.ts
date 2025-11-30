@@ -1,5 +1,22 @@
 import { VideoTopic, SocialServiceCategory } from "@/lib/types";
 import type { TopicVariant } from "@/lib/types";
+import { JobType, LocationType } from "@prisma/client";
+
+// File upload limits
+export const MAX_AUDIO_FILE_SIZE_MB = 30;
+export const MAX_AUDIO_FILE_SIZE_BYTES = MAX_AUDIO_FILE_SIZE_MB * 1024 * 1024;
+
+// Salary filter defaults
+export const DEFAULT_MIN_SALARY = 10000;
+export const DEFAULT_MAX_SALARY = 100000;
+
+// UI timing constants (in milliseconds)
+export const NOTIFICATION_AUTO_DISMISS_MS = 3000;
+export const NAVIGATION_DELAY_MS = 1000;
+
+// Validation constants
+export const MIN_PASSWORD_LENGTH = 8;
+export const ADDRESS_PARTS_COUNT = 3;
 
 // Topic colors for UI display
 export const TOPIC_COLORS: Record<TopicVariant, string> = {
@@ -114,3 +131,54 @@ export const TOPIC_MAP: Record<string, TopicVariant> = {
   SHELTERS: "Shelters",
   FOOD: "Food",
 };
+
+// Job type options for dropdowns
+export const JOB_TYPE_OPTIONS = [
+  "Internship",
+  "Full-time",
+  "Part-time",
+  "Temporary",
+  "Freelance",
+  "Seasonal",
+] as const;
+
+export const JOB_TYPE_TO_ENUM: Record<string, JobType> = {
+  Internship: JobType.INTERNSHIP,
+  "Full-time": JobType.FULLTIME,
+  "Part-time": JobType.PARTTIME,
+  Temporary: JobType.TEMPORARY,
+  Freelance: JobType.FREELANCE,
+  Seasonal: JobType.SEASONAL,
+};
+
+export const JOB_TYPE_FROM_ENUM: Record<JobType, string> = {
+  [JobType.INTERNSHIP]: "Internship",
+  [JobType.FULLTIME]: "Full-time",
+  [JobType.PARTTIME]: "Part-time",
+  [JobType.TEMPORARY]: "Temporary",
+  [JobType.FREELANCE]: "Freelance",
+  [JobType.SEASONAL]: "Seasonal",
+  [JobType.QANJOBAL]: "Q'anjob'al",
+};
+
+// Location type options for dropdowns
+export const LOCATION_TYPE_OPTIONS = ["Remote", "Hybrid", "In person"] as const;
+
+export const LOCATION_TYPE_TO_ENUM: Record<string, LocationType> = {
+  Remote: LocationType.REMOTE,
+  Hybrid: LocationType.HYBRID,
+  "In person": LocationType.INPERSON,
+};
+
+export const LOCATION_TYPE_FROM_ENUM: Record<LocationType, string> = {
+  [LocationType.REMOTE]: "Remote",
+  [LocationType.HYBRID]: "Hybrid",
+  [LocationType.INPERSON]: "In person",
+};
+
+// Language options for job postings
+export const LANGUAGE_OPTIONS = [
+  { name: "Non-English", disabled: false },
+  { name: "Spanish", disabled: false },
+  { name: "Q'anjob'al", disabled: false },
+];

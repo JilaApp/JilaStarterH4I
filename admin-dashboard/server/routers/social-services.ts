@@ -3,6 +3,7 @@ import prisma from "@/lib/prisma";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { SocialServiceCategory } from "@/lib/types";
+import { logger } from "@/lib/logger";
 
 const addSocialServiceInput = z.object({
   title: z.string(),
@@ -44,87 +45,141 @@ type RemoveSocialServiceInput = z.infer<typeof removeSocialServiceInput>;
 type EditSocialServiceInput = z.infer<typeof editSocialServiceInput>;
 
 async function addSocialService(input: AddSocialServiceInput) {
-  const existing = await prisma.socialServices.findUnique({
-    where: { phone_number: input.phone_number },
-    select: { id: true },
-  });
+  try {
+    const existing = await prisma.socialServices.findUnique({
+      where: { phone_number: input.phone_number },
+      select: { id: true },
+    });
 
-  if (existing) {
+    if (existing) {
+      throw new TRPCError({
+        code: "CONFLICT",
+        message: `Social Service with phone number ${input.phone_number} already exists`,
+      });
+    }
+
+    await prisma.socialServices.create({
+      data: {
+        title: input.title,
+        category: input.category,
+        phone_number: input.phone_number,
+        address: input.address,
+        description: input.description,
+        url: input.url,
+      },
+    });
+
+    return { success: true };
+  } catch (error) {
+    if (error instanceof TRPCError) {
+      throw error;
+    }
+
+    logger.error("[addSocialService] Database error", error);
+
     throw new TRPCError({
-      code: "CONFLICT",
-      message: `Social Service with phone number ${input.phone_number} already exists`,
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Failed to add social service. Please try again.",
     });
   }
+}
 
-  await prisma.socialServices.create({
-    data: {
+async function removeSocialService(input: RemoveSocialServiceInput) {
+  try {
+    const existing = await prisma.socialServices.findUnique({
+      where: { id: input.id },
+    });
+
+    if (!existing) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "Resource not found",
+      });
+    }
+
+    await prisma.socialServices.delete({
+      where: {
+        id: input.id,
+      },
+    });
+
+    return { success: true };
+  } catch (error) {
+    if (error instanceof TRPCError) {
+      throw error;
+    }
+
+    logger.error("[removeSocialService] Database error", error);
+
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Failed to remove social service. Please try again.",
+    });
+  }
+}
+
+async function editSocialService(input: EditSocialServiceInput) {
+  try {
+    const existing = await prisma.socialServices.findUnique({
+      where: { id: input.id },
+    });
+
+    if (!existing) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "Resource not found",
+      });
+    }
+
+    const removing_undefined_vals = {
       title: input.title,
       category: input.category,
       phone_number: input.phone_number,
       address: input.address,
       description: input.description,
       url: input.url,
-    },
-  });
-}
+    };
 
-async function removeSocialService(input: RemoveSocialServiceInput) {
-  const existing = await prisma.socialServices.findUnique({
-    where: { id: input.id },
-  });
+    const data = Object.fromEntries(
+      Object.entries(removing_undefined_vals).filter(
+        ([_, value]) => value !== undefined,
+      ),
+    );
 
-  if (!existing) {
+    await prisma.socialServices.update({
+      where: {
+        id: input.id,
+      },
+      data,
+    });
+
+    return { success: true };
+  } catch (error) {
+    if (error instanceof TRPCError) {
+      throw error;
+    }
+
+    logger.error("[editSocialService] Database error", error);
+
     throw new TRPCError({
-      code: "NOT_FOUND",
-      message: `Social Service with id ${input.id} does not exist`,
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Failed to edit social service. Please try again.",
     });
   }
-
-  await prisma.socialServices.delete({
-    where: {
-      id: input.id,
-    },
-  });
-}
-
-async function editSocialService(input: EditSocialServiceInput) {
-  const existing = await prisma.socialServices.findUnique({
-    where: { id: input.id },
-  });
-
-  if (!existing) {
-    throw new TRPCError({
-      code: "NOT_FOUND",
-      message: `Social Service with id ${input.id} does not exist`,
-    });
-  }
-
-  const removing_undefined_vals = {
-    title: input.title,
-    category: input.category,
-    phone_number: input.phone_number,
-    address: input.address,
-    description: input.description,
-    url: input.url,
-  };
-
-  const data = Object.fromEntries(
-    Object.entries(removing_undefined_vals).filter(
-      ([_, value]) => value !== undefined,
-    ),
-  );
-
-  await prisma.socialServices.update({
-    where: {
-      id: input.id,
-    },
-    data,
-  });
 }
 
 async function getAllSocialServices() {
-  const services = await prisma.socialServices.findMany();
-  return services;
+  try {
+    const services = await prisma.socialServices.findMany();
+    return services;
+  } catch (error) {
+    logger.error("[getAllSocialServices] Database error", error);
+
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Failed to fetch social services. Please try again.",
+    });
+  }
 }
 
 export const socialServicesRouter = router({

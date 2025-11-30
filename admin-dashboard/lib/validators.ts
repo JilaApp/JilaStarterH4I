@@ -1,3 +1,5 @@
+import { MIN_PASSWORD_LENGTH, ADDRESS_PARTS_COUNT } from "@/lib/constants";
+
 const isValidEmail = (email: string): boolean => {
   const emailRegex =
     /^[A-Za-z0-9]+([._-]?[A-Za-z0-9]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}$/;
@@ -18,13 +20,13 @@ export const validatePassword = (value: string): string | null => {
   if (!value) {
     return "Password is required";
   }
-  if (value.length < 8) {
-    return "Password must be at least 8 characters";
+  if (value.length < MIN_PASSWORD_LENGTH) {
+    return `Password must be at least ${MIN_PASSWORD_LENGTH} characters`;
   }
   return null;
 };
 
-export const validateRequired = (value: any): string | null => {
+export const validateRequired = (value: unknown): string | null => {
   if (!value || (typeof value === "string" && !value.trim())) {
     return "This field is required";
   }
@@ -67,7 +69,7 @@ export const validateURL = (value: string): string | null => {
 };
 
 export const validateFileSize = (maxSizeMB: number) => {
-  return (file: File | null): string | null => {
+  return (file: File | undefined): string | null => {
     if (!file) {
       return "File is required";
     }
