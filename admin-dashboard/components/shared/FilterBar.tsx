@@ -29,7 +29,7 @@ export default function FilterBar({
         <button
           key={option}
           onClick={() => handleFilterClick(option)}
-          className={`flex items-center gap-2 px-4 h-10 rounded-lg font-bold body2-desktop-text transition-colors ${
+          className={`flex items-center gap-2 px-4 h-10 rounded-lg font-bold body2-desktop-text transition-colors cursor-pointer ${
             selectedOptions.includes(option)
               ? "bg-jila-400 text-white hover:bg-type-400"
               : "bg-white text-gray-400 hover:bg-gray-200"
@@ -41,7 +41,7 @@ export default function FilterBar({
       ))}
       <button
         onClick={handleClearFilters}
-        className="text-jila-400 underline body2-desktop-text font-semibold whitespace-nowrap ml-2"
+        className="text-jila-400 underline body2-desktop-text font-semibold whitespace-nowrap ml-2 cursor-pointer"
       >
         Clear filters
       </button>

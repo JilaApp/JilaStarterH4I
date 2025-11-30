@@ -351,20 +351,22 @@ export default function JobRequestModal({
           </FormField>
 
           {!isEditing ? (
-            <div className="flex gap-3 justify-end mt-[26px] gap-x-[26px] w-full">
-              <Button
-                onClick={handleDeny}
-                text="Deny"
-                defaultClassName="w-[141px] h-[60px] bg-error-200 text-error-400 rounded-[10px] components-text"
-                hoverClassName="hover:bg-error-300"
-              />
-              <Button
-                onClick={handleApprove}
-                text="Approve"
-                defaultClassName="w-[141px] h-[60px] bg-green-200 text-green-400 rounded-[10px] components-text"
-                hoverClassName="hover:bg-green-300"
-              />
-            </div>
+            jobData.status === JobStatus.PENDING ? (
+              <div className="flex gap-3 justify-end mt-[26px] gap-x-[26px] w-full">
+                <Button
+                  onClick={handleDeny}
+                  text="Deny"
+                  defaultClassName="w-[141px] h-[60px] bg-error-200 text-error-400 rounded-[10px] components-text"
+                  hoverClassName="hover:bg-error-300"
+                />
+                <Button
+                  onClick={handleApprove}
+                  text="Approve"
+                  defaultClassName="w-[141px] h-[60px] bg-green-200 text-green-400 rounded-[10px] components-text"
+                  hoverClassName="hover:bg-green-300"
+                />
+              </div>
+            ) : null
           ) : (
             <div className="flex gap-3 justify-end mt-[26px] gap-x-[26px] w-full">
               <Button

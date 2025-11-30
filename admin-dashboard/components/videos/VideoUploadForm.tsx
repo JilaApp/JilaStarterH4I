@@ -177,13 +177,13 @@ export default function VideoUploadForm() {
                     id={`video-input-${index}`}
                     value={link}
                     onChange={(val) => handleLinkChange(index, val)}
-                    className="w-full h-[46px]"
+                    className="w-full h-[60px]"
                     state={fields.videoLinks.state}
                   />
                 </div>
                 <button
                   onClick={() => handleRemoveLink(index)}
-                  className="p-2 text-gray-500 hover:text-red-500 transition-colors"
+                  className="p-2 text-gray-500 hover:text-red-500 transition-colors cursor-pointer"
                   type="button"
                   title="Remove link"
                 >
@@ -193,7 +193,7 @@ export default function VideoUploadForm() {
             ))}
             <button
               onClick={handleAddLink}
-              className="flex items-center text-sm text-jila-400 hover:text-jila-300 font-medium mt-1 w-fit"
+              className="flex items-center text-sm text-jila-400 hover:text-jila-300 font-medium mt-1 w-fit cursor-pointer"
               type="button"
             >
               <Plus className="w-4 h-4 mr-1" />
