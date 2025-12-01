@@ -26,6 +26,7 @@ import {
 import { Button } from "@/components/Button";
 import LikeDislike from "@/components/LikeDislike";
 import Dropdown from "@/components/Dropdown";
+import SearchableDropdown from "@/components/SearchableDropdown";
 import SocialServicesCategories, {
   SocialService,
 } from "@/components/SocialServicesCategories";
@@ -66,6 +67,20 @@ export default function DevPage() {
 
   const [selectedDropdown, setSelectedDropdown] = useState<string | null>(null);
   const dropdownOptions = ["PA", "TX", "NJ", "IL", "CA"];
+
+  const [selectedCity, setSelectedCity] = useState<string | null>(null);
+  const cityOptions = [
+    "Champaign",
+    "Urbana",
+    "Chicago",
+    "Springfield",
+    "Peoria",
+    "Rockford",
+    "Naperville",
+    "Aurora",
+    "Joliet",
+    "Elgin",
+  ];
 
   const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null);
   const [smallChecked, setSmallChecked] = useState(false);
@@ -285,6 +300,7 @@ export default function DevPage() {
         <Text style={styles.colorDemoTitle}>Color Demo:</Text>
 
         <View style={styles.dropdownContainer}>
+          <Text style={styles.sectionTitle}>Dropdown with Scroll</Text>
           <Text style={styles.dropdownText}>
             You chose: <Text style={styles.semibold}>{selectedDropdown}</Text>
           </Text>
@@ -293,6 +309,48 @@ export default function DevPage() {
             options={dropdownOptions}
             selected={selectedDropdown}
             onSelect={setSelectedDropdown}
+          />
+        </View>
+
+        <View style={styles.dropdownContainer}>
+          <Text style={styles.sectionTitle}>Dropdown - Disabled State</Text>
+          <Dropdown
+            text={"--Select State--"}
+            placeholder="Select a state"
+            options={dropdownOptions}
+            selected={null}
+            onSelect={() => {}}
+            disabled={true}
+          />
+        </View>
+
+        <View style={styles.dropdownContainer}>
+          <Text style={styles.sectionTitle}>
+            Searchable Dropdown with Scroll
+          </Text>
+          <Text style={styles.dropdownText}>
+            You chose: <Text style={styles.semibold}>{selectedCity}</Text>
+          </Text>
+          <SearchableDropdown
+            placeholder="Search U.S. cities..."
+            text={"Champaign"}
+            options={cityOptions}
+            selected={selectedCity}
+            onSelect={setSelectedCity}
+          />
+        </View>
+
+        <View style={styles.dropdownContainer}>
+          <Text style={styles.sectionTitle}>
+            Searchable Dropdown - Disabled State
+          </Text>
+          <SearchableDropdown
+            placeholder="Search U.S. cities..."
+            text={"Champaign"}
+            options={cityOptions}
+            selected={null}
+            onSelect={() => {}}
+            disabled={true}
           />
         </View>
 
