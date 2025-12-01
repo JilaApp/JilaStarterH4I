@@ -85,10 +85,6 @@ export default function JobPostings({
     },
   });
 
-  useEffect(() => {
-    refetchJobs();
-  }, [refetchJobs]);
-
   const jobResourcesData: JobResourceData[] = useMemo(() => {
     const jobTypeDisplayMap: Record<string, string> = {
       INTERNSHIP: "Internship",
