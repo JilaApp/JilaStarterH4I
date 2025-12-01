@@ -121,11 +121,6 @@ export default function JobRequests() {
     },
   });
 
-  useEffect(() => {
-    refetchPendingJobs();
-    refetchReviewedJobs();
-  }, [refetchPendingJobs, refetchReviewedJobs]);
-
   const jobRequestColumns: ColumnDefinition<JobRequestTableData>[] = [
     { header: "Position", accessorKey: "position" },
     { header: "Date submitted", accessorKey: "dateSubmitted" },
