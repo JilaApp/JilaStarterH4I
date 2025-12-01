@@ -106,12 +106,7 @@ export default function NotificationWindow({
 
   if (isLoading) {
     return (
-      <BaseSideModal
-        isOpen={isOpen}
-        onClose={onClose}
-        title="Notifications"
-        width="w-[569px]"
-      >
+      <BaseSideModal isOpen={isOpen} onClose={onClose} title="Notifications">
         <div className="flex items-center justify-center h-full px-[25px] py-[60px]">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-jila-400"></div>
         </div>
@@ -124,7 +119,6 @@ export default function NotificationWindow({
       isOpen={isOpen}
       onClose={onClose}
       title="Notifications"
-      width="w-[569px]"
       headerRight={headerRight}
     >
       {notifications.length === 0 ? (

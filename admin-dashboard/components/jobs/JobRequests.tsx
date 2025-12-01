@@ -235,6 +235,22 @@ export default function JobRequests() {
     denyJobMutation.mutate({ id });
   };
 
+  const handleJobRequestEdit = (id: number) => {
+    const job =
+      activeTabIndex === 0
+        ? pendingJobsData?.find((j) => j.id === id)
+        : reviewedJobsData?.find((j) => j.id === id);
+    if (job) {
+      setSelectedJobRequest({
+        ...job,
+        expirationDate: new Date(job.expirationDate),
+        createdAt: new Date(job.createdAt),
+        updatedAt: new Date(job.updatedAt),
+      } as FullJobType);
+      setIsModalOpen(true);
+    }
+  };
+
   const handleBulkApprove = () => {
     bulkApproveJobsMutation.mutate({ ids: selectedRows });
   };
@@ -290,6 +306,8 @@ export default function JobRequests() {
         <Table
           data={filteredReviewedJobs}
           columns={jobRequestColumns}
+          handleEdit={handleJobRequestEdit}
+          handleDelete={handleJobRequestDeny}
           handleRowClick={handleJobRequestRowClick}
           selectedRows={selectedRows}
           onSelectedRowsChange={setSelectedRows}
