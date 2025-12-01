@@ -144,7 +144,7 @@ export default function SocialServiceEditModal({
       );
       setFieldValue("topicIndex", topicIndex !== -1 ? topicIndex : undefined);
     }
-  }, [isOpen, serviceData?.id]);
+  }, [isOpen, serviceData, setFieldValue]);
 
   const handleTitleFileChange = (file: File) => {
     setFieldValue("titleFile", file);

@@ -93,7 +93,7 @@ export default function JobRequestModal({
 
       setIsEditing(false);
     }
-  }, [isOpen, jobData?.id]);
+  }, [isOpen, jobData, setFieldValue]);
 
   useModalOverflow(isOpen);
 

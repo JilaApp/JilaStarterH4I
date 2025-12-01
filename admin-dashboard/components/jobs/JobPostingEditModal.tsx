@@ -127,7 +127,7 @@ export default function JobPostingEditModal({
         resetForm();
       }
     }
-  }, [isOpen, jobData?.id]);
+  }, [isOpen, jobData, setFieldValue, resetForm]);
 
   useModalOverflow(isOpen);
 

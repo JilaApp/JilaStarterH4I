@@ -1,4 +1,5 @@
 import React, { useState, useRef } from "react";
+import Image from "next/image";
 import { MoreVertical, Check, X as XIcon } from "lucide-react";
 import type { DataRow, ColumnDefinition } from "@/lib/types";
 import { useClickOutside } from "@/hooks/useClickOutside";
@@ -172,10 +173,12 @@ export default function Table<T extends DataRow>({
                             left: `${menuPosition.left}px`,
                           }}
                         >
-                          <img
+                          <Image
                             src="/table-menu-tail.svg"
                             alt="tail"
-                            className="absolute top-[-50px] right-[-34px] w-[100px] h-[100px] origin-center block pointer-events-none"
+                            width={100}
+                            height={100}
+                            className="absolute top-[-50px] right-[-34px] origin-center block pointer-events-none"
                           />
                           {handleEdit && (
                             <button

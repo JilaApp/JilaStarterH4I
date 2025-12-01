@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { Plus, SlidersHorizontal } from "lucide-react";
 import Table from "@/components/shared/Table";
 import { ColumnDefinition, DataRow, JobFilters } from "@/lib/types";
@@ -89,18 +89,18 @@ export default function JobPostings({
     refetchJobs();
   }, [refetchJobs]);
 
-  const jobTypeDisplayMap: Record<string, string> = {
-    INTERNSHIP: "Internship",
-    FULLTIME: "Full-time",
-    PARTTIME: "Part-time",
-    TEMPORARY: "Temporary",
-    FREELANCE: "Freelance",
-    SEASONAL: "Seasonal",
-    QANJOBAL: "Q'anjob'al",
-  };
+  const jobResourcesData: JobResourceData[] = useMemo(() => {
+    const jobTypeDisplayMap: Record<string, string> = {
+      INTERNSHIP: "Internship",
+      FULLTIME: "Full-time",
+      PARTTIME: "Part-time",
+      TEMPORARY: "Temporary",
+      FREELANCE: "Freelance",
+      SEASONAL: "Seasonal",
+      QANJOBAL: "Q'anjob'al",
+    };
 
-  const jobResourcesData: JobResourceData[] = useMemo(
-    () =>
+    return (
       jobsData
         ?.map((job) => ({
           id: job.id,
@@ -110,9 +110,9 @@ export default function JobPostings({
           link: job.url,
           status: job.status,
         }))
-        .sort((a, b) => a.position.localeCompare(b.position)) || [],
-    [jobsData],
-  );
+        .sort((a, b) => a.position.localeCompare(b.position)) || []
+    );
+  }, [jobsData]);
 
   const jobColumns: ColumnDefinition<JobResourceData>[] = [
     { header: "Position", accessorKey: "position" },
@@ -225,97 +225,103 @@ export default function JobPostings({
     setIsBulkDeleteModalOpen(false);
   };
 
-  const applyFiltersToData = (data: JobResourceData[]) => {
-    let filtered = data;
+  const applyFiltersToData = useCallback(
+    (data: JobResourceData[]) => {
+      let filtered = data;
 
-    if (searchQuery) {
-      filtered = filtered.filter((item) =>
-        item.position.toLowerCase().includes(searchQuery.toLowerCase()),
-      );
-    }
+      if (searchQuery) {
+        filtered = filtered.filter((item) =>
+          item.position.toLowerCase().includes(searchQuery.toLowerCase()),
+        );
+      }
 
-    if (appliedFilters) {
-      if (
-        appliedFilters.locationTypes &&
-        appliedFilters.locationTypes.length > 0
-      ) {
-        filtered = filtered.filter((job) => {
-          const jobData = jobsData?.find((j) => j.id === job.id);
-          if (!jobData) return false;
-          return appliedFilters.locationTypes!.some((type: string) => {
-            if (type === "Remote") return jobData.locationType === "REMOTE";
-            if (type === "Hybrid") return jobData.locationType === "HYBRID";
-            if (type === "In person")
-              return jobData.locationType === "INPERSON";
-            return false;
+      if (appliedFilters) {
+        if (
+          appliedFilters.locationTypes &&
+          appliedFilters.locationTypes.length > 0
+        ) {
+          filtered = filtered.filter((job) => {
+            const jobData = jobsData?.find((j) => j.id === job.id);
+            if (!jobData) return false;
+            return appliedFilters.locationTypes!.some((type: string) => {
+              if (type === "Remote") return jobData.locationType === "REMOTE";
+              if (type === "Hybrid") return jobData.locationType === "HYBRID";
+              if (type === "In person")
+                return jobData.locationType === "INPERSON";
+              return false;
+            });
           });
-        });
-      }
+        }
 
-      if (appliedFilters.jobTypes && appliedFilters.jobTypes.length > 0) {
-        filtered = filtered.filter((job) => {
-          const jobData = jobsData?.find((j) => j.id === job.id);
-          if (!jobData) return false;
-          return appliedFilters.jobTypes!.some((type: string) => {
-            const typeMap: Record<string, string> = {
-              Internship: "INTERNSHIP",
-              "Full-time": "FULLTIME",
-              "Part-time": "PARTTIME",
-              Temporary: "TEMPORARY",
-              Freelance: "FREELANCE",
-              Seasonal: "SEASONAL",
-            };
-            return jobData.jobType === typeMap[type];
+        if (appliedFilters.jobTypes && appliedFilters.jobTypes.length > 0) {
+          filtered = filtered.filter((job) => {
+            const jobData = jobsData?.find((j) => j.id === job.id);
+            if (!jobData) return false;
+            return appliedFilters.jobTypes!.some((type: string) => {
+              const typeMap: Record<string, string> = {
+                Internship: "INTERNSHIP",
+                "Full-time": "FULLTIME",
+                "Part-time": "PARTTIME",
+                Temporary: "TEMPORARY",
+                Freelance: "FREELANCE",
+                Seasonal: "SEASONAL",
+              };
+              return jobData.jobType === typeMap[type];
+            });
           });
-        });
+        }
+
+        if (
+          appliedFilters.speakerTags &&
+          appliedFilters.speakerTags.length > 0
+        ) {
+          filtered = filtered.filter((job) => {
+            const jobData = jobsData?.find((j) => j.id === job.id);
+            if (!jobData) return false;
+            return appliedFilters.speakerTags!.some((tag: string) =>
+              jobData.acceptedLanguages.includes(tag),
+            );
+          });
+        }
+
+        if (
+          appliedFilters.minSalary !== undefined &&
+          appliedFilters.maxSalary !== undefined
+        ) {
+          filtered = filtered.filter((job) => {
+            const jobData = jobsData?.find((j) => j.id === job.id);
+            if (!jobData) return false;
+            return (
+              jobData.salary >= appliedFilters.minSalary! &&
+              jobData.salary <= appliedFilters.maxSalary!
+            );
+          });
+        }
+
+        if (appliedFilters.locationSearch) {
+          filtered = filtered.filter((job) => {
+            const jobData = jobsData?.find((j) => j.id === job.id);
+            if (!jobData) return false;
+            const query = appliedFilters.locationSearch!.toLowerCase();
+            const fullLocation =
+              `${jobData.city}, ${jobData.state}`.toLowerCase();
+            return (
+              fullLocation.includes(query) ||
+              jobData.city.toLowerCase().includes(query) ||
+              jobData.state.toLowerCase().includes(query)
+            );
+          });
+        }
       }
 
-      if (appliedFilters.speakerTags && appliedFilters.speakerTags.length > 0) {
-        filtered = filtered.filter((job) => {
-          const jobData = jobsData?.find((j) => j.id === job.id);
-          if (!jobData) return false;
-          return appliedFilters.speakerTags!.some((tag: string) =>
-            jobData.acceptedLanguages.includes(tag),
-          );
-        });
-      }
-
-      if (
-        appliedFilters.minSalary !== undefined &&
-        appliedFilters.maxSalary !== undefined
-      ) {
-        filtered = filtered.filter((job) => {
-          const jobData = jobsData?.find((j) => j.id === job.id);
-          if (!jobData) return false;
-          return (
-            jobData.salary >= appliedFilters.minSalary! &&
-            jobData.salary <= appliedFilters.maxSalary!
-          );
-        });
-      }
-
-      if (appliedFilters.locationSearch) {
-        filtered = filtered.filter((job) => {
-          const jobData = jobsData?.find((j) => j.id === job.id);
-          if (!jobData) return false;
-          const query = appliedFilters.locationSearch!.toLowerCase();
-          const fullLocation =
-            `${jobData.city}, ${jobData.state}`.toLowerCase();
-          return (
-            fullLocation.includes(query) ||
-            jobData.city.toLowerCase().includes(query) ||
-            jobData.state.toLowerCase().includes(query)
-          );
-        });
-      }
-    }
-
-    return filtered;
-  };
+      return filtered;
+    },
+    [searchQuery, appliedFilters, jobsData],
+  );
 
   const allJobsData = useMemo(
     () => applyFiltersToData(jobResourcesData),
-    [jobResourcesData, searchQuery, appliedFilters, jobsData],
+    [jobResourcesData, applyFiltersToData],
   );
 
   const activeJobsData = useMemo(
@@ -323,7 +329,7 @@ export default function JobPostings({
       applyFiltersToData(
         jobResourcesData.filter((job) => job.status === JobStatus.ACTIVE),
       ),
-    [jobResourcesData, searchQuery, appliedFilters, jobsData],
+    [jobResourcesData, applyFiltersToData],
   );
 
   const archivedJobsData = useMemo(
@@ -331,7 +337,7 @@ export default function JobPostings({
       applyFiltersToData(
         jobResourcesData.filter((job) => job.status === JobStatus.ARCHIVED),
       ),
-    [jobResourcesData, searchQuery, appliedFilters, jobsData],
+    [jobResourcesData, applyFiltersToData],
   );
 
   const allJobsTotalPages = Math.ceil(allJobsData.length / itemsPerPage);
