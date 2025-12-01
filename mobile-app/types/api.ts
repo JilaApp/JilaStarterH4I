@@ -24,6 +24,18 @@ export type SocialService = {
   descriptionAudioFile?: string | null;
 };
 
+export type VideoData = {
+  id: string | number;
+  titleEnglish: string;
+  titleQanjobal: string;
+  topic: string;
+  urls: string[];
+  descriptionEnglish: string | null;
+  descriptionQanjobal: string | null;
+  audioFilename: string | null;
+  audioFileSize: number | null;
+};
+
 export type AppRouter = {
   socialServices: {
     getAllSocialServices: {

@@ -3,12 +3,12 @@
 import { useSignIn, useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
-import { EmailInput, PasswordInput } from "@/components/Input";
-import Button from "@/components/Button";
-import DisplayBox from "@/components/DisplayBox";
-import Link from "@/components/Link";
-import FormField from "@/components/FormField";
-import PageBackground from "@/components/PageBackground";
+import { EmailInput, PasswordInput } from "@/components/ui/Input";
+import Button from "@/components/ui/Button";
+import DisplayBox from "@/components/shared/DisplayBox";
+import Link from "@/components/shared/Link";
+import FormField from "@/components/forms/FormField";
+import PageBackground from "@/components/layout/PageBackground";
 import { Ban } from "lucide-react";
 import { useForm, createField } from "@/hooks/useForm";
 import { validateEmail, validatePassword } from "@/lib/validators";

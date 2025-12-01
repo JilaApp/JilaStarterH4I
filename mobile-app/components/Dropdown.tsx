@@ -5,6 +5,7 @@ import {
   Text,
   Pressable,
   StyleSheet,
+  ScrollView,
 } from "react-native";
 import { ChevronDown, ChevronRight } from "lucide-react-native";
 import { colors } from "@/colors";
@@ -15,6 +16,8 @@ interface DropdownProps {
   options: string[];
   selected: string | null;
   onSelect: (option: string) => void;
+  disabled?: boolean;
+  placeholder?: string;
 }
 
 const Dropdown: React.FC<DropdownProps> = ({
@@ -22,72 +25,97 @@ const Dropdown: React.FC<DropdownProps> = ({
   options,
   selected,
   onSelect,
+  disabled = false,
+  placeholder,
 }: DropdownProps) => {
   const [open, setOpen] = useState(false);
 
   return (
-    <View style={styles.container}>
-      <TouchableOpacity
-        onPress={() => setOpen((prev) => !prev)}
-        activeOpacity={0.7}
-      >
-        <View
-          style={[
-            styles.trigger,
-            open ? styles.triggerOpen : styles.triggerClosed,
-          ]}
+    <View style={styles.wrapper}>
+      <View style={styles.container}>
+        <TouchableOpacity
+          onPress={() => setOpen((prev) => !prev)}
+          activeOpacity={0.7}
+          disabled={disabled}
         >
-          <Text style={selected ? styles.textSelected : styles.textPlaceholder}>
-            {selected || text}
-          </Text>
-          {open ? (
-            <ChevronDown size={sizes.icon.md} color={colors.black} />
-          ) : (
-            <ChevronRight size={sizes.icon.md} color={colors.black} />
-          )}
-        </View>
-      </TouchableOpacity>
+          <View
+            style={[
+              styles.trigger,
+              open ? styles.triggerOpen : styles.triggerClosed,
+              disabled && styles.triggerDisabled,
+            ]}
+          >
+            <Text
+              style={[
+                selected ? styles.textSelected : styles.textPlaceholder,
+                disabled && styles.textDisabled,
+              ]}
+            >
+              {selected || placeholder || text}
+            </Text>
+            {open ? (
+              <ChevronDown
+                size={sizes.icon.md}
+                color={disabled ? colors.gray[400] : colors.black}
+              />
+            ) : (
+              <ChevronRight
+                size={sizes.icon.md}
+                color={disabled ? colors.gray[400] : colors.black}
+              />
+            )}
+          </View>
+        </TouchableOpacity>
 
-      {open && (
-        <View style={styles.dropdown}>
-          {options.map((option, index) => {
-            const isSelected = option === selected;
-            const isFirst = index === 0;
-            const isLast = index === options.length - 1;
+        {open && (
+          <View style={styles.dropdown}>
+            <ScrollView
+              style={styles.scrollView}
+              showsVerticalScrollIndicator={true}
+              nestedScrollEnabled={true}
+            >
+              {options.map((option, index) => {
+                const isSelected = option === selected;
+                const isFirst = index === 0;
+                const isLast = index === options.length - 1;
 
-            return (
-              <Pressable
-                key={option}
-                onPress={() => {
-                  onSelect(option);
-                  setOpen(false);
-                }}
-              >
-                <View
-                  style={[
-                    styles.option,
-                    !isFirst && styles.optionBorderTop,
-                    isSelected
-                      ? styles.optionSelected
-                      : styles.optionUnselected,
-                    isFirst && styles.optionRoundedTop,
-                    isLast && styles.optionRoundedBottom,
-                  ]}
-                >
-                  <Text>{option}</Text>
-                </View>
-              </Pressable>
-            );
-          })}
-        </View>
-      )}
+                return (
+                  <Pressable
+                    key={option}
+                    onPress={() => {
+                      onSelect(option);
+                      setOpen(false);
+                    }}
+                  >
+                    <View
+                      style={[
+                        styles.option,
+                        !isFirst && styles.optionBorderTop,
+                        isSelected
+                          ? styles.optionSelected
+                          : styles.optionUnselected,
+                        isFirst && styles.optionRoundedTop,
+                        isLast && styles.optionRoundedBottom,
+                      ]}
+                    >
+                      <Text>{option}</Text>
+                    </View>
+                  </Pressable>
+                );
+              })}
+            </ScrollView>
+          </View>
+        )}
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  wrapper: {
+    width: "100%",
+  },
   container: {
-    position: "relative",
     width: "100%",
     borderRadius: sizes.borderRadius.md,
   },
@@ -108,10 +136,17 @@ const styles = StyleSheet.create({
   triggerClosed: {
     borderColor: colors.gray[400],
   },
+  triggerDisabled: {
+    backgroundColor: colors.gray[200],
+    borderColor: colors.gray[300],
+  },
   textSelected: {
     color: colors.gray[800],
   },
   textPlaceholder: {
+    color: colors.gray[400],
+  },
+  textDisabled: {
     color: colors.gray[400],
   },
   dropdown: {
@@ -120,10 +155,15 @@ const styles = StyleSheet.create({
     marginTop: sizes.spacing.md,
     width: "100%",
     backgroundColor: colors.white[400],
-    zIndex: 50,
-    overflow: "hidden",
+    zIndex: 1001,
     top: "100%",
     borderRadius: sizes.borderRadius.md,
+    borderWidth: 1,
+    borderColor: colors.gray[400],
+    overflow: "hidden",
+  },
+  scrollView: {
+    maxHeight: 200,
   },
   option: {
     paddingHorizontal: sizes.spacing.md,
@@ -134,7 +174,7 @@ const styles = StyleSheet.create({
     borderTopColor: colors.gray[400],
   },
   optionSelected: {
-    backgroundColor: colors.gray[300],
+    backgroundColor: colors.gray[200],
   },
   optionUnselected: {
     backgroundColor: colors.white[400],

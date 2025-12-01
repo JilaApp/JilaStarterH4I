@@ -1,6 +1,9 @@
 import type React from "react";
+import { JobType, LocationType, JobStatus, Jobs } from "@prisma/client";
 
 export { VideoTopic, SocialServiceCategory } from "@prisma/client";
+
+export type FullJobType = Jobs;
 
 export type FormInputState = "default" | "error" | "pending" | "complete";
 
@@ -10,7 +13,7 @@ export type UploadedFile = {
 };
 
 export interface DataRow {
-  id: number | string;
+  id: number;
   [key: string]: unknown;
 }
 
@@ -41,4 +44,23 @@ export interface JobFilters {
   minSalary?: number;
   maxSalary?: number;
   locationSearch?: string;
+}
+
+export interface JobData {
+  id: number;
+  titleEnglish: string;
+  titleQanjobal: string;
+  companyName: string;
+  businessContactEmail: string;
+  jobType: JobType;
+  acceptedLanguages: string[];
+  locationType: LocationType;
+  city: string;
+  state: string;
+  url: string;
+  salary: number;
+  expirationDate: Date;
+  descriptionEnglish: string;
+  descriptionQanjobal: string;
+  status: JobStatus;
 }
