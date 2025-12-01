@@ -14,6 +14,7 @@ import {
   validateRequired,
   validateEmail,
   validateDropdownIndex,
+  validateNumber,
 } from "@/lib/validators";
 import SubmitButton from "@/components/ui/SubmitButton";
 import { US_STATES } from "@/lib/constants";
@@ -85,6 +86,7 @@ export default function JobRequestPage() {
       companyName: validateRequired,
       jobTypeIndex: validateDropdownIndex,
       applicationLink: validateRequired,
+      salary: fields.salary.value ? validateNumber : undefined,
     };
 
     const isValid = validateAllFields(validationRules);
