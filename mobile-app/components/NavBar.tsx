@@ -3,10 +3,12 @@ import { Pressable, View, StyleSheet } from "react-native";
 import { House, Briefcase, BookOpen } from "lucide-react-native";
 import { colors } from "@/colors";
 import { sizes } from "@/constants/sizes";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function NavBar() {
   const router = useRouter();
   const pathname = usePathname();
+  const insets = useSafeAreaInsets();
 
   const handleHomePress = () => {
     if (pathname !== "/") {
@@ -27,7 +29,7 @@ export default function NavBar() {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingBottom: insets.bottom }]}>
       <Pressable
         hitSlop={{ top: 50, bottom: 50, left: 50, right: 50 }}
         onPress={handleJobPress}
