@@ -102,7 +102,7 @@ export default function VideoEditModal({
 
       setSaveStatus("idle");
     }
-  }, [isOpen, videoData?.id]);
+  }, [isOpen, videoData, setFieldValue]);
 
   const { handleLinkChange, handleAddLink, handleRemoveLink } = useVideoLinks(
     fields.videoLinks.value,
