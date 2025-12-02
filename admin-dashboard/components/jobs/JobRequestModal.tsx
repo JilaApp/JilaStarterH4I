@@ -375,14 +375,14 @@ export default function JobRequestModal({
                 <Button
                   onClick={handleDeny}
                   text="Deny"
-                  defaultClassName="w-[141px] h-[60px] bg-error-200 text-error-400 rounded-[10px] components-text"
+                  defaultClassName="w-[141px] h-[60px] bg-error-200 text-type-400 rounded-[10px] font-semibold text-[18px]"
                   hoverClassName="hover:bg-error-300"
                 />
                 <Button
                   onClick={handleApprove}
                   text="Approve"
-                  defaultClassName="w-[141px] h-[60px] bg-green-200 text-green-400 rounded-[10px] components-text"
-                  hoverClassName="hover:bg-green-300"
+                  defaultClassName="w-[141px] h-[60px] bg-green-300 text-type-400 rounded-[10px] font-semibold text-[18px]"
+                  hoverClassName="hover:bg-green-400"
                 />
               </div>
             ) : null
