@@ -51,8 +51,8 @@ export default function VideoEditModal({
   isEditing = true,
   videoData,
 }: VideoEditModalProps) {
-  const { fields, setFieldValue, setFieldError, resetForm, validateAllFields } =
-    useForm({
+  const initialFormConfig = useMemo(
+    () => ({
       englishTitle: createField(""),
       qanjobalTitle: createField(""),
       videoLinks: createField<string[]>([""]),
@@ -60,7 +60,12 @@ export default function VideoEditModal({
       qanjobalDescription: createField(""),
       dropdownIndex: createField<number | undefined>(undefined),
       audioFile: createField<File | undefined>(undefined),
-    });
+    }),
+    [],
+  );
+
+  const { fields, setFieldValue, setFieldError, resetForm, validateAllFields } =
+    useForm(initialFormConfig);
 
   const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
   const [clearExistingFile, setClearExistingFile] = useState(false);
@@ -102,7 +107,8 @@ export default function VideoEditModal({
 
       setSaveStatus("idle");
     }
-  }, [isOpen, videoData, setFieldValue]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen, videoData]);
 
   const { handleLinkChange, handleAddLink, handleRemoveLink } = useVideoLinks(
     fields.videoLinks.value,

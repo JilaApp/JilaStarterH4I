@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useMemo } from "react";
 import { X, Pencil } from "lucide-react";
 import FormField from "@/components/forms/FormField";
 import { TextInput } from "@/components/ui/Input";
@@ -44,8 +44,8 @@ export default function JobRequestModal({
 }: JobRequestModalProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [error, setError] = useState("");
-  const { fields, setFieldValue, setFieldError, resetForm, validateAllFields } =
-    useForm({
+  const initialFormConfig = useMemo(
+    () => ({
       jobTitleEnglish: createField(""),
       jobTitleQanjobal: createField(""),
       companyName: createField(""),
@@ -53,7 +53,12 @@ export default function JobRequestModal({
       jobTypeIndex: createField<number | undefined>(undefined),
       acceptedLanguages: createField<string[]>([]),
       locationTypeIndex: createField<number | undefined>(undefined),
-    });
+    }),
+    [],
+  );
+
+  const { fields, setFieldValue, setFieldError, resetForm, validateAllFields } =
+    useForm(initialFormConfig);
 
   const [isSaving, setIsSaving] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
@@ -93,7 +98,8 @@ export default function JobRequestModal({
 
       setIsEditing(false);
     }
-  }, [isOpen, jobData, setFieldValue]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen, jobData]);
 
   useModalOverflow(isOpen);
 

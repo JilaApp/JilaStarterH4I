@@ -54,8 +54,8 @@ export default function SocialServiceEditModal({
   isEditing = true,
   serviceData,
 }: SocialServiceEditModalProps) {
-  const { fields, setFieldValue, setFieldError, resetForm, validateAllFields } =
-    useForm({
+  const initialFormConfig = useMemo(
+    () => ({
       englishTitle: createField(""),
       qanjobalTitle: createField(""),
       titleFile: createField<File | undefined>(undefined),
@@ -68,7 +68,12 @@ export default function SocialServiceEditModal({
       englishDescription: createField(""),
       qanjobalDescription: createField(""),
       descriptionFile: createField<File | undefined>(undefined),
-    });
+    }),
+    [],
+  );
+
+  const { fields, setFieldValue, setFieldError, resetForm, validateAllFields } =
+    useForm(initialFormConfig);
 
   const [clearExistingTitleFile, setClearExistingTitleFile] = useState(false);
   const [clearExistingDescriptionFile, setClearExistingDescriptionFile] =
@@ -144,7 +149,8 @@ export default function SocialServiceEditModal({
       );
       setFieldValue("topicIndex", topicIndex !== -1 ? topicIndex : undefined);
     }
-  }, [isOpen, serviceData, setFieldValue]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen, serviceData]);
 
   const handleTitleFileChange = (file: File) => {
     setFieldValue("titleFile", file);

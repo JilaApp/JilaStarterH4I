@@ -48,8 +48,8 @@ export default function JobPostingEditModal({
   isEditing = true,
   jobData,
 }: JobPostingEditModalProps) {
-  const { fields, setFieldValue, setFieldError, resetForm, validateAllFields } =
-    useForm({
+  const initialFormConfig = useMemo(
+    () => ({
       jobTitleEnglish: createField(""),
       jobTitleQanjobal: createField(""),
       companyName: createField(""),
@@ -64,7 +64,12 @@ export default function JobPostingEditModal({
       expirationDate: createField(""),
       descriptionEnglish: createField(""),
       descriptionQanjobal: createField(""),
-    });
+    }),
+    [],
+  );
+
+  const { fields, setFieldValue, setFieldError, resetForm, validateAllFields } =
+    useForm(initialFormConfig);
 
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState("");
@@ -127,7 +132,8 @@ export default function JobPostingEditModal({
         resetForm();
       }
     }
-  }, [isOpen, jobData, setFieldValue, resetForm]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen, jobData]);
 
   useModalOverflow(isOpen);
 
