@@ -48,6 +48,7 @@ export default function BuilProfile() {
             <Text style={styles.buttonText}>Onboarding Page</Text>
           </Link>
           {/* Example usage of Stepper and Button components */}
+
           <View style={styles.exampleContainer}>
             <View style={styles.selectContainer}>
                 <Select
@@ -57,9 +58,14 @@ export default function BuilProfile() {
                 />
             </View>
             <Toggle />
+
+
+
+
+            
             <Button text="Continue" onPress={handleContinue} />
             <Stepper totalSteps={4} currentStep={currentStep} />
-          </View> */}
+          </View>
         </View>
       </DisplayBox>
     </Background>
