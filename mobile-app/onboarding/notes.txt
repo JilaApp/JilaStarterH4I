@@ -1,0 +1,1 @@
+how to use style sheets to make everything center aligned/styling consistent across devices

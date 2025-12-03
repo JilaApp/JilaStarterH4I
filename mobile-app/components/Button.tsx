@@ -98,7 +98,11 @@ export function Button({
     borderColor: buttonStyle.borderColor,
     paddingHorizontal: buttonStyle.paddingHorizontal,
     paddingVertical: buttonStyle.paddingVertical,
+
+    width: buttonStyle.width,
+    height: buttonStyle.height,
   };
+
 
   const textStyle: any = {
     color: buttonStyle.textColor,

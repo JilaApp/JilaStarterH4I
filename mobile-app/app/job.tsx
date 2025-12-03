@@ -24,6 +24,9 @@ export default function JobDashboard() {
           <Link path="/dev">
             <Text style={styles.buttonText}>Dev Page</Text>
           </Link>
+          <Link path="/onboarding">
+            <Text style={styles.buttonText}>Onboarding Page</Text>
+          </Link>
           {/* Example usage of Stepper and Button components */}
           <View style={styles.exampleContainer}>
             <Button text="Continue" onPress={handleContinue} />
