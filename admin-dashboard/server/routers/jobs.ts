@@ -259,49 +259,6 @@ async function getPendingJobRequests() {
   }
 }
 
-async function getReviewedJobRequests() {
-  try {
-    const jobs = await prisma.jobs.findMany({
-      where: {
-        status: {
-          in: [JobStatus.ACTIVE, JobStatus.ARCHIVED],
-        },
-      },
-      select: {
-        id: true,
-        titleEnglish: true,
-        titleQanjobal: true,
-        companyName: true,
-        businessContactEmail: true,
-        jobType: true,
-        acceptedLanguages: true,
-        locationType: true,
-        city: true,
-        state: true,
-        url: true,
-        salary: true,
-        expirationDate: true,
-        descriptionEnglish: true,
-        descriptionQanjobal: true,
-        status: true,
-        createdAt: true,
-        updatedAt: true,
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
-    return jobs;
-  } catch (error) {
-    logger.error("[getReviewedJobRequests] Database error", error);
-
-    throw new TRPCError({
-      code: "INTERNAL_SERVER_ERROR",
-      message: "Failed to fetch reviewed job requests. Please try again.",
-    });
-  }
-}
-
 async function approveJobRequest(input: ApproveJobRequestInput) {
   try {
     const existing = await prisma.jobs.findUnique({
@@ -440,7 +397,6 @@ export const jobsRouter = router({
     .mutation(({ input }) => addJob(input)),
   getAllJobs: publicProcedure.query(getAllJobs),
   getPendingJobRequests: publicProcedure.query(getPendingJobRequests),
-  getReviewedJobRequests: publicProcedure.query(getReviewedJobRequests),
   removeJob: publicProcedure
     .input(removeJobInput)
     .mutation(({ input }) => removeJob(input)),

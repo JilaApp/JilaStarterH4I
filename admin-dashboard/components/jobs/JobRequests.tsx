@@ -7,7 +7,6 @@ import SearchBar from "@/components/forms/SearchBar";
 import { trpc } from "@/lib/trpc";
 import { Jobs, JobStatus } from "@prisma/client";
 import Link from "@/components/shared/Link";
-import Tabs from "@/components/shared/Tabs";
 import JobRequestBulkBar from "@/components/jobs/JobRequestBulkBar";
 import JobRequestModal from "@/components/jobs/JobRequestModal";
 import { useNotification } from "@/hooks/useNotification";
@@ -19,12 +18,12 @@ interface JobRequestTableData extends DataRow {
   position: string;
   dateSubmitted: string;
   company: string;
+  businessContactEmail: string;
   link: string;
   status: JobStatus;
 }
 
 export default function JobRequests() {
-  const [activeTabIndex, setActiveTabIndex] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -42,19 +41,9 @@ export default function JobRequests() {
     refetchOnWindowFocus: false,
   });
 
-  const {
-    data: reviewedJobsData,
-    isLoading: reviewedJobsLoading,
-    refetch: refetchReviewedJobs,
-  } = trpc.jobs.getReviewedJobRequests.useQuery(undefined, {
-    refetchOnMount: "always",
-    refetchOnWindowFocus: false,
-  });
-
   const approveJobMutation = trpc.jobs.approveJobRequest.useMutation({
     onSuccess: () => {
       refetchPendingJobs();
-      refetchReviewedJobs();
       setSelectedRows([]);
       showNotification("Job postings approved", "success");
     },
@@ -70,7 +59,6 @@ export default function JobRequests() {
   const denyJobMutation = trpc.jobs.denyJobRequest.useMutation({
     onSuccess: () => {
       refetchPendingJobs();
-      refetchReviewedJobs();
       setSelectedRows([]);
       showNotification("Job posting deleted", "error");
     },
@@ -86,7 +74,6 @@ export default function JobRequests() {
   const bulkApproveJobsMutation = trpc.jobs.bulkApproveJobRequests.useMutation({
     onSuccess: () => {
       refetchPendingJobs();
-      refetchReviewedJobs();
       setSelectedRows([]);
       showNotification("Job postings approved", "success");
     },
@@ -105,7 +92,6 @@ export default function JobRequests() {
   const bulkDenyJobsMutation = trpc.jobs.bulkDenyJobRequests.useMutation({
     onSuccess: () => {
       refetchPendingJobs();
-      refetchReviewedJobs();
       setSelectedRows([]);
       showNotification("Job posting deleted", "error");
     },
@@ -125,6 +111,7 @@ export default function JobRequests() {
     { header: "Position", accessorKey: "position" },
     { header: "Date submitted", accessorKey: "dateSubmitted" },
     { header: "Company", accessorKey: "company" },
+    { header: "Business contact email", accessorKey: "businessContactEmail" },
     {
       header: "Application link",
       accessorKey: "link",
@@ -160,6 +147,7 @@ export default function JobRequests() {
           position: job.titleEnglish,
           dateSubmitted: formatDate(job.createdAt),
           company: job.companyName,
+          businessContactEmail: job.businessContactEmail,
           link: job.url,
           status: job.status,
         }))
@@ -171,25 +159,6 @@ export default function JobRequests() {
     [pendingJobsData],
   );
 
-  const reviewedJobsResourcesData: JobRequestTableData[] = useMemo(
-    () =>
-      reviewedJobsData
-        ?.map((job) => ({
-          id: job.id,
-          position: job.titleEnglish,
-          dateSubmitted: formatDate(job.createdAt),
-          company: job.companyName,
-          link: job.url,
-          status: job.status,
-        }))
-        .sort(
-          (a, b) =>
-            new Date(b.dateSubmitted).getTime() -
-            new Date(a.dateSubmitted).getTime(),
-        ) || [],
-    [reviewedJobsData],
-  );
-
   const filteredPendingJobs = useMemo(
     () =>
       pendingJobsResourcesData.filter((item) =>
@@ -198,19 +167,8 @@ export default function JobRequests() {
     [pendingJobsResourcesData, searchQuery],
   );
 
-  const filteredReviewedJobs = useMemo(
-    () =>
-      reviewedJobsResourcesData.filter((item) =>
-        item.position.toLowerCase().includes(searchQuery.toLowerCase()),
-      ),
-    [reviewedJobsResourcesData, searchQuery],
-  );
-
   const handleJobRequestRowClick = (id: number) => {
-    const job =
-      activeTabIndex === 0
-        ? pendingJobsData?.find((j) => j.id === id)
-        : reviewedJobsData?.find((j) => j.id === id);
+    const job = pendingJobsData?.find((j) => j.id === id);
     if (job) {
       setSelectedJobRequest({
         ...job,
@@ -228,22 +186,6 @@ export default function JobRequests() {
 
   const handleJobRequestDeny = (id: number) => {
     denyJobMutation.mutate({ id });
-  };
-
-  const handleJobRequestEdit = (id: number) => {
-    const job =
-      activeTabIndex === 0
-        ? pendingJobsData?.find((j) => j.id === id)
-        : reviewedJobsData?.find((j) => j.id === id);
-    if (job) {
-      setSelectedJobRequest({
-        ...job,
-        expirationDate: new Date(job.expirationDate),
-        createdAt: new Date(job.createdAt),
-        updatedAt: new Date(job.updatedAt),
-      } as FullJobType);
-      setIsModalOpen(true);
-    }
   };
 
   const handleBulkApprove = () => {
@@ -266,51 +208,6 @@ export default function JobRequests() {
     }
   };
 
-  const tabs = [
-    {
-      header: {
-        logo: <></>,
-        text: "Pending review",
-      },
-      content: pendingJobsLoading ? (
-        <div className="flex items-center justify-center h-full">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-jila-400"></div>
-        </div>
-      ) : (
-        <Table
-          data={filteredPendingJobs}
-          columns={jobRequestColumns}
-          handleApprove={handleJobRequestApprove}
-          handleDeny={handleJobRequestDeny}
-          handleRowClick={handleJobRequestRowClick}
-          selectedRows={selectedRows}
-          onSelectedRowsChange={setSelectedRows}
-        />
-      ),
-    },
-    {
-      header: {
-        logo: <></>,
-        text: "Reviewed",
-      },
-      content: reviewedJobsLoading ? (
-        <div className="flex items-center justify-center h-full">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-jila-400"></div>
-        </div>
-      ) : (
-        <Table
-          data={filteredReviewedJobs}
-          columns={jobRequestColumns}
-          handleEdit={handleJobRequestEdit}
-          handleDelete={handleJobRequestDeny}
-          handleRowClick={handleJobRequestRowClick}
-          selectedRows={selectedRows}
-          onSelectedRowsChange={setSelectedRows}
-        />
-      ),
-    },
-  ];
-
   return (
     <div className="flex h-full w-full gap-0 relative">
       <div className="flex-1 flex flex-col gap-[5px]">
@@ -318,32 +215,35 @@ export default function JobRequests() {
           <SearchBar
             value={searchQuery}
             onChange={setSearchQuery}
-            placeholder={
-              activeTabIndex === 0
-                ? "Search pending requests"
-                : "Search reviewed requests"
-            }
+            placeholder="Search pending requests"
             defaultClassName="w-[404px] h-[46px]"
           />
         </div>
 
-        <Tabs
-          tabs={tabs}
-          activeIndex={activeTabIndex}
-          onTabChange={(index) => {
-            setActiveTabIndex(index);
-            setSelectedRows([]);
-          }}
-        />
+        <div className="bg-white rounded-[24px] shadow-[0px_4px_80px_0px_rgba(109,15,0,0.1)] overflow-hidden flex flex-col pb-[40px] pt-[25px] h-full">
+          {pendingJobsLoading ? (
+            <div className="flex items-center justify-center h-full">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-jila-400"></div>
+            </div>
+          ) : (
+            <Table
+              data={filteredPendingJobs}
+              columns={jobRequestColumns}
+              handleApprove={handleJobRequestApprove}
+              handleDeny={handleJobRequestDeny}
+              handleRowClick={handleJobRequestRowClick}
+              selectedRows={selectedRows}
+              onSelectedRowsChange={setSelectedRows}
+            />
+          )}
+        </div>
       </div>
 
-      {activeTabIndex === 0 && (
-        <JobRequestBulkBar
-          selectedCount={selectedRows.length}
-          onApprove={handleBulkApprove}
-          onDeny={handleBulkDeny}
-        />
-      )}
+      <JobRequestBulkBar
+        selectedCount={selectedRows.length}
+        onApprove={handleBulkApprove}
+        onDeny={handleBulkDeny}
+      />
 
       <JobRequestModal
         isOpen={isModalOpen}
@@ -352,7 +252,6 @@ export default function JobRequests() {
         onDeny={handleModalDeny}
         onUpdateComplete={() => {
           refetchPendingJobs();
-          refetchReviewedJobs();
         }}
         jobData={selectedJobRequest}
       />
