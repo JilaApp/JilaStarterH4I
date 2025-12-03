@@ -10,7 +10,7 @@ export const config = {
   },
 };
 
-export default async function audioUpload(
+export default async function audioUploadRouter(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {

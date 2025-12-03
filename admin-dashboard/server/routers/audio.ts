@@ -16,7 +16,7 @@ export async function streamToBuffer(stream: Readable): Promise<Buffer> {
 }
 
 
-export default async function audio(req: NextApiRequest, res: NextApiResponse) {
+export default async function audioRouter(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") {
     return res.status(405).json({ message: "Method Not Allowed" });
   }
