@@ -1,5 +1,5 @@
-import React, { ReactNode, useMemo } from "react";
-import { View } from "react-native";
+import React from "react";
+import { View, Pressable, StyleSheet } from "react-native";
 import Text from "./JilaText";
 import { CircleDollarSign, MapPin } from "lucide-react-native";
 import { colors } from "@/colors";
@@ -9,6 +9,7 @@ interface JobProps {
   company: string;
   location: string;
   salary: string;
+  onPress?: () => void;
 }
 
 export default function JobCard({
@@ -16,51 +17,52 @@ export default function JobCard({
   company,
   location,
   salary,
+  onPress,
 }: JobProps) {
   return (
-    <View
-      style={{
-        borderColor: colors.gray[200],
-        borderRadius: 18,
-        borderWidth: 1,
-        padding: 15,
-      }}
-    >
-      <Text style={{ fontSize: 28, fontWeight: "600" }}>{title}</Text>
-      <Text
-        style={{
-          color: colors.jila[400],
-          fontWeight: "700",
-          marginBottom: 4,
-          fontSize: 16,
-        }}
-      >
-        {company}
-      </Text>
-      <View
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          alignItems: "center",
-          gap: 3,
-        }}
-      >
+    <Pressable style={styles.card} onPress={onPress}>
+      <Text style={styles.title}>{title}</Text>
+
+      <Text style={styles.company}>{company}</Text>
+
+      <View style={styles.row}>
         <MapPin color={colors.gray[400]} />
-        <Text style={{ color: colors.gray[400], fontSize: 16 }}>
-          {location}
-        </Text>
+        <Text style={styles.subText}>{location}</Text>
       </View>
-      <View
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          alignItems: "center",
-          gap: 3,
-        }}
-      >
+
+      <View style={styles.row}>
         <CircleDollarSign color={colors.gray[400]} />
-        <Text style={{ color: colors.gray[400], fontSize: 16 }}>{salary}</Text>
+        <Text style={styles.subText}>{salary}</Text>
       </View>
-    </View>
+    </Pressable>
   );
 }
+
+const styles = StyleSheet.create({
+  card: {
+    borderColor: colors.gray[200],
+    borderRadius: 18,
+    borderWidth: 1,
+    padding: 15,
+    backgroundColor: colors.white[400],
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: "600",
+  },
+  company: {
+    color: colors.jila[400],
+    fontWeight: "700",
+    marginBottom: 4,
+    fontSize: 16,
+  },
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 3,
+  },
+  subText: {
+    color: colors.gray[400],
+    fontSize: 16,
+  },
+});

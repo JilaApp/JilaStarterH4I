@@ -206,6 +206,7 @@ export default function DevPage() {
             company="apple"
             salary="100000"
             location="champaign"
+            onPress={() => console.log("pressed job card")}
           />
           <Text style={styles.sectionTitle}>
             VideoDropdown - Multiple Videos (Cream)
