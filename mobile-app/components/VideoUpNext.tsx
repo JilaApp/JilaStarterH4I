@@ -1,8 +1,9 @@
 import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
 import { colors } from "@/colors";
+import { formatDuration } from "@/utils/formatters";
+import { sizes } from "@/constants/sizes";
 import { useRouter } from "expo-router";
 import { CirclePlay } from "lucide-react-native";
-import { sizes } from "@/constants/sizes";
 
 type VideoUpNextProps = {
   videoUrl: string;
@@ -41,14 +42,6 @@ export default function VideoUpNext({
       </TouchableOpacity>
     </View>
   );
-}
-
-function formatDuration(duration: number) {
-  const mins = Math.floor(duration / 60)
-    .toString()
-    .padStart(2, "0");
-  const secs = (duration % 60).toString().padStart(2, "0");
-  return `${mins}:${secs}`;
 }
 
 const styles = StyleSheet.create({
