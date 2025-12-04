@@ -125,6 +125,11 @@ export default function InviteSignUpPage() {
       if (result.status === "complete") {
         await setActive({ session: result.createdSessionId });
         await finalizeSignUpMutation.mutateAsync();
+
+        if (user) {
+          await user.reload();
+        }
+
         router.push("/dashboard");
       } else {
         setError("Could not complete your sign up. Please try again.");
