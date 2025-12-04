@@ -56,23 +56,71 @@ export default function SocialServiceForm() {
 
     if (!isValid) return;
 
-    try {
-      await addSocialServiceMutation.mutateAsync({
-        title: fields.englishTitle.value,
-        category: SOCIAL_SERVICE_CATEGORY_DISPLAY_OPTIONS[
-          fields.topicIndex.value!
-        ].toUpperCase() as SocialServiceCategory,
-        phone_number: fields.phoneNumber.value,
-        address: fields.addressLine.value || undefined,
-        description: fields.englishDescription.value || undefined,
-        url: fields.link.value || undefined,
-      });
+    const filesToProcess: Array<{ file: File; type: "title" | "description" }> =
+      [];
 
-      showNotification("Social service submitted successfully!");
-      resetForm();
-    } catch (err) {
-      logger.error("[submitForm] Failed to submit social service", err);
-      showNotification("Error submitting social service.");
+    if (fields.titleFile.value) {
+      filesToProcess.push({ file: fields.titleFile.value, type: "title" });
+    }
+    if (fields.descriptionFile.value) {
+      filesToProcess.push({
+        file: fields.descriptionFile.value,
+        type: "description",
+      });
+    }
+
+    const mutationPayload: any = {
+      title: fields.englishTitle.value,
+      category: SOCIAL_SERVICE_CATEGORY_DISPLAY_OPTIONS[
+        fields.topicIndex.value!
+      ].toUpperCase() as SocialServiceCategory,
+      phone_number: fields.phoneNumber.value,
+      address: fields.addressLine.value || undefined,
+      description: fields.englishDescription.value || undefined,
+      url: fields.link.value || undefined,
+    };
+
+    if (filesToProcess.length > 0) {
+      let processedCount = 0;
+
+      filesToProcess.forEach(({ file, type }) => {
+        const reader = new FileReader();
+        reader.onload = async () => {
+          const base64Data = reader.result?.toString().split(",")[1];
+
+          if (type === "title") {
+            mutationPayload.titleAudioFile = base64Data;
+            mutationPayload.titleAudioFilename = file.name;
+            mutationPayload.titleAudioFileSize = file.size;
+          } else {
+            mutationPayload.descriptionAudioFile = base64Data;
+            mutationPayload.descriptionAudioFilename = file.name;
+            mutationPayload.descriptionAudioFileSize = file.size;
+          }
+
+          processedCount++;
+          if (processedCount === filesToProcess.length) {
+            try {
+              await addSocialServiceMutation.mutateAsync(mutationPayload);
+              showNotification("Social service submitted successfully!");
+              resetForm();
+            } catch (err) {
+              logger.error("[submitForm] Failed to submit social service", err);
+              showNotification("Error submitting social service.");
+            }
+          }
+        };
+        reader.readAsDataURL(file);
+      });
+    } else {
+      try {
+        await addSocialServiceMutation.mutateAsync(mutationPayload);
+        showNotification("Social service submitted successfully!");
+        resetForm();
+      } catch (err) {
+        logger.error("[submitForm] Failed to submit social service", err);
+        showNotification("Error submitting social service.");
+      }
     }
   };
 

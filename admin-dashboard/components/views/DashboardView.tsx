@@ -21,7 +21,7 @@ import SocialServiceEditModal from "@/components/social-services/SocialServiceMo
 import { useNotification } from "@/hooks/useNotification";
 import { logger } from "@/lib/logger";
 
-type FullVideoType = Omit<Videos, "audioFile">;
+type FullVideoType = Omit<Videos, "audioFileS3Key">;
 
 interface VideoResourceData extends DataRow {
   id: number;

@@ -303,9 +303,9 @@ async function main() {
       await prisma.videos.create({
         data: {
           ...video,
-          audioFile: audioBuffer,
-          audioFilename: "sample.mp3",
-          audioFileSize: audioBuffer.length,
+          audioFileS3Key: null,
+          audioFilename: null,
+          audioFileSize: null,
         },
       });
     }

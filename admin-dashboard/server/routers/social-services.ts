@@ -4,6 +4,7 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { SocialServiceCategory } from "@/lib/types";
 import { logger } from "@/lib/logger";
+import { uploadAudioToS3, deleteAudioFromS3 } from "@/lib/s3Utils";
 
 const addSocialServiceInput = z.object({
   title: z.string(),
@@ -58,6 +59,26 @@ async function addSocialService(input: AddSocialServiceInput) {
       });
     }
 
+    // Upload audio files to S3 if provided
+    let titleAudioS3Key: string | undefined;
+    let descriptionAudioS3Key: string | undefined;
+
+    if (input.titleAudioFile && input.titleAudioFilename) {
+      titleAudioS3Key = await uploadAudioToS3(
+        input.titleAudioFile,
+        input.titleAudioFilename,
+        "social-services/titles",
+      );
+    }
+
+    if (input.descriptionAudioFile && input.descriptionAudioFilename) {
+      descriptionAudioS3Key = await uploadAudioToS3(
+        input.descriptionAudioFile,
+        input.descriptionAudioFilename,
+        "social-services/descriptions",
+      );
+    }
+
     await prisma.socialServices.create({
       data: {
         title: input.title,
@@ -66,6 +87,12 @@ async function addSocialService(input: AddSocialServiceInput) {
         address: input.address,
         description: input.description,
         url: input.url,
+        titleAudioFilename: input.titleAudioFilename,
+        titleAudioFileSize: input.titleAudioFileSize,
+        titleAudioFileS3Key: titleAudioS3Key,
+        descriptionAudioFilename: input.descriptionAudioFilename,
+        descriptionAudioFileSize: input.descriptionAudioFileSize,
+        descriptionAudioFileS3Key: descriptionAudioS3Key,
       },
     });
 
@@ -95,6 +122,14 @@ async function removeSocialService(input: RemoveSocialServiceInput) {
         code: "NOT_FOUND",
         message: "Resource not found",
       });
+    }
+
+    // Delete audio files from S3 if they exist
+    if (existing.titleAudioFileS3Key) {
+      await deleteAudioFromS3(existing.titleAudioFileS3Key);
+    }
+    if (existing.descriptionAudioFileS3Key) {
+      await deleteAudioFromS3(existing.descriptionAudioFileS3Key);
     }
 
     await prisma.socialServices.delete({
@@ -131,7 +166,7 @@ async function editSocialService(input: EditSocialServiceInput) {
       });
     }
 
-    const removing_undefined_vals = {
+    const dataToUpdate: Record<string, any> = {
       title: input.title,
       category: input.category,
       phone_number: input.phone_number,
@@ -140,10 +175,66 @@ async function editSocialService(input: EditSocialServiceInput) {
       url: input.url,
     };
 
+    // Handle title audio file
+    if (input.titleAudioFile !== undefined) {
+      if (input.titleAudioFile === "") {
+        // Delete old file from S3
+        if (existing.titleAudioFileS3Key) {
+          await deleteAudioFromS3(existing.titleAudioFileS3Key);
+        }
+        dataToUpdate.titleAudioFileS3Key = null;
+        dataToUpdate.titleAudioFilename = null;
+        dataToUpdate.titleAudioFileSize = null;
+      } else {
+        // Upload new file to S3
+        const s3Key = await uploadAudioToS3(
+          input.titleAudioFile,
+          input.titleAudioFilename!,
+          "social-services/titles",
+        );
+
+        // Delete old file from S3
+        if (existing.titleAudioFileS3Key) {
+          await deleteAudioFromS3(existing.titleAudioFileS3Key);
+        }
+
+        dataToUpdate.titleAudioFileS3Key = s3Key;
+        dataToUpdate.titleAudioFilename = input.titleAudioFilename;
+        dataToUpdate.titleAudioFileSize = input.titleAudioFileSize;
+      }
+    }
+
+    // Handle description audio file
+    if (input.descriptionAudioFile !== undefined) {
+      if (input.descriptionAudioFile === "") {
+        // Delete old file from S3
+        if (existing.descriptionAudioFileS3Key) {
+          await deleteAudioFromS3(existing.descriptionAudioFileS3Key);
+        }
+        dataToUpdate.descriptionAudioFileS3Key = null;
+        dataToUpdate.descriptionAudioFilename = null;
+        dataToUpdate.descriptionAudioFileSize = null;
+      } else {
+        // Upload new file to S3
+        const s3Key = await uploadAudioToS3(
+          input.descriptionAudioFile,
+          input.descriptionAudioFilename!,
+          "social-services/descriptions",
+        );
+
+        // Delete old file from S3
+        if (existing.descriptionAudioFileS3Key) {
+          await deleteAudioFromS3(existing.descriptionAudioFileS3Key);
+        }
+
+        dataToUpdate.descriptionAudioFileS3Key = s3Key;
+        dataToUpdate.descriptionAudioFilename = input.descriptionAudioFilename;
+        dataToUpdate.descriptionAudioFileSize = input.descriptionAudioFileSize;
+      }
+    }
+
     const data = Object.fromEntries(
-      Object.entries(removing_undefined_vals).filter(
-        ([_, value]) => value !== undefined,
-      ),
+      Object.entries(dataToUpdate).filter(([_, value]) => value !== undefined),
     );
 
     await prisma.socialServices.update({

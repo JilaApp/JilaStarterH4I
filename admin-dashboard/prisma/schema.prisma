@@ -34,7 +34,7 @@ model Videos {
   id                  Int      @id @default(autoincrement())
   titleEnglish        String
   titleQanjobal       String
-  audioFile           Bytes?
+  audioFileS3Key      String?
   audioFilename       String?
   audioFileSize       Int?
   topic               VideoTopic
@@ -54,10 +54,10 @@ model SocialServices {
   url          String?               @unique
   titleAudioFilename String?
   titleAudioFileSize Int?
-  titleAudioFile String? // base64 encoded
+  titleAudioFileS3Key String?
   descriptionAudioFilename String?
   descriptionAudioFileSize Int?
-  descriptionAudioFile String?
+  descriptionAudioFileS3Key String?
 }
 
 model Jobs {
