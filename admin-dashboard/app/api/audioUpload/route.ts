@@ -1,6 +1,6 @@
-import type { NextApiRequest, NextApiResponse } from "next";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { bucket_name, s3_client } from "@/s3";
+import { NextRequest, NextResponse } from "next/server";
 
 export const config = {
   api: {
@@ -10,19 +10,16 @@ export const config = {
   },
 };
 
-export default async function audioUploadRouter(
-  req: NextApiRequest,
-  res: NextApiResponse,
+export async function POST(
+  req: NextRequest,
 ) {
-  if (req.method !== "POST") {
-    return res.status(405).json({ message: "Method Not Allowed" });
-  }
+
 
   try {
-    const { fileName, fileType, fileData } = req.body;
+    const { fileName, fileType, fileData } = await req.json();
 
     if (!fileData) {
-      return res.status(400).json({ message: "No file data provided" });
+      return NextResponse.json({ message: "No file data provided" }, {status: 400});
     }
 
     // Convert base64 data to buffer
@@ -38,17 +35,15 @@ export default async function audioUploadRouter(
       Bucket: bucket_name,
       Key: key,
       Body: fileBuffer,
-      ContentType: fileType || "audio/wav",
+      ContentType: fileType || "audio/mp3",
     };
 
     const data = await s3_client.send(new PutObjectCommand(uploadParams));
     // console.log("S3 upload response:", data);
 
-    return res.status(200).json({ success: true, key });
+    return NextResponse.json({success: true, key}, {status: 200});
   } catch (error) {
     console.error("Error uploading file to S3:", error);
-    return res
-      .status(500)
-      .json({ message: "Failed to upload audio file to S3" });
+    return NextResponse.json({message: "Failed to upload audio file to S3"}, {status: 500});
   }
 }

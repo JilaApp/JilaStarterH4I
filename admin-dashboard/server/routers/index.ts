@@ -4,8 +4,6 @@ import { videosRouter } from "./videos";
 import { socialServicesRouter } from "./social-services";
 import { userRouter } from "./user";
 import { jobsRouter } from "./jobs";
-import audio from "./audio";
-import audioUpload from "./audioUpload";
 
 export const appRouter = router({
   hello: helloRouter,
