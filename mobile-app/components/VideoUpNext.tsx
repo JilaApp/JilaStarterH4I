@@ -1,10 +1,4 @@
-import {
-  View,
-  TouchableOpacity,
-  Text,
-  StyleSheet,
-  Pressable,
-} from "react-native";
+import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
 import { colors } from "@/colors";
 import { useRouter } from "expo-router";
 import { CirclePlay } from "lucide-react-native";
@@ -29,16 +23,21 @@ export default function VideoUpNext({
 
   return (
     <View style={[styles.container, { backgroundColor: "cream" }]}>
-      <TouchableOpacity activeOpacity={0.7} style={styles.content}>
+      <TouchableOpacity
+        activeOpacity={0.7}
+        style={styles.content}
+        onPress={handlePress}
+      >
         <View style={styles.titleContainer}>
           <Text style={styles.title}>{title}</Text>
           <View style={styles.timer}>
             <Text style={styles.timerText}>{formatDuration(duration)}</Text>
           </View>
         </View>
-        <Pressable style={styles.playButtonContainer} onPress={handlePress}>
+
+        <View style={styles.playButtonContainer}>
           <CirclePlay size={24} color={colors.jila[400]} />
-        </Pressable>
+        </View>
       </TouchableOpacity>
     </View>
   );
