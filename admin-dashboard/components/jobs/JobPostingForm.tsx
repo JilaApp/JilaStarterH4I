@@ -49,7 +49,7 @@ export default function JobPostingForm({ onBack }: JobPostingFormProps = {}) {
     });
 
   const { showNotification, NotificationContainer } = useNotification();
-  const addJobMutation = trpc.jobs.addJob.useMutation();
+  const addJobMutation = trpc.jobs.addJobAsAdmin.useMutation();
 
   const submitForm = async () => {
     const isValid = validateAllFields({

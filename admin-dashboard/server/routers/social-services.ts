@@ -1,9 +1,18 @@
-import { router, publicProcedure } from "../trpc";
+import { router, protectedProcedure } from "../trpc";
 import prisma from "@/lib/prisma";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { SocialServiceCategory } from "@/lib/types";
 import { logger } from "@/lib/logger";
+import { clerkClient } from "@clerk/nextjs/server";
+
+const getUserCommunityOrgId = async (
+  userId: string,
+): Promise<string | null> => {
+  const client = await clerkClient();
+  const user = await client.users.getUser(userId);
+  return (user.publicMetadata?.communityOrgId as string) || null;
+};
 
 const addSocialServiceInput = z.object({
   title: z.string(),
@@ -44,7 +53,10 @@ type AddSocialServiceInput = z.infer<typeof addSocialServiceInput>;
 type RemoveSocialServiceInput = z.infer<typeof removeSocialServiceInput>;
 type EditSocialServiceInput = z.infer<typeof editSocialServiceInput>;
 
-async function addSocialService(input: AddSocialServiceInput) {
+async function addSocialService(
+  input: AddSocialServiceInput,
+  communityOrgId: string | null,
+) {
   try {
     const existing = await prisma.socialServices.findUnique({
       where: { phone_number: input.phone_number },
@@ -66,6 +78,7 @@ async function addSocialService(input: AddSocialServiceInput) {
         address: input.address,
         description: input.description,
         url: input.url,
+        communityOrgId: communityOrgId,
       },
     });
 
@@ -168,9 +181,11 @@ async function editSocialService(input: EditSocialServiceInput) {
   }
 }
 
-async function getAllSocialServices() {
+async function getAllSocialServices(communityOrgId: string | null) {
   try {
-    const services = await prisma.socialServices.findMany();
+    const services = await prisma.socialServices.findMany({
+      where: communityOrgId ? { communityOrgId } : undefined,
+    });
     return services;
   } catch (error) {
     logger.error("[getAllSocialServices] Database error", error);
@@ -183,14 +198,20 @@ async function getAllSocialServices() {
 }
 
 export const socialServicesRouter = router({
-  addSocialService: publicProcedure
+  addSocialService: protectedProcedure
     .input(addSocialServiceInput)
-    .mutation(({ input }) => addSocialService(input)),
-  getAllSocialServices: publicProcedure.query(getAllSocialServices),
-  removeSocialService: publicProcedure
+    .mutation(async ({ input, ctx }) => {
+      const communityOrgId = await getUserCommunityOrgId(ctx.auth.userId!);
+      return addSocialService(input, communityOrgId);
+    }),
+  getAllSocialServices: protectedProcedure.query(async ({ ctx }) => {
+    const communityOrgId = await getUserCommunityOrgId(ctx.auth.userId!);
+    return getAllSocialServices(communityOrgId);
+  }),
+  removeSocialService: protectedProcedure
     .input(removeSocialServiceInput)
     .mutation(({ input }) => removeSocialService(input)),
-  editSocialService: publicProcedure
+  editSocialService: protectedProcedure
     .input(editSocialServiceInput)
     .mutation(({ input }) => editSocialService(input)),
 });

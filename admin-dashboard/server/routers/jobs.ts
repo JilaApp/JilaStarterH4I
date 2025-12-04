@@ -1,9 +1,19 @@
-import { router, publicProcedure } from "../trpc";
+import { router, publicProcedure, protectedProcedure } from "../trpc";
 import prisma from "@/lib/prisma";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { JobType, LocationType, JobStatus } from "@prisma/client";
 import { logger } from "@/lib/logger";
+import { clerkClient } from "@clerk/nextjs/server";
+
+// Helper to get user's communityOrgId
+const getUserCommunityOrgId = async (
+  userId: string,
+): Promise<string | null> => {
+  const client = await clerkClient();
+  const user = await client.users.getUser(userId);
+  return (user.publicMetadata?.communityOrgId as string) || null;
+};
 
 const addJobInput = z.object({
   titleEnglish: z.string(),
@@ -21,6 +31,7 @@ const addJobInput = z.object({
   descriptionEnglish: z.string(),
   descriptionQanjobal: z.string(),
   status: z.nativeEnum(JobStatus).optional().default(JobStatus.ACTIVE),
+  communityOrgId: z.string().optional(), // For job requests submitted by businesses
 });
 
 const removeJobInput = z.object({
@@ -75,7 +86,7 @@ type BulkApproveJobRequestsInput = z.infer<typeof bulkApproveJobRequestsInput>;
 type BulkDenyJobRequestsInput = z.infer<typeof bulkDenyJobRequestsInput>;
 type MarkJobRequestsAsReadInput = z.infer<typeof markJobRequestsAsReadInput>;
 
-async function addJob(input: AddJobInput) {
+async function addJob(input: AddJobInput, communityOrgId?: string | null) {
   try {
     const existing = await prisma.jobs.findUnique({
       where: { url: input.url },
@@ -88,6 +99,9 @@ async function addJob(input: AddJobInput) {
         message: `Job with url ${input.url} already exists`,
       });
     }
+
+    // Use communityOrgId from input (for job requests) or from user context
+    const finalCommunityOrgId = input.communityOrgId || communityOrgId;
 
     await prisma.jobs.create({
       data: {
@@ -106,6 +120,7 @@ async function addJob(input: AddJobInput) {
         descriptionEnglish: input.descriptionEnglish,
         descriptionQanjobal: input.descriptionQanjobal,
         status: input.status || JobStatus.ACTIVE,
+        communityOrgId: finalCommunityOrgId || null,
       },
     });
   } catch (err: unknown) {
@@ -179,9 +194,10 @@ async function updateJob(input: UpdateJobInput) {
   }
 }
 
-async function getAllJobs() {
+async function getAllJobs(communityOrgId: string | null) {
   try {
     const jobs = await prisma.jobs.findMany({
+      where: communityOrgId ? { communityOrgId } : undefined,
       select: {
         id: true,
         titleEnglish: true,
@@ -201,6 +217,7 @@ async function getAllJobs() {
         status: true,
         createdAt: true,
         updatedAt: true,
+        communityOrgId: true,
       },
       orderBy: {
         createdAt: "desc",
@@ -217,11 +234,12 @@ async function getAllJobs() {
   }
 }
 
-async function getPendingJobRequests() {
+async function getPendingJobRequests(communityOrgId: string | null) {
   try {
     const jobs = await prisma.jobs.findMany({
       where: {
         status: JobStatus.PENDING,
+        ...(communityOrgId && { communityOrgId }),
       },
       select: {
         id: true,
@@ -243,6 +261,7 @@ async function getPendingJobRequests() {
         unread: true,
         createdAt: true,
         updatedAt: true,
+        communityOrgId: true,
       },
       orderBy: {
         createdAt: "desc",
@@ -392,30 +411,49 @@ async function markJobRequestsAsRead(input: MarkJobRequestsAsReadInput) {
 }
 
 export const jobsRouter = router({
+  // addJob is public - for businesses submitting job requests via the public form
+  // communityOrgId should be passed in the input from the URL query param
   addJob: publicProcedure
     .input(addJobInput)
     .mutation(({ input }) => addJob(input)),
-  getAllJobs: publicProcedure.query(getAllJobs),
-  getPendingJobRequests: publicProcedure.query(getPendingJobRequests),
-  removeJob: publicProcedure
+
+  // addJobAsAdmin - for CommunityOrgAdmins creating jobs from the dashboard
+  // Automatically attaches their communityOrgId
+  addJobAsAdmin: protectedProcedure
+    .input(addJobInput)
+    .mutation(async ({ input, ctx }) => {
+      const communityOrgId = await getUserCommunityOrgId(ctx.auth.userId!);
+      return addJob(input, communityOrgId);
+    }),
+
+  // Protected routes for admin dashboard
+  getAllJobs: protectedProcedure.query(async ({ ctx }) => {
+    const communityOrgId = await getUserCommunityOrgId(ctx.auth.userId!);
+    return getAllJobs(communityOrgId);
+  }),
+  getPendingJobRequests: protectedProcedure.query(async ({ ctx }) => {
+    const communityOrgId = await getUserCommunityOrgId(ctx.auth.userId!);
+    return getPendingJobRequests(communityOrgId);
+  }),
+  removeJob: protectedProcedure
     .input(removeJobInput)
     .mutation(({ input }) => removeJob(input)),
-  updateJob: publicProcedure
+  updateJob: protectedProcedure
     .input(updateJobInput)
     .mutation(({ input }) => updateJob(input)),
-  approveJobRequest: publicProcedure
+  approveJobRequest: protectedProcedure
     .input(approveJobRequestInput)
     .mutation(({ input }) => approveJobRequest(input)),
-  denyJobRequest: publicProcedure
+  denyJobRequest: protectedProcedure
     .input(denyJobRequestInput)
     .mutation(({ input }) => denyJobRequest(input)),
-  bulkApproveJobRequests: publicProcedure
+  bulkApproveJobRequests: protectedProcedure
     .input(bulkApproveJobRequestsInput)
     .mutation(({ input }) => bulkApproveJobRequests(input)),
-  bulkDenyJobRequests: publicProcedure
+  bulkDenyJobRequests: protectedProcedure
     .input(bulkDenyJobRequestsInput)
     .mutation(({ input }) => bulkDenyJobRequests(input)),
-  markJobRequestsAsRead: publicProcedure
+  markJobRequestsAsRead: protectedProcedure
     .input(markJobRequestsAsReadInput)
     .mutation(({ input }) => markJobRequestsAsRead(input)),
 });
