@@ -52,6 +52,7 @@ export default function Welcome(){
 
 const styles = StyleSheet.create({
   logo: {
+    // FIX 
     marginLeft: 55,
     width: componentSizes.logo.background.width * 1.75,
     height: componentSizes.logo.background.height * 3.67,

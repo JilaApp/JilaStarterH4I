@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { useState } from "react";
 import { colors } from "@/colors";
 import { sizes } from "@/constants/sizes";
@@ -9,9 +9,11 @@ import { Button } from "@/components/Button";
 import Select from "@/components/Select";
 import Link from "@/components/Link";
 import { Toggle } from "@/components/Toggle";
+import Text from "@/components/JilaText";
+import { UsernameInput, PasswordInput } from "@/components/Input";
 
 
-export default function BuilProfile() {
+export default function BuildProfile() {
 
     const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null);
     const [smallChecked, setSmallChecked] = useState(false);
@@ -38,17 +40,9 @@ export default function BuilProfile() {
   return (
     <Background>
       <DisplayBox>
-        <View style={styles.container}>
-          <Text style={styles.title}>Select your language</Text>
-          {/* <Text>(in job dashboard)</Text>
-          <Link path="/dev">
-            <Text style={styles.buttonText}>Dev Page</Text>
-          </Link>
-          <Link path="/onboarding">
-            <Text style={styles.buttonText}>Onboarding Page</Text>
-          </Link>
-          {/* Example usage of Stepper and Button components */}
 
+        {/* <View style={styles.container}>
+          <Text style={styles.title}>Select your language</Text>
           <View style={styles.exampleContainer}>
             <View style={styles.selectContainer}>
                 <Select
@@ -57,16 +51,33 @@ export default function BuilProfile() {
                 onSelect={setSelectedLanguage}
                 />
             </View>
-            <Toggle />
+            <View style={styles.toggle}>
+              <Toggle />
+            </View>
+            <Button text="Continue" onPress={handleContinue} />
+            <Stepper totalSteps={4} currentStep={currentStep} />
+          </View>
+        </View> */}
 
 
+        <View style={styles.container}>
+          <Text style={styles.title}>Create profile</Text>
+          
+          <View style={styles.exampleContainer}>
+            <Text style={{ fontWeight: 'bold', fontSize: 16 }}>Username</Text>
+            <UsernameInput />
 
+            <Text style={{ fontWeight: 'bold', fontSize: 16, marginTop: "5%" }}>Password</Text>
+            <View style={{marginBottom: "5%"}}>
+              <PasswordInput />
+            </View>
 
-            
             <Button text="Continue" onPress={handleContinue} />
             <Stepper totalSteps={4} currentStep={currentStep} />
           </View>
         </View>
+
+
       </DisplayBox>
     </Background>
   );
@@ -74,20 +85,33 @@ export default function BuilProfile() {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+    width: "93%",
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: colors.white[400],
+    marginHorizontal: "auto"
+  },
+  toggle : {
+    flex: 1,
+    // marginHorizontal: "auto",
+    width: "70%",
+    marginTop: "-20%",
+    marginLeft: "-11%",
+    marginBottom: "-15%",
+    
   },
   title: {
     fontSize: sizes.fontSize.lg,
     fontWeight: "700",
-    color: colors.jila[300],
+    color: colors.jila[400],
+    marginBottom: 0
   },
   exampleContainer: {
-    width: "100%",
-    marginTop: sizes.spacing.lg,
-    paddingHorizontal: sizes.spacing.lg,
-    gap: sizes.spacing.md,
+    width: "125%",
+    marginTop: sizes.spacing.xs,
+    paddingHorizontal: sizes.spacing.xs,
+    gap: sizes.spacing.xs,
   },
   sectionTitle: {
     fontSize: 16,
@@ -98,6 +122,7 @@ const styles = StyleSheet.create({
   },
   selectContainer: {
     paddingVertical: 20,
+    marginBottom: 0,
   },
   checkboxContainer: {
     flexDirection: "column",

@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
   },
   tail: {
     position: "absolute",
-    bottom: "-27%",
+    bottom: "-23%",
     right: "-16%",
     width: componentSizes.displayBox.tailSize,
     height: componentSizes.displayBox.tailSize,

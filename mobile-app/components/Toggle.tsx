@@ -135,7 +135,8 @@ export function Toggle() {
 
 const styles = StyleSheet.create({
   switch: {
-    width: SWITCH_WIDTH,
+    // width: SWITCH_WIDTH,
+    width: sizes.spacing.xxl,
     height: sizes.spacing.xl,
     padding: sizes.spacing.xxs,
   },
@@ -152,10 +153,13 @@ const styles = StyleSheet.create({
   toggleRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: sizes.spacing.md,
+    gap: sizes.spacing.sm,
+    width: "135%",
+    flex: 1,
+    // marginHorizontal: "auto",
   },
   titleText: {
-    fontSize: sizes.fontSize.lg,
+    fontSize: sizes.fontSize.md,
     fontWeight: "bold",
   },
   descriptionContainer: {
@@ -163,5 +167,7 @@ const styles = StyleSheet.create({
   },
   descriptionText: {
     textAlign: "center",
+    fontSize: sizes.fontSize.xs,
+    marginTop: 10,
   },
 });
