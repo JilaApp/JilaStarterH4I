@@ -32,7 +32,14 @@ export default function InviteSignUpPage() {
   const [isTicketProcessed, setIsTicketProcessed] = useState(false);
 
   useEffect(() => {
-    if (isLoaded && user && user.publicMetadata?.userType === "admin") {
+    const userType = user?.publicMetadata?.userType;
+    if (
+      isLoaded &&
+      user &&
+      (userType === "JilaAdmin" ||
+        userType === "CommunityOrgAdmin" ||
+        userType === "admin")
+    ) {
       router.push("/dashboard");
     }
   }, [isLoaded, user, router]);

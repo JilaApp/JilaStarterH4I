@@ -168,7 +168,7 @@ export default function InviteView() {
       </div>
 
       {/* Form Fields */}
-      <div className="flex gap-6 items-end">
+      <div className="flex gap-6 items-start">
         {/* Community Name Field */}
         <div className="w-[308px]">
           {inviteMode === "existing" ? (
@@ -234,7 +234,7 @@ export default function InviteView() {
         <button
           onClick={handleSubmit}
           disabled={isLoading}
-          className={`w-[56px] h-[60px] rounded-[10px] bg-jila-400 flex items-center justify-center transition-opacity ${
+          className={`w-[56px] h-[60px] mt-[34px] rounded-[10px] bg-jila-400 flex items-center justify-center transition-opacity ${
             isLoading
               ? "opacity-50 cursor-not-allowed"
               : "hover:opacity-90 cursor-pointer"
