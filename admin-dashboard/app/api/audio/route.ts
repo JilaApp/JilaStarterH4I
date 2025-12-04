@@ -45,12 +45,16 @@ export async function GET(req: NextRequest) {
 
     const headers = new Headers();
 
-    const contentType = data.ContentType || "application/octet-stream";
+    const contentType = data.ContentType || "audio/mpeg";
     headers.set("Content-Type", contentType);
+
+    headers.set("Access-Control-Allow-Origin", "*");
+    headers.set("Access-Control-Allow-Methods", "GET, OPTIONS");
+    headers.set("Access-Control-Allow-Headers", "Content-Type");
 
     headers.set(
       "Content-Disposition",
-      `attachment; filename="${file_key.split("/").pop()}"`,
+      `inline; filename="${file_key.split("/").pop()}"`,
     );
 
     console.log(
