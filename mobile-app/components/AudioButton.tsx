@@ -22,29 +22,14 @@ export default function AudioButton({
   const [isPlaying, setIsPlaying] = useState(false);
 
   useEffect(() => {
-    console.log("[AudioButton] Audio source:", audioSource);
-    console.log("[AudioButton] Player status:", {
-      isLoaded: status.isLoaded,
-      playing: status.playing,
-      error: status.error,
-    });
-  }, [audioSource, status.isLoaded, status.playing, status.error]);
-
-  useEffect(() => {
     setIsPlaying(status.playing);
   }, [status.playing]);
 
   function playSound() {
-    console.log("[AudioButton] playSound called, isLoaded:", status.isLoaded);
-    if (!status.isLoaded) {
-      console.log("[AudioButton] Audio not loaded yet");
-      return;
-    }
+    if (!status.isLoaded) return;
     if (status.playing) {
-      console.log("[AudioButton] Pausing audio");
       player.pause();
     } else {
-      console.log("[AudioButton] Playing audio");
       player.play();
     }
   }

@@ -265,7 +265,7 @@ export default function DevPage() {
         </Text>
         <AudioButton
           audioSource={{
-            uri: `${process.env.EXPO_PUBLIC_API_URL}/api/audio?key=CA138clip.mp3`,
+            uri: `${process.env.EXPO_PUBLIC_API_URL}api/audio?key=CA138clip.mp3`,
           }}
           variant={"default"}
         />
