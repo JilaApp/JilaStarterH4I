@@ -41,12 +41,22 @@ export default function NotificationWindow({
 
   const markAsReadMutation = trpc.jobs.markJobRequestsAsRead.useMutation();
 
-  // Reset readInSession when modal closes
+  // Mark all unread notifications as read when window opens
   useEffect(() => {
-    if (!isOpen) {
+    if (isOpen && pendingJobs) {
+      const unreadIds = pendingJobs
+        .filter((job) => job.unread)
+        .map((job) => job.id);
+
+      if (unreadIds.length > 0) {
+        markAsReadMutation.mutateAsync({ ids: unreadIds });
+        setReadInSession(new Set(unreadIds));
+      }
+    } else if (!isOpen) {
+      // Reset readInSession when modal closes
       setReadInSession(new Set());
     }
-  }, [isOpen]);
+  }, [isOpen, pendingJobs]);
 
   // Show notifications that are unread OR were marked as read in this session
   const notifications = useMemo(() => {
@@ -68,22 +78,7 @@ export default function NotificationWindow({
       );
   }, [pendingJobs, readInSession]);
 
-  const handleMarkAllAsRead = async () => {
-    const unreadIds = notifications.filter((n) => n.unread).map((n) => n.id);
-    if (unreadIds.length === 0) return;
-
-    await markAsReadMutation.mutateAsync({ ids: unreadIds });
-    setReadInSession((prev) => {
-      const newSet = new Set(prev);
-      unreadIds.forEach((id) => newSet.add(id));
-      return newSet;
-    });
-    refetch();
-  };
-
   const handleNotificationClick = async (id: number) => {
-    await markAsReadMutation.mutateAsync({ ids: [id] });
-    setReadInSession((prev) => new Set(prev).add(id));
     onClose();
     router.push("/dashboard");
     // Small delay to ensure navigation happens first
@@ -92,17 +87,6 @@ export default function NotificationWindow({
       window.dispatchEvent(event);
     }, 100);
   };
-
-  const unreadCount = notifications.filter((n) => n.unread).length;
-
-  const headerRight = unreadCount > 0 && (
-    <button
-      onClick={handleMarkAllAsRead}
-      className="bg-white border border-gray-200 rounded-[6px] px-[6px] py-[6px] text-gray-300 font-bold text-[11px] cursor-pointer hover:bg-gray-50"
-    >
-      Mark all {unreadCount} as read
-    </button>
-  );
 
   if (isLoading) {
     return (
@@ -115,12 +99,7 @@ export default function NotificationWindow({
   }
 
   return (
-    <BaseSideModal
-      isOpen={isOpen}
-      onClose={onClose}
-      title="Notifications"
-      headerRight={headerRight}
-    >
+    <BaseSideModal isOpen={isOpen} onClose={onClose} title="Notifications">
       {notifications.length === 0 ? (
         <div className="flex flex-col items-center justify-center h-full px-[25px] py-[60px]">
           <div className="w-[60px] h-[60px] rounded-full bg-gray-200 flex items-center justify-center mb-[20px]">
