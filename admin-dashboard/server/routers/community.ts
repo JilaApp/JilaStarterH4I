@@ -77,7 +77,7 @@ export const communityRouter = router({
             communityOrgId: input.communityOrgId,
           },
           redirectUrl: getInvitationRedirectUrl(),
-          ignore_existing: true,
+          ignoreExisting: true,
         });
 
         return invitation;
@@ -112,7 +112,7 @@ export const communityRouter = router({
             communityOrgId: communityOrg.id,
           },
           redirectUrl: getInvitationRedirectUrl(),
-          ignore_existing: true,
+          ignoreExisting: true,
         });
 
         return { invitation, communityOrg };
