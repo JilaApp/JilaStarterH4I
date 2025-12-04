@@ -24,11 +24,9 @@ export default function InviteView() {
       selectedCommunityIndex: createField<number | undefined>(undefined),
     });
 
-  // Fetch existing community orgs
   const { data: communityOrgs, refetch: refetchCommunityOrgs } =
     trpc.community.getAllCommunityOrgs.useQuery();
 
-  // Mutations
   const sendInvitationMutation = trpc.community.sendInvitation.useMutation({
     onSuccess: () => {
       showNotification(`Invite sent to ${fields.email.value}`, "success");
@@ -60,7 +58,6 @@ export default function InviteView() {
     });
 
   const handleSubmit = async () => {
-    // Validate email
     const emailError = validateEmail(fields.email.value);
     if (emailError) {
       setFieldError("email", emailError);
@@ -68,7 +65,6 @@ export default function InviteView() {
     }
 
     if (inviteMode === "existing") {
-      // Validate community selection
       if (fields.selectedCommunityIndex.value === undefined) {
         setFieldError("selectedCommunityIndex", "Please select a community");
         return;
@@ -86,7 +82,6 @@ export default function InviteView() {
         communityOrgId: selectedCommunity.id,
       });
     } else {
-      // Validate community name
       const nameError = validateRequired(fields.communityName.value);
       if (nameError) {
         setFieldError("communityName", nameError);
@@ -110,14 +105,12 @@ export default function InviteView() {
     <div className="flex-1 px-10 py-6 flex flex-col items-center">
       <NotificationContainer />
 
-      {/* Header Icon */}
       <div className="mt-16 mb-6">
         <div className="w-[61px] h-[61px] flex items-center justify-center">
           <Send className="w-12 h-12 text-type-400" strokeWidth={1.5} />
         </div>
       </div>
 
-      {/* Title and Description */}
       <h1 className="text-2xl font-semibold text-type-400 text-center mb-2">
         Invite communities to JILA
       </h1>
@@ -126,9 +119,7 @@ export default function InviteView() {
         JILA.
       </p>
 
-      {/* Mode Selection Cards */}
       <div className="flex gap-6 mb-8">
-        {/* Add to existing community */}
         <button
           onClick={() => setInviteMode("existing")}
           className={`w-[309px] h-[120px] rounded-[10px] border flex flex-col items-center justify-center gap-1 transition-all cursor-pointer ${
@@ -147,7 +138,6 @@ export default function InviteView() {
           </span>
         </button>
 
-        {/* Create new community */}
         <button
           onClick={() => setInviteMode("new")}
           className={`w-[309px] h-[120px] rounded-[10px] border flex flex-col items-center justify-center gap-1 transition-all cursor-pointer ${
@@ -167,9 +157,7 @@ export default function InviteView() {
         </button>
       </div>
 
-      {/* Form Fields */}
       <div className="flex gap-6 items-start">
-        {/* Community Name Field */}
         <div className="w-[308px]">
           {inviteMode === "existing" ? (
             <FormField
@@ -210,7 +198,6 @@ export default function InviteView() {
           )}
         </div>
 
-        {/* Email Field */}
         <div className="w-[631px]">
           <FormField
             title="Email"
@@ -230,7 +217,6 @@ export default function InviteView() {
           </FormField>
         </div>
 
-        {/* Send Button */}
         <button
           onClick={handleSubmit}
           disabled={isLoading}

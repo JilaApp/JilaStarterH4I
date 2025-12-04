@@ -4,7 +4,6 @@ import prisma from "@/lib/prisma";
 import { clerkClient } from "@clerk/nextjs/server";
 import { TRPCError } from "@trpc/server";
 
-// Helper to check if user is a JilaAdmin
 const requireJilaAdmin = async (userId: string) => {
   const client = await clerkClient();
   const user = await client.users.getUser(userId);
@@ -18,7 +17,23 @@ const requireJilaAdmin = async (userId: string) => {
 };
 
 export const communityRouter = router({
-  // Get all community orgs
+  getMyCommunityOrg: protectedProcedure.query(async ({ ctx }) => {
+    const client = await clerkClient();
+    const user = await client.users.getUser(ctx.auth.userId!);
+    const communityOrgId = user.publicMetadata?.communityOrgId as
+      | string
+      | undefined;
+
+    if (!communityOrgId) {
+      return null;
+    }
+
+    const communityOrg = await prisma.communityOrg.findUnique({
+      where: { id: communityOrgId },
+    });
+    return communityOrg;
+  }),
+
   getAllCommunityOrgs: protectedProcedure.query(async () => {
     const communityOrgs = await prisma.communityOrg.findMany({
       orderBy: { name: "asc" },
@@ -26,7 +41,6 @@ export const communityRouter = router({
     return communityOrgs;
   }),
 
-  // Create a new community org (JilaAdmin only)
   createCommunityOrg: protectedProcedure
     .input(z.object({ name: z.string().min(1) }))
     .mutation(async ({ input, ctx }) => {
@@ -38,7 +52,6 @@ export const communityRouter = router({
       return communityOrg;
     }),
 
-  // Send invitation to a community org admin (JilaAdmin only)
   sendInvitation: protectedProcedure
     .input(
       z.object({
@@ -50,8 +63,6 @@ export const communityRouter = router({
       await requireJilaAdmin(ctx.auth.userId!);
 
       const client = await clerkClient();
-
-      // Create invitation with community org metadata
       const invitation = await client.invitations.createInvitation({
         emailAddress: input.email,
         publicMetadata: {
@@ -63,7 +74,6 @@ export const communityRouter = router({
       return invitation;
     }),
 
-  // Send invitation with a new community org (JilaAdmin only)
   sendInvitationWithNewCommunity: protectedProcedure
     .input(
       z.object({
@@ -74,14 +84,11 @@ export const communityRouter = router({
     .mutation(async ({ input, ctx }) => {
       await requireJilaAdmin(ctx.auth.userId!);
 
-      // Create the community org first
       const communityOrg = await prisma.communityOrg.create({
         data: { name: input.communityName },
       });
 
       const client = await clerkClient();
-
-      // Create invitation with community org metadata
       const invitation = await client.invitations.createInvitation({
         emailAddress: input.email,
         publicMetadata: {

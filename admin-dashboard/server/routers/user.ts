@@ -18,7 +18,6 @@ export const userRouter = router({
       const client = await clerkClient();
       const user = await client.users.getUser(userId);
 
-      // Check if userType is already set by webhook
       const existingUserType = user.publicMetadata?.userType;
       if (
         existingUserType === "JilaAdmin" ||
@@ -27,7 +26,6 @@ export const userRouter = router({
         return { success: true };
       }
 
-      // Determine userType based on communityOrgId in metadata
       const communityOrgId = user.publicMetadata?.communityOrgId as
         | string
         | undefined;
