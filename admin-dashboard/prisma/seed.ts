@@ -14,6 +14,26 @@ const prisma = new PrismaClient();
 async function main() {
   console.log("Starting the seeding process...");
 
+  console.log("Seeding community organizations...");
+  const communityOrgsData = [
+    { name: "Metro City Community Center" },
+    { name: "Westside Immigrant Services" },
+    { name: "Eastside Community Hub" },
+  ];
+
+  const communityOrgs: { id: string; name: string }[] = [];
+  for (const org of communityOrgsData) {
+    const created = await prisma.communityOrg.upsert({
+      where: { name: org.name },
+      update: {},
+      create: org,
+    });
+    communityOrgs.push(created);
+  }
+  console.log(
+    `Successfully seeded ${communityOrgs.length} community organizations.`,
+  );
+
   console.log("Seeding videos...");
   const audioPath = path.join(__dirname, "sample.mp3");
 
@@ -294,18 +314,21 @@ async function main() {
     },
   ];
 
-  for (const video of videosData) {
+  for (let i = 0; i < videosData.length; i++) {
+    const video = videosData[i];
     const existingVideo = await prisma.videos.findFirst({
       where: { urls: { has: video.urls[0] } },
     });
 
     if (!existingVideo) {
+      const communityOrgId = communityOrgs[i % communityOrgs.length].id;
       await prisma.videos.create({
         data: {
           ...video,
           audioFile: audioBuffer,
           audioFilename: "sample.mp3",
           audioFileSize: audioBuffer.length,
+          communityOrgId,
         },
       });
     }
@@ -534,11 +557,13 @@ async function main() {
     },
   ];
 
-  for (const service of socialServicesData) {
+  for (let i = 0; i < socialServicesData.length; i++) {
+    const service = socialServicesData[i];
+    const communityOrgId = communityOrgs[i % communityOrgs.length].id;
     await prisma.socialServices.upsert({
       where: { phone_number: service.phone_number },
       update: {},
-      create: service,
+      create: { ...service, communityOrgId },
     });
   }
   console.log("Successfully seeded 25 social services.");
@@ -1022,11 +1047,13 @@ async function main() {
     },
   ];
 
-  for (const job of jobsData) {
+  for (let i = 0; i < jobsData.length; i++) {
+    const job = jobsData[i];
+    const communityOrgId = communityOrgs[i % communityOrgs.length].id;
     await prisma.jobs.upsert({
       where: { url: job.url },
       update: {},
-      create: job,
+      create: { ...job, communityOrgId },
     });
   }
   console.log("Successfully seeded 25 job postings.");

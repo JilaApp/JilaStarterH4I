@@ -27,11 +27,19 @@ export default function SignInPage() {
   const [loading, setLoading] = useState(false);
   const [isWaitingForMetadata, setIsWaitingForMetadata] = useState(false);
 
+  const isValidAdminType = (userType: unknown): boolean => {
+    return (
+      userType === "admin" ||
+      userType === "JilaAdmin" ||
+      userType === "CommunityOrgAdmin"
+    );
+  };
+
   useEffect(() => {
     if (isUserLoaded && user) {
       const userType = user.publicMetadata?.userType;
 
-      if (userType === "admin") {
+      if (isValidAdminType(userType)) {
         router.push("/dashboard");
         return;
       } else if (userType) {
@@ -45,7 +53,7 @@ export default function SignInPage() {
       const checkMetadata = setInterval(() => {
         const userType = user.publicMetadata?.userType;
 
-        if (userType === "admin") {
+        if (isValidAdminType(userType)) {
           clearInterval(checkMetadata);
           router.push("/dashboard");
           return;
