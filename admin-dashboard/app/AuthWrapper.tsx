@@ -23,14 +23,22 @@ const AuthWrapper = ({ children }: { children: ReactNode }) => {
       return;
     }
 
+    const isValidAdminType = (userType: unknown): boolean => {
+      return (
+        userType === "admin" ||
+        userType === "JilaAdmin" ||
+        userType === "CommunityOrgAdmin"
+      );
+    };
+
     const checkUserRole = async () => {
-      if (user.publicMetadata?.userType === "admin") {
+      if (isValidAdminType(user.publicMetadata?.userType)) {
         setVerificationStatus("success");
         return;
       }
       try {
         await user.reload();
-        if (user.publicMetadata?.userType === "admin") {
+        if (isValidAdminType(user.publicMetadata?.userType)) {
           setVerificationStatus("success");
         } else {
           setVerificationStatus("failed");

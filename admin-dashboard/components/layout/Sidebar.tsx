@@ -1,24 +1,45 @@
 import Image from "next/image";
 import TempJilaLogo from "@/assets/jila-white.svg";
-import { LayoutDashboard, Settings } from "lucide-react";
+import {
+  LayoutDashboard,
+  Settings,
+  Send,
+  BarChart3,
+  Upload,
+  Briefcase,
+  ClipboardList,
+} from "lucide-react";
 import { logger } from "@/lib/logger";
+import { useUser } from "@clerk/nextjs";
 
 interface SidebarProps {
   activeButton: string;
   setActiveButton: (id: string) => void;
 }
 
+// Define all possible sidebar buttons
+const jilaAdminButtons = [
+  { id: "metrics", label: "Metrics", icon: BarChart3 },
+  { id: "invite", label: "Invite", icon: Send },
+];
+
+const communityOrgAdminButtons = [
+  { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { id: "upload", label: "Upload", icon: Upload },
+  { id: "jobs", label: "Job postings", icon: Briefcase },
+  { id: "job-requests", label: "Job requests", icon: ClipboardList },
+];
+
 export default function Sidebar({
   activeButton,
   setActiveButton,
 }: SidebarProps) {
-  const buttons = [
-    { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
-    { id: "upload", label: "Upload", icon: LayoutDashboard },
-    { id: "jobs", label: "Job postings", icon: LayoutDashboard },
-    { id: "job-requests", label: "Job requests", icon: LayoutDashboard },
-    { id: "metrics", label: "Metrics", icon: LayoutDashboard },
-  ];
+  const { user } = useUser();
+  const userType = user?.publicMetadata?.userType;
+
+  // Determine which buttons to show based on user type
+  const buttons =
+    userType === "JilaAdmin" ? jilaAdminButtons : communityOrgAdminButtons;
 
   const dummyButtonClick = () => {
     logger.info("[dummyButtonClick] Settings button clicked", undefined);

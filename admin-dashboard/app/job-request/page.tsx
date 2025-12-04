@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import FormField from "@/components/forms/FormField";
 import { TextInput } from "@/components/ui/Input";
 import Dropdown from "@/components/ui/Dropdown";
@@ -55,8 +55,10 @@ const LANGUAGE_OPTIONS = [
   { name: "Q'anjob'al", disabled: false },
 ];
 
-export default function JobRequestPage() {
+function JobRequestForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const communityOrgId = searchParams.get("communityOrgId");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState("");
@@ -119,10 +121,11 @@ export default function JobRequestPage() {
         salary: fields.salary.value ? parseInt(fields.salary.value) : 0,
         expirationDate: fields.expirationDate.value
           ? new Date(fields.expirationDate.value)
-          : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // Default 30 days from now
+          : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
         descriptionEnglish: "",
         descriptionQanjobal: "",
         status: JobStatus.PENDING,
+        communityOrgId: communityOrgId || undefined,
       });
 
       setError("");
@@ -420,5 +423,21 @@ export default function JobRequestPage() {
         )}
       </div>
     </PageBackground>
+  );
+}
+
+export default function JobRequestPage() {
+  return (
+    <Suspense
+      fallback={
+        <PageBackground>
+          <div className="flex items-center justify-center h-full">
+            Loading...
+          </div>
+        </PageBackground>
+      }
+    >
+      <JobRequestForm />
+    </Suspense>
   );
 }

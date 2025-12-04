@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { clerkClient } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { AdminRole } from "@prisma/client";
 
 export async function POST(req: NextRequest) {
   try {
@@ -31,10 +32,27 @@ export async function POST(req: NextRequest) {
         }
 
         try {
-          // Set userType in Clerk metadata
           const client = await clerkClient();
+
+          // Check if this user was invited with communityOrgId metadata
+          // JilaAdmins are invited from Clerk dashboard (no communityOrgId)
+          // CommunityOrgAdmins are invited from our website with communityOrgId
+          const communityOrgId = data.public_metadata?.communityOrgId as
+            | string
+            | undefined;
+          const isJilaAdmin = !communityOrgId;
+
+          const role: AdminRole = isJilaAdmin
+            ? "JILA_ADMIN"
+            : "COMMUNITY_ORG_ADMIN";
+          const userType = isJilaAdmin ? "JilaAdmin" : "CommunityOrgAdmin";
+
+          // Set userType in Clerk metadata
           await client.users.updateUserMetadata(data.id, {
-            publicMetadata: { userType: "admin" },
+            publicMetadata: {
+              userType,
+              ...(communityOrgId && { communityOrgId }),
+            },
           });
 
           // Create admin user in database
@@ -42,7 +60,8 @@ export async function POST(req: NextRequest) {
             data: {
               clerkId: data.id,
               email: email,
-              communityOrg: "Default Org",
+              role: role,
+              communityOrgId: communityOrgId || null,
             },
           });
         } catch (error) {
@@ -97,7 +116,11 @@ export async function POST(req: NextRequest) {
       const data = evt.data;
       const userType = data.public_metadata?.userType;
 
-      if (userType === "admin") {
+      if (
+        userType === "JilaAdmin" ||
+        userType === "CommunityOrgAdmin" ||
+        userType === "admin"
+      ) {
         await prisma.adminUser.update({
           where: { clerkId: data.id },
           data: {

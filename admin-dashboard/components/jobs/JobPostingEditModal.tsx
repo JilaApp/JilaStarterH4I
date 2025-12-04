@@ -76,7 +76,7 @@ export default function JobPostingEditModal({
   const modalRef = useRef<HTMLDivElement>(null);
 
   const updateJobMutation = trpc.jobs.updateJob.useMutation();
-  const addJobMutation = trpc.jobs.addJob.useMutation();
+  const addJobMutation = trpc.jobs.addJobAsAdmin.useMutation();
 
   useClickOutside(modalRef, () => {
     if (!isSaving) {

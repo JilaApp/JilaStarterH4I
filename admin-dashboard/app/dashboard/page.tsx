@@ -11,13 +11,25 @@ import UploadView from "@/components/views/UploadView";
 import JobPostingsView from "@/components/views/JobPostingsView";
 import JobRequestsView from "@/components/views/JobRequestsView";
 import JobAddView from "@/components/views/JobAddView";
+import InviteView from "@/components/views/InviteView";
 
 export default function DashboardDev() {
-  const { user } = useUser();
+  const { user, isLoaded } = useUser();
   const { signOut } = useClerk();
 
-  const [activeView, setActiveView] = useState<string>("dashboard");
+  const userType = user?.publicMetadata?.userType;
+  const isJilaAdmin = userType === "JilaAdmin";
+
+  // Set default view based on user type
+  const [activeView, setActiveView] = useState<string | null>(null);
   const [currentTabIndex, setCurrentTabIndex] = useState(0);
+
+  // Set initial view once user is loaded
+  useEffect(() => {
+    if (isLoaded && user && activeView === null) {
+      setActiveView(isJilaAdmin ? "metrics" : "dashboard");
+    }
+  }, [isLoaded, user, isJilaAdmin, activeView]);
 
   // Listen for notification clicks to navigate to job requests
   useEffect(() => {
@@ -46,6 +58,7 @@ export default function DashboardDev() {
     "job-add": "jobs", // job-add should highlight jobs in sidebar
     "job-requests": "job-requests",
     metrics: "metrics",
+    invite: "invite",
   };
 
   const getPageTitle = () => {
@@ -62,12 +75,16 @@ export default function DashboardDev() {
         return "Job requests";
       case "metrics":
         return "Metrics";
+      case "invite":
+        return "";
       default:
         return "Your JILA! Dashboard";
     }
   };
 
   const renderContent = () => {
+    if (!activeView) return null;
+
     switch (activeView) {
       case "dashboard":
         return <DashboardView />;
@@ -91,9 +108,11 @@ export default function DashboardDev() {
       case "metrics":
         return (
           <div className="flex-1 px-10 py-6">
-            <p>metrics</p>
+            <p>Metrics dashboard coming soon...</p>
           </div>
         );
+      case "invite":
+        return <InviteView />;
       default:
         return null;
     }
@@ -104,7 +123,7 @@ export default function DashboardDev() {
       <div className="flex h-screen overflow-hidden bg-[linear-gradient(348deg,_#7E0601_51.81%,_#E8965B_130.16%)]">
         <div className="fixed left-0 top-0 h-screen z-50">
           <Sidebar
-            activeButton={viewToSidebarButton[activeView]}
+            activeButton={activeView ? viewToSidebarButton[activeView] : ""}
             setActiveButton={setActiveView}
           />
         </div>
