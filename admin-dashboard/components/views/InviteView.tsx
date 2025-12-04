@@ -57,7 +57,7 @@ export default function InviteView() {
       },
     });
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     const emailError = validateEmail(fields.email.value);
     if (emailError) {
       setFieldError("email", emailError);

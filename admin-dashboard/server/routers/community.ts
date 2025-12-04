@@ -16,6 +16,13 @@ const requireJilaAdmin = async (userId: string) => {
   }
 };
 
+const getInvitationRedirectUrl = () => {
+  const baseUrl =
+    process.env.NEXT_PUBLIC_APP_URL ||
+    `http://localhost:${process.env.PORT || 3000}`;
+  return `${baseUrl}/sign-up`;
+};
+
 export const communityRouter = router({
   getMyCommunityOrg: protectedProcedure.query(async ({ ctx }) => {
     const client = await clerkClient();
@@ -62,16 +69,25 @@ export const communityRouter = router({
     .mutation(async ({ input, ctx }) => {
       await requireJilaAdmin(ctx.auth.userId!);
 
-      const client = await clerkClient();
-      const invitation = await client.invitations.createInvitation({
-        emailAddress: input.email,
-        publicMetadata: {
-          communityOrgId: input.communityOrgId,
-        },
-        redirectUrl: `${process.env.NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL || "/dashboard"}`,
-      });
+      try {
+        const client = await clerkClient();
+        const invitation = await client.invitations.createInvitation({
+          emailAddress: input.email,
+          publicMetadata: {
+            communityOrgId: input.communityOrgId,
+          },
+          redirectUrl: getInvitationRedirectUrl(),
+          ignore_existing: true,
+        });
 
-      return invitation;
+        return invitation;
+      } catch (error: any) {
+        console.error("Clerk invitation error:", error);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to send invitation. Please try again.",
+        });
+      }
     }),
 
   sendInvitationWithNewCommunity: protectedProcedure
@@ -88,15 +104,24 @@ export const communityRouter = router({
         data: { name: input.communityName },
       });
 
-      const client = await clerkClient();
-      const invitation = await client.invitations.createInvitation({
-        emailAddress: input.email,
-        publicMetadata: {
-          communityOrgId: communityOrg.id,
-        },
-        redirectUrl: `${process.env.NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL || "/dashboard"}`,
-      });
+      try {
+        const client = await clerkClient();
+        const invitation = await client.invitations.createInvitation({
+          emailAddress: input.email,
+          publicMetadata: {
+            communityOrgId: communityOrg.id,
+          },
+          redirectUrl: getInvitationRedirectUrl(),
+          ignore_existing: true,
+        });
 
-      return { invitation, communityOrg };
+        return { invitation, communityOrg };
+      } catch (error: any) {
+        console.error("Clerk invitation error:", error);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to send invitation. Please try again.",
+        });
+      }
     }),
 });
