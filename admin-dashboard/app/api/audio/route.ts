@@ -2,16 +2,7 @@ import { GetObjectCommand } from "@aws-sdk/client-s3";
 import { Readable } from "stream";
 import { bucket_name, s3_client } from "@/s3";
 import { NextRequest, NextResponse } from "next/server";
-
-export async function streamToBuffer(stream: Readable): Promise<Buffer> {
-  const chunks: Buffer[] = [];
-
-  for await (const chunk of stream) {
-    chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
-  }
-
-  return Buffer.concat(chunks as unknown as Uint8Array[]);
-}
+import { streamToBuffer } from "@/lib/s3Utils";
 
 export async function GET(req: NextRequest) {
   try {
