@@ -39,6 +39,7 @@ import Checkbox from "@/components/Checkbox";
 import Header from "@/components/Header";
 import Link from "@/components/Link";
 import VideoEmbed, { VideoType } from "@/components/VideoEmbed";
+import JobCard from "@/components/JobCard";
 
 export default function DevPage() {
   const [
@@ -196,9 +197,16 @@ export default function DevPage() {
           uri={videoEmbedGoogleDriveURL}
           type={VideoType.GoogleDrive}
         />
+
         <View
           style={{ backgroundColor: colors.cream[300], gap: 10, padding: 10 }}
         >
+          <JobCard
+            title="swe"
+            company="apple"
+            salary="100000"
+            location="champaign"
+          />
           <Text style={styles.sectionTitle}>
             VideoDropdown - Multiple Videos (Cream)
           </Text>
