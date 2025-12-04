@@ -10,16 +10,15 @@ export const config = {
   },
 };
 
-export async function POST(
-  req: NextRequest,
-) {
-
-
+export async function POST(req: NextRequest) {
   try {
     const { fileName, fileType, fileData } = await req.json();
 
     if (!fileData) {
-      return NextResponse.json({ message: "No file data provided" }, {status: 400});
+      return NextResponse.json(
+        { message: "No file data provided" },
+        { status: 400 },
+      );
     }
 
     // Convert base64 data to buffer
@@ -41,9 +40,12 @@ export async function POST(
     const data = await s3_client.send(new PutObjectCommand(uploadParams));
     // console.log("S3 upload response:", data);
 
-    return NextResponse.json({success: true, key}, {status: 200});
+    return NextResponse.json({ success: true, key }, { status: 200 });
   } catch (error) {
     console.error("Error uploading file to S3:", error);
-    return NextResponse.json({message: "Failed to upload audio file to S3"}, {status: 500});
+    return NextResponse.json(
+      { message: "Failed to upload audio file to S3" },
+      { status: 500 },
+    );
   }
 }

@@ -3,7 +3,6 @@ import { Readable } from "stream";
 import { bucket_name, s3_client } from "@/s3";
 import { NextRequest, NextResponse } from "next/server";
 
-
 //promise allows other code to run while waiting for streamtobuffer to complete
 //readable means it wont come in all at once and rather piece by piece.
 export async function streamToBuffer(stream: Readable): Promise<Buffer> {
@@ -16,16 +15,16 @@ export async function streamToBuffer(stream: Readable): Promise<Buffer> {
   return Buffer.concat(chunks as unknown as Uint8Array[]);
 }
 
-
 export async function GET(req: NextRequest) {
-
   try {
-
     const searchParams = req.nextUrl.searchParams;
     const file_key = searchParams.get("key");
 
     if (!file_key) {
-        return NextResponse.json({ message: "Missing file key" }, { status: 400 });
+      return NextResponse.json(
+        { message: "Missing file key" },
+        { status: 400 },
+      );
     }
 
     const params = {
@@ -37,7 +36,10 @@ export async function GET(req: NextRequest) {
     const data = await s3_client.send(command);
 
     if (!data) {
-      return NextResponse.json({message: "Audio file not found"}, {status: 404});
+      return NextResponse.json(
+        { message: "Audio file not found" },
+        { status: 404 },
+      );
     }
 
     const buffer = await streamToBuffer(data.Body as Readable);
@@ -52,10 +54,15 @@ export async function GET(req: NextRequest) {
       `attachment; filename="${file_key.split("/").pop()}"`,
     );
 
-    return new NextResponse(buffer as unknown as BodyInit, {status: 200, headers:headers});
+    return new NextResponse(buffer as unknown as BodyInit, {
+      status: 200,
+      headers: headers,
+    });
   } catch (error) {
     // console.error("Error fetching file from S3:", error);
-    return NextResponse.json({message: "Failed to fetch audio file from S3"}, {status: 404});
-
+    return NextResponse.json(
+      { message: "Failed to fetch audio file from S3" },
+      { status: 404 },
+    );
   }
 }
