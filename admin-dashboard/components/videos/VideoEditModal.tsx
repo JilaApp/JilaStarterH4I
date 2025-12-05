@@ -146,7 +146,7 @@ export default function VideoEditModal({
     const currentLinks = fields.videoLinks.value;
     const invalidLinks = currentLinks.some((link) => {
       if (!link) return true;
-      return !validateURL(link);
+      return validateURL(link) !== null;
     });
 
     if (invalidLinks) {
