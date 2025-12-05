@@ -325,9 +325,9 @@ async function main() {
       await prisma.videos.create({
         data: {
           ...video,
-          audioFileS3Key: null,
-          audioFilename: null,
-          audioFileSize: null,
+          audioFileS3Key: "videos/CA138clip.mp3",
+          audioFilename: "CA138clip.mp3",
+          audioFileSize: 512000,
           communityOrgId,
         },
       });
@@ -563,7 +563,16 @@ async function main() {
     await prisma.socialServices.upsert({
       where: { phone_number: service.phone_number },
       update: {},
-      create: { ...service, communityOrgId },
+      create: {
+        ...service,
+        communityOrgId,
+        titleAudioFileS3Key: "social-services/titles/CA138clip.mp3",
+        titleAudioFilename: "CA138clip.mp3",
+        titleAudioFileSize: 512000,
+        descriptionAudioFileS3Key: "social-services/descriptions/CA138clip.mp3",
+        descriptionAudioFilename: "CA138clip.mp3",
+        descriptionAudioFileSize: 512000,
+      },
     });
   }
   console.log("Successfully seeded 25 social services.");
