@@ -1,11 +1,11 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { PrismaClient } from "@prisma/client";
 import { router, protectedProcedure } from "../trpc";
 import { requireCommunityOrgAdmin, getUserCommunityOrgId } from "../utils";
 import { SocialServiceCategory } from "@/lib/types";
 import { logger } from "@/lib/logger";
 import { uploadAudioToS3, deleteAudioFromS3 } from "@/lib/s3Utils";
+import prisma from "@/lib/prisma";
 
 const addSocialServiceInput = z.object({
   title: z.string(),
@@ -49,7 +49,6 @@ type EditSocialServiceInput = z.infer<typeof editSocialServiceInput>;
 async function addSocialService(
   input: AddSocialServiceInput,
   communityOrgId: string | null,
-  prisma: PrismaClient,
 ) {
   try {
     const existing = await prisma.socialServices.findUnique({
@@ -117,10 +116,7 @@ async function addSocialService(
   }
 }
 
-async function removeSocialService(
-  input: RemoveSocialServiceInput,
-  prisma: PrismaClient,
-) {
+async function removeSocialService(input: RemoveSocialServiceInput) {
   try {
     const existing = await prisma.socialServices.findUnique({
       where: { id: input.id },
@@ -162,10 +158,7 @@ async function removeSocialService(
   }
 }
 
-async function editSocialService(
-  input: EditSocialServiceInput,
-  prisma: PrismaClient,
-) {
+async function editSocialService(input: EditSocialServiceInput) {
   try {
     const existing = await prisma.socialServices.findUnique({
       where: { id: input.id },
@@ -271,10 +264,7 @@ async function editSocialService(
   }
 }
 
-async function getAllSocialServices(
-  communityOrgId: string | null,
-  prisma: PrismaClient,
-) {
+async function getAllSocialServices(communityOrgId: string | null) {
   try {
     const services = await prisma.socialServices.findMany({
       where: communityOrgId ? { communityOrgId } : undefined,
@@ -296,23 +286,23 @@ export const socialServicesRouter = router({
     .mutation(async ({ input, ctx }) => {
       await requireCommunityOrgAdmin(ctx.auth.userId!);
       const communityOrgId = await getUserCommunityOrgId(ctx.auth.userId!);
-      return addSocialService(input, communityOrgId, ctx.prisma);
+      return addSocialService(input, communityOrgId);
     }),
   getAllSocialServices: protectedProcedure.query(async ({ ctx }) => {
     await requireCommunityOrgAdmin(ctx.auth.userId!);
     const communityOrgId = await getUserCommunityOrgId(ctx.auth.userId!);
-    return getAllSocialServices(communityOrgId, ctx.prisma);
+    return getAllSocialServices(communityOrgId);
   }),
   removeSocialService: protectedProcedure
     .input(removeSocialServiceInput)
     .mutation(async ({ input, ctx }) => {
       await requireCommunityOrgAdmin(ctx.auth.userId!);
-      return removeSocialService(input, ctx.prisma);
+      return removeSocialService(input);
     }),
   editSocialService: protectedProcedure
     .input(editSocialServiceInput)
     .mutation(async ({ input, ctx }) => {
       await requireCommunityOrgAdmin(ctx.auth.userId!);
-      return editSocialService(input, ctx.prisma);
+      return editSocialService(input);
     }),
 });

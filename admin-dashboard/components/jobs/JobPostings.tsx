@@ -100,7 +100,7 @@ export default function JobPostings({
 
     return (
       jobsData
-        ?.map((job) => ({
+        ?.map((job: NonNullable<typeof jobsData>[number]) => ({
           id: job.id,
           position: job.titleEnglish,
           jobType: jobTypeDisplayMap[job.jobType] || job.jobType,
@@ -108,7 +108,9 @@ export default function JobPostings({
           link: job.url,
           status: job.status,
         }))
-        .sort((a, b) => a.position.localeCompare(b.position)) || []
+        .sort((a: JobResourceData, b: JobResourceData) =>
+          a.position.localeCompare(b.position),
+        ) || []
     );
   }, [jobsData]);
 
@@ -132,7 +134,9 @@ export default function JobPostings({
   ];
 
   const handleJobRowClick = (id: number) => {
-    const job = jobsData?.find((j) => j.id === id);
+    const job = jobsData?.find(
+      (j: NonNullable<typeof jobsData>[number]) => j.id === id,
+    );
     if (job) {
       setSelectedJob({
         ...job,
@@ -146,7 +150,9 @@ export default function JobPostings({
   };
 
   const handleJobEdit = (id: number) => {
-    const job = jobsData?.find((j) => j.id === id);
+    const job = jobsData?.find(
+      (j: NonNullable<typeof jobsData>[number]) => j.id === id,
+    );
     if (job) {
       setSelectedJob({
         ...job,
@@ -239,7 +245,9 @@ export default function JobPostings({
           appliedFilters.locationTypes.length > 0
         ) {
           filtered = filtered.filter((job) => {
-            const jobData = jobsData?.find((j) => j.id === job.id);
+            const jobData = jobsData?.find(
+              (j: NonNullable<typeof jobsData>[number]) => j.id === job.id,
+            );
             if (!jobData) return false;
             return appliedFilters.locationTypes!.some((type: string) => {
               if (type === "Remote") return jobData.locationType === "REMOTE";
@@ -253,7 +261,9 @@ export default function JobPostings({
 
         if (appliedFilters.jobTypes && appliedFilters.jobTypes.length > 0) {
           filtered = filtered.filter((job) => {
-            const jobData = jobsData?.find((j) => j.id === job.id);
+            const jobData = jobsData?.find(
+              (j: NonNullable<typeof jobsData>[number]) => j.id === job.id,
+            );
             if (!jobData) return false;
             return appliedFilters.jobTypes!.some((type: string) => {
               const typeMap: Record<string, string> = {
@@ -274,7 +284,9 @@ export default function JobPostings({
           appliedFilters.speakerTags.length > 0
         ) {
           filtered = filtered.filter((job) => {
-            const jobData = jobsData?.find((j) => j.id === job.id);
+            const jobData = jobsData?.find(
+              (j: NonNullable<typeof jobsData>[number]) => j.id === job.id,
+            );
             if (!jobData) return false;
             return appliedFilters.speakerTags!.some((tag: string) =>
               jobData.acceptedLanguages.includes(tag),
@@ -287,7 +299,9 @@ export default function JobPostings({
           appliedFilters.maxSalary !== undefined
         ) {
           filtered = filtered.filter((job) => {
-            const jobData = jobsData?.find((j) => j.id === job.id);
+            const jobData = jobsData?.find(
+              (j: NonNullable<typeof jobsData>[number]) => j.id === job.id,
+            );
             if (!jobData) return false;
             return (
               jobData.salary >= appliedFilters.minSalary! &&
@@ -298,7 +312,9 @@ export default function JobPostings({
 
         if (appliedFilters.locationSearch) {
           filtered = filtered.filter((job) => {
-            const jobData = jobsData?.find((j) => j.id === job.id);
+            const jobData = jobsData?.find(
+              (j: NonNullable<typeof jobsData>[number]) => j.id === job.id,
+            );
             if (!jobData) return false;
             const query = appliedFilters.locationSearch!.toLowerCase();
             const fullLocation =

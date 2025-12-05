@@ -1,10 +1,11 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { PrismaClient, VideoTopic } from "@prisma/client";
+import { VideoTopic } from "@prisma/client";
 import { router, protectedProcedure } from "../trpc";
 import { requireCommunityOrgAdmin, getUserCommunityOrgId } from "../utils";
 import { logger } from "@/lib/logger";
 import { uploadAudioToS3, deleteAudioFromS3 } from "@/lib/s3Utils";
+import prisma from "@/lib/prisma";
 
 const addVideoInput = z.object({
   titleEnglish: z.string(),
@@ -39,11 +40,7 @@ type AddVideoInput = z.infer<typeof addVideoInput>;
 type RemoveVideoInput = z.infer<typeof removeVideoInput>;
 type UpdateVideoInput = z.infer<typeof updateVideoInput>;
 
-async function addVideo(
-  input: AddVideoInput,
-  communityOrgId: string | null,
-  prisma: PrismaClient,
-) {
+async function addVideo(input: AddVideoInput, communityOrgId: string | null) {
   try {
     const s3Key = await uploadAudioToS3(
       input.audioFile,
@@ -72,7 +69,7 @@ async function addVideo(
   }
 }
 
-async function removeVideo(input: RemoveVideoInput, prisma: PrismaClient) {
+async function removeVideo(input: RemoveVideoInput) {
   try {
     const existing = await prisma.videos.findUnique({
       where: { id: input.id },
@@ -111,7 +108,7 @@ async function removeVideo(input: RemoveVideoInput, prisma: PrismaClient) {
   }
 }
 
-async function updateVideo(input: UpdateVideoInput, prisma: PrismaClient) {
+async function updateVideo(input: UpdateVideoInput) {
   try {
     const { id, audioFile, audioFilename, audioFileSize, ...rest } = input;
     const existing = await prisma.videos.findUnique({
@@ -183,10 +180,7 @@ async function updateVideo(input: UpdateVideoInput, prisma: PrismaClient) {
   }
 }
 
-async function getAllVideos(
-  communityOrgId: string | null,
-  prisma: PrismaClient,
-) {
+async function getAllVideos(communityOrgId: string | null) {
   try {
     const videos = await prisma.videos.findMany({
       where: communityOrgId ? { communityOrgId } : undefined,
@@ -222,23 +216,23 @@ export const videosRouter = router({
     .mutation(async ({ input, ctx }) => {
       await requireCommunityOrgAdmin(ctx.auth.userId!);
       const communityOrgId = await getUserCommunityOrgId(ctx.auth.userId!);
-      return addVideo(input, communityOrgId, ctx.prisma);
+      return addVideo(input, communityOrgId);
     }),
   getAllVideos: protectedProcedure.query(async ({ ctx }) => {
     await requireCommunityOrgAdmin(ctx.auth.userId!);
     const communityOrgId = await getUserCommunityOrgId(ctx.auth.userId!);
-    return getAllVideos(communityOrgId, ctx.prisma);
+    return getAllVideos(communityOrgId);
   }),
   removeVideo: protectedProcedure
     .input(removeVideoInput)
     .mutation(async ({ input, ctx }) => {
       await requireCommunityOrgAdmin(ctx.auth.userId!);
-      return removeVideo(input, ctx.prisma);
+      return removeVideo(input);
     }),
   updateVideo: protectedProcedure
     .input(updateVideoInput)
     .mutation(async ({ input, ctx }) => {
       await requireCommunityOrgAdmin(ctx.auth.userId!);
-      return updateVideo(input, ctx.prisma);
+      return updateVideo(input);
     }),
 });

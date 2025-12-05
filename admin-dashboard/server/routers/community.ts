@@ -7,6 +7,7 @@ import {
   requireJilaAdmin,
   getInvitationRedirectUrl,
 } from "../utils";
+import prisma from "@/lib/prisma";
 
 export const communityRouter = router({
   getMyCommunityOrg: protectedProcedure.query(async ({ ctx }) => {
@@ -22,7 +23,7 @@ export const communityRouter = router({
       return null;
     }
 
-    const communityOrg = await ctx.prisma.communityOrg.findUnique({
+    const communityOrg = await prisma.communityOrg.findUnique({
       where: { id: communityOrgId },
     });
     return communityOrg;
@@ -31,7 +32,7 @@ export const communityRouter = router({
   getAllCommunityOrgs: protectedProcedure.query(async ({ ctx }) => {
     await requireJilaAdmin(ctx.auth.userId!);
 
-    const communityOrgs = await ctx.prisma.communityOrg.findMany({
+    const communityOrgs = await prisma.communityOrg.findMany({
       orderBy: { name: "asc" },
     });
     return communityOrgs;
@@ -42,7 +43,7 @@ export const communityRouter = router({
     .mutation(async ({ input, ctx }) => {
       await requireJilaAdmin(ctx.auth.userId!);
 
-      const communityOrg = await ctx.prisma.communityOrg.create({
+      const communityOrg = await prisma.communityOrg.create({
         data: { name: input.name },
       });
       return communityOrg;
@@ -89,7 +90,7 @@ export const communityRouter = router({
     .mutation(async ({ input, ctx }) => {
       await requireJilaAdmin(ctx.auth.userId!);
 
-      const communityOrg = await ctx.prisma.communityOrg.create({
+      const communityOrg = await prisma.communityOrg.create({
         data: { name: input.communityName },
       });
 
