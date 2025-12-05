@@ -20,7 +20,10 @@ import { formatFileSize } from "@/lib/utils";
 import { useVideoLinks } from "@/hooks/useVideoLinks";
 import FormError from "@/components/shared/FormError";
 import { logger } from "@/lib/logger";
-import { getFileUploadState } from "@/lib/fileUploadUtils";
+import {
+  getFileUploadState,
+  shouldShowSuccessMessage,
+} from "@/lib/fileUploadUtils";
 
 type SaveStatus = "idle" | "saving" | "success" | "error";
 
@@ -34,6 +37,7 @@ interface VideoData {
   descriptionQanjobal: string | null;
   audioFilename: string | null;
   audioFileSize: number | null;
+  audioFileS3Key: string | null;
 }
 
 interface VideoEditModalProps {
@@ -78,10 +82,15 @@ export default function VideoEditModal({
       return {
         fileName: videoData.audioFilename,
         fileSizeMB: formatFileSize(videoData.audioFileSize),
+        s3Key: videoData.audioFileS3Key || undefined,
       };
     }
     return undefined;
-  }, [videoData?.audioFilename, videoData?.audioFileSize]);
+  }, [
+    videoData?.audioFilename,
+    videoData?.audioFileSize,
+    videoData?.audioFileS3Key,
+  ]);
 
   useEffect(() => {
     if (isOpen && videoData) {
@@ -296,6 +305,10 @@ export default function VideoEditModal({
                 onDelete={handleDeleteFile}
                 state={getFileUploadState(
                   fields.audioFile.state,
+                  fields.audioFile.value,
+                  !!(existingFileMetadata && !clearExistingFile),
+                )}
+                showSuccessMessage={shouldShowSuccessMessage(
                   fields.audioFile.value,
                   !!(existingFileMetadata && !clearExistingFile),
                 )}

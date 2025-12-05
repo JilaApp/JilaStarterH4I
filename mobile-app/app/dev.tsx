@@ -270,6 +270,8 @@ export default function DevPage() {
         <BaseInput />
         <UsernameInput />
         <PasswordInput />
+        <Text style={styles.sectionTitle}>Audio Buttons</Text>
+        <Text style={styles.sectionSubtitle}>Static Audio (Bundled)</Text>
         <AudioButton
           audioSource={require("../assets/audio/sample.mp3")}
           variant={"default"}
@@ -277,6 +279,16 @@ export default function DevPage() {
         <AudioButton
           audioSource={require("../assets/audio/sample.mp3")}
           disabled
+        />
+        <Text style={styles.sectionSubtitle}>Dynamic Audio from S3</Text>
+        <Text style={styles.exampleText}>
+          Example S3 audio from admin-uploaded content
+        </Text>
+        <AudioButton
+          audioSource={{
+            uri: `${process.env.EXPO_PUBLIC_API_URL}api/audio?key=CA138clip.mp3`,
+          }}
+          variant={"default"}
         />
 
         <LikeDislike
@@ -493,6 +505,18 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 5,
     color: colors.type[400],
+  },
+  sectionSubtitle: {
+    fontSize: 14,
+    fontWeight: "500",
+    marginTop: 8,
+    marginBottom: 4,
+    color: colors.gray[600],
+  },
+  exampleText: {
+    fontSize: 12,
+    color: colors.gray[500],
+    marginBottom: 8,
   },
   selectContainer: {
     paddingVertical: 20,

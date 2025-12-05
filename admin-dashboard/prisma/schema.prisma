@@ -52,7 +52,7 @@ model Videos {
   id                  Int           @id @default(autoincrement())
   titleEnglish        String
   titleQanjobal       String
-  audioFile           Bytes?
+  audioFileS3Key      String?
   audioFilename       String?
   audioFileSize       Int?
   topic               VideoTopic
@@ -65,21 +65,21 @@ model Videos {
 }
 
 model SocialServices {
-  id                       Int                   @id @default(autoincrement())
-  title                    String
-  category                 SocialServiceCategory
-  phone_number             String                @unique @db.VarChar(20)
-  address                  String?
-  description              String?
-  url                      String?               @unique
-  titleAudioFilename       String?
-  titleAudioFileSize       Int?
-  titleAudioFile           String? // base64 encoded
-  descriptionAudioFilename String?
-  descriptionAudioFileSize Int?
-  descriptionAudioFile     String?
-  communityOrgId           String?
-  communityOrg             CommunityOrg?         @relation(fields: [communityOrgId], references: [id])
+  id                        Int                   @id @default(autoincrement())
+  title                     String
+  category                  SocialServiceCategory
+  phone_number              String                @unique @db.VarChar(20)
+  address                   String?
+  description               String?
+  url                       String?               @unique
+  titleAudioFilename        String?
+  titleAudioFileSize        Int?
+  titleAudioFileS3Key       String?
+  descriptionAudioFilename  String?
+  descriptionAudioFileSize  Int?
+  descriptionAudioFileS3Key String?
+  communityOrgId            String?
+  communityOrg              CommunityOrg?         @relation(fields: [communityOrgId], references: [id])
 }
 
 model Jobs {

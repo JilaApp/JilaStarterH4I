@@ -16,3 +16,17 @@ export function getFileUploadState(
   if (fieldValue || hasExistingFile) return "complete";
   return "default";
 }
+
+/**
+ * Determines whether to show the success message after upload
+ * @param fieldValue - The current file value (File or undefined)
+ * @param hasExistingFile - Whether an existing file is present (for edit modals)
+ * @returns Whether to show "File uploaded!" success message
+ */
+export function shouldShowSuccessMessage(
+  fieldValue: File | undefined,
+  hasExistingFile: boolean = false,
+): boolean {
+  // Show success message only if we have a newly uploaded file (not an existing one)
+  return !!fieldValue && !hasExistingFile;
+}

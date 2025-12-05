@@ -21,7 +21,10 @@ import {
 } from "@/lib/validators";
 import { Plus, Trash2 } from "lucide-react";
 import { logger } from "@/lib/logger";
-import { getFileUploadState } from "@/lib/fileUploadUtils";
+import {
+  getFileUploadState,
+  shouldShowSuccessMessage,
+} from "@/lib/fileUploadUtils";
 
 export default function VideoUploadForm() {
   const { fields, setFieldValue, setFieldError, resetForm, validateAllFields } =
@@ -145,6 +148,9 @@ export default function VideoUploadForm() {
             onDelete={() => setFieldValue("audioFile", undefined)}
             state={getFileUploadState(
               fields.audioFile.state,
+              fields.audioFile.value,
+            )}
+            showSuccessMessage={shouldShowSuccessMessage(
               fields.audioFile.value,
             )}
             extendedText="Upload an audio recording of the resource title in Q'anjob'al"
