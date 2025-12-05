@@ -6,13 +6,19 @@ import { formatFileSize } from "@/lib/utils";
 import { useClickOutside } from "@/hooks/useClickOutside";
 
 interface AudioDisplayProps {
-  file: File;
+  file?: File;
+  audioUrl?: string;
+  fileName?: string;
+  fileSize?: number;
   onDelete?: () => void;
   editable?: boolean;
 }
 
 export default function AudioDisplay({
   file,
+  audioUrl: audioUrlProp,
+  fileName,
+  fileSize,
   onDelete,
   editable = true,
 }: AudioDisplayProps) {
@@ -32,13 +38,21 @@ export default function AudioDisplay({
   });
 
   useEffect(() => {
-    const url = URL.createObjectURL(file);
-    setAudioUrl(url);
+    if (file) {
+      const url = URL.createObjectURL(file);
+      setAudioUrl(url);
 
-    return () => {
-      URL.revokeObjectURL(url);
-    };
+      return () => {
+        URL.revokeObjectURL(url);
+      };
+    } else {
+      setAudioUrl("");
+    }
   }, [file]);
+
+  const effectiveAudioUrl = audioUrl || audioUrlProp || "";
+  const displayName = file?.name || fileName || "";
+  const displaySize = file?.size || fileSize || 0;
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -57,7 +71,7 @@ export default function AudioDisplay({
       audio.removeEventListener("loadedmetadata", updateDuration);
       audio.removeEventListener("ended", handleEnded);
     };
-  }, [audioUrl]);
+  }, [effectiveAudioUrl]);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -103,17 +117,17 @@ export default function AudioDisplay({
 
   return (
     <div className="border border-gray-200 rounded-[10px] overflow-visible">
-      <audio ref={audioRef} src={audioUrl || undefined} />
+      <audio ref={audioRef} src={effectiveAudioUrl || undefined} />
 
       <div className="bg-white flex items-center justify-between px-[10px] py-[5px]">
         <div className="flex gap-[17px] items-center w-[245px]">
           <File className="text-type-400 size-[24px]" />
           <div className="flex flex-col w-[218px]">
             <span className="font-semibold text-type-400 text-[18px] leading-[25px] truncate">
-              {file.name}
+              {displayName}
             </span>
             <span className="font-normal text-gray-300 text-[18px] leading-[25px]">
-              {formatFileSize(file.size)} MB
+              {formatFileSize(displaySize)} MB
             </span>
           </div>
         </div>

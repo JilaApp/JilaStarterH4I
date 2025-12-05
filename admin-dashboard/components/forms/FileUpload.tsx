@@ -18,6 +18,7 @@ interface FileUploadProps {
   existingFile?: {
     fileName: string;
     fileSizeMB: number;
+    s3Key?: string;
   };
   showSuccessMessage?: boolean;
 }
@@ -124,6 +125,14 @@ export default function FileUpload({
           onDelete={handleDelete}
           editable={editable}
         />
+      ) : state === "complete" && !value && existingFile?.s3Key ? (
+        <AudioDisplay
+          audioUrl={`/api/audio?key=${existingFile.s3Key}`}
+          fileName={existingFile.fileName}
+          fileSize={existingFile.fileSizeMB * 1024 * 1024}
+          onDelete={handleDelete}
+          editable={editable}
+        />
       ) : (
         <>
           {(state === "default" ||
@@ -174,6 +183,18 @@ export default function FileUpload({
               editable={editable}
             />
           )}
+          {state === "complete" &&
+            !value &&
+            showSuccessMessage &&
+            existingFile?.s3Key && (
+              <AudioDisplay
+                audioUrl={`/api/audio?key=${existingFile.s3Key}`}
+                fileName={existingFile.fileName}
+                fileSize={existingFile.fileSizeMB * 1024 * 1024}
+                onDelete={handleDelete}
+                editable={editable}
+              />
+            )}
         </>
       )}
     </div>

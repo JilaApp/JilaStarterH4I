@@ -39,6 +39,8 @@ import Checkbox from "@/components/Checkbox";
 import Header from "@/components/Header";
 import Link from "@/components/Link";
 import VideoEmbed, { VideoType } from "@/components/VideoEmbed";
+import VideoUpNext from "@/components/VideoUpNext";
+import JobCard from "@/components/JobCard";
 
 export default function DevPage() {
   const [
@@ -196,9 +198,28 @@ export default function DevPage() {
           uri={videoEmbedGoogleDriveURL}
           type={VideoType.GoogleDrive}
         />
+
         <View
           style={{ backgroundColor: colors.cream[300], gap: 10, padding: 10 }}
         >
+          <Text style={styles.sectionTitle}>Up Next</Text>
+          <VideoUpNext
+            videoUrl={videoEmbedYoutubeURL}
+            title="Part 2"
+            duration={0}
+          />
+        </View>
+
+        <View
+          style={{ backgroundColor: colors.cream[300], gap: 10, padding: 10 }}
+        >
+          <JobCard
+            title="swe"
+            company="apple"
+            salary="100000"
+            location="champaign"
+            onPress={() => console.log("pressed job card")}
+          />
           <Text style={styles.sectionTitle}>
             VideoDropdown - Multiple Videos (Cream)
           </Text>

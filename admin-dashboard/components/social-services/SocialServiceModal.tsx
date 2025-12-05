@@ -38,8 +38,10 @@ interface SocialServiceData {
   url: string | null;
   titleAudioFilename: string | null;
   titleAudioFileSize: number | null;
+  titleAudioFileS3Key: string | null;
   descriptionAudioFilename: string | null;
   descriptionAudioFileSize: number | null;
+  descriptionAudioFileS3Key: string | null;
 }
 
 interface SocialServiceEditModalProps {
@@ -92,10 +94,15 @@ export default function SocialServiceEditModal({
       return {
         fileName: serviceData.titleAudioFilename,
         fileSizeMB: formatFileSize(serviceData.titleAudioFileSize),
+        s3Key: serviceData.titleAudioFileS3Key || undefined,
       };
     }
     return undefined;
-  }, [serviceData?.titleAudioFilename, serviceData?.titleAudioFileSize]);
+  }, [
+    serviceData?.titleAudioFilename,
+    serviceData?.titleAudioFileSize,
+    serviceData?.titleAudioFileS3Key,
+  ]);
 
   const existingDescriptionFileMetadata = useMemo(() => {
     if (
@@ -105,12 +112,14 @@ export default function SocialServiceEditModal({
       return {
         fileName: serviceData.descriptionAudioFilename,
         fileSizeMB: formatFileSize(serviceData.descriptionAudioFileSize),
+        s3Key: serviceData.descriptionAudioFileS3Key || undefined,
       };
     }
     return undefined;
   }, [
     serviceData?.descriptionAudioFilename,
     serviceData?.descriptionAudioFileSize,
+    serviceData?.descriptionAudioFileS3Key,
   ]);
 
   useEffect(() => {

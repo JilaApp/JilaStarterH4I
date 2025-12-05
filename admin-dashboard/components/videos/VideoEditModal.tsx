@@ -37,6 +37,7 @@ interface VideoData {
   descriptionQanjobal: string | null;
   audioFilename: string | null;
   audioFileSize: number | null;
+  audioFileS3Key: string | null;
 }
 
 interface VideoEditModalProps {
@@ -81,10 +82,15 @@ export default function VideoEditModal({
       return {
         fileName: videoData.audioFilename,
         fileSizeMB: formatFileSize(videoData.audioFileSize),
+        s3Key: videoData.audioFileS3Key || undefined,
       };
     }
     return undefined;
-  }, [videoData?.audioFilename, videoData?.audioFileSize]);
+  }, [
+    videoData?.audioFilename,
+    videoData?.audioFileSize,
+    videoData?.audioFileS3Key,
+  ]);
 
   useEffect(() => {
     if (isOpen && videoData) {

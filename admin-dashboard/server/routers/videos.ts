@@ -1,10 +1,19 @@
-import { router, publicProcedure } from "../trpc";
+import { router, protectedProcedure } from "../trpc";
 import prisma from "@/lib/prisma";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { VideoTopic } from "@prisma/client";
 import { logger } from "@/lib/logger";
 import { uploadAudioToS3, deleteAudioFromS3 } from "@/lib/s3Utils";
+import { clerkClient } from "@clerk/nextjs/server";
+
+const getUserCommunityOrgId = async (
+  userId: string,
+): Promise<string | null> => {
+  const client = await clerkClient();
+  const user = await client.users.getUser(userId);
+  return (user.publicMetadata?.communityOrgId as string) || null;
+};
 
 const addVideoInput = z.object({
   titleEnglish: z.string(),
@@ -39,7 +48,7 @@ type AddVideoInput = z.infer<typeof addVideoInput>;
 type RemoveVideoInput = z.infer<typeof removeVideoInput>;
 type UpdateVideoInput = z.infer<typeof updateVideoInput>;
 
-async function addVideo(input: AddVideoInput) {
+async function addVideo(input: AddVideoInput, communityOrgId: string | null) {
   try {
     // Upload audio file to S3
     const s3Key = await uploadAudioToS3(
@@ -60,6 +69,7 @@ async function addVideo(input: AddVideoInput) {
         uploadDate: new Date(),
         descriptionEnglish: input.descriptionEnglish,
         descriptionQanjobal: input.descriptionQanjobal,
+        communityOrgId: communityOrgId,
       },
     });
   } catch (err: any) {
@@ -179,9 +189,10 @@ async function updateVideo(input: UpdateVideoInput) {
   }
 }
 
-async function getAllVideos() {
+async function getAllVideos(communityOrgId: string | null) {
   try {
     const videos = await prisma.videos.findMany({
+      where: communityOrgId ? { communityOrgId } : undefined,
       select: {
         id: true,
         titleEnglish: true,
@@ -194,6 +205,7 @@ async function getAllVideos() {
         audioFilename: true,
         audioFileSize: true,
         audioFileS3Key: true,
+        communityOrgId: true,
       },
     });
     return videos;
@@ -208,14 +220,20 @@ async function getAllVideos() {
 }
 
 export const videosRouter = router({
-  addVideo: publicProcedure
+  addVideo: protectedProcedure
     .input(addVideoInput)
-    .mutation(({ input }) => addVideo(input)),
-  getAllVideos: publicProcedure.query(getAllVideos),
-  removeVideo: publicProcedure
+    .mutation(async ({ input, ctx }) => {
+      const communityOrgId = await getUserCommunityOrgId(ctx.auth.userId!);
+      return addVideo(input, communityOrgId);
+    }),
+  getAllVideos: protectedProcedure.query(async ({ ctx }) => {
+    const communityOrgId = await getUserCommunityOrgId(ctx.auth.userId!);
+    return getAllVideos(communityOrgId);
+  }),
+  removeVideo: protectedProcedure
     .input(removeVideoInput)
     .mutation(({ input }) => removeVideo(input)),
-  updateVideo: publicProcedure
+  updateVideo: protectedProcedure
     .input(updateVideoInput)
     .mutation(({ input }) => updateVideo(input)),
 });
