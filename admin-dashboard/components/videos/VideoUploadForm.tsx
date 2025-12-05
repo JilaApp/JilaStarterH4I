@@ -48,7 +48,7 @@ export default function VideoUploadForm() {
     }
     const invalidLinks = currentLinks.some((link) => {
       if (!link) return true;
-      return !validateURL(link);
+      return validateURL(link) !== null;
     });
 
     if (invalidLinks) {
@@ -170,7 +170,13 @@ export default function VideoUploadForm() {
           <Dropdown {...props} options={[...VIDEO_TOPIC_DISPLAY_OPTIONS]} />
         )}
       </FormField>
-      <FormField title="Video link" defaultClassName="max-w-[918px]" required>
+      <FormField
+        title="Video link"
+        defaultClassName="max-w-[918px]"
+        required
+        state={fields.videoLinks.state}
+        errorString={fields.videoLinks.error}
+      >
         {(props) => (
           <>
             {fields.videoLinks.value.map((link, index) => (

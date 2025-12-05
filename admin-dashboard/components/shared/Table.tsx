@@ -15,6 +15,7 @@ interface TableProps<T extends DataRow> {
   handleRowClick: (id: T["id"]) => void;
   selectedRows?: number[];
   onSelectedRowsChange?: (selectedRows: number[]) => void;
+  emptyState?: React.ReactNode;
 }
 
 export default function Table<T extends DataRow>({
@@ -27,6 +28,7 @@ export default function Table<T extends DataRow>({
   handleRowClick,
   selectedRows: externalSelectedRows,
   onSelectedRowsChange,
+  emptyState,
 }: TableProps<T>) {
   const [internalSelectedRows, setInternalSelectedRows] = useState<number[]>(
     [],
@@ -85,130 +87,144 @@ export default function Table<T extends DataRow>({
             </tr>
           </thead>
           <tbody className="font-medium">
-            {data.map((row) => (
-              <tr
-                key={row.id}
-                onClick={() => handleRowClick(row.id)}
-                className={clsx("cursor-pointer border-t", {
-                  "bg-cream-400 border-error-200 border-b":
-                    selectedRows.includes(row.id),
-                  "bg-white-400 hover:bg-gray-200 border-transparent":
-                    !selectedRows.includes(row.id),
-                })}
-              >
-                {columns.map((col, cellIndex) => {
-                  const value = row[col.accessorKey];
-                  return (
-                    <td
-                      key={cellIndex}
-                      className={
-                        cellIndex === 0
-                          ? "pl-5 pr-6 p-4 font-semibold"
-                          : "px-6 p-4"
-                      }
-                    >
-                      {cellIndex === 0 && (
-                        <input
-                          type="checkbox"
-                          checked={selectedRows.includes(row.id)}
-                          onClick={(e) => e.stopPropagation()}
-                          onChange={() => handleCheckboxChange(row.id)}
-                          className="w-4 h-4 mr-6 align-middle accent-jila-400 cursor-pointer"
-                        />
-                      )}
-                      <span className="align-middle">
-                        {col.cell ? col.cell(value) : String(value)}
-                      </span>
-                    </td>
-                  );
-                })}
-                <td className="px-6 p-4 relative text-center">
-                  {handleApprove && handleDeny ? (
-                    <div className="flex items-center justify-center gap-[20px]">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleApprove(row.id);
-                        }}
-                        className="hover:opacity-80 cursor-pointer"
-                      >
-                        <Check size={24} className="text-green-400" />
-                      </button>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDeny(row.id);
-                        }}
-                        className="hover:opacity-80 cursor-pointer"
-                      >
-                        <XIcon size={24} className="text-error-400" />
-                      </button>
-                    </div>
-                  ) : (
-                    <>
-                      <button
-                        ref={(el) => {
-                          if (el) buttonRefs.current.set(row.id, el);
-                        }}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          const rect = e.currentTarget.getBoundingClientRect();
-                          setMenuPosition({
-                            top: rect.bottom + 5,
-                            left: rect.right - 110,
-                          });
-                          setOpenMenu(openMenu === row.id ? null : row.id);
-                        }}
-                        className="p-2 rounded-full hover:bg-gray-300 hover:cursor-pointer"
-                      >
-                        <MoreVertical size={18} />
-                      </button>
-                      {openMenu === row.id && menuPosition && (
-                        <div
-                          ref={menuRef}
-                          className="fixed w-28 bg-white rounded-lg shadow-[0_8px_16px_rgba(0,0,0,0.2)] z-[100]"
-                          onClick={(e) => e.stopPropagation()}
-                          style={{
-                            top: `${menuPosition.top}px`,
-                            left: `${menuPosition.left}px`,
-                          }}
-                        >
-                          <Image
-                            src="/table-menu-tail.svg"
-                            alt="tail"
-                            width={100}
-                            height={100}
-                            className="absolute top-[-50px] right-[-34px] origin-center block pointer-events-none"
-                          />
-                          {handleEdit && (
-                            <button
-                              onClick={() => {
-                                handleEdit(row.id);
-                                setOpenMenu(null);
-                              }}
-                              className="block w-full text-left px-4 py-2 hover:text-gray-300 cursor-pointer rounded-md"
-                            >
-                              Edit
-                            </button>
-                          )}
-                          {handleDelete && (
-                            <button
-                              onClick={() => {
-                                handleDelete(row.id);
-                                setOpenMenu(null);
-                              }}
-                              className="block w-full text-left px-4 py-2 hover:text-gray-300 cursor-pointer rounded-md"
-                            >
-                              Delete
-                            </button>
-                          )}
-                        </div>
-                      )}
-                    </>
-                  )}
+            {data.length === 0 && emptyState ? (
+              <tr>
+                <td
+                  colSpan={columns.length + 1}
+                  className="p-0 h-full align-top"
+                >
+                  <div className="bg-white h-[600px] flex items-center justify-center">
+                    {emptyState}
+                  </div>
                 </td>
               </tr>
-            ))}
+            ) : (
+              data.map((row) => (
+                <tr
+                  key={row.id}
+                  onClick={() => handleRowClick(row.id)}
+                  className={clsx("cursor-pointer border-t", {
+                    "bg-cream-400 border-error-200 border-b":
+                      selectedRows.includes(row.id),
+                    "bg-white-400 hover:bg-gray-200 border-transparent":
+                      !selectedRows.includes(row.id),
+                  })}
+                >
+                  {columns.map((col, cellIndex) => {
+                    const value = row[col.accessorKey];
+                    return (
+                      <td
+                        key={cellIndex}
+                        className={
+                          cellIndex === 0
+                            ? "pl-5 pr-6 p-4 font-semibold"
+                            : "px-6 p-4"
+                        }
+                      >
+                        {cellIndex === 0 && (
+                          <input
+                            type="checkbox"
+                            checked={selectedRows.includes(row.id)}
+                            onClick={(e) => e.stopPropagation()}
+                            onChange={() => handleCheckboxChange(row.id)}
+                            className="w-4 h-4 mr-6 align-middle accent-jila-400 cursor-pointer"
+                          />
+                        )}
+                        <span className="align-middle">
+                          {col.cell ? col.cell(value) : String(value)}
+                        </span>
+                      </td>
+                    );
+                  })}
+                  <td className="px-6 p-4 relative text-center">
+                    {handleApprove && handleDeny ? (
+                      <div className="flex items-center justify-center gap-[20px]">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleApprove(row.id);
+                          }}
+                          className="hover:opacity-80 cursor-pointer"
+                        >
+                          <Check size={24} className="text-green-400" />
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeny(row.id);
+                          }}
+                          className="hover:opacity-80 cursor-pointer"
+                        >
+                          <XIcon size={24} className="text-error-400" />
+                        </button>
+                      </div>
+                    ) : (
+                      <>
+                        <button
+                          ref={(el) => {
+                            if (el) buttonRefs.current.set(row.id, el);
+                          }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            const rect =
+                              e.currentTarget.getBoundingClientRect();
+                            setMenuPosition({
+                              top: rect.bottom + 5,
+                              left: rect.right - 110,
+                            });
+                            setOpenMenu(openMenu === row.id ? null : row.id);
+                          }}
+                          className="p-2 rounded-full hover:bg-gray-300 hover:cursor-pointer"
+                        >
+                          <MoreVertical size={18} />
+                        </button>
+                        {openMenu === row.id && menuPosition && (
+                          <div
+                            ref={menuRef}
+                            className="fixed w-28 bg-white rounded-lg shadow-[0_8px_16px_rgba(0,0,0,0.2)] z-[100]"
+                            onClick={(e) => e.stopPropagation()}
+                            style={{
+                              top: `${menuPosition.top}px`,
+                              left: `${menuPosition.left}px`,
+                            }}
+                          >
+                            <Image
+                              src="/table-menu-tail.svg"
+                              alt="tail"
+                              width={100}
+                              height={100}
+                              className="absolute top-[-50px] right-[-34px] origin-center block pointer-events-none"
+                            />
+                            {handleEdit && (
+                              <button
+                                onClick={() => {
+                                  handleEdit(row.id);
+                                  setOpenMenu(null);
+                                }}
+                                className="block w-full text-left px-4 py-2 hover:text-gray-300 cursor-pointer rounded-md"
+                              >
+                                Edit
+                              </button>
+                            )}
+                            {handleDelete && (
+                              <button
+                                onClick={() => {
+                                  handleDelete(row.id);
+                                  setOpenMenu(null);
+                                }}
+                                className="block w-full text-left px-4 py-2 hover:text-gray-300 cursor-pointer rounded-md"
+                              >
+                                Delete
+                              </button>
+                            )}
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>
