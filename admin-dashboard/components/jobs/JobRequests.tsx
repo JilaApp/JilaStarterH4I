@@ -12,6 +12,7 @@ import JobRequestModal from "@/components/jobs/JobRequestModal";
 import { useNotification } from "@/hooks/useNotification";
 import { logger } from "@/lib/logger";
 import { FullJobType } from "@/lib/types";
+import EmptyState from "@/components/shared/EmptyState";
 
 interface JobRequestTableData extends DataRow {
   id: number;
@@ -234,6 +235,12 @@ export default function JobRequests() {
               handleRowClick={handleJobRequestRowClick}
               selectedRows={selectedRows}
               onSelectedRowsChange={setSelectedRows}
+              emptyState={
+                <EmptyState
+                  heading="No pending job requests"
+                  subtext="When communities request jobs, their requests will appear here"
+                />
+              }
             />
           )}
         </div>
