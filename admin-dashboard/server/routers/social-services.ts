@@ -1,19 +1,11 @@
-import { router, protectedProcedure } from "../trpc";
-import prisma from "@/lib/prisma";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
+import { PrismaClient } from "@prisma/client";
+import { router, protectedProcedure } from "../trpc";
+import { requireCommunityOrgAdmin, getUserCommunityOrgId } from "../utils";
 import { SocialServiceCategory } from "@/lib/types";
 import { logger } from "@/lib/logger";
 import { uploadAudioToS3, deleteAudioFromS3 } from "@/lib/s3Utils";
-import { clerkClient } from "@clerk/nextjs/server";
-
-const getUserCommunityOrgId = async (
-  userId: string,
-): Promise<string | null> => {
-  const client = await clerkClient();
-  const user = await client.users.getUser(userId);
-  return (user.publicMetadata?.communityOrgId as string) || null;
-};
 
 const addSocialServiceInput = z.object({
   title: z.string(),
@@ -57,6 +49,7 @@ type EditSocialServiceInput = z.infer<typeof editSocialServiceInput>;
 async function addSocialService(
   input: AddSocialServiceInput,
   communityOrgId: string | null,
+  prisma: PrismaClient,
 ) {
   try {
     const existing = await prisma.socialServices.findUnique({
@@ -124,7 +117,10 @@ async function addSocialService(
   }
 }
 
-async function removeSocialService(input: RemoveSocialServiceInput) {
+async function removeSocialService(
+  input: RemoveSocialServiceInput,
+  prisma: PrismaClient,
+) {
   try {
     const existing = await prisma.socialServices.findUnique({
       where: { id: input.id },
@@ -166,7 +162,10 @@ async function removeSocialService(input: RemoveSocialServiceInput) {
   }
 }
 
-async function editSocialService(input: EditSocialServiceInput) {
+async function editSocialService(
+  input: EditSocialServiceInput,
+  prisma: PrismaClient,
+) {
   try {
     const existing = await prisma.socialServices.findUnique({
       where: { id: input.id },
@@ -272,7 +271,10 @@ async function editSocialService(input: EditSocialServiceInput) {
   }
 }
 
-async function getAllSocialServices(communityOrgId: string | null) {
+async function getAllSocialServices(
+  communityOrgId: string | null,
+  prisma: PrismaClient,
+) {
   try {
     const services = await prisma.socialServices.findMany({
       where: communityOrgId ? { communityOrgId } : undefined,
@@ -292,17 +294,25 @@ export const socialServicesRouter = router({
   addSocialService: protectedProcedure
     .input(addSocialServiceInput)
     .mutation(async ({ input, ctx }) => {
+      await requireCommunityOrgAdmin(ctx.auth.userId!);
       const communityOrgId = await getUserCommunityOrgId(ctx.auth.userId!);
-      return addSocialService(input, communityOrgId);
+      return addSocialService(input, communityOrgId, ctx.prisma);
     }),
   getAllSocialServices: protectedProcedure.query(async ({ ctx }) => {
+    await requireCommunityOrgAdmin(ctx.auth.userId!);
     const communityOrgId = await getUserCommunityOrgId(ctx.auth.userId!);
-    return getAllSocialServices(communityOrgId);
+    return getAllSocialServices(communityOrgId, ctx.prisma);
   }),
   removeSocialService: protectedProcedure
     .input(removeSocialServiceInput)
-    .mutation(({ input }) => removeSocialService(input)),
+    .mutation(async ({ input, ctx }) => {
+      await requireCommunityOrgAdmin(ctx.auth.userId!);
+      return removeSocialService(input, ctx.prisma);
+    }),
   editSocialService: protectedProcedure
     .input(editSocialServiceInput)
-    .mutation(({ input }) => editSocialService(input)),
+    .mutation(async ({ input, ctx }) => {
+      await requireCommunityOrgAdmin(ctx.auth.userId!);
+      return editSocialService(input, ctx.prisma);
+    }),
 });

@@ -34,7 +34,10 @@ export default function InviteView() {
     },
     onError: (error) => {
       logger.error("[sendInvitation] Failed to send invitation", error);
-      showNotification("Failed to send invitation. Please try again.", "error");
+      showNotification(
+        error?.message || "Failed to send invitation. Please try again.",
+        "error",
+      );
     },
   });
 
@@ -51,7 +54,7 @@ export default function InviteView() {
           error,
         );
         showNotification(
-          "Failed to send invitation. Please try again.",
+          error?.message || "Failed to send invitation. Please try again.",
           "error",
         );
       },

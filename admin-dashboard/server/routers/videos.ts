@@ -1,19 +1,10 @@
-import { router, protectedProcedure } from "../trpc";
-import prisma from "@/lib/prisma";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { VideoTopic } from "@prisma/client";
+import { PrismaClient, VideoTopic } from "@prisma/client";
+import { router, protectedProcedure } from "../trpc";
+import { requireCommunityOrgAdmin, getUserCommunityOrgId } from "../utils";
 import { logger } from "@/lib/logger";
 import { uploadAudioToS3, deleteAudioFromS3 } from "@/lib/s3Utils";
-import { clerkClient } from "@clerk/nextjs/server";
-
-const getUserCommunityOrgId = async (
-  userId: string,
-): Promise<string | null> => {
-  const client = await clerkClient();
-  const user = await client.users.getUser(userId);
-  return (user.publicMetadata?.communityOrgId as string) || null;
-};
 
 const addVideoInput = z.object({
   titleEnglish: z.string(),
@@ -48,9 +39,12 @@ type AddVideoInput = z.infer<typeof addVideoInput>;
 type RemoveVideoInput = z.infer<typeof removeVideoInput>;
 type UpdateVideoInput = z.infer<typeof updateVideoInput>;
 
-async function addVideo(input: AddVideoInput, communityOrgId: string | null) {
+async function addVideo(
+  input: AddVideoInput,
+  communityOrgId: string | null,
+  prisma: PrismaClient,
+) {
   try {
-    // Upload audio file to S3
     const s3Key = await uploadAudioToS3(
       input.audioFile,
       input.audioFilename,
@@ -78,7 +72,7 @@ async function addVideo(input: AddVideoInput, communityOrgId: string | null) {
   }
 }
 
-async function removeVideo(input: RemoveVideoInput) {
+async function removeVideo(input: RemoveVideoInput, prisma: PrismaClient) {
   try {
     const existing = await prisma.videos.findUnique({
       where: { id: input.id },
@@ -117,7 +111,7 @@ async function removeVideo(input: RemoveVideoInput) {
   }
 }
 
-async function updateVideo(input: UpdateVideoInput) {
+async function updateVideo(input: UpdateVideoInput, prisma: PrismaClient) {
   try {
     const { id, audioFile, audioFilename, audioFileSize, ...rest } = input;
     const existing = await prisma.videos.findUnique({
@@ -189,7 +183,10 @@ async function updateVideo(input: UpdateVideoInput) {
   }
 }
 
-async function getAllVideos(communityOrgId: string | null) {
+async function getAllVideos(
+  communityOrgId: string | null,
+  prisma: PrismaClient,
+) {
   try {
     const videos = await prisma.videos.findMany({
       where: communityOrgId ? { communityOrgId } : undefined,
@@ -223,17 +220,25 @@ export const videosRouter = router({
   addVideo: protectedProcedure
     .input(addVideoInput)
     .mutation(async ({ input, ctx }) => {
+      await requireCommunityOrgAdmin(ctx.auth.userId!);
       const communityOrgId = await getUserCommunityOrgId(ctx.auth.userId!);
-      return addVideo(input, communityOrgId);
+      return addVideo(input, communityOrgId, ctx.prisma);
     }),
   getAllVideos: protectedProcedure.query(async ({ ctx }) => {
+    await requireCommunityOrgAdmin(ctx.auth.userId!);
     const communityOrgId = await getUserCommunityOrgId(ctx.auth.userId!);
-    return getAllVideos(communityOrgId);
+    return getAllVideos(communityOrgId, ctx.prisma);
   }),
   removeVideo: protectedProcedure
     .input(removeVideoInput)
-    .mutation(({ input }) => removeVideo(input)),
+    .mutation(async ({ input, ctx }) => {
+      await requireCommunityOrgAdmin(ctx.auth.userId!);
+      return removeVideo(input, ctx.prisma);
+    }),
   updateVideo: protectedProcedure
     .input(updateVideoInput)
-    .mutation(({ input }) => updateVideo(input)),
+    .mutation(async ({ input, ctx }) => {
+      await requireCommunityOrgAdmin(ctx.auth.userId!);
+      return updateVideo(input, ctx.prisma);
+    }),
 });

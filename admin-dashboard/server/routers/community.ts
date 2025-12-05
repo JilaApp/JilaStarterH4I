@@ -1,30 +1,17 @@
-import { z } from "zod";
-import { router, protectedProcedure } from "../trpc";
-import prisma from "@/lib/prisma";
-import { clerkClient } from "@clerk/nextjs/server";
 import { TRPCError } from "@trpc/server";
-
-const requireJilaAdmin = async (userId: string) => {
-  const client = await clerkClient();
-  const user = await client.users.getUser(userId);
-
-  if (user.publicMetadata?.userType !== "JilaAdmin") {
-    throw new TRPCError({
-      code: "FORBIDDEN",
-      message: "Only Jila Admins can perform this action",
-    });
-  }
-};
-
-const getInvitationRedirectUrl = () => {
-  const baseUrl =
-    process.env.NEXT_PUBLIC_APP_URL ||
-    `http://localhost:${process.env.PORT || 3000}`;
-  return `${baseUrl}/sign-up`;
-};
+import { z } from "zod";
+import { clerkClient } from "@clerk/nextjs/server";
+import { router, protectedProcedure } from "../trpc";
+import {
+  requireCommunityOrgAdmin,
+  requireJilaAdmin,
+  getInvitationRedirectUrl,
+} from "../utils";
 
 export const communityRouter = router({
   getMyCommunityOrg: protectedProcedure.query(async ({ ctx }) => {
+    await requireCommunityOrgAdmin(ctx.auth.userId!);
+
     const client = await clerkClient();
     const user = await client.users.getUser(ctx.auth.userId!);
     const communityOrgId = user.publicMetadata?.communityOrgId as
@@ -35,14 +22,16 @@ export const communityRouter = router({
       return null;
     }
 
-    const communityOrg = await prisma.communityOrg.findUnique({
+    const communityOrg = await ctx.prisma.communityOrg.findUnique({
       where: { id: communityOrgId },
     });
     return communityOrg;
   }),
 
-  getAllCommunityOrgs: protectedProcedure.query(async () => {
-    const communityOrgs = await prisma.communityOrg.findMany({
+  getAllCommunityOrgs: protectedProcedure.query(async ({ ctx }) => {
+    await requireJilaAdmin(ctx.auth.userId!);
+
+    const communityOrgs = await ctx.prisma.communityOrg.findMany({
       orderBy: { name: "asc" },
     });
     return communityOrgs;
@@ -53,7 +42,7 @@ export const communityRouter = router({
     .mutation(async ({ input, ctx }) => {
       await requireJilaAdmin(ctx.auth.userId!);
 
-      const communityOrg = await prisma.communityOrg.create({
+      const communityOrg = await ctx.prisma.communityOrg.create({
         data: { name: input.name },
       });
       return communityOrg;
@@ -100,7 +89,7 @@ export const communityRouter = router({
     .mutation(async ({ input, ctx }) => {
       await requireJilaAdmin(ctx.auth.userId!);
 
-      const communityOrg = await prisma.communityOrg.create({
+      const communityOrg = await ctx.prisma.communityOrg.create({
         data: { name: input.communityName },
       });
 

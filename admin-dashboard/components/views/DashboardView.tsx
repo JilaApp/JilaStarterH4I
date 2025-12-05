@@ -100,7 +100,9 @@ export default function DashboardView() {
     },
     onError: (error) => {
       logger.error("[deleteVideoMutation] Failed to delete video", error);
-      showNotification("Failed to delete video. Please try again.");
+      showNotification(
+        error?.message || "Failed to delete video. Please try again.",
+      );
     },
   });
 
@@ -114,7 +116,10 @@ export default function DashboardView() {
           "[deleteSocialServiceMutation] Failed to delete social service",
           error,
         );
-        showNotification("Failed to delete social service. Please try again.");
+        showNotification(
+          error?.message ||
+            "Failed to delete social service. Please try again.",
+        );
       },
     });
 
