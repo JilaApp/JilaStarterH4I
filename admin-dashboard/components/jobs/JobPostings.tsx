@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo, useCallback } from "react";
-import { SlidersHorizontal } from "lucide-react";
+import { Plus, SlidersHorizontal } from "lucide-react";
 import Table from "@/components/shared/Table";
 import { ColumnDefinition, DataRow, JobFilters } from "@/lib/types";
 import SearchBar from "@/components/forms/SearchBar";
@@ -17,8 +17,6 @@ import { useNotification } from "@/hooks/useNotification";
 import Pagination from "@/components/shared/Pagination";
 import { logger } from "@/lib/logger";
 import { FullJobType } from "@/lib/types";
-import EmptyState from "@/components/shared/EmptyState";
-import AddButton from "@/components/shared/AddButton";
 
 interface JobResourceData extends DataRow {
   id: number;
@@ -100,7 +98,7 @@ export default function JobPostings({
 
     return (
       jobsData
-        ?.map((job: NonNullable<typeof jobsData>[number]) => ({
+        ?.map((job) => ({
           id: job.id,
           position: job.titleEnglish,
           jobType: jobTypeDisplayMap[job.jobType] || job.jobType,
@@ -108,9 +106,7 @@ export default function JobPostings({
           link: job.url,
           status: job.status,
         }))
-        .sort((a: JobResourceData, b: JobResourceData) =>
-          a.position.localeCompare(b.position),
-        ) || []
+        .sort((a, b) => a.position.localeCompare(b.position)) || []
     );
   }, [jobsData]);
 
@@ -134,9 +130,7 @@ export default function JobPostings({
   ];
 
   const handleJobRowClick = (id: number) => {
-    const job = jobsData?.find(
-      (j: NonNullable<typeof jobsData>[number]) => j.id === id,
-    );
+    const job = jobsData?.find((j) => j.id === id);
     if (job) {
       setSelectedJob({
         ...job,
@@ -150,9 +144,7 @@ export default function JobPostings({
   };
 
   const handleJobEdit = (id: number) => {
-    const job = jobsData?.find(
-      (j: NonNullable<typeof jobsData>[number]) => j.id === id,
-    );
+    const job = jobsData?.find((j) => j.id === id);
     if (job) {
       setSelectedJob({
         ...job,
@@ -245,9 +237,7 @@ export default function JobPostings({
           appliedFilters.locationTypes.length > 0
         ) {
           filtered = filtered.filter((job) => {
-            const jobData = jobsData?.find(
-              (j: NonNullable<typeof jobsData>[number]) => j.id === job.id,
-            );
+            const jobData = jobsData?.find((j) => j.id === job.id);
             if (!jobData) return false;
             return appliedFilters.locationTypes!.some((type: string) => {
               if (type === "Remote") return jobData.locationType === "REMOTE";
@@ -261,9 +251,7 @@ export default function JobPostings({
 
         if (appliedFilters.jobTypes && appliedFilters.jobTypes.length > 0) {
           filtered = filtered.filter((job) => {
-            const jobData = jobsData?.find(
-              (j: NonNullable<typeof jobsData>[number]) => j.id === job.id,
-            );
+            const jobData = jobsData?.find((j) => j.id === job.id);
             if (!jobData) return false;
             return appliedFilters.jobTypes!.some((type: string) => {
               const typeMap: Record<string, string> = {
@@ -284,9 +272,7 @@ export default function JobPostings({
           appliedFilters.speakerTags.length > 0
         ) {
           filtered = filtered.filter((job) => {
-            const jobData = jobsData?.find(
-              (j: NonNullable<typeof jobsData>[number]) => j.id === job.id,
-            );
+            const jobData = jobsData?.find((j) => j.id === job.id);
             if (!jobData) return false;
             return appliedFilters.speakerTags!.some((tag: string) =>
               jobData.acceptedLanguages.includes(tag),
@@ -299,9 +285,7 @@ export default function JobPostings({
           appliedFilters.maxSalary !== undefined
         ) {
           filtered = filtered.filter((job) => {
-            const jobData = jobsData?.find(
-              (j: NonNullable<typeof jobsData>[number]) => j.id === job.id,
-            );
+            const jobData = jobsData?.find((j) => j.id === job.id);
             if (!jobData) return false;
             return (
               jobData.salary >= appliedFilters.minSalary! &&
@@ -312,9 +296,7 @@ export default function JobPostings({
 
         if (appliedFilters.locationSearch) {
           filtered = filtered.filter((job) => {
-            const jobData = jobsData?.find(
-              (j: NonNullable<typeof jobsData>[number]) => j.id === job.id,
-            );
+            const jobData = jobsData?.find((j) => j.id === job.id);
             if (!jobData) return false;
             const query = appliedFilters.locationSearch!.toLowerCase();
             const fullLocation =
@@ -411,15 +393,6 @@ export default function JobPostings({
           handleRowClick={handleJobRowClick}
           selectedRows={selectedRows}
           onSelectedRowsChange={setSelectedRows}
-          emptyState={
-            <EmptyState
-              heading="No job postings added"
-              subtext="Get started by adding a new job"
-              showButton={true}
-              buttonLabel="Add job posting"
-              onButtonClick={handleAddJobPosting}
-            />
-          }
         />
       ),
     },
@@ -441,15 +414,6 @@ export default function JobPostings({
           handleRowClick={handleJobRowClick}
           selectedRows={selectedRows}
           onSelectedRowsChange={setSelectedRows}
-          emptyState={
-            <EmptyState
-              heading="No job postings added"
-              subtext="Get started by adding a new job"
-              showButton={true}
-              buttonLabel="Add job posting"
-              onButtonClick={handleAddJobPosting}
-            />
-          }
         />
       ),
     },
@@ -471,15 +435,6 @@ export default function JobPostings({
           handleRowClick={handleJobRowClick}
           selectedRows={selectedRows}
           onSelectedRowsChange={setSelectedRows}
-          emptyState={
-            <EmptyState
-              heading="No job postings added"
-              subtext="Get started by adding a new job"
-              showButton={true}
-              buttonLabel="Add job posting"
-              onButtonClick={handleAddJobPosting}
-            />
-          }
         />
       ),
     },
@@ -495,7 +450,13 @@ export default function JobPostings({
             placeholder="Search"
             defaultClassName="w-[404px] h-[46px]"
           />
-          <AddButton onClick={handleAddJobPosting} label="Add job posting" />
+          <button
+            onClick={handleAddJobPosting}
+            className="flex items-center gap-[10px] bg-jila-400 text-white px-[10px] py-[10px] h-[46px] rounded-[10px] hover:bg-type-400 cursor-pointer font-bold text-lg"
+          >
+            <Plus size={24} />
+            Add job posting
+          </button>
         </div>
 
         <Tabs

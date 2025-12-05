@@ -206,6 +206,7 @@ async function getAllJobs(communityOrgId: string | null) {
         descriptionEnglish: true,
         descriptionQanjobal: true,
         status: true,
+        unread: true,
         createdAt: true,
         updatedAt: true,
         communityOrgId: true,
