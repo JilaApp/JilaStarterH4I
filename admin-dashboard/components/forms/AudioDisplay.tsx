@@ -1,9 +1,8 @@
 "use client";
 
-import { File, X, Play, Pause, Volume2 } from "lucide-react";
+import { File, X, Play, Pause } from "lucide-react";
 import { useRef, useState, useEffect } from "react";
 import { formatFileSize } from "@/lib/utils";
-import { useClickOutside } from "@/hooks/useClickOutside";
 
 interface AudioDisplayProps {
   file?: File;
@@ -23,19 +22,10 @@ export default function AudioDisplay({
   editable = true,
 }: AudioDisplayProps) {
   const audioRef = useRef<HTMLAudioElement>(null);
-  const volumeSliderRef = useRef<HTMLDivElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [audioUrl, setAudioUrl] = useState<string>("");
-  const [volume, setVolume] = useState(1);
-  const [showVolumeSlider, setShowVolumeSlider] = useState(false);
-
-  useClickOutside(volumeSliderRef, () => {
-    if (showVolumeSlider) {
-      setShowVolumeSlider(false);
-    }
-  });
 
   useEffect(() => {
     if (file) {
@@ -73,13 +63,6 @@ export default function AudioDisplay({
     };
   }, [effectiveAudioUrl]);
 
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (audio) {
-      audio.volume = volume;
-    }
-  }, [volume]);
-
   const togglePlayPause = () => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -110,10 +93,6 @@ export default function AudioDisplay({
   };
 
   const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
-
-  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setVolume(parseFloat(e.target.value));
-  };
 
   return (
     <div className="border border-gray-200 rounded-[10px] overflow-visible">
@@ -169,30 +148,6 @@ export default function AudioDisplay({
               style={{ width: `${progress}%` }}
             />
           </div>
-        </div>
-
-        <div className="relative size-[24px] shrink-0 flex items-center justify-center">
-          <button
-            onClick={() => setShowVolumeSlider(!showVolumeSlider)}
-            className="cursor-pointer"
-          >
-            <Volume2 className="size-[20px] text-jila-400" />
-          </button>
-          {showVolumeSlider && (
-            <div
-              ref={volumeSliderRef}
-              className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-white border border-gray-200 rounded-[10px] p-3 shadow-lg z-10"
-            >
-              <input
-                type="range"
-                min="0"
-                max="1"
-                step="0.01"
-                value={volume}
-                onChange={handleVolumeChange}
-              />
-            </div>
-          )}
         </div>
       </div>
     </div>
