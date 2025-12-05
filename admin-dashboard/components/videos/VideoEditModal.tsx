@@ -20,7 +20,10 @@ import { formatFileSize } from "@/lib/utils";
 import { useVideoLinks } from "@/hooks/useVideoLinks";
 import FormError from "@/components/shared/FormError";
 import { logger } from "@/lib/logger";
-import { getFileUploadState } from "@/lib/fileUploadUtils";
+import {
+  getFileUploadState,
+  shouldShowSuccessMessage,
+} from "@/lib/fileUploadUtils";
 
 type SaveStatus = "idle" | "saving" | "success" | "error";
 
@@ -296,6 +299,10 @@ export default function VideoEditModal({
                 onDelete={handleDeleteFile}
                 state={getFileUploadState(
                   fields.audioFile.state,
+                  fields.audioFile.value,
+                  !!(existingFileMetadata && !clearExistingFile),
+                )}
+                showSuccessMessage={shouldShowSuccessMessage(
                   fields.audioFile.value,
                   !!(existingFileMetadata && !clearExistingFile),
                 )}

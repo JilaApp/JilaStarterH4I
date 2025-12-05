@@ -3,6 +3,7 @@ import { useRef } from "react";
 import type { FormInputState } from "@/lib/types";
 import { formatFileSize } from "@/lib/utils";
 import Spinner from "../ui/Spinner";
+import AudioDisplay from "./AudioDisplay";
 import clsx from "clsx";
 
 interface FileUploadProps {
@@ -18,6 +19,7 @@ interface FileUploadProps {
     fileName: string;
     fileSizeMB: number;
   };
+  showSuccessMessage?: boolean;
 }
 
 export default function FileUpload({
@@ -30,6 +32,7 @@ export default function FileUpload({
   errorText = "",
   extendedTextClassName = "",
   existingFile,
+  showSuccessMessage = false,
 }: FileUploadProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -111,24 +114,41 @@ export default function FileUpload({
       <input
         ref={fileInputRef}
         type="file"
+        accept=".mp3,audio/mpeg"
         className="hidden"
         onChange={handleFileChange}
       />
-      {(state === "default" || state === "pending" || state === "error") &&
-        editable && (
-          <div
-            onClick={state === "pending" ? undefined : handleClickUpload}
-            className={clsx(
-              "flex justify-center items-center w-full h-[122px] rounded-[10px]",
-              {
-                "cursor-pointer hover:bg-cream-300": state !== "pending",
-                "bg-[#FFF3F3]": state === "error",
-                "bg-white": state !== "error",
-              },
-            )}
-            style={{
-              backgroundImage: `url("data:image/svg+xml,${encodeURIComponent(
-                `<svg width='100%' height='100%' xmlns='http://www.w3.org/2000/svg'>
+      {state === "complete" && value && !showSuccessMessage ? (
+        <AudioDisplay
+          file={value}
+          onDelete={handleDelete}
+          editable={editable}
+        />
+      ) : (
+        <>
+          {(state === "default" ||
+            state === "pending" ||
+            state === "error" ||
+            (state === "complete" && showSuccessMessage)) &&
+            editable && (
+              <div
+                onClick={
+                  state === "pending" || state === "complete"
+                    ? undefined
+                    : handleClickUpload
+                }
+                className={clsx(
+                  "flex justify-center items-center w-full h-[122px] rounded-[10px]",
+                  {
+                    "cursor-pointer hover:bg-cream-300":
+                      state !== "pending" && state !== "complete",
+                    "bg-[#FFF3F3]": state === "error",
+                    "bg-white": state !== "error",
+                  },
+                )}
+                style={{
+                  backgroundImage: `url("data:image/svg+xml,${encodeURIComponent(
+                    `<svg width='100%' height='100%' xmlns='http://www.w3.org/2000/svg'>
         <rect
           width='100%'
           height='100%'
@@ -141,30 +161,20 @@ export default function FileUpload({
           stroke-linecap='square'
         />
       </svg>`,
-              )}")`,
-            }}
-          >
-            {renderContent()}
-          </div>
-        )}
-      {state === "complete" && displayedFile && (
-        <div className="flex items-center rounded-[10px] px-[10px] py-[8px] bg-white">
-          <div className="flex gap-[17px] items-center w-full">
-            <File className="text-jila-400" />
-            <div className="flex flex-col">
-              <span className="font-medium">{displayedFile.fileName}</span>
-              <span className="text-gray-300 font-extralight">
-                {displayedFile.fileSizeMB} MB
-              </span>
-            </div>
-            {editable && (
-              <X
-                className="flex ml-auto cursor-pointer"
-                onClick={handleDelete}
-              />
+                  )}")`,
+                }}
+              >
+                {renderContent()}
+              </div>
             )}
-          </div>
-        </div>
+          {state === "complete" && value && showSuccessMessage && (
+            <AudioDisplay
+              file={value}
+              onDelete={handleDelete}
+              editable={editable}
+            />
+          )}
+        </>
       )}
     </div>
   );
