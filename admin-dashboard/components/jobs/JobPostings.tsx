@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo, useCallback } from "react";
-import { Plus, SlidersHorizontal } from "lucide-react";
+import { SlidersHorizontal } from "lucide-react";
 import Table from "@/components/shared/Table";
 import { ColumnDefinition, DataRow, JobFilters } from "@/lib/types";
 import SearchBar from "@/components/forms/SearchBar";
@@ -17,6 +17,8 @@ import { useNotification } from "@/hooks/useNotification";
 import Pagination from "@/components/shared/Pagination";
 import { logger } from "@/lib/logger";
 import { FullJobType } from "@/lib/types";
+import EmptyState from "@/components/shared/EmptyState";
+import AddButton from "@/components/shared/AddButton";
 
 interface JobResourceData extends DataRow {
   id: number;
@@ -393,6 +395,15 @@ export default function JobPostings({
           handleRowClick={handleJobRowClick}
           selectedRows={selectedRows}
           onSelectedRowsChange={setSelectedRows}
+          emptyState={
+            <EmptyState
+              heading="No job postings added"
+              subtext="Get started by adding a new job"
+              showButton={true}
+              buttonLabel="Add job posting"
+              onButtonClick={handleAddJobPosting}
+            />
+          }
         />
       ),
     },
@@ -414,6 +425,15 @@ export default function JobPostings({
           handleRowClick={handleJobRowClick}
           selectedRows={selectedRows}
           onSelectedRowsChange={setSelectedRows}
+          emptyState={
+            <EmptyState
+              heading="No job postings added"
+              subtext="Get started by adding a new job"
+              showButton={true}
+              buttonLabel="Add job posting"
+              onButtonClick={handleAddJobPosting}
+            />
+          }
         />
       ),
     },
@@ -435,6 +455,15 @@ export default function JobPostings({
           handleRowClick={handleJobRowClick}
           selectedRows={selectedRows}
           onSelectedRowsChange={setSelectedRows}
+          emptyState={
+            <EmptyState
+              heading="No job postings added"
+              subtext="Get started by adding a new job"
+              showButton={true}
+              buttonLabel="Add job posting"
+              onButtonClick={handleAddJobPosting}
+            />
+          }
         />
       ),
     },
@@ -450,13 +479,7 @@ export default function JobPostings({
             placeholder="Search"
             defaultClassName="w-[404px] h-[46px]"
           />
-          <button
-            onClick={handleAddJobPosting}
-            className="flex items-center gap-[10px] bg-jila-400 text-white px-[10px] py-[10px] h-[46px] rounded-[10px] hover:bg-type-400 cursor-pointer font-bold text-lg"
-          >
-            <Plus size={24} />
-            Add job posting
-          </button>
+          <AddButton onClick={handleAddJobPosting} label="Add job posting" />
         </div>
 
         <Tabs
