@@ -325,7 +325,7 @@ async function main() {
       await prisma.videos.create({
         data: {
           ...video,
-          audioFileS3Key: "videos/CA138clip.mp3",
+          audioFileS3Key: "CA138clip.mp3",
           audioFilename: "CA138clip.mp3",
           audioFileSize: 512000,
           communityOrgId,
@@ -566,10 +566,10 @@ async function main() {
       create: {
         ...service,
         communityOrgId,
-        titleAudioFileS3Key: "social-services/titles/CA138clip.mp3",
+        titleAudioFileS3Key: "CA138clip.mp3",
         titleAudioFilename: "CA138clip.mp3",
         titleAudioFileSize: 512000,
-        descriptionAudioFileS3Key: "social-services/descriptions/CA138clip.mp3",
+        descriptionAudioFileS3Key: "CA138clip.mp3",
         descriptionAudioFilename: "CA138clip.mp3",
         descriptionAudioFileSize: 512000,
       },

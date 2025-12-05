@@ -1,19 +1,11 @@
-import { router, protectedProcedure } from "../trpc";
-import prisma from "@/lib/prisma";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
+import { router, protectedProcedure } from "../trpc";
+import { requireCommunityOrgAdmin, getUserCommunityOrgId } from "../utils";
 import { SocialServiceCategory } from "@/lib/types";
 import { logger } from "@/lib/logger";
 import { uploadAudioToS3, deleteAudioFromS3 } from "@/lib/s3Utils";
-import { clerkClient } from "@clerk/nextjs/server";
-
-const getUserCommunityOrgId = async (
-  userId: string,
-): Promise<string | null> => {
-  const client = await clerkClient();
-  const user = await client.users.getUser(userId);
-  return (user.publicMetadata?.communityOrgId as string) || null;
-};
+import prisma from "@/lib/prisma";
 
 const addSocialServiceInput = z.object({
   title: z.string(),
@@ -292,17 +284,25 @@ export const socialServicesRouter = router({
   addSocialService: protectedProcedure
     .input(addSocialServiceInput)
     .mutation(async ({ input, ctx }) => {
+      await requireCommunityOrgAdmin(ctx.auth.userId!);
       const communityOrgId = await getUserCommunityOrgId(ctx.auth.userId!);
       return addSocialService(input, communityOrgId);
     }),
   getAllSocialServices: protectedProcedure.query(async ({ ctx }) => {
+    await requireCommunityOrgAdmin(ctx.auth.userId!);
     const communityOrgId = await getUserCommunityOrgId(ctx.auth.userId!);
     return getAllSocialServices(communityOrgId);
   }),
   removeSocialService: protectedProcedure
     .input(removeSocialServiceInput)
-    .mutation(({ input }) => removeSocialService(input)),
+    .mutation(async ({ input, ctx }) => {
+      await requireCommunityOrgAdmin(ctx.auth.userId!);
+      return removeSocialService(input);
+    }),
   editSocialService: protectedProcedure
     .input(editSocialServiceInput)
-    .mutation(({ input }) => editSocialService(input)),
+    .mutation(async ({ input, ctx }) => {
+      await requireCommunityOrgAdmin(ctx.auth.userId!);
+      return editSocialService(input);
+    }),
 });
