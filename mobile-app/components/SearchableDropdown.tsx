@@ -182,7 +182,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   scrollView: {
-    maxHeight: 200,
+    maxHeight: 85,
   },
   option: {
     flexDirection: "row",

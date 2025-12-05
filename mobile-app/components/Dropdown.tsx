@@ -48,7 +48,7 @@ const Dropdown: React.FC<DropdownProps> = ({
             <Text
               style={[
                 selected ? styles.textSelected : styles.textPlaceholder,
-                disabled && styles.textDisabled,
+                disabled && styles.textDisabled
               ]}
             >
               {selected || placeholder || text}
@@ -98,7 +98,7 @@ const Dropdown: React.FC<DropdownProps> = ({
                         isLast && styles.optionRoundedBottom,
                       ]}
                     >
-                      <Text>{option}</Text>
+                      <Text style={{fontSize: sizes.fontSize.base}}>{option}</Text>
                     </View>
                   </Pressable>
                 );
@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   scrollView: {
-    maxHeight: 200,
+    maxHeight: 144,
   },
   option: {
     paddingHorizontal: sizes.spacing.md,
