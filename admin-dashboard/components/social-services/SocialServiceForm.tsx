@@ -21,7 +21,10 @@ import {
   validateDropdownIndex,
 } from "@/lib/validators";
 import { logger } from "@/lib/logger";
-import { getFileUploadState } from "@/lib/fileUploadUtils";
+import {
+  getFileUploadState,
+  shouldShowSuccessMessage,
+} from "@/lib/fileUploadUtils";
 
 export default function SocialServiceForm() {
   const { fields, setFieldValue, setFieldError, resetForm, validateAllFields } =
@@ -125,6 +128,9 @@ export default function SocialServiceForm() {
             onDelete={() => setFieldValue("titleFile", undefined)}
             state={getFileUploadState(
               fields.titleFile.state,
+              fields.titleFile.value,
+            )}
+            showSuccessMessage={shouldShowSuccessMessage(
               fields.titleFile.value,
             )}
             extendedText="Upload an audio recording of the resource title in Q'anjob'al"
@@ -239,6 +245,9 @@ export default function SocialServiceForm() {
             onDelete={() => setFieldValue("descriptionFile", undefined)}
             state={getFileUploadState(
               fields.descriptionFile.state,
+              fields.descriptionFile.value,
+            )}
+            showSuccessMessage={shouldShowSuccessMessage(
               fields.descriptionFile.value,
             )}
             extendedText="Upload an audio recording of the description in Q'anjob'al"

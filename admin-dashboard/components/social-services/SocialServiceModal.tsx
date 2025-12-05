@@ -23,7 +23,10 @@ import {
 import { formatFileSize } from "@/lib/utils";
 import { logger } from "@/lib/logger";
 import FormError from "@/components/shared/FormError";
-import { getFileUploadState } from "@/lib/fileUploadUtils";
+import {
+  getFileUploadState,
+  shouldShowSuccessMessage,
+} from "@/lib/fileUploadUtils";
 
 interface SocialServiceData {
   id: number;
@@ -355,6 +358,10 @@ export default function SocialServiceEditModal({
               fields.titleFile.value,
               !!(existingTitleFileMetadata && !clearExistingTitleFile),
             )}
+            showSuccessMessage={shouldShowSuccessMessage(
+              fields.titleFile.value,
+              !!(existingTitleFileMetadata && !clearExistingTitleFile),
+            )}
             extendedText={
               isEditing
                 ? "Upload an audio recording of the description in Q'anjob'al"
@@ -484,6 +491,12 @@ export default function SocialServiceEditModal({
             onDelete={handleDeleteDescriptionFile}
             state={getFileUploadState(
               fields.descriptionFile.state,
+              fields.descriptionFile.value,
+              !!(
+                existingDescriptionFileMetadata && !clearExistingDescriptionFile
+              ),
+            )}
+            showSuccessMessage={shouldShowSuccessMessage(
               fields.descriptionFile.value,
               !!(
                 existingDescriptionFileMetadata && !clearExistingDescriptionFile
