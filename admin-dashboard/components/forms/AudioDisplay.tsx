@@ -31,7 +31,6 @@ export default function AudioDisplay({
     if (file) {
       const url = URL.createObjectURL(file);
       setAudioUrl(url);
-
       return () => {
         URL.revokeObjectURL(url);
       };
@@ -75,16 +74,6 @@ export default function AudioDisplay({
     setIsPlaying(!isPlaying);
   };
 
-  const handleProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    const audio = audioRef.current;
-    if (!audio) return;
-
-    const bounds = e.currentTarget.getBoundingClientRect();
-    const x = e.clientX - bounds.left;
-    const percentage = x / bounds.width;
-    audio.currentTime = percentage * duration;
-  };
-
   const formatTime = (time: number) => {
     if (isNaN(time)) return "0:00";
     const minutes = Math.floor(time / 60);
@@ -97,7 +86,6 @@ export default function AudioDisplay({
   return (
     <div className="border border-gray-200 rounded-[10px] overflow-visible">
       <audio ref={audioRef} src={effectiveAudioUrl || undefined} />
-
       <div className="bg-white flex items-center justify-between px-[10px] py-[5px]">
         <div className="flex gap-[17px] items-center w-[245px]">
           <File className="text-type-400 size-[24px]" />
@@ -117,7 +105,6 @@ export default function AudioDisplay({
           />
         )}
       </div>
-
       <div className="bg-white flex gap-[13px] items-center px-[15px] py-[10px]">
         <button
           onClick={togglePlayPause}
@@ -134,15 +121,11 @@ export default function AudioDisplay({
             />
           )}
         </button>
-
         <div className="flex flex-1 gap-[3px] items-center min-w-0">
           <span className="font-normal text-[12px] leading-[15px] text-black shrink-0 w-[64px]">
             {formatTime(currentTime)}/ {formatTime(duration)}
           </span>
-          <div
-            className="flex-1 h-[6px] bg-gray-200 rounded-[100px] cursor-pointer relative"
-            onClick={handleProgressClick}
-          >
+          <div className="flex-1 h-[6px] bg-gray-200 rounded-[100px] relative">
             <div
               className="absolute left-0 top-0 h-full bg-jila-400 rounded-[100px]"
               style={{ width: `${progress}%` }}
