@@ -4,9 +4,9 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { VideoTopic } from "@prisma/client";
 import { logger } from "@/lib/logger";
+import { uploadAudioToS3, deleteAudioFromS3 } from "@/lib/s3Utils";
 import { clerkClient } from "@clerk/nextjs/server";
 
-// Helper to get user's communityOrgId
 const getUserCommunityOrgId = async (
   userId: string,
 ): Promise<string | null> => {
@@ -50,14 +50,18 @@ type UpdateVideoInput = z.infer<typeof updateVideoInput>;
 
 async function addVideo(input: AddVideoInput, communityOrgId: string | null) {
   try {
-    const buffer = Buffer.from(input.audioFile, "base64");
-    const audioBytes = new Uint8Array(buffer);
+    // Upload audio file to S3
+    const s3Key = await uploadAudioToS3(
+      input.audioFile,
+      input.audioFilename,
+      "videos",
+    );
 
     await prisma.videos.create({
       data: {
         titleEnglish: input.titleEnglish,
         titleQanjobal: input.titleQanjobal,
-        audioFile: audioBytes,
+        audioFileS3Key: s3Key,
         audioFilename: input.audioFilename,
         audioFileSize: input.audioFileSize,
         topic: input.topic,
@@ -69,6 +73,7 @@ async function addVideo(input: AddVideoInput, communityOrgId: string | null) {
       },
     });
   } catch (err: any) {
+    logger.error("[addVideo] Failed to add video", err);
     throw err;
   }
 }
@@ -84,6 +89,11 @@ async function removeVideo(input: RemoveVideoInput) {
         code: "NOT_FOUND",
         message: "Video not found",
       });
+    }
+
+    // Delete audio file from S3 if it exists
+    if (existing.audioFileS3Key) {
+      await deleteAudioFromS3(existing.audioFileS3Key);
     }
 
     await prisma.videos.delete({
@@ -128,19 +138,34 @@ async function updateVideo(input: UpdateVideoInput) {
       urls?: string[];
       descriptionEnglish?: string;
       descriptionQanjobal?: string;
-      audioFile?: Uint8Array | null;
+      audioFileS3Key?: string | null;
       audioFilename?: string | null;
       audioFileSize?: number | null;
     } = { ...rest };
 
     if (audioFile !== undefined) {
       if (audioFile === "") {
-        dataToUpdate.audioFile = null;
+        // Delete old file from S3 if it exists
+        if (existing.audioFileS3Key) {
+          await deleteAudioFromS3(existing.audioFileS3Key);
+        }
+        dataToUpdate.audioFileS3Key = null;
         dataToUpdate.audioFilename = null;
         dataToUpdate.audioFileSize = null;
       } else {
-        const buffer = Buffer.from(audioFile, "base64");
-        dataToUpdate.audioFile = new Uint8Array(buffer);
+        // Upload new file to S3
+        const s3Key = await uploadAudioToS3(
+          audioFile,
+          audioFilename!,
+          "videos",
+        );
+
+        // Delete old file from S3 if it exists
+        if (existing.audioFileS3Key) {
+          await deleteAudioFromS3(existing.audioFileS3Key);
+        }
+
+        dataToUpdate.audioFileS3Key = s3Key;
         dataToUpdate.audioFilename = audioFilename;
         dataToUpdate.audioFileSize = audioFileSize;
       }
@@ -179,6 +204,7 @@ async function getAllVideos(communityOrgId: string | null) {
         descriptionQanjobal: true,
         audioFilename: true,
         audioFileSize: true,
+        audioFileS3Key: true,
         communityOrgId: true,
       },
     });

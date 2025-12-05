@@ -23,7 +23,10 @@ import {
 import { formatFileSize } from "@/lib/utils";
 import { logger } from "@/lib/logger";
 import FormError from "@/components/shared/FormError";
-import { getFileUploadState } from "@/lib/fileUploadUtils";
+import {
+  getFileUploadState,
+  shouldShowSuccessMessage,
+} from "@/lib/fileUploadUtils";
 
 interface SocialServiceData {
   id: number;
@@ -35,8 +38,10 @@ interface SocialServiceData {
   url: string | null;
   titleAudioFilename: string | null;
   titleAudioFileSize: number | null;
+  titleAudioFileS3Key: string | null;
   descriptionAudioFilename: string | null;
   descriptionAudioFileSize: number | null;
+  descriptionAudioFileS3Key: string | null;
 }
 
 interface SocialServiceEditModalProps {
@@ -89,10 +94,15 @@ export default function SocialServiceEditModal({
       return {
         fileName: serviceData.titleAudioFilename,
         fileSizeMB: formatFileSize(serviceData.titleAudioFileSize),
+        s3Key: serviceData.titleAudioFileS3Key || undefined,
       };
     }
     return undefined;
-  }, [serviceData?.titleAudioFilename, serviceData?.titleAudioFileSize]);
+  }, [
+    serviceData?.titleAudioFilename,
+    serviceData?.titleAudioFileSize,
+    serviceData?.titleAudioFileS3Key,
+  ]);
 
   const existingDescriptionFileMetadata = useMemo(() => {
     if (
@@ -102,12 +112,14 @@ export default function SocialServiceEditModal({
       return {
         fileName: serviceData.descriptionAudioFilename,
         fileSizeMB: formatFileSize(serviceData.descriptionAudioFileSize),
+        s3Key: serviceData.descriptionAudioFileS3Key || undefined,
       };
     }
     return undefined;
   }, [
     serviceData?.descriptionAudioFilename,
     serviceData?.descriptionAudioFileSize,
+    serviceData?.descriptionAudioFileS3Key,
   ]);
 
   useEffect(() => {
@@ -355,6 +367,10 @@ export default function SocialServiceEditModal({
               fields.titleFile.value,
               !!(existingTitleFileMetadata && !clearExistingTitleFile),
             )}
+            showSuccessMessage={shouldShowSuccessMessage(
+              fields.titleFile.value,
+              !!(existingTitleFileMetadata && !clearExistingTitleFile),
+            )}
             extendedText={
               isEditing
                 ? "Upload an audio recording of the description in Q'anjob'al"
@@ -484,6 +500,12 @@ export default function SocialServiceEditModal({
             onDelete={handleDeleteDescriptionFile}
             state={getFileUploadState(
               fields.descriptionFile.state,
+              fields.descriptionFile.value,
+              !!(
+                existingDescriptionFileMetadata && !clearExistingDescriptionFile
+              ),
+            )}
+            showSuccessMessage={shouldShowSuccessMessage(
               fields.descriptionFile.value,
               !!(
                 existingDescriptionFileMetadata && !clearExistingDescriptionFile

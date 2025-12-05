@@ -18,10 +18,10 @@ export type SocialService = {
   url?: string | null;
   titleAudioFilename?: string | null;
   titleAudioFileSize?: number | null;
-  titleAudioFile?: string | null;
+  titleAudioFileS3Key?: string | null;
   descriptionAudioFilename?: string | null;
   descriptionAudioFileSize?: number | null;
-  descriptionAudioFile?: string | null;
+  descriptionAudioFileS3Key?: string | null;
 };
 
 export type VideoData = {
@@ -34,6 +34,7 @@ export type VideoData = {
   descriptionQanjobal: string | null;
   audioFilename: string | null;
   audioFileSize: number | null;
+  audioFileS3Key: string | null;
 };
 
 export type AppRouter = {

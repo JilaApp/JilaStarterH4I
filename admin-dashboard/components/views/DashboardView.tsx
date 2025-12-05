@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { Video, MessageCircle } from "lucide-react";
+import { useRouter } from "next/navigation";
 import Table from "@/components/shared/Table";
 import { ColumnDefinition, DataRow } from "@/lib/types";
 import TopicTag from "@/components/shared/TopicTag";
@@ -20,8 +21,9 @@ import DeleteModal from "@/components/shared/DeleteModal";
 import SocialServiceEditModal from "@/components/social-services/SocialServiceModal";
 import { useNotification } from "@/hooks/useNotification";
 import { logger } from "@/lib/logger";
+import EmptyState from "@/components/shared/EmptyState";
 
-type FullVideoType = Omit<Videos, "audioFile">;
+type FullVideoType = Videos;
 
 interface VideoResourceData extends DataRow {
   id: number;
@@ -40,6 +42,7 @@ interface SocialServiceData extends DataRow {
 }
 
 export default function DashboardView() {
+  const router = useRouter();
   const { showNotification, NotificationContainer } = useNotification();
 
   // Tab and filter state
@@ -330,6 +333,15 @@ export default function DashboardView() {
           handleEdit={handleVideoEdit}
           handleDelete={handleVideoDelete}
           handleRowClick={handleVideoRowClick}
+          emptyState={
+            <EmptyState
+              heading="No items added"
+              subtext="Add social services and video resources through the upload forms"
+              showButton={true}
+              buttonLabel="Add resource"
+              onButtonClick={() => router.push("/dashboard/upload")}
+            />
+          }
         />
       ),
     },
@@ -344,6 +356,15 @@ export default function DashboardView() {
           handleEdit={handleSocialEdit}
           handleDelete={handleSocialDelete}
           handleRowClick={handleSocialRowClick}
+          emptyState={
+            <EmptyState
+              heading="No items added"
+              subtext="Add social services and video resources through the upload forms"
+              showButton={true}
+              buttonLabel="Add resource"
+              onButtonClick={() => router.push("/dashboard/upload")}
+            />
+          }
         />
       ),
     },

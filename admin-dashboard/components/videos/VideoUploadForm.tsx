@@ -21,7 +21,10 @@ import {
 } from "@/lib/validators";
 import { Plus, Trash2 } from "lucide-react";
 import { logger } from "@/lib/logger";
-import { getFileUploadState } from "@/lib/fileUploadUtils";
+import {
+  getFileUploadState,
+  shouldShowSuccessMessage,
+} from "@/lib/fileUploadUtils";
 
 export default function VideoUploadForm() {
   const { fields, setFieldValue, setFieldError, resetForm, validateAllFields } =
@@ -45,7 +48,7 @@ export default function VideoUploadForm() {
     }
     const invalidLinks = currentLinks.some((link) => {
       if (!link) return true;
-      return !validateURL(link);
+      return validateURL(link) !== null;
     });
 
     if (invalidLinks) {
@@ -147,6 +150,9 @@ export default function VideoUploadForm() {
               fields.audioFile.state,
               fields.audioFile.value,
             )}
+            showSuccessMessage={shouldShowSuccessMessage(
+              fields.audioFile.value,
+            )}
             extendedText="Upload an audio recording of the resource title in Q'anjob'al"
           />
         )}
@@ -164,7 +170,13 @@ export default function VideoUploadForm() {
           <Dropdown {...props} options={[...VIDEO_TOPIC_DISPLAY_OPTIONS]} />
         )}
       </FormField>
-      <FormField title="Video link" defaultClassName="max-w-[918px]" required>
+      <FormField
+        title="Video link"
+        defaultClassName="max-w-[918px]"
+        required
+        state={fields.videoLinks.state}
+        errorString={fields.videoLinks.error}
+      >
         {(props) => (
           <>
             {fields.videoLinks.value.map((link, index) => (

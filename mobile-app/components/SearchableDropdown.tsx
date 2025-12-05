@@ -8,7 +8,7 @@ import {
   ScrollView,
   TextInput,
 } from "react-native";
-import { ChevronDown, ChevronRight, Search, X } from "lucide-react-native";
+import { Search, X } from "lucide-react-native";
 import { colors } from "@/colors";
 import { sizes } from "@/constants/sizes";
 

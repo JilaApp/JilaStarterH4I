@@ -40,6 +40,7 @@ import Header from "@/components/Header";
 import Link from "@/components/Link";
 import VideoEmbed, { VideoType } from "@/components/VideoEmbed";
 import VideoUpNext from "@/components/VideoUpNext";
+import JobCard from "@/components/JobCard";
 import BottomDrawer from "@/components/BottomDrawer";
 
 export default function DevPage() {
@@ -222,6 +223,35 @@ export default function DevPage() {
 
       </BottomDrawer>
 
+        <View
+          style={{ backgroundColor: colors.cream[300], gap: 10, padding: 10 }}
+        >
+          <JobCard
+            title="swe"
+            company="apple"
+            salary="100000"
+            location="champaign"
+            onPress={() => console.log("pressed job card")}
+          />
+          <Text style={styles.sectionTitle}>
+            VideoDropdown - Multiple Videos (Cream)
+          </Text>
+          <VideoDropdown
+            text={videoDropdownMultipleVideos.text}
+            ttsUrl={videoDropdownMultipleVideos.ttsUrl}
+            parts={videoDropdownMultipleVideos.parts}
+            type="cream"
+          />
+          <Toggle />
+          <Text style={styles.sectionTitle}>
+            VideoDropdown - Single Video (Cream)
+          </Text>
+          <VideoDropdown
+            text={videoDropdownSingleVideo.text}
+            ttsUrl={videoDropdownSingleVideo.ttsUrl}
+            parts={videoDropdownSingleVideo.parts}
+            type="cream"
+          />
       <View
         style={{ backgroundColor: colors.cream[300], gap: 10, padding: 10 }}
       >
@@ -245,6 +275,56 @@ export default function DevPage() {
           type="cream"
         />
 
+          <Text style={styles.sectionTitle}>
+            JobDropdown - White Background
+          </Text>
+          <JobDropdown
+            text="Job Application Steps"
+            ttsUrl="https://example.com/job-tts.mp3"
+          >
+            <View style={{ padding: 20, backgroundColor: colors.white[400] }}>
+              <Text>Step 1: sleep</Text>
+              <Text>Step 2: eepy</Text>
+              <Text>Step 3: buh</Text>
+            </View>
+          </JobDropdown>
+        </View>
+        <SocialServicesCategories
+          socialServices={socialServices}
+          currentIndex={currentSocialServicesCategoriesIndex}
+          onSelect={setCurrentSocialServicesCategoriesIndex}
+        />
+        <Button text="Sign up" onPress={myOnPress} preset="outline-cream" />
+        <Button text="Clear all" onPress={myOnPress} preset="outline" />
+        <Button
+          text="Apply"
+          onPress={myOnPress}
+          preset="secondary"
+          icon={SquareArrowOutUpRight}
+        />
+        <BaseInput />
+        <UsernameInput />
+        <PasswordInput />
+        <Text style={styles.sectionTitle}>Audio Buttons</Text>
+        <Text style={styles.sectionSubtitle}>Static Audio (Bundled)</Text>
+        <AudioButton
+          audioSource={require("../assets/audio/sample.mp3")}
+          variant={"default"}
+        />
+        <AudioButton
+          audioSource={require("../assets/audio/sample.mp3")}
+          disabled
+        />
+        <Text style={styles.sectionSubtitle}>Dynamic Audio from S3</Text>
+        <Text style={styles.exampleText}>
+          Example S3 audio from admin-uploaded content
+        </Text>
+        <AudioButton
+          audioSource={{
+            uri: `${process.env.EXPO_PUBLIC_API_URL}api/audio?key=CA138clip.mp3`,
+          }}
+          variant={"default"}
+        />
         <Text style={styles.sectionTitle}>
           JobDropdown - White Background
         </Text>
@@ -498,6 +578,18 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 5,
     color: colors.type[400],
+  },
+  sectionSubtitle: {
+    fontSize: 14,
+    fontWeight: "500",
+    marginTop: 8,
+    marginBottom: 4,
+    color: colors.gray[600],
+  },
+  exampleText: {
+    fontSize: 12,
+    color: colors.gray[500],
+    marginBottom: 8,
   },
   selectContainer: {
     paddingVertical: 20,

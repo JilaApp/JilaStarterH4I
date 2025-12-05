@@ -1,8 +1,13 @@
+<<<<<<< HEAD
 import { View, TouchableOpacity, Text, StyleSheet, Pressable } from "react-native";
+=======
+import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
+>>>>>>> fb51411a6c02535a4b1071a5a0b8433cdbab8f26
 import { colors } from "@/colors";
+import { formatDuration } from "@/utils/formatters";
+import { sizes } from "@/constants/sizes";
 import { useRouter } from "expo-router";
 import { CirclePlay } from "lucide-react-native";
-import { sizes } from "@/constants/sizes";
 
 type VideoUpNextProps = {
     videoUrl: string;
@@ -21,6 +26,7 @@ export default function VideoUpNext({
         router.push(`/video?url=${encodeURIComponent(videoUrl)}`);
     }
 
+<<<<<<< HEAD
     return (
         <View style={[styles.container, { backgroundColor: "cream" }]}>
             <TouchableOpacity
@@ -51,6 +57,30 @@ function formatDuration(duration: number) {
     return `${mins}:${secs}`;
 }
 
+=======
+  return (
+    <View style={[styles.container, { backgroundColor: "cream" }]}>
+      <TouchableOpacity
+        activeOpacity={0.7}
+        style={styles.content}
+        onPress={handlePress}
+      >
+        <View style={styles.titleContainer}>
+          <Text style={styles.title}>{title}</Text>
+          <View style={styles.timer}>
+            <Text style={styles.timerText}>{formatDuration(duration)}</Text>
+          </View>
+        </View>
+
+        <View style={styles.playButtonContainer}>
+          <CirclePlay size={24} color={colors.jila[400]} />
+        </View>
+      </TouchableOpacity>
+    </View>
+  );
+}
+
+>>>>>>> fb51411a6c02535a4b1071a5a0b8433cdbab8f26
 const styles = StyleSheet.create({
     container: {
         width: "100%",
