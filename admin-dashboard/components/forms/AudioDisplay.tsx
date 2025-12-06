@@ -1,9 +1,8 @@
 "use client";
 
-import { File, X, Play, Pause, Volume2 } from "lucide-react";
+import { File, X, Play, Pause } from "lucide-react";
 import { useRef, useState, useEffect } from "react";
 import { formatFileSize } from "@/lib/utils";
-import { useClickOutside } from "@/hooks/useClickOutside";
 
 interface AudioDisplayProps {
   file?: File;
@@ -23,25 +22,15 @@ export default function AudioDisplay({
   editable = true,
 }: AudioDisplayProps) {
   const audioRef = useRef<HTMLAudioElement>(null);
-  const volumeSliderRef = useRef<HTMLDivElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [audioUrl, setAudioUrl] = useState<string>("");
-  const [volume, setVolume] = useState(1);
-  const [showVolumeSlider, setShowVolumeSlider] = useState(false);
-
-  useClickOutside(volumeSliderRef, () => {
-    if (showVolumeSlider) {
-      setShowVolumeSlider(false);
-    }
-  });
 
   useEffect(() => {
     if (file) {
       const url = URL.createObjectURL(file);
       setAudioUrl(url);
-
       return () => {
         URL.revokeObjectURL(url);
       };
@@ -73,13 +62,6 @@ export default function AudioDisplay({
     };
   }, [effectiveAudioUrl]);
 
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (audio) {
-      audio.volume = volume;
-    }
-  }, [volume]);
-
   const togglePlayPause = () => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -92,16 +74,6 @@ export default function AudioDisplay({
     setIsPlaying(!isPlaying);
   };
 
-  const handleProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    const audio = audioRef.current;
-    if (!audio) return;
-
-    const bounds = e.currentTarget.getBoundingClientRect();
-    const x = e.clientX - bounds.left;
-    const percentage = x / bounds.width;
-    audio.currentTime = percentage * duration;
-  };
-
   const formatTime = (time: number) => {
     if (isNaN(time)) return "0:00";
     const minutes = Math.floor(time / 60);
@@ -111,14 +83,9 @@ export default function AudioDisplay({
 
   const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
 
-  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setVolume(parseFloat(e.target.value));
-  };
-
   return (
     <div className="border border-gray-200 rounded-[10px] overflow-visible">
       <audio ref={audioRef} src={effectiveAudioUrl || undefined} />
-
       <div className="bg-white flex items-center justify-between px-[10px] py-[5px]">
         <div className="flex gap-[17px] items-center w-[245px]">
           <File className="text-type-400 size-[24px]" />
@@ -138,7 +105,6 @@ export default function AudioDisplay({
           />
         )}
       </div>
-
       <div className="bg-white flex gap-[13px] items-center px-[15px] py-[10px]">
         <button
           onClick={togglePlayPause}
@@ -155,44 +121,16 @@ export default function AudioDisplay({
             />
           )}
         </button>
-
         <div className="flex flex-1 gap-[3px] items-center min-w-0">
           <span className="font-normal text-[12px] leading-[15px] text-black shrink-0 w-[64px]">
             {formatTime(currentTime)}/ {formatTime(duration)}
           </span>
-          <div
-            className="flex-1 h-[6px] bg-gray-200 rounded-[100px] cursor-pointer relative"
-            onClick={handleProgressClick}
-          >
+          <div className="flex-1 h-[6px] bg-gray-200 rounded-[100px] relative">
             <div
               className="absolute left-0 top-0 h-full bg-jila-400 rounded-[100px]"
               style={{ width: `${progress}%` }}
             />
           </div>
-        </div>
-
-        <div className="relative size-[24px] shrink-0 flex items-center justify-center">
-          <button
-            onClick={() => setShowVolumeSlider(!showVolumeSlider)}
-            className="cursor-pointer"
-          >
-            <Volume2 className="size-[20px] text-jila-400" />
-          </button>
-          {showVolumeSlider && (
-            <div
-              ref={volumeSliderRef}
-              className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-white border border-gray-200 rounded-[10px] p-3 shadow-lg z-10"
-            >
-              <input
-                type="range"
-                min="0"
-                max="1"
-                step="0.01"
-                value={volume}
-                onChange={handleVolumeChange}
-              />
-            </div>
-          )}
         </div>
       </div>
     </div>

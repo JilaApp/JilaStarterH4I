@@ -1,19 +1,10 @@
-import { router, publicProcedure, protectedProcedure } from "../trpc";
-import prisma from "@/lib/prisma";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { JobType, LocationType, JobStatus } from "@prisma/client";
+import { router, publicProcedure, protectedProcedure } from "../trpc";
+import { requireCommunityOrgAdmin, getUserCommunityOrgId } from "../utils";
 import { logger } from "@/lib/logger";
-import { clerkClient } from "@clerk/nextjs/server";
-
-// Helper to get user's communityOrgId
-const getUserCommunityOrgId = async (
-  userId: string,
-): Promise<string | null> => {
-  const client = await clerkClient();
-  const user = await client.users.getUser(userId);
-  return (user.publicMetadata?.communityOrgId as string) || null;
-};
+import prisma from "@/lib/prisma";
 
 const addJobInput = z.object({
   titleEnglish: z.string(),
@@ -215,6 +206,7 @@ async function getAllJobs(communityOrgId: string | null) {
         descriptionEnglish: true,
         descriptionQanjobal: true,
         status: true,
+        unread: true,
         createdAt: true,
         updatedAt: true,
         communityOrgId: true,
@@ -411,49 +403,68 @@ async function markJobRequestsAsRead(input: MarkJobRequestsAsReadInput) {
 }
 
 export const jobsRouter = router({
-  // addJob is public - for businesses submitting job requests via the public form
-  // communityOrgId should be passed in the input from the URL query param
   addJob: publicProcedure
     .input(addJobInput)
     .mutation(({ input }) => addJob(input)),
 
-  // addJobAsAdmin - for CommunityOrgAdmins creating jobs from the dashboard
-  // Automatically attaches their communityOrgId
   addJobAsAdmin: protectedProcedure
     .input(addJobInput)
     .mutation(async ({ input, ctx }) => {
+      await requireCommunityOrgAdmin(ctx.auth.userId!);
       const communityOrgId = await getUserCommunityOrgId(ctx.auth.userId!);
       return addJob(input, communityOrgId);
     }),
 
-  // Protected routes for admin dashboard
   getAllJobs: protectedProcedure.query(async ({ ctx }) => {
+    await requireCommunityOrgAdmin(ctx.auth.userId!);
     const communityOrgId = await getUserCommunityOrgId(ctx.auth.userId!);
     return getAllJobs(communityOrgId);
   }),
   getPendingJobRequests: protectedProcedure.query(async ({ ctx }) => {
+    await requireCommunityOrgAdmin(ctx.auth.userId!);
     const communityOrgId = await getUserCommunityOrgId(ctx.auth.userId!);
     return getPendingJobRequests(communityOrgId);
   }),
   removeJob: protectedProcedure
     .input(removeJobInput)
-    .mutation(({ input }) => removeJob(input)),
+    .mutation(async ({ input, ctx }) => {
+      await requireCommunityOrgAdmin(ctx.auth.userId!);
+      return removeJob(input);
+    }),
   updateJob: protectedProcedure
     .input(updateJobInput)
-    .mutation(({ input }) => updateJob(input)),
+    .mutation(async ({ input, ctx }) => {
+      await requireCommunityOrgAdmin(ctx.auth.userId!);
+      return updateJob(input);
+    }),
   approveJobRequest: protectedProcedure
     .input(approveJobRequestInput)
-    .mutation(({ input }) => approveJobRequest(input)),
+    .mutation(async ({ input, ctx }) => {
+      await requireCommunityOrgAdmin(ctx.auth.userId!);
+      return approveJobRequest(input);
+    }),
   denyJobRequest: protectedProcedure
     .input(denyJobRequestInput)
-    .mutation(({ input }) => denyJobRequest(input)),
+    .mutation(async ({ input, ctx }) => {
+      await requireCommunityOrgAdmin(ctx.auth.userId!);
+      return denyJobRequest(input);
+    }),
   bulkApproveJobRequests: protectedProcedure
     .input(bulkApproveJobRequestsInput)
-    .mutation(({ input }) => bulkApproveJobRequests(input)),
+    .mutation(async ({ input, ctx }) => {
+      await requireCommunityOrgAdmin(ctx.auth.userId!);
+      return bulkApproveJobRequests(input);
+    }),
   bulkDenyJobRequests: protectedProcedure
     .input(bulkDenyJobRequestsInput)
-    .mutation(({ input }) => bulkDenyJobRequests(input)),
+    .mutation(async ({ input, ctx }) => {
+      await requireCommunityOrgAdmin(ctx.auth.userId!);
+      return bulkDenyJobRequests(input);
+    }),
   markJobRequestsAsRead: protectedProcedure
     .input(markJobRequestsAsReadInput)
-    .mutation(({ input }) => markJobRequestsAsRead(input)),
+    .mutation(async ({ input, ctx }) => {
+      await requireCommunityOrgAdmin(ctx.auth.userId!);
+      return markJobRequestsAsRead(input);
+    }),
 });

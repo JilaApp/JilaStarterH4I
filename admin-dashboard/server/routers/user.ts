@@ -1,6 +1,6 @@
-import { protectedProcedure, router } from "../trpc";
-import { clerkClient } from "@clerk/nextjs/server";
 import { TRPCError } from "@trpc/server";
+import { clerkClient } from "@clerk/nextjs/server";
+import { router, protectedProcedure } from "../trpc";
 import { logger } from "@/lib/logger";
 
 export const userRouter = router({

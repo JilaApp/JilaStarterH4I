@@ -68,12 +68,19 @@ export default function VideoEditModal({
     [],
   );
 
-  const { fields, setFieldValue, setFieldError, resetForm, validateAllFields } =
-    useForm(initialFormConfig);
+  const {
+    fields,
+    setFieldValue,
+    setFieldError,
+    resetForm,
+    validateAllFields,
+    formError,
+    setFormError,
+    formRef,
+  } = useForm(initialFormConfig);
 
   const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
   const [clearExistingFile, setClearExistingFile] = useState(false);
-  const [error, setError] = useState("");
 
   const updateVideoMutation = trpc.videos.updateVideo.useMutation();
 
@@ -94,7 +101,7 @@ export default function VideoEditModal({
 
   useEffect(() => {
     if (isOpen && videoData) {
-      setError("");
+      setFormError("");
       setFieldValue("englishTitle", videoData.titleEnglish || "");
       setFieldValue("qanjobalTitle", videoData.titleQanjobal || "");
       setFieldValue(
@@ -146,7 +153,7 @@ export default function VideoEditModal({
     const currentLinks = fields.videoLinks.value;
     const invalidLinks = currentLinks.some((link) => {
       if (!link) return true;
-      return !validateURL(link);
+      return validateURL(link) !== null;
     });
 
     if (invalidLinks) {
@@ -190,7 +197,7 @@ export default function VideoEditModal({
           errorMessage = error.message;
         }
 
-        setError(errorMessage);
+        setFormError(errorMessage);
         setSaveStatus("error");
         setTimeout(() => {
           setSaveStatus("idle");
@@ -208,7 +215,7 @@ export default function VideoEditModal({
       };
       reader.onerror = (error) => {
         logger.error("[handleSave] FileReader error", error);
-        setError("Failed to read audio file. Please try again.");
+        setFormError("Failed to read audio file. Please try again.");
         setSaveStatus("error");
       };
       reader.readAsDataURL(fields.audioFile.value);
@@ -247,7 +254,10 @@ export default function VideoEditModal({
       showFooter={false}
       disableClickOutside={saveStatus === "saving"}
     >
-      <div className="overflow-y-auto flex-1 pl-4 pr-4">
+      <div
+        ref={formRef as React.RefObject<HTMLDivElement>}
+        className="overflow-y-auto flex-1 pl-4 pr-4"
+      >
         <div className="flex gap-[13.62px] mb-[10px]">
           <div className="flex-1">
             <FormField
@@ -411,7 +421,7 @@ export default function VideoEditModal({
             {(props) => <ParagraphInput {...props} disabled={!isEditing} />}
           </FormField>
         </div>
-        {error && <FormError message={error} />}
+        {formError && <FormError message={formError} />}
         {isEditing && (
           <div className="flex gap-3 justify-end mt-[26px] gap-x-[26px]">
             <Button

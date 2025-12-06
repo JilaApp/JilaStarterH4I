@@ -1,30 +1,18 @@
-import { z } from "zod";
-import { router, protectedProcedure } from "../trpc";
-import prisma from "@/lib/prisma";
-import { clerkClient } from "@clerk/nextjs/server";
 import { TRPCError } from "@trpc/server";
-
-const requireJilaAdmin = async (userId: string) => {
-  const client = await clerkClient();
-  const user = await client.users.getUser(userId);
-
-  if (user.publicMetadata?.userType !== "JilaAdmin") {
-    throw new TRPCError({
-      code: "FORBIDDEN",
-      message: "Only Jila Admins can perform this action",
-    });
-  }
-};
-
-const getInvitationRedirectUrl = () => {
-  const baseUrl =
-    process.env.NEXT_PUBLIC_APP_URL ||
-    `http://localhost:${process.env.PORT || 3000}`;
-  return `${baseUrl}/sign-up`;
-};
+import { z } from "zod";
+import { clerkClient } from "@clerk/nextjs/server";
+import { router, protectedProcedure } from "../trpc";
+import {
+  requireCommunityOrgAdmin,
+  requireJilaAdmin,
+  getInvitationRedirectUrl,
+} from "../utils";
+import prisma from "@/lib/prisma";
 
 export const communityRouter = router({
   getMyCommunityOrg: protectedProcedure.query(async ({ ctx }) => {
+    await requireCommunityOrgAdmin(ctx.auth.userId!);
+
     const client = await clerkClient();
     const user = await client.users.getUser(ctx.auth.userId!);
     const communityOrgId = user.publicMetadata?.communityOrgId as
@@ -41,7 +29,9 @@ export const communityRouter = router({
     return communityOrg;
   }),
 
-  getAllCommunityOrgs: protectedProcedure.query(async () => {
+  getAllCommunityOrgs: protectedProcedure.query(async ({ ctx }) => {
+    await requireJilaAdmin(ctx.auth.userId!);
+
     const communityOrgs = await prisma.communityOrg.findMany({
       orderBy: { name: "asc" },
     });

@@ -77,14 +77,21 @@ export default function SocialServiceEditModal({
     [],
   );
 
-  const { fields, setFieldValue, setFieldError, resetForm, validateAllFields } =
-    useForm(initialFormConfig);
+  const {
+    fields,
+    setFieldValue,
+    setFieldError,
+    resetForm,
+    validateAllFields,
+    formError,
+    setFormError,
+    formRef,
+  } = useForm(initialFormConfig);
 
   const [clearExistingTitleFile, setClearExistingTitleFile] = useState(false);
   const [clearExistingDescriptionFile, setClearExistingDescriptionFile] =
     useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [error, setError] = useState("");
 
   const updateSocialServiceMutation =
     trpc.socialServices.editSocialService.useMutation();
@@ -124,7 +131,7 @@ export default function SocialServiceEditModal({
 
   useEffect(() => {
     if (isOpen && serviceData) {
-      setError("");
+      setFormError("");
       setFieldValue("englishTitle", serviceData.title || "");
       setFieldValue("qanjobalTitle", serviceData.title || "");
       setFieldValue("phoneNumber", serviceData.phone_number || "");
@@ -243,7 +250,7 @@ export default function SocialServiceEditModal({
           errorMessage = error.message;
         }
 
-        setError(errorMessage);
+        setFormError(errorMessage);
         setIsSaving(false);
       }
     };
@@ -292,7 +299,7 @@ export default function SocialServiceEditModal({
         };
         reader.onerror = (error) => {
           logger.error("[handleSave] FileReader error", error);
-          setError("Failed to read audio file. Please try again.");
+          setFormError("Failed to read audio file. Please try again.");
           setIsSaving(false);
         };
         reader.readAsDataURL(file);
@@ -318,214 +325,218 @@ export default function SocialServiceEditModal({
       isLoading={isSaving}
       disableClickOutside={isSaving}
     >
-      <div className="flex flex-row gap-[18px]">
+      <div ref={formRef as React.RefObject<HTMLDivElement>}>
+        <div className="flex flex-row gap-[18px]">
+          <FormField
+            title="Resource title (English)"
+            state={fields.englishTitle.state}
+            errorString={fields.englishTitle.error}
+            value={fields.englishTitle.value}
+            onChange={(val) => setFieldValue("englishTitle", val)}
+            defaultClassName="max-w-[450px] text-[15px]"
+            required
+          >
+            {(props) => <TextInput {...props} disabled={!isEditing} />}
+          </FormField>
+
+          <FormField
+            title="Resource title (Q'anjob'al)"
+            state={fields.qanjobalTitle.state}
+            errorString={fields.qanjobalTitle.error}
+            value={fields.qanjobalTitle.value}
+            onChange={(val) => setFieldValue("qanjobalTitle", val)}
+            defaultClassName="max-w-[450px] text-[15px]"
+            required
+          >
+            {(props) => <TextInput {...props} disabled={!isEditing} />}
+          </FormField>
+        </div>
+
         <FormField
-          title="Resource title (English)"
-          state={fields.englishTitle.state}
-          errorString={fields.englishTitle.error}
-          value={fields.englishTitle.value}
-          onChange={(val) => setFieldValue("englishTitle", val)}
-          defaultClassName="max-w-[450px] text-[15px]"
+          title="Title audio file (Q'anjob'al)"
+          description={
+            isEditing ? `Maximum size: ${MAX_AUDIO_FILE_SIZE_MB}MB` : ""
+          }
+          state={fields.titleFile.state}
+          errorString={fields.titleFile.error}
+          value={fields.titleFile.value}
+          onChange={handleTitleFileChange}
+          defaultClassName="max-w-[918px] mt-[10px] text-[15px]"
           required
         >
-          {(props) => <TextInput {...props} disabled={!isEditing} />}
+          {(props) => (
+            <FileUpload
+              value={props.value}
+              onChange={props.onChange}
+              editable={isEditing}
+              onDelete={handleDeleteTitleFile}
+              state={getFileUploadState(
+                fields.titleFile.state,
+                fields.titleFile.value,
+                !!(existingTitleFileMetadata && !clearExistingTitleFile),
+              )}
+              showSuccessMessage={shouldShowSuccessMessage(
+                fields.titleFile.value,
+                !!(existingTitleFileMetadata && !clearExistingTitleFile),
+              )}
+              extendedText={
+                isEditing
+                  ? "Upload an audio recording of the description in Q'anjob'al"
+                  : ""
+              }
+              existingFile={
+                clearExistingTitleFile ? undefined : existingTitleFileMetadata
+              }
+            />
+          )}
         </FormField>
 
         <FormField
-          title="Resource title (Q'anjob'al)"
-          state={fields.qanjobalTitle.state}
-          errorString={fields.qanjobalTitle.error}
-          value={fields.qanjobalTitle.value}
-          onChange={(val) => setFieldValue("qanjobalTitle", val)}
-          defaultClassName="max-w-[450px] text-[15px]"
+          title="Topic"
+          state={fields.topicIndex.state}
+          errorString={fields.topicIndex.error}
+          value={fields.topicIndex.value}
+          onChange={(val) => setFieldValue("topicIndex", val)}
+          defaultClassName="w-full mt-[10px] text-[15px]"
           required
-        >
-          {(props) => <TextInput {...props} disabled={!isEditing} />}
-        </FormField>
-      </div>
-
-      <FormField
-        title="Title audio file (Q'anjob'al)"
-        description={
-          isEditing ? `Maximum size: ${MAX_AUDIO_FILE_SIZE_MB}MB` : ""
-        }
-        state={fields.titleFile.state}
-        errorString={fields.titleFile.error}
-        value={fields.titleFile.value}
-        onChange={handleTitleFileChange}
-        defaultClassName="max-w-[918px] mt-[10px] text-[15px]"
-        required
-      >
-        {(props) => (
-          <FileUpload
-            value={props.value}
-            onChange={props.onChange}
-            editable={isEditing}
-            onDelete={handleDeleteTitleFile}
-            state={getFileUploadState(
-              fields.titleFile.state,
-              fields.titleFile.value,
-              !!(existingTitleFileMetadata && !clearExistingTitleFile),
-            )}
-            showSuccessMessage={shouldShowSuccessMessage(
-              fields.titleFile.value,
-              !!(existingTitleFileMetadata && !clearExistingTitleFile),
-            )}
-            extendedText={
-              isEditing
-                ? "Upload an audio recording of the description in Q'anjob'al"
-                : ""
-            }
-            existingFile={
-              clearExistingTitleFile ? undefined : existingTitleFileMetadata
-            }
-          />
-        )}
-      </FormField>
-
-      <FormField
-        title="Topic"
-        state={fields.topicIndex.state}
-        errorString={fields.topicIndex.error}
-        value={fields.topicIndex.value}
-        onChange={(val) => setFieldValue("topicIndex", val)}
-        defaultClassName="w-full mt-[10px] text-[15px]"
-        required
-      >
-        {(props) => (
-          <Dropdown
-            {...props}
-            options={[...SOCIAL_SERVICE_CATEGORY_DISPLAY_OPTIONS]}
-            disabled={!isEditing}
-          />
-        )}
-      </FormField>
-
-      <FormField
-        title="Phone number"
-        state={fields.phoneNumber.state}
-        errorString={fields.phoneNumber.error}
-        value={fields.phoneNumber.value}
-        onChange={(val) => setFieldValue("phoneNumber", val)}
-        defaultClassName="max-w-[918px] mt-[10px] text-[15px]"
-        required
-      >
-        {(props) => <TextInput {...props} disabled={!isEditing} />}
-      </FormField>
-
-      <FormField
-        title="Address line 1"
-        state={fields.addressLine.state}
-        errorString={fields.addressLine.error}
-        value={fields.addressLine.value}
-        onChange={(val) => setFieldValue("addressLine", val)}
-        defaultClassName="max-w-[918px] mt-[10px] text-[15px]"
-      >
-        {(props) => <TextInput {...props} disabled={!isEditing} />}
-      </FormField>
-
-      <div className="flex flex-row gap-[18px] mt-[10px] text-[15px]">
-        <FormField
-          title="City"
-          state={fields.city.state}
-          errorString={fields.city.error}
-          value={fields.city.value}
-          onChange={(val) => setFieldValue("city", val)}
-          defaultClassName="max-w-[450px]"
-        >
-          {(props) => <TextInput {...props} disabled={!isEditing} />}
-        </FormField>
-
-        <FormField
-          title="State"
-          state={fields.stateIndex.state}
-          errorString={fields.stateIndex.error}
-          value={fields.stateIndex.value}
-          onChange={(val) => setFieldValue("stateIndex", val)}
-          defaultClassName="max-w-[450px] text-[15px]"
         >
           {(props) => (
             <Dropdown
               {...props}
+              options={[...SOCIAL_SERVICE_CATEGORY_DISPLAY_OPTIONS]}
               disabled={!isEditing}
-              options={[...US_STATES]}
             />
           )}
         </FormField>
+
+        <FormField
+          title="Phone number"
+          state={fields.phoneNumber.state}
+          errorString={fields.phoneNumber.error}
+          value={fields.phoneNumber.value}
+          onChange={(val) => setFieldValue("phoneNumber", val)}
+          defaultClassName="max-w-[918px] mt-[10px] text-[15px]"
+          required
+        >
+          {(props) => <TextInput {...props} disabled={!isEditing} />}
+        </FormField>
+
+        <FormField
+          title="Address line 1"
+          state={fields.addressLine.state}
+          errorString={fields.addressLine.error}
+          value={fields.addressLine.value}
+          onChange={(val) => setFieldValue("addressLine", val)}
+          defaultClassName="max-w-[918px] mt-[10px] text-[15px]"
+        >
+          {(props) => <TextInput {...props} disabled={!isEditing} />}
+        </FormField>
+
+        <div className="flex flex-row gap-[18px] mt-[10px] text-[15px]">
+          <FormField
+            title="City"
+            state={fields.city.state}
+            errorString={fields.city.error}
+            value={fields.city.value}
+            onChange={(val) => setFieldValue("city", val)}
+            defaultClassName="max-w-[450px]"
+          >
+            {(props) => <TextInput {...props} disabled={!isEditing} />}
+          </FormField>
+
+          <FormField
+            title="State"
+            state={fields.stateIndex.state}
+            errorString={fields.stateIndex.error}
+            value={fields.stateIndex.value}
+            onChange={(val) => setFieldValue("stateIndex", val)}
+            defaultClassName="max-w-[450px] text-[15px]"
+          >
+            {(props) => (
+              <Dropdown
+                {...props}
+                disabled={!isEditing}
+                options={[...US_STATES]}
+              />
+            )}
+          </FormField>
+        </div>
+
+        <FormField
+          title="Link to external website"
+          state={fields.link.state}
+          errorString={fields.link.error}
+          value={fields.link.value}
+          onChange={(val) => setFieldValue("link", val)}
+          defaultClassName="max-w-[918px] mt-[10px] text-[15px]"
+        >
+          {(props) => <TextInput {...props} disabled={!isEditing} />}
+        </FormField>
+
+        <FormField
+          title="Description (English)"
+          defaultClassName="max-w-[918px] mt-[10px] text-[15px]"
+          value={fields.englishDescription.value}
+          onChange={(val) => setFieldValue("englishDescription", val)}
+        >
+          {(props) => <ParagraphInput {...props} disabled={!isEditing} />}
+        </FormField>
+
+        <FormField
+          title="Description (Q'anjob'al)"
+          defaultClassName="max-w-[918px] mt-[10px] text-[15px]"
+          value={fields.qanjobalDescription.value}
+          onChange={(val) => setFieldValue("qanjobalDescription", val)}
+        >
+          {(props) => <ParagraphInput {...props} disabled={!isEditing} />}
+        </FormField>
+
+        <FormField
+          title="Description audio file (Q'anjob'al)"
+          description={
+            isEditing ? `Maximum size: ${MAX_AUDIO_FILE_SIZE_MB}MB` : ""
+          }
+          defaultClassName="max-w-[918px] mt-[10px] text-[15px]"
+          value={fields.descriptionFile.value}
+          onChange={handleDescriptionFileChange}
+        >
+          {(props) => (
+            <FileUpload
+              value={props.value}
+              onChange={props.onChange}
+              editable={isEditing}
+              onDelete={handleDeleteDescriptionFile}
+              state={getFileUploadState(
+                fields.descriptionFile.state,
+                fields.descriptionFile.value,
+                !!(
+                  existingDescriptionFileMetadata &&
+                  !clearExistingDescriptionFile
+                ),
+              )}
+              showSuccessMessage={shouldShowSuccessMessage(
+                fields.descriptionFile.value,
+                !!(
+                  existingDescriptionFileMetadata &&
+                  !clearExistingDescriptionFile
+                ),
+              )}
+              extendedText={
+                isEditing
+                  ? "Upload an audio recording of the description in Q'anjob'al"
+                  : ""
+              }
+              existingFile={
+                clearExistingDescriptionFile
+                  ? undefined
+                  : existingDescriptionFileMetadata
+              }
+            />
+          )}
+        </FormField>
+
+        {formError && <FormError message={formError} />}
       </div>
-
-      <FormField
-        title="Link to external website"
-        state={fields.link.state}
-        errorString={fields.link.error}
-        value={fields.link.value}
-        onChange={(val) => setFieldValue("link", val)}
-        defaultClassName="max-w-[918px] mt-[10px] text-[15px]"
-      >
-        {(props) => <TextInput {...props} disabled={!isEditing} />}
-      </FormField>
-
-      <FormField
-        title="Description (English)"
-        defaultClassName="max-w-[918px] mt-[10px] text-[15px]"
-        value={fields.englishDescription.value}
-        onChange={(val) => setFieldValue("englishDescription", val)}
-      >
-        {(props) => <ParagraphInput {...props} disabled={!isEditing} />}
-      </FormField>
-
-      <FormField
-        title="Description (Q'anjob'al)"
-        defaultClassName="max-w-[918px] mt-[10px] text-[15px]"
-        value={fields.qanjobalDescription.value}
-        onChange={(val) => setFieldValue("qanjobalDescription", val)}
-      >
-        {(props) => <ParagraphInput {...props} disabled={!isEditing} />}
-      </FormField>
-
-      <FormField
-        title="Description audio file (Q'anjob'al)"
-        description={
-          isEditing ? `Maximum size: ${MAX_AUDIO_FILE_SIZE_MB}MB` : ""
-        }
-        defaultClassName="max-w-[918px] mt-[10px] text-[15px]"
-        value={fields.descriptionFile.value}
-        onChange={handleDescriptionFileChange}
-      >
-        {(props) => (
-          <FileUpload
-            value={props.value}
-            onChange={props.onChange}
-            editable={isEditing}
-            onDelete={handleDeleteDescriptionFile}
-            state={getFileUploadState(
-              fields.descriptionFile.state,
-              fields.descriptionFile.value,
-              !!(
-                existingDescriptionFileMetadata && !clearExistingDescriptionFile
-              ),
-            )}
-            showSuccessMessage={shouldShowSuccessMessage(
-              fields.descriptionFile.value,
-              !!(
-                existingDescriptionFileMetadata && !clearExistingDescriptionFile
-              ),
-            )}
-            extendedText={
-              isEditing
-                ? "Upload an audio recording of the description in Q'anjob'al"
-                : ""
-            }
-            existingFile={
-              clearExistingDescriptionFile
-                ? undefined
-                : existingDescriptionFileMetadata
-            }
-          />
-        )}
-      </FormField>
-
-      {error && <FormError message={error} />}
     </BaseModal>
   );
 }
