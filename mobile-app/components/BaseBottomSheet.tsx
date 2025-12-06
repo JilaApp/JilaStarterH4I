@@ -1,6 +1,6 @@
-import React, { useRef, useEffect, ReactNode } from 'react';
+import React, { useRef, useEffect, ReactNode } from "react";
 import { ViewStyle, StyleSheet } from "react-native";
-import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
+import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { colors } from "@/colors";
 import { sizes } from "@/constants/sizes";
 
@@ -15,7 +15,7 @@ export interface BaseBottomSheetProps {
 
 export function BaseBottomSheet({
   children,
-  height = '70%',
+  height = "70%",
   maxHeight,
   padding = 20,
   backgroundColor,
@@ -37,11 +37,13 @@ export function BaseBottomSheet({
       enablePanDownToClose={true}
       enableOverDrag={false}
       maxDynamicContentSize={maxHeight || sizes.screen.height * 0.6}
-      backgroundStyle={style || {
-        backgroundColor: backgroundColor || colors.white[400],
-        borderTopLeftRadius: styles.background.borderTopLeftRadius,
-        borderTopRightRadius: styles.background.borderTopRightRadius,
-      }}
+      backgroundStyle={
+        style || {
+          backgroundColor: backgroundColor || colors.white[400],
+          borderTopLeftRadius: styles.background.borderTopLeftRadius,
+          borderTopRightRadius: styles.background.borderTopRightRadius,
+        }
+      }
       enableContentPanningGesture={true}
     >
       <BottomSheetScrollView

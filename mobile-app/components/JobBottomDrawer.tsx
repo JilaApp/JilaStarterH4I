@@ -1,10 +1,15 @@
-import React from 'react';
+import React from "react";
 import { View, StyleSheet, Text } from "react-native";
 import { colors } from "@/colors";
 import { sizes } from "@/constants/sizes";
-import * as Linking from 'expo-linking';
+import * as Linking from "expo-linking";
 import { Button } from "@/components/Button";
-import { CircleDollarSign, SquareArrowOutUpRight, MapPin, Clock } from "lucide-react-native";
+import {
+  CircleDollarSign,
+  SquareArrowOutUpRight,
+  MapPin,
+  Clock,
+} from "lucide-react-native";
 import { BaseBottomSheet } from "@/components/BaseBottomSheet";
 
 type JobBottomDrawerProps = {
@@ -16,7 +21,7 @@ type JobBottomDrawerProps = {
   workLocation: string;
   jobType: string;
   jobDescription: string;
-}
+};
 
 export default function JobBottomDrawer({
   applyUrl,
@@ -26,17 +31,14 @@ export default function JobBottomDrawer({
   salary,
   workLocation,
   jobType,
-  jobDescription
+  jobDescription,
 }: JobBottomDrawerProps) {
   const handlePress = () => {
     Linking.openURL(applyUrl);
-  }
+  };
 
   return (
-    <BaseBottomSheet
-      height="70%"
-      maxHeight={sizes.screen.height * 0.6}
-    >
+    <BaseBottomSheet height="70%" maxHeight={sizes.screen.height * 0.6}>
       <Text style={styles.company}>{company}</Text>
       <Text style={styles.title}>{role}</Text>
       <Text style={styles.location}>{companyLocation}</Text>
@@ -72,25 +74,25 @@ export default function JobBottomDrawer({
 const styles = StyleSheet.create({
   title: {
     fontSize: sizes.fontSize.xl,
-    fontWeight: '600',
+    fontWeight: "600",
     color: colors.black,
     marginBottom: 4,
   },
   jobDescription: {
     fontSize: sizes.fontSize.xl,
-    fontWeight: '700',
+    fontWeight: "700",
     color: colors.black,
     marginBottom: 10,
   },
   company: {
     fontSize: sizes.fontSize.base,
-    fontWeight: '400',
+    fontWeight: "400",
     color: colors.black,
     marginBottom: 4,
   },
   location: {
     fontSize: sizes.fontSize.base,
-    fontWeight: '400',
+    fontWeight: "400",
     color: colors.black,
     marginBottom: 16,
   },
@@ -99,15 +101,15 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
     width: 116,
-    height: 60
+    height: 60,
   },
   detailsContainer: {
     marginBottom: 16,
     gap: 8,
   },
   detailRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 8,
   },
   detailText: {
@@ -116,8 +118,8 @@ const styles = StyleSheet.create({
   },
   description: {
     fontSize: sizes.fontSize.base,
-    fontWeight: '400',
-    fontStyle: "normal", 
+    fontWeight: "400",
+    fontStyle: "normal",
     color: colors.black,
   },
 });
