@@ -15,6 +15,7 @@ import {
   validateEmail,
   validateDropdownIndex,
   validateNumber,
+  validateURL,
 } from "@/lib/validators";
 import SubmitButton from "@/components/ui/SubmitButton";
 import { US_STATES } from "@/lib/constants";
@@ -63,20 +64,21 @@ function JobRequestForm() {
   const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState("");
 
-  const { fields, setFieldValue, validateAllFields, resetForm } = useForm({
-    contactEmail: createField(""),
-    jobTitleEnglish: createField(""),
-    jobTitleQanjobal: createField(""),
-    companyName: createField(""),
-    jobTypeIndex: createField<number | undefined>(undefined),
-    acceptedLanguages: createField<string[]>([]),
-    locationTypeIndex: createField<number | undefined>(undefined),
-    city: createField(""),
-    stateIndex: createField<number | undefined>(undefined),
-    applicationLink: createField(""),
-    salary: createField(""),
-    expirationDate: createField(""),
-  });
+  const { fields, setFieldValue, validateAllFields, resetForm, formRef } =
+    useForm({
+      contactEmail: createField(""),
+      jobTitleEnglish: createField(""),
+      jobTitleQanjobal: createField(""),
+      companyName: createField(""),
+      jobTypeIndex: createField<number | undefined>(undefined),
+      acceptedLanguages: createField<string[]>([]),
+      locationTypeIndex: createField<number | undefined>(undefined),
+      city: createField(""),
+      stateIndex: createField<number | undefined>(undefined),
+      applicationLink: createField(""),
+      salary: createField(""),
+      expirationDate: createField(""),
+    });
 
   const addJobMutation = trpc.jobs.addJob.useMutation();
 
@@ -87,13 +89,18 @@ function JobRequestForm() {
       jobTitleQanjobal: validateRequired,
       companyName: validateRequired,
       jobTypeIndex: validateDropdownIndex,
-      applicationLink: validateRequired,
+      applicationLink: validateURL,
       salary: fields.salary.value ? validateNumber : undefined,
     };
 
     const isValid = validateAllFields(validationRules);
 
-    if (!isValid) return;
+    if (!isValid) {
+      if (formRef.current) {
+        formRef.current.scrollTo({ top: 0, behavior: "smooth" });
+      }
+      return;
+    }
 
     setIsSubmitting(true);
 
@@ -131,6 +138,9 @@ function JobRequestForm() {
       setError("");
       setIsSuccess(true);
       setIsSubmitting(false);
+      if (formRef.current) {
+        formRef.current.scrollTo({ top: 0, behavior: "smooth" });
+      }
     } catch (error: any) {
       let errorMessage = "Failed to submit job request. Please try again.";
 
@@ -149,11 +159,17 @@ function JobRequestForm() {
     setIsSuccess(false);
     setError("");
     resetForm();
+    if (formRef.current) {
+      formRef.current.scrollTo({ top: 0, behavior: "smooth" });
+    }
   };
 
   return (
     <PageBackground>
-      <div className="flex flex-col items-center w-full h-full overflow-y-auto px-6 lg:px-24 py-12">
+      <div
+        ref={formRef as React.RefObject<HTMLDivElement>}
+        className="flex flex-col items-center w-full h-full overflow-y-auto px-6 lg:px-24 py-12"
+      >
         <h1 className="body1-desktop-semi-text text-type-400 text-center mb-5">
           Submit Job Posting
         </h1>

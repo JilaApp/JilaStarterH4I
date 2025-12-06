@@ -13,6 +13,9 @@ import { useNotification } from "@/hooks/useNotification";
 import { logger } from "@/lib/logger";
 import { FullJobType } from "@/lib/types";
 import EmptyState from "@/components/shared/EmptyState";
+import IconButton from "@/components/shared/AddButton";
+import { Copy } from "lucide-react";
+import Pagination from "@/components/shared/Pagination";
 
 interface JobRequestTableData extends DataRow {
   id: number;
@@ -30,6 +33,8 @@ export default function JobRequests() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedJobRequest, setSelectedJobRequest] =
     useState<FullJobType | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 8;
 
   const { showNotification, NotificationContainer } = useNotification();
 
@@ -41,6 +46,12 @@ export default function JobRequests() {
     refetchOnMount: "always",
     refetchOnWindowFocus: false,
   });
+
+  const { data: communityOrgData } = trpc.community.getMyCommunityOrg.useQuery();
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery]);
 
   const approveJobMutation = trpc.jobs.approveJobRequest.useMutation({
     onSuccess: () => {
@@ -168,6 +179,17 @@ export default function JobRequests() {
     [pendingJobsResourcesData, searchQuery],
   );
 
+  const totalPages = Math.ceil(filteredPendingJobs.length / itemsPerPage);
+
+  const paginatedPendingJobs = useMemo(
+    () =>
+      filteredPendingJobs.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage,
+      ),
+    [filteredPendingJobs, currentPage, itemsPerPage],
+  );
+
   const handleJobRequestRowClick = (id: number) => {
     const job = pendingJobsData?.find((j) => j.id === id);
     if (job) {
@@ -209,6 +231,27 @@ export default function JobRequests() {
     }
   };
 
+  const handleCopyJobRequestLink = () => {
+    if (!communityOrgData?.id) {
+      showNotification("Unable to get community org ID", "error");
+      return;
+    }
+
+    const baseUrl =
+      process.env.NEXT_PUBLIC_APP_URL || window.location.origin;
+    const jobRequestUrl = `${baseUrl}/job-request?communityOrgId=${communityOrgData.id}`;
+
+    navigator.clipboard
+      .writeText(jobRequestUrl)
+      .then(() => {
+        showNotification("Job request form link copied to clipboard", "success");
+      })
+      .catch((error) => {
+        logger.error("[handleCopyJobRequestLink] Failed to copy link", error);
+        showNotification("Failed to copy link. Please try again.", "error");
+      });
+  };
+
   const isFiltered = Boolean(
     searchQuery &&
       filteredPendingJobs.length === 0 &&
@@ -225,6 +268,11 @@ export default function JobRequests() {
             placeholder="Search pending requests"
             defaultClassName="w-[404px] h-[46px]"
           />
+          <IconButton
+            onClick={handleCopyJobRequestLink}
+            label="Copy job request form link"
+            icon={<Copy size={24} />}
+          />
         </div>
 
         <div className="bg-white rounded-[24px] shadow-[0px_4px_80px_0px_rgba(109,15,0,0.1)] overflow-hidden flex flex-col pb-[40px] pt-[25px] h-full">
@@ -234,7 +282,7 @@ export default function JobRequests() {
             </div>
           ) : (
             <Table
-              data={filteredPendingJobs}
+              data={paginatedPendingJobs}
               columns={jobRequestColumns}
               handleApprove={handleJobRequestApprove}
               handleDeny={handleJobRequestDeny}
@@ -251,6 +299,15 @@ export default function JobRequests() {
             />
           )}
         </div>
+        {totalPages > 0 && (
+          <div className="mt-4">
+            <Pagination
+              numOptions={totalPages}
+              selectedOption={currentPage}
+              onChange={setCurrentPage}
+            />
+          </div>
+        )}
       </div>
 
       <JobRequestBulkBar

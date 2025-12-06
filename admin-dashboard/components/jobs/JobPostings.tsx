@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo, useCallback } from "react";
-import { SlidersHorizontal } from "lucide-react";
+import { SlidersHorizontal, Plus } from "lucide-react";
 import Table from "@/components/shared/Table";
 import { ColumnDefinition, DataRow, JobFilters } from "@/lib/types";
 import SearchBar from "@/components/forms/SearchBar";
@@ -18,7 +18,7 @@ import Pagination from "@/components/shared/Pagination";
 import { logger } from "@/lib/logger";
 import { FullJobType } from "@/lib/types";
 import EmptyState from "@/components/shared/EmptyState";
-import AddButton from "@/components/shared/AddButton";
+import IconButton from "@/components/shared/AddButton";
 
 interface JobResourceData extends DataRow {
   id: number;
@@ -480,7 +480,11 @@ export default function JobPostings({
             placeholder="Search"
             defaultClassName="w-[404px] h-[46px]"
           />
-          <AddButton onClick={handleAddJobPosting} label="Add job posting" />
+          <IconButton
+            onClick={handleAddJobPosting}
+            label="Add job posting"
+            icon={<Plus size={24} />}
+          />
         </div>
 
         <Tabs
