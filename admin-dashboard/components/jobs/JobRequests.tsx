@@ -47,7 +47,8 @@ export default function JobRequests() {
     refetchOnWindowFocus: false,
   });
 
-  const { data: communityOrgData } = trpc.community.getMyCommunityOrg.useQuery();
+  const { data: communityOrgData } =
+    trpc.community.getMyCommunityOrg.useQuery();
 
   useEffect(() => {
     setCurrentPage(1);
@@ -237,14 +238,16 @@ export default function JobRequests() {
       return;
     }
 
-    const baseUrl =
-      process.env.NEXT_PUBLIC_APP_URL || window.location.origin;
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || window.location.origin;
     const jobRequestUrl = `${baseUrl}/job-request?communityOrgId=${communityOrgData.id}`;
 
     navigator.clipboard
       .writeText(jobRequestUrl)
       .then(() => {
-        showNotification("Job request form link copied to clipboard", "success");
+        showNotification(
+          "Job request form link copied to clipboard",
+          "success",
+        );
       })
       .catch((error) => {
         logger.error("[handleCopyJobRequestLink] Failed to copy link", error);
