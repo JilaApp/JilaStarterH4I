@@ -69,7 +69,7 @@ export default function DashboardView() {
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
   const [isEditingMode, setIsEditingMode] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState<FullVideoType | null>(
-    null,
+    null
   );
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [videoToDeleteId, setVideoToDeleteId] = useState<number | null>(null);
@@ -121,7 +121,7 @@ export default function DashboardView() {
       onError: (error) => {
         logger.error(
           "[deleteSocialServiceMutation] Failed to delete social service",
-          error,
+          error
         );
         showNotification("Failed to delete social service. Please try again.");
       },
@@ -159,7 +159,7 @@ export default function DashboardView() {
           duration: formatTime(video.durations[0]),
         }))
         .sort((a, b) => a.title.localeCompare(b.title)) || [],
-    [videosData],
+    [videosData]
   );
 
   const socialServicesResourcesData: SocialServiceData[] = useMemo(
@@ -173,17 +173,17 @@ export default function DashboardView() {
           link: service.url || "N/A",
         }))
         .sort((a, b) => a.title.localeCompare(b.title)) || [],
-    [socialServicesData],
+    [socialServicesData]
   );
 
   const filteredVideoData = useMemo(() => {
     let filtered = videoResourcesData
       .filter(
         (item) =>
-          selectedFilters.length === 0 || selectedFilters.includes(item.topic),
+          selectedFilters.length === 0 || selectedFilters.includes(item.topic)
       )
       .filter((item) =>
-        item.title.toLowerCase().includes(videoSearchQuery.toLowerCase()),
+        item.title.toLowerCase().includes(videoSearchQuery.toLowerCase())
       );
 
     if (videoSortConfig) {
@@ -205,10 +205,10 @@ export default function DashboardView() {
     let filtered = socialServicesResourcesData
       .filter(
         (item) =>
-          selectedFilters.length === 0 || selectedFilters.includes(item.topic),
+          selectedFilters.length === 0 || selectedFilters.includes(item.topic)
       )
       .filter((item) =>
-        item.title.toLowerCase().includes(socialSearchQuery.toLowerCase()),
+        item.title.toLowerCase().includes(socialSearchQuery.toLowerCase())
       );
 
     if (socialSortConfig) {
@@ -236,21 +236,21 @@ export default function DashboardView() {
     () =>
       filteredVideoData.slice(
         (videoCurrentPage - 1) * itemsPerPage,
-        videoCurrentPage * itemsPerPage,
+        videoCurrentPage * itemsPerPage
       ),
-    [filteredVideoData, videoCurrentPage],
+    [filteredVideoData, videoCurrentPage]
   );
 
   const socialTotalPages = Math.ceil(
-    filteredSocialServicesData.length / itemsPerPage,
+    filteredSocialServicesData.length / itemsPerPage
   );
   const paginatedSocialData = useMemo(
     () =>
       filteredSocialServicesData.slice(
         (socialCurrentPage - 1) * itemsPerPage,
-        socialCurrentPage * itemsPerPage,
+        socialCurrentPage * itemsPerPage
       ),
-    [filteredSocialServicesData, socialCurrentPage],
+    [filteredSocialServicesData, socialCurrentPage]
   );
 
   // Handlers
@@ -331,7 +331,6 @@ export default function DashboardView() {
       accessorKey: "topic",
       cell: (value) => <TopicTag variant={value as TopicVariant} />,
     },
-    { header: "Phone number", accessorKey: "phoneNumber" },
     { header: "Duration", accessorKey: "duration" },
     {
       header: "Link",
@@ -372,7 +371,7 @@ export default function DashboardView() {
   ];
 
   const hasFilters = Boolean(
-    videoSearchQuery || socialSearchQuery || selectedFilters.length > 0,
+    videoSearchQuery || socialSearchQuery || selectedFilters.length > 0
   );
   const isVideoFiltered =
     hasFilters &&
