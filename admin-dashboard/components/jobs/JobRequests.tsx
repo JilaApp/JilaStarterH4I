@@ -209,6 +209,12 @@ export default function JobRequests() {
     }
   };
 
+  const isFiltered = Boolean(
+    searchQuery &&
+      filteredPendingJobs.length === 0 &&
+      pendingJobsResourcesData.length > 0,
+  );
+
   return (
     <div className="flex h-full w-full gap-0 relative">
       <div className="flex-1 flex flex-col gap-[5px]">
@@ -239,6 +245,7 @@ export default function JobRequests() {
                 <EmptyState
                   heading="No pending job requests"
                   subtext="When communities request jobs, their requests will appear here"
+                  isFiltered={isFiltered}
                 />
               }
             />

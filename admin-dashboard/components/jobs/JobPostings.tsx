@@ -376,6 +376,31 @@ export default function JobPostings({
     setArchivedJobsCurrentPage(1);
   }, [searchQuery, appliedFilters]);
 
+  const hasFilters = Boolean(searchQuery || appliedFilters);
+  const isAllJobsFiltered =
+    hasFilters && allJobsData.length === 0 && jobResourcesData.length > 0;
+  const isActiveJobsFiltered =
+    hasFilters &&
+    activeJobsData.length === 0 &&
+    jobResourcesData.filter((job) => job.status === JobStatus.ACTIVE).length >
+      0;
+  const isArchivedJobsFiltered =
+    hasFilters &&
+    archivedJobsData.length === 0 &&
+    jobResourcesData.filter((job) => job.status === JobStatus.ARCHIVED).length >
+      0;
+
+  const getEmptyState = (isFiltered: boolean) => (
+    <EmptyState
+      heading="No job postings added"
+      subtext="Get started by adding a new job"
+      showButton={true}
+      buttonLabel="Add job posting"
+      onButtonClick={handleAddJobPosting}
+      isFiltered={isFiltered}
+    />
+  );
+
   const tabs = [
     {
       header: {
@@ -395,15 +420,7 @@ export default function JobPostings({
           handleRowClick={handleJobRowClick}
           selectedRows={selectedRows}
           onSelectedRowsChange={setSelectedRows}
-          emptyState={
-            <EmptyState
-              heading="No job postings added"
-              subtext="Get started by adding a new job"
-              showButton={true}
-              buttonLabel="Add job posting"
-              onButtonClick={handleAddJobPosting}
-            />
-          }
+          emptyState={getEmptyState(isAllJobsFiltered)}
         />
       ),
     },
@@ -425,15 +442,7 @@ export default function JobPostings({
           handleRowClick={handleJobRowClick}
           selectedRows={selectedRows}
           onSelectedRowsChange={setSelectedRows}
-          emptyState={
-            <EmptyState
-              heading="No job postings added"
-              subtext="Get started by adding a new job"
-              showButton={true}
-              buttonLabel="Add job posting"
-              onButtonClick={handleAddJobPosting}
-            />
-          }
+          emptyState={getEmptyState(isActiveJobsFiltered)}
         />
       ),
     },
@@ -455,15 +464,7 @@ export default function JobPostings({
           handleRowClick={handleJobRowClick}
           selectedRows={selectedRows}
           onSelectedRowsChange={setSelectedRows}
-          emptyState={
-            <EmptyState
-              heading="No job postings added"
-              subtext="Get started by adding a new job"
-              showButton={true}
-              buttonLabel="Add job posting"
-              onButtonClick={handleAddJobPosting}
-            />
-          }
+          emptyState={getEmptyState(isArchivedJobsFiltered)}
         />
       ),
     },
