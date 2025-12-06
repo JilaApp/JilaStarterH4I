@@ -30,6 +30,7 @@ export type VideoData = {
   titleQanjobal: string;
   topic: string;
   urls: string[];
+  durations: number[];
   descriptionEnglish: string | null;
   descriptionQanjobal: string | null;
   audioFilename: string | null;

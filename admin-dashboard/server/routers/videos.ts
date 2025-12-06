@@ -6,6 +6,7 @@ import { requireCommunityOrgAdmin, getUserCommunityOrgId } from "../utils";
 import { logger } from "@/lib/logger";
 import { uploadAudioToS3, deleteAudioFromS3 } from "@/lib/s3Utils";
 import prisma from "@/lib/prisma";
+import { GoogleAuth } from "google-auth-library";
 
 const addVideoInput = z.object({
   titleEnglish: z.string(),
@@ -40,13 +41,88 @@ type AddVideoInput = z.infer<typeof addVideoInput>;
 type RemoveVideoInput = z.infer<typeof removeVideoInput>;
 type UpdateVideoInput = z.infer<typeof updateVideoInput>;
 
+function extractYoutubeId(url: string) {
+  var regExp =
+    /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+  var match = url.match(regExp);
+  if (match && match[2].length == 11) {
+    return match[2];
+  } else {
+    console.log(`error for url ${url}`);
+    return url;
+  }
+}
+
+function extractDriveId(url: string): string {
+  const match =
+    url.match(/\/file\/d\/([^\/]+)\//) || url.match(/[?&]id=([^&]+)/);
+  return match ? match[1] : url;
+}
+
+async function getYoutubeDuration(url: string) {
+  let id = extractYoutubeId(url);
+  let result = await fetch(
+    `https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id=${id}&key=${process.env.GOOGLE_API_KEY}`
+  );
+  let r = await result.json();
+  let str = r.items[0].contentDetails.duration.substring(2);
+  let secs = 0;
+  if (str.includes("H")) {
+    secs += +str.split("H")[0] * 60 * 60;
+    str = str.split("H")[1];
+  }
+  if (str.includes("M")) {
+    secs += +str.split("M")[0] * 60;
+    str = str.split("M")[1];
+  }
+  if (str.includes("S")) {
+    secs += +str.split("S")[0];
+  }
+  return secs;
+}
+
+async function getAuthClient() {
+  const auth = new GoogleAuth({
+    keyFile: process.env.DRIVE_KEY_PATH,
+    scopes: ["https://www.googleapis.com/auth/drive.readonly"],
+  });
+  const client = await auth.getClient();
+  return client;
+}
+
+async function getDriveDuration(url: string): Promise<number> {
+  let id = extractDriveId(url);
+  const fields = encodeURIComponent("videoMediaMetadata");
+  const client = await getAuthClient();
+  const res = await client.request({
+    url: `https://www.googleapis.com/drive/v3/files/${id}?fields=${fields}`,
+    method: "GET",
+  });
+  // @ts-ignore
+  return +res.data.videoMediaMetadata.durationMillis / 1000;
+}
+
+async function processUrlList(urls: string[]): Promise<number[]> {
+  let videoDurations = [];
+  for (let i = 0; i < urls.length; i++) {
+    if (urls[i].includes("google")) {
+      videoDurations.push(await getDriveDuration(urls[i]));
+    } else {
+      videoDurations.push(await getYoutubeDuration(urls[i]));
+    }
+  }
+  return videoDurations;
+}
+
 async function addVideo(input: AddVideoInput, communityOrgId: string | null) {
   try {
     const s3Key = await uploadAudioToS3(
       input.audioFile,
       input.audioFilename,
-      "videos",
+      "videos"
     );
+
+    let videoDurations = await processUrlList(input.urls);
 
     await prisma.videos.create({
       data: {
@@ -57,6 +133,7 @@ async function addVideo(input: AddVideoInput, communityOrgId: string | null) {
         audioFileSize: input.audioFileSize,
         topic: input.topic,
         urls: input.urls,
+        durations: videoDurations,
         uploadDate: new Date(),
         descriptionEnglish: input.descriptionEnglish,
         descriptionQanjobal: input.descriptionQanjobal,
@@ -127,12 +204,13 @@ async function updateVideo(input: UpdateVideoInput) {
       titleQanjobal?: string;
       topic?: VideoTopic;
       urls?: string[];
+      durations?: number[];
       descriptionEnglish?: string;
       descriptionQanjobal?: string;
       audioFileS3Key?: string | null;
       audioFilename?: string | null;
       audioFileSize?: number | null;
-    } = { ...rest };
+    } = { ...rest, durations: await processUrlList(rest.urls || []) };
 
     if (audioFile !== undefined) {
       if (audioFile === "") {
@@ -148,7 +226,7 @@ async function updateVideo(input: UpdateVideoInput) {
         const s3Key = await uploadAudioToS3(
           audioFile,
           audioFilename!,
-          "videos",
+          "videos"
         );
 
         // Delete old file from S3 if it exists
@@ -190,6 +268,7 @@ async function getAllVideos(communityOrgId: string | null) {
         titleQanjobal: true,
         topic: true,
         urls: true,
+        durations: true,
         uploadDate: true,
         descriptionEnglish: true,
         descriptionQanjobal: true,

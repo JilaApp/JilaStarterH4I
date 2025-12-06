@@ -94,7 +94,7 @@ export default function VideoRouter() {
                 parts={vid.urls.map((url, i) => {
                   return {
                     videoUrl: url,
-                    duration: 0,
+                    duration: vid.durations[i],
                     name: `Part ${i + 1}`,
                   };
                 })}
