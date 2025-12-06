@@ -1,5 +1,5 @@
-import { Search } from "lucide-react";
-import AddButton from "./AddButton";
+import { Search, Plus } from "lucide-react";
+import IconButton from "./AddButton";
 
 interface EmptyStateProps {
   heading?: string;
@@ -40,7 +40,11 @@ export default function EmptyState({
       </div>
 
       {displayButton && buttonLabel && onButtonClick && (
-        <AddButton onClick={onButtonClick} label={buttonLabel} />
+        <IconButton
+          onClick={onButtonClick}
+          label={buttonLabel}
+          icon={<Plus size={24} />}
+        />
       )}
     </div>
   );
