@@ -376,7 +376,7 @@ export default function JobPostings({
     setArchivedJobsCurrentPage(1);
   }, [searchQuery, appliedFilters]);
 
-  const hasFilters = searchQuery || appliedFilters;
+  const hasFilters = Boolean(searchQuery || appliedFilters);
   const isAllJobsFiltered =
     hasFilters && allJobsData.length === 0 && jobResourcesData.length > 0;
   const isActiveJobsFiltered =

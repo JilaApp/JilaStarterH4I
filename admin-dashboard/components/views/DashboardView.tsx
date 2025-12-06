@@ -321,8 +321,9 @@ export default function DashboardView() {
     },
   ];
 
-  const hasFilters =
-    videoSearchQuery || socialSearchQuery || selectedFilters.length > 0;
+  const hasFilters = Boolean(
+    videoSearchQuery || socialSearchQuery || selectedFilters.length > 0,
+  );
   const isVideoFiltered =
     hasFilters &&
     filteredVideoData.length === 0 &&

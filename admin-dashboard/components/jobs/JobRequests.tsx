@@ -209,10 +209,11 @@ export default function JobRequests() {
     }
   };
 
-  const isFiltered =
+  const isFiltered = Boolean(
     searchQuery &&
-    filteredPendingJobs.length === 0 &&
-    pendingJobsResourcesData.length > 0;
+      filteredPendingJobs.length === 0 &&
+      pendingJobsResourcesData.length > 0,
+  );
 
   return (
     <div className="flex h-full w-full gap-0 relative">
