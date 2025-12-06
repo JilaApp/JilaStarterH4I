@@ -49,7 +49,7 @@ export const validatePhone = (value: string): string | null => {
   return null;
 };
 
-const isValidURL = (url: string): boolean => {
+export const isValidURL = (url: string): boolean => {
   try {
     new URL(url);
     return true;
