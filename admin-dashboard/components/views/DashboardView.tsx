@@ -126,6 +126,18 @@ export default function DashboardView() {
     setSocialCurrentPage(1);
   }, [selectedFilters, socialSearchQuery]);
 
+  useEffect(() => {
+    setSelectedFilters([]);
+  }, [currentTabIndex]);
+
+  const filterOptions = useMemo(() => {
+    if (currentTabIndex === 0) {
+      return ["Career", "Legal", "Medical", "Transport", "Other"];
+    } else {
+      return ["Food", "Emergencia", "Transportation", "Shelters", "Other"];
+    }
+  }, [currentTabIndex]);
+
   const videoResourcesData: VideoResourceData[] = useMemo(
     () =>
       videosData
@@ -381,7 +393,7 @@ export default function DashboardView() {
     <>
       <div className="flex-shrink-0 px-10">
         <FilterBar
-          options={["Career", "Legal", "Medical", "Transport"]}
+          options={filterOptions}
           selectedOptions={selectedFilters}
           setSelectedOptions={setSelectedFilters}
         />
