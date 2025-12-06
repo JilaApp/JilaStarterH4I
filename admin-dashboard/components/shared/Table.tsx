@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
 import Image from "next/image";
-import { MoreVertical, Check, X as XIcon } from "lucide-react";
-import type { DataRow, ColumnDefinition } from "@/lib/types";
+import { MoreVertical, Check, X as XIcon, ChevronsUpDown } from "lucide-react";
+import type { DataRow, ColumnDefinition, SortConfig } from "@/lib/types";
 import { useClickOutside } from "@/hooks/useClickOutside";
 import clsx from "clsx";
 
@@ -16,6 +16,8 @@ interface TableProps<T extends DataRow> {
   selectedRows?: number[];
   onSelectedRowsChange?: (selectedRows: number[]) => void;
   emptyState?: React.ReactNode;
+  sortConfig?: SortConfig | null;
+  onSort?: (key: string) => void;
 }
 
 export default function Table<T extends DataRow>({
@@ -29,6 +31,8 @@ export default function Table<T extends DataRow>({
   selectedRows: externalSelectedRows,
   onSelectedRowsChange,
   emptyState,
+  sortConfig,
+  onSort,
 }: TableProps<T>) {
   const [internalSelectedRows, setInternalSelectedRows] = useState<number[]>(
     [],
@@ -80,7 +84,17 @@ export default function Table<T extends DataRow>({
                       : "px-6 p-4 text-left text-gray-300"
                   }
                 >
-                  {col.header}
+                  {col.sortable && onSort ? (
+                    <button
+                      onClick={() => onSort(String(col.accessorKey))}
+                      className="flex items-center gap-2 hover:opacity-70 cursor-pointer"
+                    >
+                      <span>{col.header}</span>
+                      <ChevronsUpDown size={24} className="text-gray-300" />
+                    </button>
+                  ) : (
+                    col.header
+                  )}
                 </th>
               ))}
               <th className="px-6 p-4 text-left text-gray-300">Actions</th>

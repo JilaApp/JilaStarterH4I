@@ -20,6 +20,7 @@ import VideoEditModal from "@/components/videos/VideoEditModal";
 import DeleteModal from "@/components/shared/DeleteModal";
 import SocialServiceEditModal from "@/components/social-services/SocialServiceModal";
 import { useNotification } from "@/hooks/useNotification";
+import { useSorting } from "@/hooks/useSorting";
 import { logger } from "@/lib/logger";
 import EmptyState from "@/components/shared/EmptyState";
 import { formatTime } from "../forms/AudioDisplay";
@@ -57,6 +58,12 @@ export default function DashboardView() {
   const [videoCurrentPage, setVideoCurrentPage] = useState(1);
   const [socialCurrentPage, setSocialCurrentPage] = useState(1);
   const itemsPerPage = 8;
+
+  // Sort state
+  const { sortConfig: videoSortConfig, handleSort: handleVideoSort } =
+    useSorting();
+  const { sortConfig: socialSortConfig, handleSort: handleSocialSort } =
+    useSorting();
 
   // Modal state
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
@@ -122,11 +129,23 @@ export default function DashboardView() {
 
   useEffect(() => {
     setVideoCurrentPage(1);
-  }, [selectedFilters, videoSearchQuery]);
+  }, [selectedFilters, videoSearchQuery, videoSortConfig]);
 
   useEffect(() => {
     setSocialCurrentPage(1);
-  }, [selectedFilters, socialSearchQuery]);
+  }, [selectedFilters, socialSearchQuery, socialSortConfig]);
+
+  useEffect(() => {
+    setSelectedFilters([]);
+  }, [currentTabIndex]);
+
+  const filterOptions = useMemo(() => {
+    if (currentTabIndex === 0) {
+      return ["Career", "Legal", "Medical", "Transport", "Other"];
+    } else {
+      return ["Food", "Emergencia", "Transportation", "Shelters", "Other"];
+    }
+  }, [currentTabIndex]);
 
   const videoResourcesData: VideoResourceData[] = useMemo(
     () =>
@@ -157,31 +176,60 @@ export default function DashboardView() {
     [socialServicesData]
   );
 
-  const filteredVideoData = useMemo(
-    () =>
-      videoResourcesData
-        .filter(
-          (item) =>
-            selectedFilters.length === 0 || selectedFilters.includes(item.topic)
-        )
-        .filter((item) =>
-          item.title.toLowerCase().includes(videoSearchQuery.toLowerCase())
-        ),
-    [videoResourcesData, selectedFilters, videoSearchQuery]
-  );
+  const filteredVideoData = useMemo(() => {
+    let filtered = videoResourcesData
+      .filter(
+        (item) =>
+          selectedFilters.length === 0 || selectedFilters.includes(item.topic)
+      )
+      .filter((item) =>
+        item.title.toLowerCase().includes(videoSearchQuery.toLowerCase())
+      );
 
-  const filteredSocialServicesData = useMemo(
-    () =>
-      socialServicesResourcesData
-        .filter(
-          (item) =>
-            selectedFilters.length === 0 || selectedFilters.includes(item.topic)
-        )
-        .filter((item) =>
-          item.title.toLowerCase().includes(socialSearchQuery.toLowerCase())
-        ),
-    [socialServicesResourcesData, selectedFilters, socialSearchQuery]
-  );
+    if (videoSortConfig) {
+      filtered = [...filtered].sort((a, b) => {
+        const aValue = a[videoSortConfig.key as keyof VideoResourceData];
+        const bValue = b[videoSortConfig.key as keyof VideoResourceData];
+
+        if (aValue === bValue) return 0;
+
+        const comparison = String(aValue).localeCompare(String(bValue));
+        return videoSortConfig.direction === "asc" ? comparison : -comparison;
+      });
+    }
+
+    return filtered;
+  }, [videoResourcesData, selectedFilters, videoSearchQuery, videoSortConfig]);
+
+  const filteredSocialServicesData = useMemo(() => {
+    let filtered = socialServicesResourcesData
+      .filter(
+        (item) =>
+          selectedFilters.length === 0 || selectedFilters.includes(item.topic)
+      )
+      .filter((item) =>
+        item.title.toLowerCase().includes(socialSearchQuery.toLowerCase())
+      );
+
+    if (socialSortConfig) {
+      filtered = [...filtered].sort((a, b) => {
+        const aValue = a[socialSortConfig.key as keyof SocialServiceData];
+        const bValue = b[socialSortConfig.key as keyof SocialServiceData];
+
+        if (aValue === bValue) return 0;
+
+        const comparison = String(aValue).localeCompare(String(bValue));
+        return socialSortConfig.direction === "asc" ? comparison : -comparison;
+      });
+    }
+
+    return filtered;
+  }, [
+    socialServicesResourcesData,
+    selectedFilters,
+    socialSearchQuery,
+    socialSortConfig,
+  ]);
 
   const videoTotalPages = Math.ceil(filteredVideoData.length / itemsPerPage);
   const paginatedVideoData = useMemo(
@@ -277,7 +325,7 @@ export default function DashboardView() {
   };
 
   const videoColumns: ColumnDefinition<VideoResourceData>[] = [
-    { header: "Title", accessorKey: "title" },
+    { header: "Title", accessorKey: "title", sortable: true },
     {
       header: "Topic",
       accessorKey: "topic",
@@ -301,7 +349,7 @@ export default function DashboardView() {
   ];
 
   const socialColumns: ColumnDefinition<SocialServiceData>[] = [
-    { header: "Title", accessorKey: "title" },
+    { header: "Title", accessorKey: "title", sortable: true },
     {
       header: "Topic",
       accessorKey: "topic",
@@ -323,6 +371,29 @@ export default function DashboardView() {
     },
   ];
 
+  const hasFilters = Boolean(
+    videoSearchQuery || socialSearchQuery || selectedFilters.length > 0
+  );
+  const isVideoFiltered =
+    hasFilters &&
+    filteredVideoData.length === 0 &&
+    videoResourcesData.length > 0;
+  const isSocialFiltered =
+    hasFilters &&
+    filteredSocialServicesData.length === 0 &&
+    socialServicesResourcesData.length > 0;
+
+  const getEmptyState = (isFiltered: boolean) => (
+    <EmptyState
+      heading="No items added"
+      subtext="Add social services and video resources through the upload forms"
+      showButton={true}
+      buttonLabel="Add resource"
+      onButtonClick={() => router.push("/dashboard/upload")}
+      isFiltered={isFiltered}
+    />
+  );
+
   const dashboardTabs = [
     {
       header: { logo: <Video size={20} />, text: "Video resources" },
@@ -335,15 +406,9 @@ export default function DashboardView() {
           handleEdit={handleVideoEdit}
           handleDelete={handleVideoDelete}
           handleRowClick={handleVideoRowClick}
-          emptyState={
-            <EmptyState
-              heading="No items added"
-              subtext="Add social services and video resources through the upload forms"
-              showButton={true}
-              buttonLabel="Add resource"
-              onButtonClick={() => router.push("/dashboard/upload")}
-            />
-          }
+          sortConfig={videoSortConfig}
+          onSort={handleVideoSort}
+          emptyState={getEmptyState(isVideoFiltered)}
         />
       ),
     },
@@ -358,15 +423,9 @@ export default function DashboardView() {
           handleEdit={handleSocialEdit}
           handleDelete={handleSocialDelete}
           handleRowClick={handleSocialRowClick}
-          emptyState={
-            <EmptyState
-              heading="No items added"
-              subtext="Add social services and video resources through the upload forms"
-              showButton={true}
-              buttonLabel="Add resource"
-              onButtonClick={() => router.push("/dashboard/upload")}
-            />
-          }
+          sortConfig={socialSortConfig}
+          onSort={handleSocialSort}
+          emptyState={getEmptyState(isSocialFiltered)}
         />
       ),
     },
@@ -376,7 +435,7 @@ export default function DashboardView() {
     <>
       <div className="flex-shrink-0 px-10">
         <FilterBar
-          options={["Career", "Legal", "Medical", "Transport"]}
+          options={filterOptions}
           selectedOptions={selectedFilters}
           setSelectedOptions={setSelectedFilters}
         />
