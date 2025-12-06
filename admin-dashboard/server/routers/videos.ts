@@ -62,7 +62,7 @@ function extractDriveId(url: string): string {
 async function getYoutubeDuration(url: string) {
   let id = extractYoutubeId(url);
   let result = await fetch(
-    `https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id=${id}&key=${process.env.GOOGLE_API_KEY}`
+    `https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id=${id}&key=${process.env.GOOGLE_API_KEY}`,
   );
   let r = await result.json();
   let str = r.items[0].contentDetails.duration.substring(2);
@@ -119,7 +119,7 @@ async function addVideo(input: AddVideoInput, communityOrgId: string | null) {
     const s3Key = await uploadAudioToS3(
       input.audioFile,
       input.audioFilename,
-      "videos"
+      "videos",
     );
 
     let videoDurations = await processUrlList(input.urls);
@@ -226,7 +226,7 @@ async function updateVideo(input: UpdateVideoInput) {
         const s3Key = await uploadAudioToS3(
           audioFile,
           audioFilename!,
-          "videos"
+          "videos",
         );
 
         // Delete old file from S3 if it exists
