@@ -321,6 +321,28 @@ export default function DashboardView() {
     },
   ];
 
+  const hasFilters =
+    videoSearchQuery || socialSearchQuery || selectedFilters.length > 0;
+  const isVideoFiltered =
+    hasFilters &&
+    filteredVideoData.length === 0 &&
+    videoResourcesData.length > 0;
+  const isSocialFiltered =
+    hasFilters &&
+    filteredSocialServicesData.length === 0 &&
+    socialServicesResourcesData.length > 0;
+
+  const getEmptyState = (isFiltered: boolean) => (
+    <EmptyState
+      heading="No items added"
+      subtext="Add social services and video resources through the upload forms"
+      showButton={true}
+      buttonLabel="Add resource"
+      onButtonClick={() => router.push("/dashboard/upload")}
+      isFiltered={isFiltered}
+    />
+  );
+
   const dashboardTabs = [
     {
       header: { logo: <Video size={20} />, text: "Video resources" },
@@ -333,15 +355,7 @@ export default function DashboardView() {
           handleEdit={handleVideoEdit}
           handleDelete={handleVideoDelete}
           handleRowClick={handleVideoRowClick}
-          emptyState={
-            <EmptyState
-              heading="No items added"
-              subtext="Add social services and video resources through the upload forms"
-              showButton={true}
-              buttonLabel="Add resource"
-              onButtonClick={() => router.push("/dashboard/upload")}
-            />
-          }
+          emptyState={getEmptyState(isVideoFiltered)}
         />
       ),
     },
@@ -356,15 +370,7 @@ export default function DashboardView() {
           handleEdit={handleSocialEdit}
           handleDelete={handleSocialDelete}
           handleRowClick={handleSocialRowClick}
-          emptyState={
-            <EmptyState
-              heading="No items added"
-              subtext="Add social services and video resources through the upload forms"
-              showButton={true}
-              buttonLabel="Add resource"
-              onButtonClick={() => router.push("/dashboard/upload")}
-            />
-          }
+          emptyState={getEmptyState(isSocialFiltered)}
         />
       ),
     },
