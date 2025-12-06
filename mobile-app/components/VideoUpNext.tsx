@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-import { View, TouchableOpacity, Text, StyleSheet, Pressable } from "react-native";
-=======
 import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
->>>>>>> fb51411a6c02535a4b1071a5a0b8433cdbab8f26
 import { colors } from "@/colors";
 import { formatDuration } from "@/utils/formatters";
 import { sizes } from "@/constants/sizes";
@@ -26,38 +22,6 @@ export default function VideoUpNext({
         router.push(`/video?url=${encodeURIComponent(videoUrl)}`);
     }
 
-<<<<<<< HEAD
-    return (
-        <View style={[styles.container, { backgroundColor: "cream" }]}>
-            <TouchableOpacity
-                activeOpacity={0.7}
-                style={styles.content}
-            >
-                <View style={styles.titleContainer}>
-                    <Text style={styles.title}>
-                        {title}
-                    </Text>
-                    <View style={styles.timer}>
-                        <Text style={styles.timerText}>{formatDuration(duration)}</Text>
-                    </View>
-                </View>
-                <Pressable style={styles.playButtonContainer} onPress={handlePress}>
-                    <CirclePlay size={24} color={colors.jila[400]}/>
-                </Pressable>
-            </TouchableOpacity>
-        </View>
-    )
-}
-
-function formatDuration(duration: number) {
-    const mins = Math.floor(duration / 60)
-        .toString()
-        .padStart(2, "0");
-    const secs = (duration % 60).toString().padStart(2, "0");
-    return `${mins}:${secs}`;
-}
-
-=======
   return (
     <View style={[styles.container, { backgroundColor: "cream" }]}>
       <TouchableOpacity
@@ -80,7 +44,6 @@ function formatDuration(duration: number) {
   );
 }
 
->>>>>>> fb51411a6c02535a4b1071a5a0b8433cdbab8f26
 const styles = StyleSheet.create({
     container: {
         width: "100%",
