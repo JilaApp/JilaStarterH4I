@@ -193,9 +193,7 @@ export default function JobRequests() {
         if (sortConfig.key === "dateSubmitted") {
           const aDate = new Date(String(aValue)).getTime();
           const bDate = new Date(String(bValue)).getTime();
-          return sortConfig.direction === "asc"
-            ? aDate - bDate
-            : bDate - aDate;
+          return sortConfig.direction === "asc" ? aDate - bDate : bDate - aDate;
         }
 
         const comparison = String(aValue).localeCompare(String(bValue));

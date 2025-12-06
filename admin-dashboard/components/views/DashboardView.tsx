@@ -58,8 +58,10 @@ export default function DashboardView() {
   const itemsPerPage = 8;
 
   // Sort state
-  const { sortConfig: videoSortConfig, handleSort: handleVideoSort } = useSorting();
-  const { sortConfig: socialSortConfig, handleSort: handleSocialSort } = useSorting();
+  const { sortConfig: videoSortConfig, handleSort: handleVideoSort } =
+    useSorting();
+  const { sortConfig: socialSortConfig, handleSort: handleSocialSort } =
+    useSorting();
 
   // Modal state
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
