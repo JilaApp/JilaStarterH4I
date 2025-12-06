@@ -1,6 +1,7 @@
 import { memo } from "react";
 import NextLink from "next/link";
 import clsx from "clsx";
+import { isValidURL } from "@/lib/validators";
 
 interface LinkProps {
   href: string;
@@ -23,6 +24,10 @@ const Link = memo(function Link({
   );
 
   if (external) {
+    if (!isValidURL(href)) {
+      return <span className="text-gray-300">{children}</span>;
+    }
+
     return (
       <a
         href={href}

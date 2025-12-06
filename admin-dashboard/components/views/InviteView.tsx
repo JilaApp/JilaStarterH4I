@@ -10,6 +10,7 @@ import Dropdown from "@/components/ui/Dropdown";
 import { useForm, createField } from "@/hooks/useForm";
 import { validateEmail, validateRequired } from "@/lib/validators";
 import { logger } from "@/lib/logger";
+import FormError from "@/components/shared/FormError";
 
 type InviteMode = "existing" | "new";
 
@@ -17,12 +18,20 @@ export default function InviteView() {
   const { showNotification, NotificationContainer } = useNotification();
   const [inviteMode, setInviteMode] = useState<InviteMode>("existing");
 
-  const { fields, setFieldValue, setFieldError, validateAllFields, resetForm } =
-    useForm({
-      email: createField(""),
-      communityName: createField(""),
-      selectedCommunityIndex: createField<number | undefined>(undefined),
-    });
+  const {
+    fields,
+    setFieldValue,
+    setFieldError,
+    validateAllFields,
+    resetForm,
+    formError,
+    setFormError,
+    formRef,
+  } = useForm({
+    email: createField(""),
+    communityName: createField(""),
+    selectedCommunityIndex: createField<number | undefined>(undefined),
+  });
 
   const { data: communityOrgs, refetch: refetchCommunityOrgs } =
     trpc.community.getAllCommunityOrgs.useQuery();
@@ -32,9 +41,11 @@ export default function InviteView() {
       showNotification(`Invite sent to ${fields.email.value}`, "success");
       resetForm();
     },
-    onError: (error) => {
+    onError: (error: any) => {
       logger.error("[sendInvitation] Failed to send invitation", error);
-      showNotification("Failed to send invitation. Please try again.", "error");
+      const errorMessage =
+        error?.message || "Failed to send invitation. Please try again.";
+      setFormError(errorMessage);
     },
   });
 
@@ -45,15 +56,14 @@ export default function InviteView() {
         resetForm();
         refetchCommunityOrgs();
       },
-      onError: (error) => {
+      onError: (error: any) => {
         logger.error(
           "[sendInvitationWithNewCommunity] Failed to send invitation",
           error,
         );
-        showNotification(
-          "Failed to send invitation. Please try again.",
-          "error",
-        );
+        const errorMessage =
+          error?.message || "Failed to send invitation. Please try again.";
+        setFormError(errorMessage);
       },
     });
 
@@ -102,7 +112,10 @@ export default function InviteView() {
   const communityOrgNames = communityOrgs?.map((org) => org.name) || [];
 
   return (
-    <div className="flex-1 px-10 py-6 flex flex-col items-center">
+    <div
+      ref={formRef as React.RefObject<HTMLDivElement>}
+      className="flex-1 px-10 py-6 flex flex-col items-center"
+    >
       <NotificationContainer />
 
       <div className="mt-16 mb-6">
@@ -216,6 +229,12 @@ export default function InviteView() {
             )}
           </FormField>
         </div>
+
+        {formError && (
+          <div className="w-[631px]">
+            <FormError message={formError} />
+          </div>
+        )}
 
         <button
           onClick={handleSubmit}

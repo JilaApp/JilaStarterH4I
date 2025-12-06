@@ -536,6 +536,7 @@ export default function JobPostings({
           onClose={() => setIsFilterOpen(false)}
           onApply={(filters) => setAppliedFilters(filters)}
           initialFilters={appliedFilters}
+          allJobs={jobsData || []}
         />
       )}
 

@@ -25,23 +25,32 @@ import {
   getFileUploadState,
   shouldShowSuccessMessage,
 } from "@/lib/fileUploadUtils";
+import FormError from "@/components/shared/FormError";
 
 export default function SocialServiceForm() {
-  const { fields, setFieldValue, setFieldError, resetForm, validateAllFields } =
-    useForm({
-      englishTitle: createField(""),
-      qanjobalTitle: createField(""),
-      titleFile: createField<File | undefined>(undefined),
-      topicIndex: createField<number | undefined>(undefined),
-      phoneNumber: createField(""),
-      addressLine: createField(""),
-      city: createField(""),
-      stateIndex: createField<number | undefined>(undefined),
-      link: createField(""),
-      englishDescription: createField(""),
-      qanjobalDescription: createField(""),
-      descriptionFile: createField<File | undefined>(undefined),
-    });
+  const {
+    fields,
+    setFieldValue,
+    setFieldError,
+    resetForm,
+    validateAllFields,
+    formError,
+    setFormError,
+    formRef,
+  } = useForm({
+    englishTitle: createField(""),
+    qanjobalTitle: createField(""),
+    titleFile: createField<File | undefined>(undefined),
+    topicIndex: createField<number | undefined>(undefined),
+    phoneNumber: createField(""),
+    addressLine: createField(""),
+    city: createField(""),
+    stateIndex: createField<number | undefined>(undefined),
+    link: createField(""),
+    englishDescription: createField(""),
+    qanjobalDescription: createField(""),
+    descriptionFile: createField<File | undefined>(undefined),
+  });
 
   const { showNotification, NotificationContainer } = useNotification();
   const addSocialServiceMutation =
@@ -107,9 +116,12 @@ export default function SocialServiceForm() {
               await addSocialServiceMutation.mutateAsync(mutationPayload);
               showNotification("Social service submitted successfully!");
               resetForm();
-            } catch (err) {
+            } catch (err: any) {
               logger.error("[submitForm] Failed to submit social service", err);
-              showNotification("Error submitting social service.");
+              const errorMessage =
+                err?.message ||
+                "Failed to submit social service. Please try again.";
+              setFormError(errorMessage);
             }
           }
         };
@@ -120,15 +132,20 @@ export default function SocialServiceForm() {
         await addSocialServiceMutation.mutateAsync(mutationPayload);
         showNotification("Social service submitted successfully!");
         resetForm();
-      } catch (err) {
+      } catch (err: any) {
         logger.error("[submitForm] Failed to submit social service", err);
-        showNotification("Error submitting social service.");
+        const errorMessage =
+          err?.message || "Failed to submit social service. Please try again.";
+        setFormError(errorMessage);
       }
     }
   };
 
   return (
-    <div className="flex flex-col gap-[26px] py-[30px] px-[35px] rounded-3xl bg-white">
+    <div
+      ref={formRef as React.RefObject<HTMLDivElement>}
+      className="flex flex-col gap-[26px] py-[30px] px-[35px] rounded-3xl bg-white"
+    >
       <div className="h-[60px] font-medium text-2xl">
         Add new social service
       </div>
@@ -302,6 +319,8 @@ export default function SocialServiceForm() {
           />
         )}
       </FormField>
+
+      {formError && <FormError message={formError} />}
 
       <div className="flex justify-end">
         <SubmitButton

@@ -25,18 +25,27 @@ import {
   getFileUploadState,
   shouldShowSuccessMessage,
 } from "@/lib/fileUploadUtils";
+import FormError from "@/components/shared/FormError";
 
 export default function VideoUploadForm() {
-  const { fields, setFieldValue, setFieldError, resetForm, validateAllFields } =
-    useForm({
-      resourceTitleEnglish: createField(""),
-      resourceTitleQanjobal: createField(""),
-      audioFile: createField<File | undefined>(undefined),
-      topicDropdownIndex: createField<number | undefined>(undefined),
-      videoLinks: createField<string[]>([""]),
-      descriptionEnglish: createField(""),
-      descriptionQanjobal: createField(""),
-    });
+  const {
+    fields,
+    setFieldValue,
+    setFieldError,
+    resetForm,
+    validateAllFields,
+    formError,
+    setFormError,
+    formRef,
+  } = useForm({
+    resourceTitleEnglish: createField(""),
+    resourceTitleQanjobal: createField(""),
+    audioFile: createField<File | undefined>(undefined),
+    topicDropdownIndex: createField<number | undefined>(undefined),
+    videoLinks: createField<string[]>([""]),
+    descriptionEnglish: createField(""),
+    descriptionQanjobal: createField(""),
+  });
 
   const { showNotification, NotificationContainer } = useNotification();
   const addVideoMutation = trpc.videos.addVideo.useMutation();
@@ -89,9 +98,11 @@ export default function VideoUploadForm() {
 
         showNotification("Video submitted successfully!");
         resetForm();
-      } catch (err) {
+      } catch (err: any) {
         logger.error("[submitForm] Failed to submit video", err);
-        showNotification("Error submitting video.");
+        const errorMessage =
+          err?.message || "Failed to submit video. Please try again.";
+        setFormError(errorMessage);
       }
     };
 
@@ -104,7 +115,10 @@ export default function VideoUploadForm() {
   );
 
   return (
-    <div className="flex flex-col gap-[26px] py-[30px] px-[35px] rounded-3xl bg-white">
+    <div
+      ref={formRef as React.RefObject<HTMLDivElement>}
+      className="flex flex-col gap-[26px] py-[30px] px-[35px] rounded-3xl bg-white"
+    >
       <div className="h-[60px] font-medium text-2xl">Add new video</div>
       <div className="flex flex-row gap-[18px]">
         <FormField
@@ -231,6 +245,9 @@ export default function VideoUploadForm() {
       >
         {(props) => <ParagraphInput {...props} />}
       </FormField>
+
+      {formError && <FormError message={formError} />}
+
       <div className="flex justify-end">
         <SubmitButton
           isLoading={addVideoMutation.isPending}
