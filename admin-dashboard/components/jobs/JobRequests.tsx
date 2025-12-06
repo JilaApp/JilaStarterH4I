@@ -10,6 +10,7 @@ import Link from "@/components/shared/Link";
 import JobRequestBulkBar from "@/components/jobs/JobRequestBulkBar";
 import JobRequestModal from "@/components/jobs/JobRequestModal";
 import { useNotification } from "@/hooks/useNotification";
+import { useSorting } from "@/hooks/useSorting";
 import { logger } from "@/lib/logger";
 import { FullJobType } from "@/lib/types";
 import EmptyState from "@/components/shared/EmptyState";
@@ -37,6 +38,7 @@ export default function JobRequests() {
   const itemsPerPage = 8;
 
   const { showNotification, NotificationContainer } = useNotification();
+  const { sortConfig, handleSort } = useSorting();
 
   const {
     data: pendingJobsData,
@@ -53,6 +55,10 @@ export default function JobRequests() {
   useEffect(() => {
     setCurrentPage(1);
   }, [searchQuery]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [sortConfig]);
 
   const approveJobMutation = trpc.jobs.approveJobRequest.useMutation({
     onSuccess: () => {
@@ -121,8 +127,8 @@ export default function JobRequests() {
   });
 
   const jobRequestColumns: ColumnDefinition<JobRequestTableData>[] = [
-    { header: "Position", accessorKey: "position" },
-    { header: "Date submitted", accessorKey: "dateSubmitted" },
+    { header: "Position", accessorKey: "position", sortable: true },
+    { header: "Date submitted", accessorKey: "dateSubmitted", sortable: true },
     { header: "Company", accessorKey: "company" },
     { header: "Business contact email", accessorKey: "businessContactEmail" },
     {
@@ -172,13 +178,33 @@ export default function JobRequests() {
     [pendingJobsData],
   );
 
-  const filteredPendingJobs = useMemo(
-    () =>
-      pendingJobsResourcesData.filter((item) =>
-        item.position.toLowerCase().includes(searchQuery.toLowerCase()),
-      ),
-    [pendingJobsResourcesData, searchQuery],
-  );
+  const filteredPendingJobs = useMemo(() => {
+    let filtered = pendingJobsResourcesData.filter((item) =>
+      item.position.toLowerCase().includes(searchQuery.toLowerCase()),
+    );
+
+    if (sortConfig) {
+      filtered = [...filtered].sort((a, b) => {
+        const aValue = a[sortConfig.key as keyof JobRequestTableData];
+        const bValue = b[sortConfig.key as keyof JobRequestTableData];
+
+        if (aValue === bValue) return 0;
+
+        if (sortConfig.key === "dateSubmitted") {
+          const aDate = new Date(String(aValue)).getTime();
+          const bDate = new Date(String(bValue)).getTime();
+          return sortConfig.direction === "asc"
+            ? aDate - bDate
+            : bDate - aDate;
+        }
+
+        const comparison = String(aValue).localeCompare(String(bValue));
+        return sortConfig.direction === "asc" ? comparison : -comparison;
+      });
+    }
+
+    return filtered;
+  }, [pendingJobsResourcesData, searchQuery, sortConfig]);
 
   const totalPages = Math.ceil(filteredPendingJobs.length / itemsPerPage);
 
@@ -292,6 +318,8 @@ export default function JobRequests() {
               handleRowClick={handleJobRequestRowClick}
               selectedRows={selectedRows}
               onSelectedRowsChange={setSelectedRows}
+              sortConfig={sortConfig}
+              onSort={handleSort}
               emptyState={
                 <EmptyState
                   heading="No pending job requests"
