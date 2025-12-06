@@ -53,13 +53,14 @@ export default function FileUpload({
     if (file) {
       onChange(file);
     }
+    e.target.value = "";
   };
 
   const handleDelete = () => {
+    onDelete();
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
-    onDelete();
   };
 
   const renderContent = () => {
