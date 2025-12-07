@@ -35,7 +35,9 @@ export type SocialService = {
   title: string;
   category: SocialServiceCategory;
   phone_number: string;
-  address?: string | null;
+  addressLine?: string | null;
+  city?: string | null;
+  state?: string | null;
   description?: string | null;
   url?: string | null;
   titleAudioFilename?: string | null;

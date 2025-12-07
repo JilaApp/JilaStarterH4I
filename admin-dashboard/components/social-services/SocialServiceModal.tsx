@@ -12,7 +12,6 @@ import {
   SOCIAL_SERVICE_CATEGORY_ENUM_MAP,
   US_STATES,
   MAX_AUDIO_FILE_SIZE_MB,
-  ADDRESS_PARTS_COUNT,
 } from "@/lib/constants";
 import { useForm, createField } from "@/hooks/useForm";
 import {
@@ -33,7 +32,9 @@ interface SocialServiceData {
   title: string;
   category: string;
   phone_number: string;
-  address: string | null;
+  addressLine: string | null;
+  city: string | null;
+  state: string | null;
   description: string | null;
   url: string | null;
   titleAudioFilename: string | null;
@@ -139,28 +140,12 @@ export default function SocialServiceEditModal({
       setFieldValue("englishDescription", serviceData.description || "");
       setFieldValue("qanjobalDescription", serviceData.description || "");
 
-      if (serviceData.address) {
-        const addressParts = serviceData.address.split(", ");
-        if (addressParts.length >= ADDRESS_PARTS_COUNT) {
-          setFieldValue("addressLine", addressParts[0] || "");
-          setFieldValue("city", addressParts[1] || "");
-          const stateIndex = US_STATES.findIndex(
-            (state) => state === addressParts[2],
-          );
-          setFieldValue(
-            "stateIndex",
-            stateIndex !== -1 ? stateIndex : undefined,
-          );
-        } else {
-          setFieldValue("addressLine", serviceData.address);
-          setFieldValue("city", "");
-          setFieldValue("stateIndex", undefined);
-        }
-      } else {
-        setFieldValue("addressLine", "");
-        setFieldValue("city", "");
-        setFieldValue("stateIndex", undefined);
-      }
+      setFieldValue("addressLine", serviceData.addressLine || "");
+      setFieldValue("city", serviceData.city || "");
+      const stateIndex = serviceData.state
+        ? US_STATES.findIndex((state) => state === serviceData.state)
+        : -1;
+      setFieldValue("stateIndex", stateIndex !== -1 ? stateIndex : undefined);
 
       const topicIndex = SOCIAL_SERVICE_CATEGORY_DISPLAY_OPTIONS.findIndex(
         (option) =>
@@ -169,7 +154,7 @@ export default function SocialServiceEditModal({
       setFieldValue("topicIndex", topicIndex !== -1 ? topicIndex : undefined);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen, serviceData]);
+  }, [isOpen, serviceData?.id]);
 
   const handleTitleFileChange = (file: File) => {
     setFieldValue("titleFile", file);
@@ -205,23 +190,20 @@ export default function SocialServiceEditModal({
 
     setIsSaving(true);
 
-    const addressParts = [
-      fields.addressLine.value,
-      fields.city.value,
-      fields.stateIndex.value !== undefined
-        ? US_STATES[fields.stateIndex.value]
-        : "",
-    ].filter(Boolean);
-
     const mutationPayload: Parameters<
       typeof updateSocialServiceMutation.mutateAsync
     >[0] = {
       id: serviceData.id as number,
       title: fields.englishTitle.value,
       phone_number: fields.phoneNumber.value,
-      address: addressParts.length > 0 ? addressParts.join(", ") : undefined,
-      description: fields.englishDescription.value || undefined,
-      url: fields.link.value || undefined,
+      addressLine: fields.addressLine.value || null,
+      city: fields.city.value || null,
+      state:
+        fields.stateIndex.value !== undefined
+          ? US_STATES[fields.stateIndex.value]
+          : null,
+      description: fields.englishDescription.value || null,
+      url: fields.link.value || null,
       category:
         fields.topicIndex.value !== undefined
           ? (SOCIAL_SERVICE_CATEGORY_ENUM_MAP[

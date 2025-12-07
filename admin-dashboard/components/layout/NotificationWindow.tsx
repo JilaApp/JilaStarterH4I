@@ -49,7 +49,9 @@ export default function NotificationWindow({
         .map((job) => job.id);
 
       if (unreadIds.length > 0) {
-        markAsReadMutation.mutateAsync({ ids: unreadIds });
+        markAsReadMutation.mutateAsync({ ids: unreadIds }).then(() => {
+          refetch();
+        });
         setReadInSession(new Set(unreadIds));
       }
     } else if (!isOpen) {

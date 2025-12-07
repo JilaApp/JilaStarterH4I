@@ -30,8 +30,8 @@ const updateVideoInput = z.object({
   titleQanjobal: z.string().optional(),
   topic: z.nativeEnum(VideoTopic).optional(),
   urls: z.array(z.string()).optional(),
-  descriptionEnglish: z.string().optional(),
-  descriptionQanjobal: z.string().optional(),
+  descriptionEnglish: z.string().nullish(),
+  descriptionQanjobal: z.string().nullish(),
   audioFile: z.string().optional(),
   audioFilename: z.string().optional(),
   audioFileSize: z.number().optional(),
@@ -205,8 +205,8 @@ async function updateVideo(input: UpdateVideoInput) {
       topic?: VideoTopic;
       urls?: string[];
       durations?: number[];
-      descriptionEnglish?: string;
-      descriptionQanjobal?: string;
+      descriptionEnglish?: string | null;
+      descriptionQanjobal?: string | null;
       audioFileS3Key?: string | null;
       audioFilename?: string | null;
       audioFileSize?: number | null;
