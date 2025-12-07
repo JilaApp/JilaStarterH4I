@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   View,
   TouchableOpacity,
@@ -7,8 +7,6 @@ import {
   StyleSheet,
   ScrollView,
   TextInput,
-  FlatList,
-  SafeAreaView,
 } from "react-native";
 import { Search, X } from "lucide-react-native";
 import { colors } from "@/colors";

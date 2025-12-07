@@ -8,7 +8,6 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
-import { SafeAreaView } from "react-native-safe-area-context";
 import Text from "./JilaText";
 import AudioButton from "./AudioButton";
 import { sizes } from "@/constants/sizes";
@@ -16,7 +15,6 @@ import { sizes } from "@/constants/sizes";
 // Toggle-specific constants
 const SWITCH_BORDER_WIDTH = 2.5;
 const SWITCH_TRACK_WIDTH = 50;
-const SWITCH_WIDTH = 48;
 
 // Toggle colors (rgba doesn't work with reanimated...)
 const SWITCH_COLORS = {
@@ -116,7 +114,7 @@ export function Toggle({
 
   React.useEffect(() => {
     isOn.value = withTiming(checked ? 1 : 0);
-  }, [checked]);
+  }, [checked, isOn]);
 
   const handlePress = () => {
     onCheckedChange(!checked);

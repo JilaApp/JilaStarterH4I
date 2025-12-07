@@ -1,12 +1,5 @@
-import {
-  View,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-  KeyboardAvoidingView,
-  Platform,
-} from "react-native";
-import { useState, useEffect } from "react";
+import { View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
+import React, { useState, useEffect } from "react";
 import { colors } from "@/colors";
 import { sizes } from "@/constants/sizes";
 import Background from "@/components/Background";
@@ -22,7 +15,6 @@ import SearchableDropdown from "@/components/SearchableDropdown";
 
 import { useSignUp } from "@clerk/clerk-expo";
 import { useRouter } from "expo-router";
-import React from "react";
 import Checkbox from "@/components/Checkbox";
 import { trpc } from "@/lib/trpc";
 import { Loader, ChevronLeft, AlertCircle } from "lucide-react-native";

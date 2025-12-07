@@ -2,7 +2,6 @@ import Text from "@/components/JilaText";
 import { colors } from "@/colors";
 import { View, StyleSheet } from "react-native";
 import { sizes } from "@/constants/sizes";
-import { Button } from "@/components/Button";
 import { useRouter } from "expo-router";
 import VideoEmbed, { VideoType } from "@/components/VideoEmbed";
 import Background from "@/components/Background";

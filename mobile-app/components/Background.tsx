@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  View,
-  Image,
-  StyleSheet,
-  KeyboardAvoidingView,
-  Platform,
-} from "react-native";
+import { View, Image, StyleSheet } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { colors } from "@/colors";
 import { sizes, componentSizes } from "@/constants/sizes";

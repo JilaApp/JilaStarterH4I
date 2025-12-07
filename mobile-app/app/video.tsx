@@ -5,12 +5,12 @@ import {
   useWindowDimensions,
   TouchableOpacity,
 } from "react-native";
-import { ArrowDownToLine, ChevronLeft } from "lucide-react-native";
+import { ArrowDownToLine, ChevronLeft, Loader } from "lucide-react-native";
 import { Linking } from "react-native";
 import { colors } from "@/colors";
 import { VideoData } from "@/types/api";
-import VideoRouter from "@/app/video-router";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { trpc } from "@/lib/trpc";
 
 import Header from "@/components/Header";
 import VideoEmbed, { VideoType } from "@/components/VideoEmbed";

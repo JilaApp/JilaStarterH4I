@@ -1,48 +1,48 @@
 import * as React from "react";
-import {
-  Text,
-  TouchableOpacity,
-  View,
-  StyleSheet,
-  KeyboardAvoidingView,
-  Platform,
-} from "react-native";
-import { useSignIn } from "@clerk/clerk-expo";
-import { useRouter } from "expo-router";
+import { View, StyleSheet, TouchableOpacity } from "react-native";
+import { useState } from "react";
 import { colors } from "@/colors";
 import { sizes } from "@/constants/sizes";
-import { Button } from "@/components/Button";
-import { UsernameInput, PasswordInput } from "@/components/Input";
 import Background from "@/components/Background";
 import DisplayBox from "@/components/DisplayBox";
+import { Button } from "@/components/Button";
+import Text from "@/components/JilaText";
+import { UsernameInput, PasswordInput } from "@/components/Input";
+import { useSignIn } from "@clerk/clerk-expo";
+import { useRouter } from "expo-router";
 
 export default function SignInScreen() {
-  const { isLoaded, signIn, setActive } = useSignIn();
+  const { signIn, setActive, isLoaded } = useSignIn();
   const router = useRouter();
 
-  const [username, setUsername] = React.useState("");
-  const [password, setPassword] = React.useState("");
-  const [error, setError] = React.useState("");
-  const [loading, setLoading] = React.useState(false);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const onSignInPress = async () => {
-    if (!isLoaded) return;
+    if (!isLoaded) {
+      return;
+    }
 
-    setError("");
     setLoading(true);
+    setError("");
 
     try {
-      const result = await signIn.create({
+      const signInAttempt = await signIn.create({
         identifier: username,
         password,
       });
 
-      if (result.status === "complete") {
-        await setActive({ session: result.createdSessionId });
+      if (signInAttempt.status === "complete") {
+        await setActive({ session: signInAttempt.createdSessionId });
         router.replace("/");
+      } else {
+        console.error(JSON.stringify(signInAttempt, null, 2));
+        setError("Sign in failed. Please try again.");
       }
     } catch (err: any) {
-      console.error("Sign in error:", JSON.stringify(err, null, 2));
+      console.error(JSON.stringify(err, null, 2));
       setError(err.errors?.[0]?.message || "Invalid username or password");
     } finally {
       setLoading(false);
@@ -75,7 +75,9 @@ export default function SignInScreen() {
             </View>
 
             <View style={styles.signUpContainer}>
-              <Text style={styles.signUpText}>Don't have an account? </Text>
+              <Text style={styles.signUpText}>
+                Don&apos;t have an account?{" "}
+              </Text>
               <TouchableOpacity onPress={() => router.push("/auth/sign-up")}>
                 <Text style={styles.signUpLink}>Sign Up</Text>
               </TouchableOpacity>
