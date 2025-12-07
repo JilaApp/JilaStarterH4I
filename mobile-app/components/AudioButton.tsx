@@ -1,6 +1,6 @@
 import { View, TouchableOpacity, StyleSheet } from "react-native";
 import { Volume2 } from "lucide-react-native";
-import { useAudioPlayer, useAudioPlayerStatus } from "expo-audio";
+import { Audio } from "expo-av";
 import { useState, useEffect } from "react";
 import { colors } from "@/colors";
 import { sizes } from "@/constants/sizes";
@@ -17,22 +17,60 @@ export default function AudioButton({
   audioSource,
   disabled = false,
 }: AudioButtonProps) {
-  const player = useAudioPlayer(audioSource);
-  const status = useAudioPlayerStatus(player);
+  if (!audioSource) return null;
+
+  const [sound, setSound] = useState<Audio.Sound>();
   const [isPlaying, setIsPlaying] = useState(false);
 
-  useEffect(() => {
-    setIsPlaying(status.playing);
-  }, [status.playing]);
+  const [isLoading, setIsLoading] = useState(false);
 
-  function playSound() {
-    if (!status.isLoaded) return;
-    if (status.playing) {
-      player.pause();
-    } else {
-      player.play();
+  async function playSound() {
+    if (!audioSource || isLoading) return;
+
+    try {
+      if (sound) {
+        if (isPlaying) {
+          await sound.pauseAsync();
+          setIsPlaying(false);
+        } else {
+          await sound.playAsync();
+          setIsPlaying(true);
+        }
+      } else {
+        setIsLoading(true);
+        console.log("Loading sound", audioSource);
+        const { sound: newSound } = await Audio.Sound.createAsync(
+          typeof audioSource === "number" ? audioSource : audioSource,
+          { shouldPlay: true, isLooping: false },
+        );
+        setSound(newSound);
+        setIsPlaying(true);
+        setIsLoading(false);
+
+        newSound.setOnPlaybackStatusUpdate((status) => {
+          if (status.isLoaded) {
+            setIsPlaying(status.isPlaying);
+            if (status.didJustFinish) {
+              setIsPlaying(false);
+              newSound.stopAsync();
+            }
+          }
+        });
+      }
+    } catch (error) {
+      console.error("Error playing sound:", error);
+      setIsLoading(false);
     }
   }
+
+  useEffect(() => {
+    return sound
+      ? () => {
+          console.log("Unloading sound");
+          sound.unloadAsync();
+        }
+      : undefined;
+  }, [sound]);
 
   const getBackgroundColor = () => {
     if (disabled) return colors.gray[300];

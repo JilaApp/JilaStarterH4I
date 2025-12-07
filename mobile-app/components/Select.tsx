@@ -5,7 +5,7 @@ import { Check } from "lucide-react-native";
 import { colors } from "@/colors";
 import { sizes } from "@/constants/sizes";
 
-type AudioSource = number | { uri: string };
+type AudioSource = number | { uri: string } | null;
 
 interface SelectOption {
   id: string;
@@ -39,6 +39,7 @@ export default function Select({
         const disabled = option.disabled ?? false;
 
         const handlePress = () => {
+          console.log("Select option pressed (row):", option.id);
           if (!disabled) {
             onSelect(option.id);
           }
