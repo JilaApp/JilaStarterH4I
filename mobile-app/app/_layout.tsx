@@ -1,4 +1,5 @@
 import { Slot, usePathname, SplashScreen } from "expo-router";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import NavBar from "@/components/NavBar";
 import { useMemo, useEffect } from "react";
 import { View, StyleSheet, StatusBar } from "react-native";
@@ -41,26 +42,32 @@ export default function RootLayout() {
   }
 
   return (
-    <SafeAreaProvider>
-      <ClerkProvider tokenCache={tokenCache}>
-        <TRPCProvider>
-          <TTSProvider>
-            <StatusBar
-              barStyle="light-content"
-              backgroundColor="transparent"
-              translucent
-            />
-            <View style={styles.container}>
-              <View style={styles.content}>
-                <Slot />
-              </View>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaProvider>
+        <ClerkProvider tokenCache={tokenCache}>
+          <TRPCProvider>
+            <TTSProvider>
+              <StatusBar
+                barStyle="light-content"
+                backgroundColor="transparent"
+                translucent
+              />
+              <View style={styles.container}>
+                <View style={styles.content}>
+                  <Slot />
+                </View>
 
-              {shouldShowNav && <NavBar />}
-            </View>
-          </TTSProvider>
-        </TRPCProvider>
-      </ClerkProvider>
-    </SafeAreaProvider>
+                {shouldShowNav && (
+                  <View style={styles.navContainer}>
+                    <NavBar />
+                  </View>
+                )}
+              </View>
+            </TTSProvider>
+          </TRPCProvider>
+        </ClerkProvider>
+      </SafeAreaProvider>
+    </GestureHandlerRootView>
   );
 }
 
@@ -70,5 +77,9 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
+  },
+  navContainer: {
+    zIndex: 1000,
+    elevation: 1000, // For Android
   },
 });
