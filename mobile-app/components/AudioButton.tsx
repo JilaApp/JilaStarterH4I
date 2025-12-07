@@ -6,9 +6,10 @@ import {
   InterruptionModeAndroid,
   InterruptionModeIOS,
 } from "expo-av";
-import { useRef, useState, useImperativeHandle, forwardRef } from "react";
+import { useRef, useState, useImperativeHandle, forwardRef, useEffect } from "react";
 import { colors } from "@/colors";
 import { sizes } from "@/constants/sizes";
+import { useTTS } from "@/context/TTSContext";
 
 type AudioButtonProps = {
   audioSource?: AVPlaybackSource;
@@ -24,6 +25,7 @@ export interface AudioButtonHandle {
 
 const AudioButton = forwardRef<AudioButtonHandle, AudioButtonProps>(
   ({ audioSource, onPress, disabled = false }, ref) => {
+    const { ttsEnabled } = useTTS();
     const soundRef = useRef<Audio.Sound | null>(null);
     const playingRef = useRef(false);
     const [variant, setVariant] = useState<"default" | "playing" | "disabled">(
@@ -94,6 +96,15 @@ const AudioButton = forwardRef<AudioButtonHandle, AudioButtonProps>(
       stop: stopSound,
     }));
 
+    useEffect(() => {
+      return soundRef.current
+        ? () => {
+            console.log("Unloading sound");
+            soundRef.current?.unloadAsync();
+          }
+        : undefined;
+    }, []);
+
     const handlePress = async () => {
       if (onPress) {
         onPress();
@@ -112,12 +123,15 @@ const AudioButton = forwardRef<AudioButtonHandle, AudioButtonProps>(
       return colors.jila[300];
     };
 
+    // Don't render if TTS is disabled or no audio source (when not using external control via ref)
+    if (!ttsEnabled || (!audioSource && !ref)) return null;
+
     return (
       <TouchableOpacity onPress={handlePress} disabled={disabled}>
         <View
           style={[styles.container, { backgroundColor: getBackgroundColor() }]}
         >
-          <Volume2 size={11} color={colors.white[400]} />
+          <Volume2 size={sizes.icon.xs} color={colors.white[400]} />
         </View>
       </TouchableOpacity>
     );

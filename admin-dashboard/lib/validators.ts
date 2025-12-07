@@ -103,3 +103,19 @@ export const validateDropdownIndex = (
   }
   return null;
 };
+
+export const validateFutureDate = (value: string): string | null => {
+  if (!value) {
+    return "Date is required";
+  }
+
+  const selectedDate = new Date(value + "T00:00:00.000Z");
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  if (selectedDate < today) {
+    return "Date must be in the future";
+  }
+
+  return null;
+};

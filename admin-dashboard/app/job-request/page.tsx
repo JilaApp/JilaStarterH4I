@@ -16,6 +16,7 @@ import {
   validateDropdownIndex,
   validateNumber,
   validateURL,
+  validateFutureDate,
 } from "@/lib/validators";
 import SubmitButton from "@/components/ui/SubmitButton";
 import { US_STATES } from "@/lib/constants";
@@ -91,6 +92,9 @@ function JobRequestForm() {
       jobTypeIndex: validateDropdownIndex,
       applicationLink: validateURL,
       salary: fields.salary.value ? validateNumber : undefined,
+      expirationDate: fields.expirationDate.value
+        ? validateFutureDate
+        : undefined,
     };
 
     const isValid = validateAllFields(validationRules);

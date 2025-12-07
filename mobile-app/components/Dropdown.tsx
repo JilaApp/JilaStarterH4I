@@ -98,7 +98,9 @@ const Dropdown: React.FC<DropdownProps> = ({
                         isLast && styles.optionRoundedBottom,
                       ]}
                     >
-                      <Text>{option}</Text>
+                      <Text style={{ fontSize: sizes.fontSize.base }}>
+                        {option}
+                      </Text>
                     </View>
                   </Pressable>
                 );
@@ -163,7 +165,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   scrollView: {
-    maxHeight: 200,
+    maxHeight: 144,
   },
   option: {
     paddingHorizontal: sizes.spacing.md,

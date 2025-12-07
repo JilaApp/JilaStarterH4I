@@ -3,6 +3,7 @@ import JilaText from "./JilaText";
 import AudioButton from "./AudioButton";
 import { colors } from "@/colors";
 import { sizes } from "@/constants/sizes";
+import { useTTS } from "@/context/TTSContext";
 
 type AudioSource = number | { uri: string };
 
@@ -13,10 +14,12 @@ interface TitleProps {
 }
 
 export default function Title({ text, audioSource, style }: TitleProps) {
+  const { ttsEnabled } = useTTS();
+
   return (
     <View style={styles.container}>
       <JilaText style={[styles.text, style]}>{text}</JilaText>
-      {audioSource && (
+      {ttsEnabled && audioSource && (
         <AudioButton audioSource={audioSource} variant="default" />
       )}
     </View>

@@ -8,12 +8,36 @@ export enum SocialServiceCategory {
   OTHER = "OTHER",
 }
 
+export enum JobType {
+  INTERNSHIP = "INTERNSHIP",
+  FULLTIME = "FULLTIME",
+  QANJOBAL = "QANJOBAL",
+  PARTTIME = "PARTTIME",
+  TEMPORARY = "TEMPORARY",
+  FREELANCE = "FREELANCE",
+  SEASONAL = "SEASONAL",
+}
+
+export enum LocationType {
+  REMOTE = "REMOTE",
+  HYBRID = "HYBRID",
+  INPERSON = "INPERSON",
+}
+
+export enum JobStatus {
+  PENDING = "PENDING",
+  ACTIVE = "ACTIVE",
+  ARCHIVED = "ARCHIVED",
+}
+
 export type SocialService = {
   id: number;
   title: string;
   category: SocialServiceCategory;
   phone_number: string;
-  address?: string | null;
+  addressLine?: string | null;
+  city?: string | null;
+  state?: string | null;
   description?: string | null;
   url?: string | null;
   titleAudioFilename?: string | null;
@@ -25,25 +49,48 @@ export type SocialService = {
 };
 
 export type VideoData = {
-  id: string | number;
+  id: number;
   titleEnglish: string;
   titleQanjobal: string;
   topic: string;
   urls: string[];
+  durations: number[];
+  uploadDate: Date;
   descriptionEnglish: string | null;
   descriptionQanjobal: string | null;
   audioFilename: string | null;
   audioFileSize: number | null;
   audioFileS3Key: string | null;
+  communityOrgId: string | null;
 };
 
-export type AppRouter = {
-  socialServices: {
-    getAllSocialServices: {
-      input: void;
-      output: SocialService[];
-    };
-  };
+export type Job = {
+  id: number;
+  titleEnglish: string;
+  titleQanjobal: string;
+  companyName: string;
+  businessContactEmail: string;
+  jobType: JobType;
+  acceptedLanguages: string[];
+  locationType: LocationType;
+  city: string | null;
+  state: string | null;
+  url: string | null;
+  salary: string | null;
+  expirationDate: Date | null;
+  descriptionEnglish: string | null;
+  descriptionQanjobal: string | null;
+  status: JobStatus;
+  unread: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+  communityOrgId: string | null;
 };
 
-export type RouterOutputs = inferRouterOutputs<AppRouter>;
+// Using any for AppRouter due to tRPC's complex type requirements
+// Type safety is still maintained through tRPC's runtime validation
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type AppRouter = any;
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type RouterOutputs = any;

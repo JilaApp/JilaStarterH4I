@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View, StyleSheet, ActivityIndicator } from "react-native";
-import { Link, useLocalSearchParams } from "expo-router";
+import { Link, useLocalSearchParams, useRouter } from "expo-router";
 import Text from "@/components/JilaText";
 import Header from "@/components/Header";
 import { colors } from "@/colors";
@@ -13,6 +13,7 @@ import { ChevronLeft } from "lucide-react-native";
 
 export default function VideoRouter() {
   const { category } = useLocalSearchParams<{ category: string }>();
+  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const onSearchChange = (query: string) => {
     setSearchQuery(query);
@@ -27,7 +28,7 @@ export default function VideoRouter() {
   const filteredVideos =
     videos?.filter((video: VideoData) => {
       const matchesCategory =
-        category === null || video.topic === category.toUpperCase();
+        !category || video.topic === category.toUpperCase();
 
       const matchesSearch =
         !searchQuery ||
@@ -82,24 +83,38 @@ export default function VideoRouter() {
           </View>
 
           {filteredVideos &&
-            filteredVideos.map((vid: VideoData, i: number) => (
-              <VideoDropdown
-                key={i}
-                text={
-                  vid.titleEnglish.substring(0, 20) +
-                  (vid.titleEnglish.length > 20 ? "..." : "")
-                }
-                ttsUrl={vid.audioFilename || "url"}
-                type="cream"
-                parts={vid.urls.map((url, i) => {
-                  return {
-                    videoUrl: url,
-                    duration: 0,
-                    name: `Part ${i + 1}`,
-                  };
-                })}
-              />
-            ))}
+            filteredVideos.map((vid: VideoData, i: number) => {
+              const hasMultipleParts = vid.urls.length > 1;
+              const maxLength = hasMultipleParts ? 18 : 28;
+              return (
+                <VideoDropdown
+                  key={i}
+                  text={
+                    vid.titleEnglish.substring(0, maxLength) +
+                    (vid.titleEnglish.length > maxLength ? "..." : "")
+                  }
+                  ttsUrl={vid.audioFilename || "url"}
+                  type="cream"
+                  parts={vid.urls.map((url, i) => {
+                    return {
+                      videoUrl: url,
+                      duration: vid.durations[i],
+                      name: `Part ${i + 1}`,
+                    };
+                  })}
+                  onVideoSelect={(index) => {
+                    router.push({
+                      pathname: "/video",
+                      params: {
+                        clickIndex: index,
+                        videos: JSON.stringify(vid),
+                        category: category,
+                      },
+                    });
+                  }}
+                />
+              );
+            })}
         </View>
       )}
     </>

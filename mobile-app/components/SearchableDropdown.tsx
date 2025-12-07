@@ -11,6 +11,7 @@ import {
 import { Search, X } from "lucide-react-native";
 import { colors } from "@/colors";
 import { sizes } from "@/constants/sizes";
+// import Text from "@/components/JilaText";
 
 interface SearchableDropdownProps {
   text: string;
@@ -19,6 +20,8 @@ interface SearchableDropdownProps {
   onSelect: (option: string) => void;
   disabled?: boolean;
   placeholder?: string;
+  citySearch: boolean;
+  onSearchChange?: (text: string) => void;
 }
 
 const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
@@ -28,6 +31,8 @@ const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
   onSelect,
   disabled = false,
   placeholder,
+  citySearch,
+  onSearchChange,
 }: SearchableDropdownProps) => {
   const [open, setOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -57,6 +62,9 @@ const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
             onChangeText={(text) => {
               setSearchQuery(text);
               setIsEditing(true);
+              if (citySearch && onSearchChange) {
+                onSearchChange(text);
+              }
             }}
             onFocus={() => {
               if (!disabled) {
@@ -182,7 +190,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   scrollView: {
-    maxHeight: 200,
+    maxHeight: 85,
   },
   option: {
     flexDirection: "row",

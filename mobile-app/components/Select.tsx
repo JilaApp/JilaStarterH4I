@@ -5,7 +5,7 @@ import { Check } from "lucide-react-native";
 import { colors } from "@/colors";
 import { sizes } from "@/constants/sizes";
 
-type AudioSource = number | { uri: string };
+type AudioSource = number | { uri: string } | null;
 
 interface SelectOption {
   id: string;
@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "column",
     alignItems: "center",
-    gap: sizes.spacing.lg,
+    gap: sizes.spacing.md,
     width: "100%",
   },
   option: {

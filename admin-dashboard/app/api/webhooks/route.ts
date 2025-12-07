@@ -74,28 +74,30 @@ export async function POST(req: NextRequest) {
 
         const communityOrg = data.unsafe_metadata?.communityOrg as string;
         const language = data.unsafe_metadata?.language as string;
+        const state = data.unsafe_metadata?.state as string;
+        const city = data.unsafe_metadata?.city as string | null;
 
-        if (!communityOrg || !language) {
+        if (!communityOrg || !language || !state) {
           return NextResponse.json(
-            { error: "Community org and language required" },
+            { error: "Community org, language, and state required" },
             { status: 400 },
           );
         }
 
         try {
-          // Set userType in Clerk metadata
           const client = await clerkClient();
           await client.users.updateUserMetadata(data.id, {
             publicMetadata: { userType: "app_user" },
           });
 
-          // Create app user in database
           await prisma.appUser.create({
             data: {
               clerkId: data.id,
               username: username!,
               communityOrg: communityOrg,
               language: language,
+              state: state,
+              city: city || undefined,
             },
           });
         } catch (error) {

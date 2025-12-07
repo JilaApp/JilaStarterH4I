@@ -39,6 +39,7 @@ import Checkbox from "@/components/Checkbox";
 import Header from "@/components/Header";
 import Link from "@/components/Link";
 import VideoEmbed, { VideoType } from "@/components/VideoEmbed";
+import { useAuth } from "@clerk/clerk-expo";
 import VideoUpNext from "@/components/VideoUpNext";
 import JobCard from "@/components/JobCard";
 import { FilterDropdownMultiselect } from "@/components/FilterDropdownMultiselect";
@@ -64,6 +65,7 @@ const LANGUAGE_OPTIONS: TTSItem[] = [
   { id: "non-english", text: "Non-English", audioSource: sampleAudio },
 ];
 export default function DevPage() {
+  const { signOut } = useAuth();
   const [
     currentSocialServicesCategoriesIndex,
     setCurrentSocialServicesCategoriesIndex,
@@ -247,6 +249,7 @@ export default function DevPage() {
         toggleSearch={true}
       />
       <ScrollView>
+        <Button title="Sign Out" onPress={() => signOut()} />
         <VideoEmbed uri={videoEmbedYoutubeURL} type={VideoType.YouTube} />
         <VideoEmbed
           uri={videoEmbedGoogleDriveURL}

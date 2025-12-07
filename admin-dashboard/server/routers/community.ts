@@ -1,7 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { clerkClient } from "@clerk/nextjs/server";
-import { router, protectedProcedure } from "../trpc";
+import { router, protectedProcedure, publicProcedure } from "../trpc";
 import {
   requireCommunityOrgAdmin,
   requireJilaAdmin,
@@ -29,11 +29,12 @@ export const communityRouter = router({
     return communityOrg;
   }),
 
-  getAllCommunityOrgs: protectedProcedure.query(async ({ ctx }) => {
-    await requireJilaAdmin(ctx.auth.userId!);
-
+  getAllCommunityOrgs: publicProcedure.query(async () => {
     const communityOrgs = await prisma.communityOrg.findMany({
       orderBy: { name: "asc" },
+      include: {
+        videos: true,
+      },
     });
     return communityOrgs;
   }),
@@ -85,13 +86,19 @@ export const communityRouter = router({
       z.object({
         email: z.string().email(),
         communityName: z.string().min(1),
+        city: z.string().min(1),
+        state: z.string().min(1),
       }),
     )
     .mutation(async ({ input, ctx }) => {
       await requireJilaAdmin(ctx.auth.userId!);
 
       const communityOrg = await prisma.communityOrg.create({
-        data: { name: input.communityName },
+        data: {
+          name: input.communityName,
+          city: input.city,
+          state: input.state,
+        },
       });
 
       try {

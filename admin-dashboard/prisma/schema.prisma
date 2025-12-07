@@ -16,6 +16,8 @@ model CommunityOrg {
   name          String          @unique
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
+  city          String          @default("Champaign")
+  state         String          @default("Illinois")
   adminUsers    AdminUser[]
   videos        Videos[]
   socialServices SocialServices[]
@@ -44,6 +46,9 @@ model AppUser {
   username     String   @unique
   communityOrg String
   language     String
+  city         String?
+  state        String
+  ttsEnabled   Boolean  @default(false)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }
@@ -57,6 +62,7 @@ model Videos {
   audioFileSize       Int?
   topic               VideoTopic
   urls                String[]
+  durations           Int[]
   uploadDate          DateTime
   descriptionEnglish  String?
   descriptionQanjobal String?
@@ -69,7 +75,9 @@ model SocialServices {
   title                     String
   category                  SocialServiceCategory
   phone_number              String                @unique @db.VarChar(20)
-  address                   String?
+  addressLine               String?
+  city                      String?
+  state                     String?
   description               String?
   url                       String?               @unique
   titleAudioFilename        String?

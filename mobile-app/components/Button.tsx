@@ -28,6 +28,7 @@ interface ButtonProps {
   icon?: LucideIcon;
   iconSize?: number;
   customStyle?: Partial<ButtonStyle>;
+  disabled?: boolean;
 }
 
 const buttonPresets: Record<ButtonPreset, ButtonStyle> = {
@@ -84,6 +85,7 @@ export function Button({
   icon: Icon,
   iconSize = sizes.icon.sm,
   customStyle = {},
+  disabled = false,
 }: ButtonProps) {
   const buttonStyle = { ...buttonPresets[preset], ...customStyle };
 
@@ -98,6 +100,9 @@ export function Button({
     borderColor: buttonStyle.borderColor,
     paddingHorizontal: buttonStyle.paddingHorizontal,
     paddingVertical: buttonStyle.paddingVertical,
+
+    width: buttonStyle.width,
+    height: buttonStyle.height,
   };
 
   const textStyle: any = {
@@ -113,8 +118,13 @@ export function Button({
 
   return (
     <Pressable
-      style={({ pressed }) => [containerStyle, pressed && styles.buttonPressed]}
-      onPress={onPress}
+      style={({ pressed }) => [
+        containerStyle,
+        pressed && !disabled && styles.buttonPressed,
+        disabled && styles.buttonDisabled,
+      ]}
+      onPress={disabled ? undefined : onPress}
+      disabled={disabled}
     >
       <Text style={textStyle}>{text}</Text>
       {Icon && <Icon color={buttonStyle.textColor} size={iconSize} />}
@@ -125,5 +135,9 @@ export function Button({
 const styles = StyleSheet.create({
   buttonPressed: {
     opacity: 0.7,
+  },
+  buttonDisabled: {
+    opacity: 0.5,
+    backgroundColor: colors.gray[300],
   },
 });
