@@ -23,7 +23,6 @@ interface VideoPageProps {
   videos?: VideoData;
 }
 
-// 2. Add props to the function argument
 export default function VideoPage({
   clickIndex: propIndex,
   videos: propVideos,
@@ -34,7 +33,6 @@ export default function VideoPage({
   let videos: VideoData | null = null;
 
   if (propVideos) {
-    // Case A: Passed manually (Mock Data)
     videos = propVideos;
   } else if (params.videos) {
     try {
@@ -44,7 +42,6 @@ export default function VideoPage({
       console.error("Error parsing video data:", e);
     }
   }
-  // Resolve clickIndex (Props > URL > Default 0)
   const clickIndex =
     propIndex !== undefined
       ? propIndex
@@ -54,7 +51,6 @@ export default function VideoPage({
 
   const category = params.category;
 
-  // Safety Check
   if (!videos || !videos.urls) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
@@ -63,27 +59,22 @@ export default function VideoPage({
     );
   }
 
-  // 4. Extract variables
   const video_urls = videos.urls;
   const total_urls = video_urls.length;
   const title = videos.titleEnglish;
   const uri = video_urls[clickIndex];
 
-  // Handle youtube type logic safely
   const isYoutube = uri.includes("youtube.com") || uri.includes("youtu.be");
 
   const type = isYoutube ? VideoType.YouTube : VideoType.GoogleDrive;
   const showNext = clickIndex < total_urls - 1;
 
-  // Handlers
   const handlePressDownload = async () => {
     const supported = await Linking.canOpenURL(uri);
     if (supported) await Linking.openURL(uri);
   };
 
   const handleNextVideo = () => {
-    // If we are in "Mock Data Mode", router.push might not be what you want,
-    // but assuming you want to simulate navigation:
     router.push({
       pathname: "/video",
       params: {
@@ -172,7 +163,6 @@ export default function VideoPage({
               videoUrl="sigma.com"
               onPress={handleNextVideo}
             />
-            {/*need to figure out duration */}
           </View>
         </View>
       )}
