@@ -41,7 +41,28 @@ import Link from "@/components/Link";
 import VideoEmbed, { VideoType } from "@/components/VideoEmbed";
 import VideoUpNext from "@/components/VideoUpNext";
 import JobCard from "@/components/JobCard";
+import { FilterDropdownMultiselect } from "@/components/FilterDropdownMultiselect";
+import { TTSItem } from "@/controllers/TTSController";
+import { FilterDropdownSearch } from "@/components/FilterDropdownSearch";
+import { FilterDropdownMinMax } from "@/components/FilterDropdownMinMax";
 
+const sampleAudio = require("../assets/audio/short_sample.mp3");
+
+const JOB_TYPE_OPTIONS: TTSItem[] = [
+  { id: "internship", text: "Internship", audioSource: sampleAudio },
+  { id: "temporary", text: "Temporary", audioSource: sampleAudio },
+  { id: "full-time", text: "Full-time", audioSource: sampleAudio },
+  { id: "freelance", text: "Freelance", audioSource: sampleAudio },
+  { id: "part-time", text: "Part-time", audioSource: sampleAudio },
+  { id: "seasonal", text: "Seasonal", audioSource: sampleAudio },
+  { id: "contract", text: "Contract", audioSource: sampleAudio },
+];
+
+const LANGUAGE_OPTIONS: TTSItem[] = [
+  { id: "spanish", text: "Spanish", audioSource: sampleAudio },
+  { id: "q-anjob-al", text: "Q'anjob'al", audioSource: sampleAudio },
+  { id: "non-english", text: "Non-English", audioSource: sampleAudio },
+];
 export default function DevPage() {
   const [
     currentSocialServicesCategoriesIndex,
@@ -186,6 +207,39 @@ export default function DevPage() {
   const videoEmbedGoogleDriveURL =
     "https://drive.google.com/file/d/1OqRpiJnv6jykHuMxv1pJM6FqPzdgW4VD/view?usp=sharing";
 
+  const jobTypeTitle: TTSItem = {
+    id: "job-title-1",
+    text: "Job Type",
+    audioSource: sampleAudio,
+  };
+  const languageTitle: TTSItem = {
+    id: "language-title-1",
+    text: "Language",
+    audioSource: sampleAudio,
+  };
+
+  const locationTitle: TTSItem = {
+    id: "location-title-1",
+    text: "Location",
+    audioSource: sampleAudio,
+  };
+
+  const salaryTitle: TTSItem = {
+    id: "salary-title-1",
+    text: "Salary Range",
+    audioSource: sampleAudio,
+  };
+
+  const [jobTypeSelected, setJobTypeSelected] = useState(
+    new Set(["full-time", "part-time"]),
+  );
+  const [languageSelected, setLanguageSelected] = useState(
+    new Set(["spanish"]),
+  );
+  const [location, setLocation] = useState("");
+  const [minSalary, setMinSalary] = useState("");
+  const [maxSalary, setMaxSalary] = useState("");
+
   return (
     <>
       <Header
@@ -199,6 +253,38 @@ export default function DevPage() {
           type={VideoType.GoogleDrive}
         />
 
+        <FilterDropdownMultiselect
+          title={jobTypeTitle}
+          options={JOB_TYPE_OPTIONS}
+          selected={jobTypeSelected}
+          onSelectedChange={setJobTypeSelected}
+        />
+
+        {/* Language Filter */}
+        <FilterDropdownMultiselect
+          title={languageTitle}
+          options={LANGUAGE_OPTIONS}
+          selected={languageSelected}
+          onSelectedChange={setLanguageSelected}
+        />
+        <FilterDropdownSearch
+          title={locationTitle}
+          value={location}
+          onChange={setLocation}
+          isFocused={false}
+        />
+        <FilterDropdownMinMax
+          title={salaryTitle}
+          minValue={minSalary}
+          maxValue={maxSalary}
+          onMinChange={setMinSalary}
+          onMaxChange={setMaxSalary}
+        />
+        <VideoEmbed uri={videoEmbedYoutubeURL} type={VideoType.YouTube} />
+        <VideoEmbed
+          uri={videoEmbedGoogleDriveURL}
+          type={VideoType.GoogleDrive}
+        />
         <View
           style={{ backgroundColor: colors.cream[300], gap: 10, padding: 10 }}
         >
@@ -257,7 +343,11 @@ export default function DevPage() {
         <SocialServicesCategories
           socialServices={socialServices}
           currentIndex={currentSocialServicesCategoriesIndex}
-          onSelect={setCurrentSocialServicesCategoriesIndex}
+          onSelect={(index) => {
+            if (index !== null) {
+              setCurrentSocialServicesCategoriesIndex(index);
+            }
+          }}
         />
         <Button text="Sign up" onPress={myOnPress} preset="outline-cream" />
         <Button text="Clear all" onPress={myOnPress} preset="outline" />
