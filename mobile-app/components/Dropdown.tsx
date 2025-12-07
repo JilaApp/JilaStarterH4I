@@ -48,7 +48,7 @@ const Dropdown: React.FC<DropdownProps> = ({
             <Text
               style={[
                 selected ? styles.textSelected : styles.textPlaceholder,
-                disabled && styles.textDisabled
+                disabled && styles.textDisabled,
               ]}
             >
               {selected || placeholder || text}
@@ -98,7 +98,9 @@ const Dropdown: React.FC<DropdownProps> = ({
                         isLast && styles.optionRoundedBottom,
                       ]}
                     >
-                      <Text style={{fontSize: sizes.fontSize.base}}>{option}</Text>
+                      <Text style={{ fontSize: sizes.fontSize.base }}>
+                        {option}
+                      </Text>
                     </View>
                   </Pressable>
                 );

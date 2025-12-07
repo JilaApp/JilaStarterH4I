@@ -210,7 +210,7 @@ export default function BuildProfile() {
       if (!response.ok) throw new Error("Network response was not ok");
       const json = await response.json();
       const cityNames = (json || []).map((fullName: string) => {
-        return fullName.split(',')[0].trim();
+        return fullName.split(",")[0].trim();
       });
       setCitySuggestions(cityNames);
     } catch (error) {
@@ -230,12 +230,18 @@ export default function BuildProfile() {
 
   if (communityOrgs && communityOrgs.length > 0) {
     if (selectedDropdown) {
-      const orgsInUserState = communityOrgs.filter(org => org.state === selectedDropdown);
+      const orgsInUserState = communityOrgs.filter(
+        (org) => org.state === selectedDropdown,
+      );
 
       if (orgsInUserState.length > 0) {
         largestOrg = orgsInUserState[0];
         for (let org of orgsInUserState) {
-          if (org.videos && largestOrg.videos && org.videos.length > largestOrg.videos.length) {
+          if (
+            org.videos &&
+            largestOrg.videos &&
+            org.videos.length > largestOrg.videos.length
+          ) {
             largestOrg = org;
           }
         }
@@ -243,7 +249,11 @@ export default function BuildProfile() {
       } else {
         largestOrg = communityOrgs[0];
         for (let org of communityOrgs) {
-          if (org.videos && largestOrg.videos && org.videos.length > largestOrg.videos.length) {
+          if (
+            org.videos &&
+            largestOrg.videos &&
+            org.videos.length > largestOrg.videos.length
+          ) {
             largestOrg = org;
           }
         }
@@ -252,7 +262,11 @@ export default function BuildProfile() {
     } else {
       largestOrg = communityOrgs[0];
       for (let org of communityOrgs) {
-        if (org.videos && largestOrg.videos && org.videos.length > largestOrg.videos.length) {
+        if (
+          org.videos &&
+          largestOrg.videos &&
+          org.videos.length > largestOrg.videos.length
+        ) {
           largestOrg = org;
         }
       }
@@ -280,7 +294,11 @@ export default function BuildProfile() {
               <View style={styles.toggle}>
                 <Toggle />
               </View>
-              <Button text="Continue" onPress={handleContinue} disabled={!selectedLanguage} />
+              <Button
+                text="Continue"
+                onPress={handleContinue}
+                disabled={!selectedLanguage}
+              />
               <Stepper totalSteps={4} currentStep={currentStep - 1} />
             </View>
           </View>
@@ -308,7 +326,11 @@ export default function BuildProfile() {
                 <PasswordInput onChange={setPassword} />
               </View>
 
-              <Button text="Continue" onPress={handleContinue} disabled={!username || !password || password.length < 8} />
+              <Button
+                text="Continue"
+                onPress={handleContinue}
+                disabled={!username || !password || password.length < 8}
+              />
               <Stepper totalSteps={4} currentStep={currentStep - 1} />
             </View>
           </View>
@@ -355,7 +377,11 @@ export default function BuildProfile() {
                 </View>
               </View>
 
-              <Button text="Continue" onPress={handleContinue} disabled={!selectedDropdown} />
+              <Button
+                text="Continue"
+                onPress={handleContinue}
+                disabled={!selectedDropdown}
+              />
               <Stepper totalSteps={4} currentStep={currentStep - 1} />
             </View>
           </View>
@@ -368,7 +394,10 @@ export default function BuildProfile() {
               <Loader />
             ) : (
               <>
-                <TouchableOpacity style={styles.backButton} onPress={handleBack}>
+                <TouchableOpacity
+                  style={styles.backButton}
+                  onPress={handleBack}
+                >
                   <ChevronLeft size={20} color={colors.jila[400]} />
                   <Text style={styles.backText}>Back</Text>
                 </TouchableOpacity>

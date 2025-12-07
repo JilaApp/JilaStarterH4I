@@ -105,7 +105,6 @@ export function Button({
     height: buttonStyle.height,
   };
 
-
   const textStyle: any = {
     color: buttonStyle.textColor,
     fontSize: buttonStyle.fontSize,
@@ -122,7 +121,7 @@ export function Button({
       style={({ pressed }) => [
         containerStyle,
         pressed && !disabled && styles.buttonPressed,
-        disabled && styles.buttonDisabled
+        disabled && styles.buttonDisabled,
       ]}
       onPress={disabled ? undefined : onPress}
       disabled={disabled}

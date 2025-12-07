@@ -55,7 +55,7 @@ export const communityRouter = router({
       z.object({
         email: z.string().email(),
         communityOrgId: z.string(),
-      })
+      }),
     )
     .mutation(async ({ input, ctx }) => {
       await requireJilaAdmin(ctx.auth.userId!);
@@ -86,7 +86,7 @@ export const communityRouter = router({
       z.object({
         email: z.string().email(),
         communityName: z.string().min(1),
-      })
+      }),
     )
     .mutation(async ({ input, ctx }) => {
       await requireJilaAdmin(ctx.auth.userId!);

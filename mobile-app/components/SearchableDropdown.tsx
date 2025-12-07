@@ -41,7 +41,7 @@ const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
   const [isEditing, setIsEditing] = useState(false);
 
   const filteredOptions = options.filter((option) =>
-    option.toLowerCase().includes(searchQuery.toLowerCase())
+    option.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const displayValue = isEditing ? searchQuery : selected || "";
