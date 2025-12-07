@@ -127,7 +127,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: sizes.fontSize.md,
-    fontWeight: "600",
+    fontWeight: "700",
   },
   titleDisabled: {
     color: colors.gray[300],

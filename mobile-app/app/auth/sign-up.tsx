@@ -318,7 +318,7 @@ export default function SignUpScreen() {
             <Text style={styles.title}>Create profile</Text>
 
             <View style={styles.exampleContainer}>
-              <Text style={{ fontWeight: "bold", fontSize: 16 }}>Username</Text>
+              <Text style={{ fontWeight: "bold", fontSize: 18 }}>Username</Text>
               <UsernameInput
                 value={formData.username}
                 onChange={(value) =>
@@ -327,7 +327,7 @@ export default function SignUpScreen() {
               />
 
               <Text
-                style={{ fontWeight: "bold", fontSize: 16, marginTop: "5%" }}
+                style={{ fontWeight: "bold", fontSize: 18, marginTop: "5%" }}
               >
                 Password
               </Text>
@@ -479,7 +479,7 @@ export default function SignUpScreen() {
                                 c.name.length < 17
                                   ? c.name
                                   : c.name.substring(0, 17) + "...",
-                              audioSource: require("../../assets/audio/sample.mp3"),
+                              audioSource: null,
                             };
                           })}
                           selected={formData.communityOrg}
@@ -526,7 +526,7 @@ export default function SignUpScreen() {
                             largestOrg.name.length < 15
                               ? largestOrg.name
                               : largestOrg.name.substring(0, 15) + "...",
-                          audioSource: require("../../assets/audio/sample.mp3"),
+                          audioSource: null,
                           disabled: chooseCommunity,
                         },
                       ]}
@@ -602,8 +602,8 @@ const styles = StyleSheet.create({
     marginVertical: sizes.spacing.sm,
   },
   title: {
-    fontSize: sizes.fontSize.lg,
-    fontWeight: "700",
+    fontSize: 24,
+    fontWeight: "600",
     color: colors.jila[400],
     marginBottom: 0,
   },

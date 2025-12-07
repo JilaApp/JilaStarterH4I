@@ -22,6 +22,7 @@ interface SearchableDropdownProps {
   placeholder?: string;
   citySearch: boolean;
   onSearchChange?: (text: string) => void;
+  error?: boolean;
 }
 
 const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
@@ -33,6 +34,7 @@ const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
   placeholder,
   citySearch,
   onSearchChange,
+  error = false,
 }: SearchableDropdownProps) => {
   const [open, setOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -50,14 +52,18 @@ const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
         <View
           style={[
             styles.searchContainer,
-            open && !disabled && styles.searchContainerOpen,
+            error && !open
+              ? styles.searchContainerError
+              : open && !disabled
+                ? styles.searchContainerOpen
+                : null,
             disabled && styles.searchContainerDisabled,
           ]}
         >
-          <Search size={sizes.icon.md} color={colors.gray[400]} />
+          <Search size={sizes.icon.md} color={colors.gray[300]} />
           <TextInput
             placeholder={placeholder || text}
-            placeholderTextColor={colors.gray[400]}
+            placeholderTextColor={colors.gray[300]}
             value={displayValue}
             onChangeText={(text) => {
               setSearchQuery(text);
@@ -128,7 +134,7 @@ const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
                     >
                       <Search
                         size={sizes.icon.md}
-                        color={colors.gray[400]}
+                        color={colors.gray[300]}
                         style={styles.searchIcon}
                       />
                       <Text style={styles.optionText}>{option}</Text>
@@ -158,11 +164,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: sizes.spacing.md,
     paddingVertical: sizes.spacing.sm,
     borderWidth: 1,
-    borderColor: colors.gray[400],
+    borderColor: colors.gray[300],
     borderRadius: sizes.borderRadius.md,
     backgroundColor: colors.white[400],
   },
   searchContainerOpen: {
+    borderColor: colors.jila[400],
+  },
+  searchContainerError: {
     borderColor: colors.jila[400],
   },
   searchContainerDisabled: {
@@ -186,7 +195,7 @@ const styles = StyleSheet.create({
     top: "100%",
     borderRadius: sizes.borderRadius.md,
     borderWidth: 1,
-    borderColor: colors.gray[400],
+    borderColor: colors.gray[300],
     overflow: "hidden",
   },
   scrollView: {
@@ -200,7 +209,7 @@ const styles = StyleSheet.create({
   },
   optionBorderTop: {
     borderTopWidth: 1,
-    borderTopColor: colors.gray[400],
+    borderTopColor: colors.gray[300],
   },
   optionSelected: {
     backgroundColor: colors.gray[200],
@@ -220,6 +229,7 @@ const styles = StyleSheet.create({
     marginRight: sizes.spacing.sm,
   },
   optionText: {
+    fontSize: sizes.fontSize.base,
     color: colors.black,
   },
 });

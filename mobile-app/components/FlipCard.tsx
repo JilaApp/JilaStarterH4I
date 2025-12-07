@@ -38,10 +38,7 @@ const ResourceCardBack = ({ description }: ResourceCardProps) => {
         <Text style={cardStyles.descriptionText}>{description}</Text>
       </View>
       <View style={styles.rightContainerBack}>
-        <AudioButton
-          audioSource={require("../assets/audio/sample.mp3")}
-          variant={"default"}
-        />
+        <AudioButton audioSource={null} variant={"default"} />
       </View>
     </View>
   );
@@ -76,10 +73,7 @@ const ResourceCardFront = ({
         </View>
       </View>
       <View style={styles.rightContainer} pointerEvents="box-none">
-        <AudioButton
-          audioSource={require("../assets/audio/sample.mp3")}
-          variant={"default"}
-        />
+        <AudioButton audioSource={null} variant={"default"} />
       </View>
       <View style={styles.pointerContainer}>
         <Pointer size={sizes.icon.md} color={colors.gray[400]} />

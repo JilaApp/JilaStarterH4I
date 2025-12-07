@@ -18,6 +18,7 @@ interface DropdownProps {
   onSelect: (option: string) => void;
   disabled?: boolean;
   placeholder?: string;
+  error?: boolean;
 }
 
 const Dropdown: React.FC<DropdownProps> = ({
@@ -27,6 +28,7 @@ const Dropdown: React.FC<DropdownProps> = ({
   onSelect,
   disabled = false,
   placeholder,
+  error = false,
 }: DropdownProps) => {
   const [open, setOpen] = useState(false);
 
@@ -41,12 +43,17 @@ const Dropdown: React.FC<DropdownProps> = ({
           <View
             style={[
               styles.trigger,
-              open ? styles.triggerOpen : styles.triggerClosed,
+              error && !open
+                ? styles.triggerError
+                : open
+                  ? styles.triggerOpen
+                  : styles.triggerClosed,
               disabled && styles.triggerDisabled,
             ]}
           >
             <Text
               style={[
+                styles.triggerText,
                 selected ? styles.textSelected : styles.textPlaceholder,
                 disabled && styles.textDisabled,
               ]}
@@ -98,9 +105,7 @@ const Dropdown: React.FC<DropdownProps> = ({
                         isLast && styles.optionRoundedBottom,
                       ]}
                     >
-                      <Text style={{ fontSize: sizes.fontSize.base }}>
-                        {option}
-                      </Text>
+                      <Text style={styles.optionText}>{option}</Text>
                     </View>
                   </Pressable>
                 );
@@ -136,17 +141,23 @@ const styles = StyleSheet.create({
     borderColor: colors.jila[400],
   },
   triggerClosed: {
-    borderColor: colors.gray[400],
+    borderColor: colors.gray[300],
+  },
+  triggerError: {
+    borderColor: colors.jila[400],
   },
   triggerDisabled: {
     backgroundColor: colors.gray[200],
     borderColor: colors.gray[300],
   },
+  triggerText: {
+    fontSize: sizes.fontSize.base,
+  },
   textSelected: {
     color: colors.gray[800],
   },
   textPlaceholder: {
-    color: colors.gray[400],
+    color: colors.gray[300],
   },
   textDisabled: {
     color: colors.gray[400],
@@ -161,7 +172,7 @@ const styles = StyleSheet.create({
     top: "100%",
     borderRadius: sizes.borderRadius.md,
     borderWidth: 1,
-    borderColor: colors.gray[400],
+    borderColor: colors.gray[300],
     overflow: "hidden",
   },
   scrollView: {
@@ -173,7 +184,7 @@ const styles = StyleSheet.create({
   },
   optionBorderTop: {
     borderTopWidth: 1,
-    borderTopColor: colors.gray[400],
+    borderTopColor: colors.gray[300],
   },
   optionSelected: {
     backgroundColor: colors.gray[200],
@@ -188,6 +199,9 @@ const styles = StyleSheet.create({
   optionRoundedBottom: {
     borderBottomLeftRadius: sizes.borderRadius.md,
     borderBottomRightRadius: sizes.borderRadius.md,
+  },
+  optionText: {
+    fontSize: sizes.fontSize.base,
   },
 });
 
