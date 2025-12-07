@@ -126,10 +126,7 @@ export function Toggle({
         <View style={styles.toggleRow}>
           <Switch value={isOn} onPress={handlePress} style={styles.switch} />
           <Text style={styles.titleText}>Enable Text-to-speech?</Text>
-          <AudioButton
-            audioSource={require("../assets/audio/sample.mp3")}
-            variant={"default"}
-          />
+          <AudioButton audioSource={null} variant={"default"} />
         </View>
         <View style={styles.descriptionContainer}>
           <Text style={styles.descriptionText}>

@@ -53,8 +53,8 @@ export function BaseInput({
   };
 
   const getInputColor = () => {
-    if (disabled) return colors.gray[400];
-    if (!isFocused && value) return colors.gray[400];
+    if (disabled) return colors.gray[300];
+    if (!isFocused && value) return colors.gray[300];
     return colors.black;
   };
 
@@ -73,7 +73,7 @@ export function BaseInput({
         onFocus={handleFocus}
         onBlur={handleBlur}
         editable={!disabled}
-        placeholderTextColor={colors.gray[400]}
+        placeholderTextColor={colors.gray[300]}
         autoComplete={autoComplete as any}
         testID={id}
         style={[styles.input, { color: getInputColor() }]}
@@ -122,7 +122,8 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    fontWeight: "500",
+    fontSize: 18,
+    fontWeight: "700",
     paddingLeft: sizes.spacing.xs,
     textAlignVertical: "center",
     paddingVertical: 0,

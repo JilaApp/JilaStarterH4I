@@ -1,7 +1,6 @@
 export const audioTranslations = {
   welcome_message: {
-    english: require("../assets/audio/sample.mp3"),
-    qanjobal: require("../assets/audio/sample.mp3"),
+    qanjobal: require("../assets/audio/welcome_to_jila.mp3"),
   },
 };
 

@@ -64,6 +64,9 @@ export default function SignUpScreen() {
   const [chooseCommunity, setChooseCommunity] = useState(false);
   const [customCommunity, setCustomCommunity] = useState(false);
 
+  // Track keyboard offset based on focused input
+  const [keyboardOffset, setKeyboardOffset] = useState(0.4);
+
   const onSignUpPress = async (selectedCommunityOrgName: string) => {
     if (!isLoaded) return;
 
@@ -268,7 +271,7 @@ export default function SignUpScreen() {
 
   return (
     <Background>
-      <DisplayBox>
+      <DisplayBox keyboardOffsetMultiplier={keyboardOffset}>
         {/* select language */}
         {currentStep === 1 && (
           <View style={styles.container}>
@@ -318,16 +321,17 @@ export default function SignUpScreen() {
             <Text style={styles.title}>Create profile</Text>
 
             <View style={styles.exampleContainer}>
-              <Text style={{ fontWeight: "bold", fontSize: 16 }}>Username</Text>
+              <Text style={{ fontWeight: "bold", fontSize: 18 }}>Username</Text>
               <UsernameInput
                 value={formData.username}
                 onChange={(value) =>
                   setFormData({ ...formData, username: value })
                 }
+                onFocus={() => setKeyboardOffset(0.2)}
               />
 
               <Text
-                style={{ fontWeight: "bold", fontSize: 16, marginTop: "5%" }}
+                style={{ fontWeight: "bold", fontSize: 18, marginTop: "5%" }}
               >
                 Password
               </Text>
@@ -337,6 +341,7 @@ export default function SignUpScreen() {
                   onChange={(value) =>
                     setFormData({ ...formData, password: value })
                   }
+                  onFocus={() => setKeyboardOffset(0.45)}
                 />
               </View>
 
@@ -376,6 +381,7 @@ export default function SignUpScreen() {
                     onSelect={(value) =>
                       setFormData({ ...formData, selectedDropdown: value })
                     }
+                    onFocus={() => setKeyboardOffset(0.3)}
                   />
                 </View>
               </View>
@@ -397,6 +403,7 @@ export default function SignUpScreen() {
                     }
                     citySearch={true}
                     onSearchChange={setCitySearchText}
+                    onFocus={() => setKeyboardOffset(0.5)}
                   />
                 </View>
               </View>
@@ -479,7 +486,7 @@ export default function SignUpScreen() {
                                 c.name.length < 17
                                   ? c.name
                                   : c.name.substring(0, 17) + "...",
-                              audioSource: require("../../assets/audio/sample.mp3"),
+                              audioSource: null,
                             };
                           })}
                           selected={formData.communityOrg}
@@ -526,7 +533,7 @@ export default function SignUpScreen() {
                             largestOrg.name.length < 15
                               ? largestOrg.name
                               : largestOrg.name.substring(0, 15) + "...",
-                          audioSource: require("../../assets/audio/sample.mp3"),
+                          audioSource: null,
                           disabled: chooseCommunity,
                         },
                       ]}
@@ -602,8 +609,8 @@ const styles = StyleSheet.create({
     marginVertical: sizes.spacing.sm,
   },
   title: {
-    fontSize: sizes.fontSize.lg,
-    fontWeight: "700",
+    fontSize: 24,
+    fontWeight: "600",
     color: colors.jila[400],
     marginBottom: 0,
   },

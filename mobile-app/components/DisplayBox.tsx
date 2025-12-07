@@ -1,5 +1,13 @@
-import React from "react";
-import { View, StyleSheet, Image, ScrollView } from "react-native";
+import React, { useEffect, useRef } from "react";
+import {
+  View,
+  StyleSheet,
+  Image,
+  ScrollView,
+  Keyboard,
+  Animated,
+  Platform,
+} from "react-native";
 import { colors } from "@/colors";
 import { sizes, componentSizes } from "@/constants/sizes";
 
@@ -7,15 +15,50 @@ interface DisplayBoxProps {
   children: React.ReactNode;
   minHeight?: number;
   maxHeight?: number;
+  keyboardOffsetMultiplier?: number;
 }
 
 export default function DisplayBox({
   children,
   minHeight = componentSizes.displayBox.minHeight,
   maxHeight = componentSizes.displayBox.maxHeight,
+  keyboardOffsetMultiplier = 0.4,
 }: DisplayBoxProps) {
+  const translateY = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    const keyboardWillShow = Keyboard.addListener(
+      Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow",
+      (e) => {
+        // Move the entire DisplayBox up by the specified multiplier of keyboard height
+        Animated.timing(translateY, {
+          toValue: -e.endCoordinates.height * keyboardOffsetMultiplier,
+          duration: e.duration || 250,
+          useNativeDriver: true,
+        }).start();
+      },
+    );
+
+    const keyboardWillHide = Keyboard.addListener(
+      Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide",
+      (e) => {
+        // Move back to original position
+        Animated.timing(translateY, {
+          toValue: 0,
+          duration: e.duration || 250,
+          useNativeDriver: true,
+        }).start();
+      },
+    );
+
+    return () => {
+      keyboardWillShow.remove();
+      keyboardWillHide.remove();
+    };
+  }, [translateY, keyboardOffsetMultiplier]);
+
   return (
-    <View style={styles.container}>
+    <Animated.View style={[styles.container, { transform: [{ translateY }] }]}>
       <View style={[styles.innerBox, { minHeight, maxHeight }]}>
         <ScrollView
           style={styles.scrollView}
@@ -31,7 +74,7 @@ export default function DisplayBox({
         style={styles.tail}
         resizeMode="contain"
       />
-    </View>
+    </Animated.View>
   );
 }
 
@@ -49,7 +92,6 @@ const styles = StyleSheet.create({
     shadowRadius: 80,
     elevation: 10,
     zIndex: 2,
-    overflow: "hidden",
   },
   scrollView: {
     width: "100%",

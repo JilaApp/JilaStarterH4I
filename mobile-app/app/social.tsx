@@ -94,10 +94,7 @@ export default function SocialServices() {
           style={styles.scrollView}
           contentContainerStyle={styles.scrollContent}
         >
-          <Title
-            text="Social Services Resources"
-            audioSource={require("../assets/audio/sample.mp3")}
-          />
+          <Title text="Social Services Resources" audioSource={null} />
 
           <SocialServicesCategories
             socialServices={categories}

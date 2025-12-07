@@ -22,6 +22,7 @@ type AudioButtonProps = {
   variant?: "default" | "light";
   disabled?: boolean;
   onPress?: () => void;
+  alwaysShow?: boolean;
 };
 
 export interface AudioButtonHandle {
@@ -30,7 +31,7 @@ export interface AudioButtonHandle {
 }
 
 const AudioButton = forwardRef<AudioButtonHandle, AudioButtonProps>(
-  ({ audioSource, onPress, disabled = false }, ref) => {
+  ({ audioSource, onPress, disabled = false, alwaysShow = false }, ref) => {
     const { ttsEnabled } = useTTS();
     const soundRef = useRef<Audio.Sound | null>(null);
     const playingRef = useRef(false);
@@ -130,7 +131,10 @@ const AudioButton = forwardRef<AudioButtonHandle, AudioButtonProps>(
     };
 
     // Don't render if TTS is disabled or no audio source (when not using external control via ref)
-    if (!ttsEnabled || (!audioSource && !ref)) return null;
+    // Unless alwaysShow is true
+    if (!alwaysShow && (!ttsEnabled || (!audioSource && !ref))) {
+      return null;
+    }
 
     return (
       <TouchableOpacity onPress={handlePress} disabled={disabled}>

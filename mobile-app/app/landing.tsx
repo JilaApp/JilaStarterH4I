@@ -6,9 +6,11 @@ import { componentSizes } from "@/constants/sizes";
 import { Button } from "@/components/Button";
 import { useRouter } from "expo-router";
 import AudioButton from "@/components/AudioButton";
+import { useAudioTranslation } from "@/hooks/useAudioTranslation";
 
 export default function LandingPage() {
   const router = useRouter();
+  const { getAudioSource } = useAudioTranslation();
 
   return (
     <View style={{ flex: 1 }}>
@@ -29,7 +31,8 @@ export default function LandingPage() {
             />
             <View style={styles.audioButtonContainer}>
               <AudioButton
-                audioSource={require("../assets/audio/welcome_to_jila.mp3")}
+                audioSource={getAudioSource("welcome_message") ?? undefined}
+                alwaysShow
               />
             </View>
           </View>
