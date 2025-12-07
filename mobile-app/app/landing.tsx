@@ -69,8 +69,8 @@ const styles = StyleSheet.create({
     marginLeft: -16,
   },
   welcomeText: {
-    fontSize: 32,
-    fontWeight: "400",
+    fontSize: 48,
+    fontWeight: "600",
     color: colors.white[400],
     marginBottom: -200,
   },

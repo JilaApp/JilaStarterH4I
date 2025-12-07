@@ -17,12 +17,20 @@ export default function AudioButton({
   audioSource,
   disabled = false,
 }: AudioButtonProps) {
-  if (!audioSource) return null;
-
   const [sound, setSound] = useState<Audio.Sound>();
   const [isPlaying, setIsPlaying] = useState(false);
-
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    return sound
+      ? () => {
+          console.log("Unloading sound");
+          sound.unloadAsync();
+        }
+      : undefined;
+  }, [sound]);
+
+  if (!audioSource) return null;
 
   async function playSound() {
     if (!audioSource || isLoading) return;
@@ -62,15 +70,6 @@ export default function AudioButton({
       setIsLoading(false);
     }
   }
-
-  useEffect(() => {
-    return sound
-      ? () => {
-          console.log("Unloading sound");
-          sound.unloadAsync();
-        }
-      : undefined;
-  }, [sound]);
 
   const getBackgroundColor = () => {
     if (disabled) return colors.gray[300];

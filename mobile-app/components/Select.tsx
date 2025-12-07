@@ -39,7 +39,6 @@ export default function Select({
         const disabled = option.disabled ?? false;
 
         const handlePress = () => {
-          console.log("Select option pressed (row):", option.id);
           if (!disabled) {
             onSelect(option.id);
           }
