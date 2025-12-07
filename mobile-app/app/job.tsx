@@ -21,9 +21,8 @@ export default function JobDashboard() {
         <View style={styles.container}>
           <Text style={styles.title}>Example display box</Text>
           <Text>(in job dashboard)</Text>
-          <Link path="/dev">
-            <Text style={styles.buttonText}>Dev Page</Text>
-          </Link>
+          <Link path="/dev">Dev Page</Link>
+
           {/* Example usage of Stepper and Button components */}
           <View style={styles.exampleContainer}>
             <Button text="Continue" onPress={handleContinue} />
@@ -50,5 +49,11 @@ const styles = StyleSheet.create({
     marginTop: sizes.spacing.lg,
     paddingHorizontal: sizes.spacing.lg,
     gap: sizes.spacing.md,
+  },
+  buttonText: {
+    color: colors.jila[400],
+    fontSize: sizes.fontSize.base,
+    fontWeight: "700",
+    textDecorationLine: "underline",
   },
 });

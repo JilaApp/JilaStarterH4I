@@ -22,7 +22,7 @@ export default function App() {
   // Handle redirect in useEffect to avoid render-time navigation
   useEffect(() => {
     if (isLoaded && !user) {
-      router.replace("/auth/sign-in");
+      router.replace("/landing");
     }
   }, [isLoaded, user, router]);
 

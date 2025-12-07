@@ -63,7 +63,7 @@ export const sizes = {
 export const componentSizes = {
   displayBox: {
     minHeight: sizes.screen.height * 0.4,
-    maxHeight: sizes.screen.height * 0.75,
+    maxHeight: sizes.screen.height * 0.65,
     tailSize: sizes.spacing.xl * 5, // 160
   },
   logo: {

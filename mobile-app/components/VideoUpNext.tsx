@@ -2,7 +2,6 @@ import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
 import { colors } from "@/colors";
 import { formatDuration } from "@/utils/formatters";
 import { sizes } from "@/constants/sizes";
-import { useRouter } from "expo-router";
 import { CirclePlay } from "lucide-react-native";
 
 type VideoUpNextProps = {

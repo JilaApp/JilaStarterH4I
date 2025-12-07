@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "column",
     alignItems: "center",
-    gap: sizes.spacing.lg,
+    gap: sizes.spacing.md,
     width: "100%",
   },
   option: {

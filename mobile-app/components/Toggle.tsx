@@ -8,7 +8,6 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
-import { SafeAreaView } from "react-native-safe-area-context";
 import Text from "./JilaText";
 import AudioButton from "./AudioButton";
 import { sizes } from "@/constants/sizes";
@@ -16,7 +15,6 @@ import { sizes } from "@/constants/sizes";
 // Toggle-specific constants
 const SWITCH_BORDER_WIDTH = 2.5;
 const SWITCH_TRACK_WIDTH = 50;
-const SWITCH_WIDTH = 48;
 
 // Toggle colors (rgba doesn't work with reanimated...)
 const SWITCH_COLORS = {
@@ -35,9 +33,9 @@ const Switch = ({
 }: {
   value: SharedValue<number>;
   onPress: () => void;
-  style;
-  duration: number;
-  trackColors: { on: string; off: string };
+  style?: any;
+  duration?: number;
+  trackColors?: { on: string; off: string };
 }) => {
   const height = useSharedValue(0);
   const width = useSharedValue(0);
@@ -105,15 +103,25 @@ const switchStyles = StyleSheet.create({
   },
 });
 
-export function Toggle() {
-  const isOn = useSharedValue(false);
+export function Toggle({
+  checked,
+  onCheckedChange,
+}: {
+  checked: boolean;
+  onCheckedChange: (value: boolean) => void;
+}) {
+  const isOn = useSharedValue(checked ? 1 : 0);
+
+  React.useEffect(() => {
+    isOn.value = withTiming(checked ? 1 : 0);
+  }, [checked, isOn]);
 
   const handlePress = () => {
-    isOn.value = !isOn.value;
+    onCheckedChange(!checked);
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <View style={styles.content}>
         <View style={styles.toggleRow}>
           <Switch value={isOn} onPress={handlePress} style={styles.switch} />
@@ -129,19 +137,18 @@ export function Toggle() {
           </Text>
         </View>
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   switch: {
-    width: SWITCH_WIDTH,
+    // width: SWITCH_WIDTH,
+    width: sizes.spacing.xxl,
     height: sizes.spacing.xl,
     padding: sizes.spacing.xxs,
   },
   container: {
-    flex: 1,
-    margin: "auto",
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: sizes.spacing.lg,
@@ -152,10 +159,11 @@ const styles = StyleSheet.create({
   toggleRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: sizes.spacing.md,
+    gap: sizes.spacing.sm,
+    width: "100%",
   },
   titleText: {
-    fontSize: sizes.fontSize.lg,
+    fontSize: sizes.fontSize.md,
     fontWeight: "bold",
   },
   descriptionContainer: {
@@ -163,5 +171,7 @@ const styles = StyleSheet.create({
   },
   descriptionText: {
     textAlign: "center",
+    fontSize: sizes.fontSize.xs,
+    marginTop: 10,
   },
 });

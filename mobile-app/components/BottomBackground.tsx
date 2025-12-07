@@ -4,7 +4,7 @@ import { colors } from "@/colors";
 import { sizes } from "@/constants/sizes";
 
 interface BottomBackgroundProps {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   contentStyle?: ViewStyle;
 }
 

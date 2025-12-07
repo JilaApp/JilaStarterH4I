@@ -60,8 +60,8 @@ const styles = StyleSheet.create({
   },
   tail: {
     position: "absolute",
-    bottom: "-27%",
-    right: "-16%",
+    bottom: -componentSizes.displayBox.tailSize * 0.6,
+    right: -componentSizes.displayBox.tailSize * 0.3,
     width: componentSizes.displayBox.tailSize,
     height: componentSizes.displayBox.tailSize,
     zIndex: 1,
