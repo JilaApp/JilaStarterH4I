@@ -105,11 +105,21 @@ const switchStyles = StyleSheet.create({
   },
 });
 
-export function Toggle() {
-  const isOn = useSharedValue(false);
+export function Toggle({
+  checked,
+  onCheckedChange,
+}: {
+  checked: boolean;
+  onCheckedChange: (value: boolean) => void;
+}) {
+  const isOn = useSharedValue(checked);
+
+  React.useEffect(() => {
+    isOn.value = withTiming(checked ? 1 : 0);
+  }, [checked]);
 
   const handlePress = () => {
-    isOn.value = !isOn.value;
+    onCheckedChange(!checked);
   };
 
   return (

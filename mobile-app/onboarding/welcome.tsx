@@ -4,12 +4,15 @@ import { colors } from "@/colors";
 import { View, Image, StyleSheet } from "react-native";
 import { sizes, componentSizes } from "@/constants/sizes";
 import { Button } from "@/components/Button";
+import { useRouter } from "expo-router";
 
 type WelcomeProps = {
   onGetStarted: () => void;
 };
 
 export default function Welcome({ onGetStarted }: WelcomeProps) {
+  const router = useRouter();
+
   return (
     <View style={{ flex: 1 }}>
       <LinearGradient
@@ -43,6 +46,23 @@ export default function Welcome({ onGetStarted }: WelcomeProps) {
               borderWidth: 2,
             }}
           />
+          <View style={{ marginTop: 20 }}>
+            <Button
+              text="Sign In"
+              onPress={() => router.push("/auth/sign-in")}
+              preset="outline"
+              customStyle={{
+                width: 200,
+                paddingHorizontal: 10,
+                paddingVertical: 18,
+                fontSize: 20,
+                borderColor: colors.white[400],
+                textColor: colors.white[400],
+                borderRadius: 50,
+                borderWidth: 2,
+              }}
+            />
+          </View>
         </View>
       </LinearGradient>
     </View>

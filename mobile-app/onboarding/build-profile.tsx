@@ -1,4 +1,11 @@
-import { View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
+import {
+  View,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  KeyboardAvoidingView,
+  Platform,
+} from "react-native";
 import { useState, useEffect } from "react";
 import { colors } from "@/colors";
 import { sizes } from "@/constants/sizes";
@@ -19,7 +26,8 @@ import { useRouter } from "expo-router";
 import React from "react";
 import Checkbox from "@/components/Checkbox";
 import { trpc } from "@/lib/trpc";
-import { Loader, ChevronLeft } from "lucide-react-native";
+import { Loader, ChevronLeft, AlertCircle } from "lucide-react-native";
+import VideoEmbed, { VideoType } from "@/components/VideoEmbed";
 
 const COMMUNITY_ORGS = [
   "Community Org 1",
@@ -37,13 +45,10 @@ const LANGUAGES = [
   "Other",
 ];
 
-export default function BuildProfile() {
+export default function BuildProfile({ formData, setFormData }) {
   const { isLoaded, signUp, setActive } = useSignUp();
   const router = useRouter();
 
-  const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null);
-  const [smallChecked, setSmallChecked] = useState(false);
-  const [largeChecked, setLargeChecked] = useState(false);
   const languageOptions = [
     {
       id: "english",
@@ -56,9 +61,6 @@ export default function BuildProfile() {
       audioSource: require("../assets/audio/sample.mp3"),
     },
   ];
-
-  const [username, setUsername] = React.useState("");
-  const [password, setPassword] = React.useState("");
 
   const [confirmPassword, setConfirmPassword] = React.useState("");
   // const [communityOrg, setCommunityOrg] = React.useState(COMMUNITY_ORGS[0]);
@@ -74,22 +76,22 @@ export default function BuildProfile() {
   const onSignUpPress = async (selectedCommunityOrgName: string) => {
     if (!isLoaded) return;
 
-    if (password.length < 8) {
+    if (formData.password.length < 8) {
       setError("Password must be at least 8 characters");
       return;
     }
 
-    if (!username.trim()) {
+    if (!formData.username.trim()) {
       setError("Username is required");
       return;
     }
 
-    if (!selectedLanguage) {
+    if (!formData.selectedLanguage) {
       setError("Please select a language");
       return;
     }
 
-    if (!selectedDropdown) {
+    if (!formData.selectedDropdown) {
       setError("Please select a state");
       return;
     }
@@ -104,13 +106,14 @@ export default function BuildProfile() {
 
     try {
       await signUp.create({
-        username,
-        password,
+        username: formData.username,
+        password: formData.password,
         unsafeMetadata: {
           communityOrg: selectedCommunityOrgName,
-          language: selectedLanguage,
-          state: selectedDropdown,
-          city: selectedCity || null,
+          language: formData.selectedLanguage,
+          state: formData.selectedDropdown,
+          city: formData.selectedCity || null,
+          ttsEnabled: formData.ttsEnabled,
         },
       });
 
@@ -125,7 +128,6 @@ export default function BuildProfile() {
     }
   };
 
-  const [selectedDropdown, setSelectedDropdown] = useState<string | null>(null);
   const dropdownOptions = [
     "Alabama",
     "Alaska",
@@ -179,7 +181,6 @@ export default function BuildProfile() {
     "Wyoming",
   ];
 
-  const [selectedCity, setSelectedCity] = useState<string | null>(null);
   const [citySuggestions, setCitySuggestions] = useState<string[]>([]);
   const [citySearchText, setCitySearchText] = useState("");
 
@@ -212,7 +213,8 @@ export default function BuildProfile() {
       const cityNames = (json || []).map((fullName: string) => {
         return fullName.split(",")[0].trim();
       });
-      setCitySuggestions(cityNames);
+      const uniqueCityNames = [...new Set(cityNames)];
+      setCitySuggestions(uniqueCityNames);
     } catch (error) {
       console.error("Fetching city error:", error);
       setCitySuggestions([]);
@@ -229,9 +231,9 @@ export default function BuildProfile() {
   let showStateWarning = false;
 
   if (communityOrgs && communityOrgs.length > 0) {
-    if (selectedDropdown) {
+    if (formData.selectedDropdown) {
       const orgsInUserState = communityOrgs.filter(
-        (org) => org.state === selectedDropdown,
+        (org) => org.state === formData.selectedDropdown,
       );
 
       if (orgsInUserState.length > 0) {
@@ -273,9 +275,6 @@ export default function BuildProfile() {
     }
   }
 
-  const [communityOrg, setCommunityOrg] = useState("");
-  const [areaOrg, setAreaorg] = useState(largestOrg);
-
   return (
     <Background>
       <DisplayBox>
@@ -287,17 +286,24 @@ export default function BuildProfile() {
               <View style={styles.selectContainer}>
                 <Select
                   options={languageOptions}
-                  selected={selectedLanguage}
-                  onSelect={setSelectedLanguage}
+                  selected={formData.selectedLanguage}
+                  onSelect={(value) =>
+                    setFormData({ ...formData, selectedLanguage: value })
+                  }
                 />
               </View>
               <View style={styles.toggle}>
-                <Toggle />
+                <Toggle
+                  onCheckedChange={(value) =>
+                    setFormData({ ...formData, ttsEnabled: value })
+                  }
+                  checked={formData.ttsEnabled}
+                />
               </View>
               <Button
                 text="Continue"
                 onPress={handleContinue}
-                disabled={!selectedLanguage}
+                disabled={!formData.selectedLanguage}
               />
               <Stepper totalSteps={4} currentStep={currentStep - 1} />
             </View>
@@ -306,7 +312,10 @@ export default function BuildProfile() {
 
         {/* username/password */}
         {currentStep === 2 && (
-          <View style={styles.container}>
+          <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            style={styles.container}
+          >
             <TouchableOpacity style={styles.backButton} onPress={handleBack}>
               <ChevronLeft size={20} color={colors.jila[400]} />
               <Text style={styles.backText}>Back</Text>
@@ -315,7 +324,12 @@ export default function BuildProfile() {
 
             <View style={styles.exampleContainer}>
               <Text style={{ fontWeight: "bold", fontSize: 16 }}>Username</Text>
-              <UsernameInput onChange={setUsername} />
+              <UsernameInput
+                value={formData.username}
+                onChange={(value) =>
+                  setFormData({ ...formData, username: value })
+                }
+              />
 
               <Text
                 style={{ fontWeight: "bold", fontSize: 16, marginTop: "5%" }}
@@ -323,22 +337,34 @@ export default function BuildProfile() {
                 Password
               </Text>
               <View style={{ marginBottom: "5%" }}>
-                <PasswordInput onChange={setPassword} />
+                <PasswordInput
+                  value={formData.password}
+                  onChange={(value) =>
+                    setFormData({ ...formData, password: value })
+                  }
+                />
               </View>
 
               <Button
                 text="Continue"
                 onPress={handleContinue}
-                disabled={!username || !password || password.length < 8}
+                disabled={
+                  !formData.username ||
+                  !formData.password ||
+                  formData.password.length < 8
+                }
               />
               <Stepper totalSteps={4} currentStep={currentStep - 1} />
             </View>
-          </View>
+          </KeyboardAvoidingView>
         )}
 
         {/* state/city is WIP */}
         {currentStep === 3 && (
-          <View style={styles.container}>
+          <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            style={styles.container}
+          >
             <TouchableOpacity style={styles.backButton} onPress={handleBack}>
               <ChevronLeft size={20} color={colors.jila[400]} />
               <Text style={styles.backText}>Back</Text>
@@ -352,8 +378,10 @@ export default function BuildProfile() {
                   <Dropdown
                     text={"--Select State--"}
                     options={dropdownOptions}
-                    selected={selectedDropdown}
-                    onSelect={setSelectedDropdown}
+                    selected={formData.selectedDropdown}
+                    onSelect={(value) =>
+                      setFormData({ ...formData, selectedDropdown: value })
+                    }
                   />
                 </View>
               </View>
@@ -369,8 +397,10 @@ export default function BuildProfile() {
                     placeholder="Search U.S. cities..."
                     text={"Search U.S. cities..."}
                     options={citySuggestions}
-                    selected={selectedCity}
-                    onSelect={setSelectedCity}
+                    selected={formData.selectedCity}
+                    onSelect={(value) =>
+                      setFormData({ ...formData, selectedCity: value })
+                    }
                     citySearch={true}
                     onSearchChange={setCitySearchText}
                   />
@@ -380,11 +410,11 @@ export default function BuildProfile() {
               <Button
                 text="Continue"
                 onPress={handleContinue}
-                disabled={!selectedDropdown}
+                disabled={!formData.selectedDropdown}
               />
               <Stepper totalSteps={4} currentStep={currentStep - 1} />
             </View>
-          </View>
+          </KeyboardAvoidingView>
         )}
 
         {/* community */}
@@ -404,7 +434,7 @@ export default function BuildProfile() {
                 <Text style={styles.title}>Select Community</Text>
 
                 {customCommunity ? (
-                  <View style={styles.exampleContainer}>
+                  <View style={{ ...styles.exampleContainer, flex: 1 }}>
                     <View style={{ marginBottom: "5%" }}>
                       <View>
                         <Text style={styles.sectionTitle}>
@@ -414,10 +444,12 @@ export default function BuildProfile() {
                           placeholder="Search organization..."
                           text="Search organization..."
                           options={communityOrgs.map((c) => c.name)}
-                          selected={areaOrg}
-                          onSelect={setAreaorg}
+                          selected={formData.areaOrg}
+                          onSelect={(value) =>
+                            setFormData({ ...formData, areaOrg: value })
+                          }
                           citySearch={false}
-                          disabled={communityOrg !== ""}
+                          disabled={formData.communityOrg !== ""}
                         />
                       </View>
                     </View>
@@ -435,38 +467,44 @@ export default function BuildProfile() {
                     <Text style={styles.sectionTitle}>
                       Select from your area:
                     </Text>
-                    <ScrollView
-                      persistentScrollbar={true}
-                      showsVerticalScrollIndicator={true}
-                      indicatorStyle="black"
-                      style={{
-                        ...styles.selectContainer,
-                        height: 200,
-                        paddingRight: 10,
-                      }}
-                    >
-                      <Select
-                        options={communityOrgs.map((c) => {
-                          return {
-                            id: c.name,
-                            title:
-                              c.name.length < 17
-                                ? c.name
-                                : c.name.substring(0, 17) + "...",
-                            audioSource: require("../assets/audio/sample.mp3"),
-                          };
-                        })}
-                        selected={communityOrg}
-                        onSelect={setCommunityOrg}
-                      />
-                    </ScrollView>
+                    <View style={{ flex: 1 }}>
+                      <ScrollView
+                        persistentScrollbar={true}
+                        showsVerticalScrollIndicator={true}
+                        indicatorStyle="black"
+                        style={{
+                          ...styles.selectContainer,
+                          paddingRight: 10,
+                        }}
+                      >
+                        <Select
+                          options={communityOrgs.map((c) => {
+                            return {
+                              id: c.name,
+                              title:
+                                c.name.length < 17
+                                  ? c.name
+                                  : c.name.substring(0, 17) + "...",
+                              audioSource: require("../assets/audio/sample.mp3"),
+                            };
+                          })}
+                          selected={formData.communityOrg}
+                          onSelect={(value) =>
+                            setFormData({ ...formData, communityOrg: value })
+                          }
+                        />
+                      </ScrollView>
+                    </View>
                     <Button
                       text="Finish!"
                       onPress={() => {
-                        const selectedOrg = communityOrg || areaOrg?.name || "";
+                        const selectedOrg =
+                          formData.communityOrg || formData.areaOrg?.name || "";
                         onSignUpPress(selectedOrg);
                       }}
-                      disabled={loading || (!communityOrg && !areaOrg)}
+                      disabled={
+                        loading || (!formData.communityOrg && !formData.areaOrg)
+                      }
                     />
                     <Stepper totalSteps={4} currentStep={currentStep - 1} />
                   </View>
@@ -502,9 +540,15 @@ export default function BuildProfile() {
 
                     {showStateWarning && (
                       <View style={styles.warningContainer}>
-                        <Text style={styles.warningText}>
-                          ⚠ Resources may not be local to your area
-                        </Text>
+                        <View
+                          style={{ flexDirection: "row", alignItems: "center" }}
+                        >
+                          <AlertCircle size={20} color={colors.jila[400]} />
+                          <Text style={styles.warningText}>
+                            {" "}
+                            Resources may not be local to your area
+                          </Text>
+                        </View>
                       </View>
                     )}
 
@@ -648,12 +692,10 @@ const styles = StyleSheet.create({
     backgroundColor: colors.cream[200],
     padding: sizes.spacing.sm,
     borderRadius: sizes.borderRadius.sm,
-    borderLeftWidth: 3,
-    borderLeftColor: colors.error[400],
   },
   warningText: {
     fontSize: sizes.fontSize.sm,
-    color: colors.error[400],
+    color: colors.jila[400],
     fontWeight: "600",
   },
   videoContainer: {

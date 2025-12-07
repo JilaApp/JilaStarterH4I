@@ -48,6 +48,7 @@ model AppUser {
   language     String
   city         String?
   state        String
+  ttsEnabled   Boolean  @default(false)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }
