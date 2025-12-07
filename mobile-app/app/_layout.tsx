@@ -7,6 +7,7 @@ import { tokenCache } from "@clerk/clerk-expo/token-cache";
 import { useFonts } from "expo-font";
 import TRPCProvider from "@/components/TRPCProvider";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { TTSProvider } from "@/context/TTSContext";
 
 const NAV_ROUTES = new Set([
   "/",
@@ -15,6 +16,7 @@ const NAV_ROUTES = new Set([
   "/dev",
   "/video-router",
   "/video",
+  "/help",
 ]);
 
 export default function RootLayout() {
@@ -42,18 +44,20 @@ export default function RootLayout() {
     <SafeAreaProvider>
       <ClerkProvider tokenCache={tokenCache}>
         <TRPCProvider>
-          <StatusBar
-            barStyle="light-content"
-            backgroundColor="transparent"
-            translucent
-          />
-          <View style={styles.container}>
-            <View style={styles.content}>
-              <Slot />
-            </View>
+          <TTSProvider>
+            <StatusBar
+              barStyle="light-content"
+              backgroundColor="transparent"
+              translucent
+            />
+            <View style={styles.container}>
+              <View style={styles.content}>
+                <Slot />
+              </View>
 
-            {shouldShowNav && <NavBar />}
-          </View>
+              {shouldShowNav && <NavBar />}
+            </View>
+          </TTSProvider>
         </TRPCProvider>
       </ClerkProvider>
     </SafeAreaProvider>
