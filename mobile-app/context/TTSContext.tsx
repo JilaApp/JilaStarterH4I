@@ -12,7 +12,8 @@ const TTSContext = createContext<TTSContextType | undefined>(undefined);
 
 export function TTSProvider({ children }: { children: React.ReactNode }) {
   const { user, isLoaded } = useUser();
-  const [ttsEnabled, setTtsEnabled] = useState(false);
+  // Don't initialize to false - wait for data to load
+  const [ttsEnabled, setTtsEnabled] = useState<boolean | null>(null);
 
   // Get TTS preference from backend
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -33,41 +34,52 @@ export function TTSProvider({ children }: { children: React.ReactNode }) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const updateTTSMutation = (trpc as any).user.updateTTSPreference.useMutation({
     onSuccess: (data: { ttsEnabled: boolean }) => {
-      setTtsEnabled(data.ttsEnabled);
       console.log("TTS updated successfully:", data.ttsEnabled);
+      setTtsEnabled(data.ttsEnabled);
     },
     onError: (error: unknown) => {
       console.error("Failed to update TTS:", error);
       // Revert the optimistic update on error
-      setTtsEnabled(!ttsEnabled);
+      if (ttsEnabled !== null) {
+        setTtsEnabled(!ttsEnabled);
+      }
     },
   });
 
   useEffect(() => {
-    if (ttsData) {
+    if (ttsData && ttsData.ttsEnabled !== undefined) {
+      console.log("TTS preference loaded from backend:", ttsData.ttsEnabled);
       setTtsEnabled(ttsData.ttsEnabled);
-      console.log("TTS preference loaded:", ttsData.ttsEnabled);
     }
   }, [ttsData]);
 
   useEffect(() => {
     if (error) {
       console.error("Failed to load TTS preference:", error);
+      // Default to false if we can't load the preference
+      setTtsEnabled(false);
     }
   }, [error]);
 
   const toggleTTS = () => {
-    console.log("Toggling TTS from", ttsEnabled, "to", !ttsEnabled);
-    const newValue = !ttsEnabled;
+    const currentValue = ttsEnabled ?? false;
+    const newValue = !currentValue;
+    console.log("Toggling TTS from", currentValue, "to", newValue);
+
     // Optimistically update the UI
     setTtsEnabled(newValue);
+
     // Update on backend
     updateTTSMutation.mutate({ ttsEnabled: newValue });
   };
 
   return (
     <TTSContext.Provider
-      value={{ ttsEnabled, toggleTTS, isLoading: isLoading || !isLoaded }}
+      value={{
+        ttsEnabled: ttsEnabled ?? false,
+        toggleTTS,
+        isLoading: isLoading || !isLoaded || ttsEnabled === null,
+      }}
     >
       {children}
     </TTSContext.Provider>

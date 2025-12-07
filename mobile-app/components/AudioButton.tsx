@@ -4,6 +4,7 @@ import { Audio } from "expo-av";
 import { useState, useEffect } from "react";
 import { colors } from "@/colors";
 import { sizes } from "@/constants/sizes";
+import { useTTS } from "@/context/TTSContext";
 
 type AudioSource = number | { uri: string };
 
@@ -17,6 +18,7 @@ export default function AudioButton({
   audioSource,
   disabled = false,
 }: AudioButtonProps) {
+  const { ttsEnabled } = useTTS();
   const [sound, setSound] = useState<Audio.Sound>();
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -30,7 +32,8 @@ export default function AudioButton({
       : undefined;
   }, [sound]);
 
-  if (!audioSource) return null;
+  // Don't render if TTS is disabled or no audio source
+  if (!ttsEnabled || !audioSource) return null;
 
   async function playSound() {
     if (!audioSource || isLoading) return;

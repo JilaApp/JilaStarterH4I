@@ -10,6 +10,7 @@ import VideoEmbed, { VideoType } from "@/components/VideoEmbed";
 import JilaText from "@/components/JilaText";
 import AudioButton from "@/components/AudioButton";
 import VideoUpNext from "@/components/VideoUpNext";
+import { useTTS } from "@/context/TTSContext";
 
 interface VideoPageProps {
   clickIndex?: number;
@@ -22,6 +23,7 @@ export default function VideoPage({
 }: VideoPageProps) {
   const router = useRouter();
   const params = useLocalSearchParams();
+  const { ttsEnabled } = useTTS();
 
   let videos: VideoData | null = null;
 
@@ -104,7 +106,9 @@ export default function VideoPage({
         <JilaText style={{ fontSize: 24, fontWeight: "600", marginRight: 10 }}>
           {title}
         </JilaText>
-        <AudioButton audioSource={{ uri: "https://mysite.com/audio.mp3" }} />
+        {ttsEnabled && (
+          <AudioButton audioSource={{ uri: "https://mysite.com/audio.mp3" }} />
+        )}
       </View>
       <VideoEmbed uri={uri} type={type} />
 

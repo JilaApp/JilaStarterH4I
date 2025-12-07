@@ -33,8 +33,15 @@ export default function Header({
   const { signOut } = useAuth();
   const { ttsEnabled, toggleTTS, isLoading } = useTTS();
 
+  console.log(
+    "Header rendering - TTS enabled:",
+    ttsEnabled,
+    "isLoading:",
+    isLoading,
+  );
+
   const handleTTSToggle = () => {
-    console.log("TTS button pressed in Header");
+    console.log("TTS button pressed in Header - current state:", ttsEnabled);
     toggleTTS();
   };
 
@@ -76,11 +83,20 @@ export default function Header({
                 style={styles.audioIconContainer}
                 onPress={handleTTSToggle}
                 disabled={isLoading}
+                activeOpacity={0.7}
               >
                 {ttsEnabled ? (
-                  <Volume2 size={sizes.icon.xs} color={colors.white[400]} />
+                  <Volume2
+                    size={sizes.icon.xs}
+                    color={colors.white[400]}
+                    key="volume-on"
+                  />
                 ) : (
-                  <VolumeOff size={sizes.icon.xs} color={colors.white[400]} />
+                  <VolumeOff
+                    size={sizes.icon.xs}
+                    color={colors.white[400]}
+                    key="volume-off"
+                  />
                 )}
               </TouchableOpacity>
 
