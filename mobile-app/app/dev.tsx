@@ -41,8 +41,8 @@ import Link from "@/components/Link";
 import VideoEmbed, { VideoType } from "@/components/VideoEmbed";
 import VideoUpNext from "@/components/VideoUpNext";
 import JobCard from "@/components/JobCard";
-import VideoPage from "@/components/VideoPage";
 import { VideoData } from "@/types/api";
+import VideoPage from "./video";
 
 export default function DevPage() {
   const [
@@ -206,12 +206,11 @@ export default function DevPage() {
     audioFileSize: 1024000,
     audioFileS3Key: "audio/intro_health.mp3",
     youtube_url: [true, true, true, true, true],
-}
+  };
 
   return (
-    <View>
-      <VideoPage clickIndex={3} videos={mockVideo}/>
-      
+    <View style={{ flex: 1 }}>
+      <VideoPage clickIndex={0} videos={mockVideo} />
     </View>
   );
 }

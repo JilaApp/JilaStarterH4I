@@ -24,12 +24,13 @@ export type SocialService = {
   descriptionAudioFileS3Key?: string | null;
 };
 
-export type VideoData = { //this component is 1 video topic and there are multiple urls attached to it
+export type VideoData = {
+  //this component is 1 video topic and there are multiple urls attached to it
   id: string | number;
   titleEnglish: string;
   titleQanjobal: string;
   topic: string;
-  urls: string[]; 
+  urls: string[];
   descriptionEnglish: string | null;
   descriptionQanjobal: string | null;
   audioFilename: string | null; //not sure how this plays into multiple urls

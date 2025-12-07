@@ -9,25 +9,21 @@ type VideoUpNextProps = {
   videoUrl: string;
   title: string;
   duration: number;
+  onPress: () => void;
 };
 
 export default function VideoUpNext({
   videoUrl,
   title,
   duration,
+  onPress,
 }: VideoUpNextProps) {
-  const router = useRouter();
-
-  const handlePress = () => {
-    router.push(`/video?url=${encodeURIComponent(videoUrl)}`);
-  };
-
   return (
     <View style={[styles.container, { backgroundColor: "cream" }]}>
       <TouchableOpacity
         activeOpacity={0.7}
         style={styles.content}
-        onPress={handlePress}
+        onPress={onPress}
       >
         <View style={styles.titleContainer}>
           <Text style={styles.title}>{title}</Text>
