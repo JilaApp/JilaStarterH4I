@@ -1,6 +1,5 @@
-import { View, TouchableOpacity } from "react-native";
+import { View, TouchableOpacity, Linking } from "react-native";
 import { ArrowDownToLine, ChevronLeft } from "lucide-react-native";
-import { Linking } from "react-native";
 import { colors } from "@/colors";
 import { VideoData } from "@/types/api";
 import { useLocalSearchParams, useRouter } from "expo-router";

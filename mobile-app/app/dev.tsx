@@ -10,6 +10,7 @@ import {
 } from "@/components/GradientButton";
 import { LinearGradient } from "expo-linear-gradient";
 import { View, ScrollView, StyleSheet } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import Text from "@/components/JilaText";
 import { BaseInput } from "@/components/Input/BaseInput";
 import { UsernameInput, PasswordInput } from "@/components/Input";
@@ -42,7 +43,29 @@ import VideoEmbed, { VideoType } from "@/components/VideoEmbed";
 import { useAuth } from "@clerk/clerk-expo";
 import VideoUpNext from "@/components/VideoUpNext";
 import JobCard from "@/components/JobCard";
+import { FilterDropdownMultiselect } from "@/components/FilterDropdownMultiselect";
+import { TTSItem } from "@/controllers/TTSController";
+import { FilterDropdownSearch } from "@/components/FilterDropdownSearch";
+import { FilterDropdownMinMax } from "@/components/FilterDropdownMinMax";
+import JobBottomDrawer from "@/components/JobBottomDrawer";
 
+const sampleAudio = require("../assets/audio/short_sample.mp3");
+
+const JOB_TYPE_OPTIONS: TTSItem[] = [
+  { id: "internship", text: "Internship", audioSource: sampleAudio },
+  { id: "temporary", text: "Temporary", audioSource: sampleAudio },
+  { id: "full-time", text: "Full-time", audioSource: sampleAudio },
+  { id: "freelance", text: "Freelance", audioSource: sampleAudio },
+  { id: "part-time", text: "Part-time", audioSource: sampleAudio },
+  { id: "seasonal", text: "Seasonal", audioSource: sampleAudio },
+  { id: "contract", text: "Contract", audioSource: sampleAudio },
+];
+
+const LANGUAGE_OPTIONS: TTSItem[] = [
+  { id: "spanish", text: "Spanish", audioSource: sampleAudio },
+  { id: "q-anjob-al", text: "Q'anjob'al", audioSource: sampleAudio },
+  { id: "non-english", text: "Non-English", audioSource: sampleAudio },
+];
 export default function DevPage() {
   const { signOut } = useAuth();
   const [
@@ -188,316 +211,389 @@ export default function DevPage() {
   const videoEmbedGoogleDriveURL =
     "https://drive.google.com/file/d/1OqRpiJnv6jykHuMxv1pJM6FqPzdgW4VD/view?usp=sharing";
 
+  const jobTypeTitle: TTSItem = {
+    id: "job-title-1",
+    text: "Job Type",
+    audioSource: sampleAudio,
+  };
+  const languageTitle: TTSItem = {
+    id: "language-title-1",
+    text: "Language",
+    audioSource: sampleAudio,
+  };
+
+  const locationTitle: TTSItem = {
+    id: "location-title-1",
+    text: "Location",
+    audioSource: sampleAudio,
+  };
+
+  const salaryTitle: TTSItem = {
+    id: "salary-title-1",
+    text: "Salary Range",
+    audioSource: sampleAudio,
+  };
+
+  const [jobTypeSelected, setJobTypeSelected] = useState(
+    new Set(["full-time", "part-time"]),
+  );
+  const [languageSelected, setLanguageSelected] = useState(
+    new Set(["spanish"]),
+  );
+  const [location, setLocation] = useState("");
+  const [minSalary, setMinSalary] = useState("");
+  const [maxSalary, setMaxSalary] = useState("");
+
   return (
-    <>
+    <GestureHandlerRootView style={{ flex: 1 }}>
       <Header
         // text="Hello Anna! What would you like to learn today?"
         toggleSearch={true}
       />
-      <ScrollView>
-        <Button title="Sign Out" onPress={() => signOut()} />
-        <VideoEmbed uri={videoEmbedYoutubeURL} type={VideoType.YouTube} />
-        <VideoEmbed
-          uri={videoEmbedGoogleDriveURL}
-          type={VideoType.GoogleDrive}
-        />
-
-        <View
-          style={{ backgroundColor: colors.cream[300], gap: 10, padding: 10 }}
-        >
-          <Text style={styles.sectionTitle}>Up Next</Text>
-          <VideoUpNext
-            videoUrl={videoEmbedYoutubeURL}
-            title="Part 2"
-            duration={0}
-          />
-        </View>
-
-        <View
-          style={{ backgroundColor: colors.cream[300], gap: 10, padding: 10 }}
-        >
-          <JobCard
-            title="swe"
-            company="apple"
-            salary="100000"
-            location="champaign"
-            onPress={() => console.log("pressed job card")}
-          />
-          <Text style={styles.sectionTitle}>
-            VideoDropdown - Multiple Videos (Cream)
-          </Text>
-          <VideoDropdown
-            text={videoDropdownMultipleVideos.text}
-            ttsUrl={videoDropdownMultipleVideos.ttsUrl}
-            parts={videoDropdownMultipleVideos.parts}
-            type="cream"
-          />
-          <Toggle />
-          <Text style={styles.sectionTitle}>
-            VideoDropdown - Single Video (Cream)
-          </Text>
-          <VideoDropdown
-            text={videoDropdownSingleVideo.text}
-            ttsUrl={videoDropdownSingleVideo.ttsUrl}
-            parts={videoDropdownSingleVideo.parts}
-            type="cream"
+      <View style={{ flex: 1 }}>
+        <ScrollView>
+          <Button title="Sign Out" onPress={() => signOut()} />
+          <VideoEmbed uri={videoEmbedYoutubeURL} type={VideoType.YouTube} />
+          <VideoEmbed
+            uri={videoEmbedGoogleDriveURL}
+            type={VideoType.GoogleDrive}
           />
 
-          <Text style={styles.sectionTitle}>
-            JobDropdown - White Background
-          </Text>
-          <JobDropdown
-            text="Job Application Steps"
-            ttsUrl="https://example.com/job-tts.mp3"
+          <FilterDropdownMultiselect
+            title={jobTypeTitle}
+            options={JOB_TYPE_OPTIONS}
+            selected={jobTypeSelected}
+            onSelectedChange={setJobTypeSelected}
+          />
+
+          {/* Language Filter */}
+          <FilterDropdownMultiselect
+            title={languageTitle}
+            options={LANGUAGE_OPTIONS}
+            selected={languageSelected}
+            onSelectedChange={setLanguageSelected}
+          />
+          <FilterDropdownSearch
+            title={locationTitle}
+            value={location}
+            onChange={setLocation}
+            isFocused={false}
+          />
+          <FilterDropdownMinMax
+            title={salaryTitle}
+            minValue={minSalary}
+            maxValue={maxSalary}
+            onMinChange={setMinSalary}
+            onMaxChange={setMaxSalary}
+          />
+
+          <View
+            style={{ backgroundColor: colors.cream[300], gap: 10, padding: 10 }}
           >
-            <View style={{ padding: 20, backgroundColor: colors.white[400] }}>
-              <Text>Step 1: sleep</Text>
-              <Text>Step 2: eepy</Text>
-              <Text>Step 3: buh</Text>
-            </View>
-          </JobDropdown>
-        </View>
-        <SocialServicesCategories
-          socialServices={socialServices}
-          currentIndex={currentSocialServicesCategoriesIndex}
-          onSelect={setCurrentSocialServicesCategoriesIndex}
-        />
-        <Button text="Sign up" onPress={myOnPress} preset="outline-cream" />
-        <Button text="Clear all" onPress={myOnPress} preset="outline" />
-        <Button
-          text="Apply"
-          onPress={myOnPress}
-          preset="secondary"
-          icon={SquareArrowOutUpRight}
-        />
-        <BaseInput />
-        <UsernameInput />
-        <PasswordInput />
-        <Text style={styles.sectionTitle}>Audio Buttons</Text>
-        <Text style={styles.sectionSubtitle}>Static Audio (Bundled)</Text>
-        <AudioButton
-          audioSource={require("../assets/audio/sample.mp3")}
-          variant={"default"}
-        />
-        <AudioButton
-          audioSource={require("../assets/audio/sample.mp3")}
-          disabled
-        />
-        <Text style={styles.sectionSubtitle}>Dynamic Audio from S3</Text>
-        <Text style={styles.exampleText}>
-          Example S3 audio from admin-uploaded content
-        </Text>
-        <AudioButton
-          audioSource={{
-            uri: `${process.env.EXPO_PUBLIC_API_URL}api/audio?key=CA138clip.mp3`,
-          }}
-          variant={"default"}
-        />
+            <Text style={styles.sectionTitle}>Up Next</Text>
+            <VideoUpNext
+              videoUrl={videoEmbedYoutubeURL}
+              title="Part 2"
+              duration={0}
+            />
+          </View>
 
-        <LikeDislike
-          isClicked={isClickedDown}
-          setIsClicked={setIsClickedDown}
-          type="dislike"
-        />
-        <LikeDislike
-          numLikes={numLikesUp}
-          isClicked={isClickedUp}
-          setIsClicked={handleLikeClick}
-          type="like"
-        />
-        <View style={styles.selectContainer}>
-          <Select
-            options={languageOptions}
-            selected={selectedLanguage}
-            onSelect={setSelectedLanguage}
+          <View
+            style={{ backgroundColor: colors.cream[300], gap: 10, padding: 10 }}
+          >
+            <JobCard
+              title="swe"
+              company="apple"
+              salary="100000"
+              location="champaign"
+              onPress={() => console.log("pressed job card")}
+            />
+            <Text style={styles.sectionTitle}>
+              VideoDropdown - Multiple Videos (Cream)
+            </Text>
+            <VideoDropdown
+              text={videoDropdownMultipleVideos.text}
+              ttsUrl={videoDropdownMultipleVideos.ttsUrl}
+              parts={videoDropdownMultipleVideos.parts}
+              type="cream"
+            />
+            <Toggle />
+            <Text style={styles.sectionTitle}>
+              VideoDropdown - Single Video (Cream)
+            </Text>
+            <VideoDropdown
+              text={videoDropdownSingleVideo.text}
+              ttsUrl={videoDropdownSingleVideo.ttsUrl}
+              parts={videoDropdownSingleVideo.parts}
+              type="cream"
+            />
+
+            <Text style={styles.sectionTitle}>
+              JobDropdown - White Background
+            </Text>
+            <JobDropdown
+              text="Job Application Steps"
+              ttsUrl="https://example.com/job-tts.mp3"
+            >
+              <View style={{ padding: 20, backgroundColor: colors.white[400] }}>
+                <Text>Step 1: sleep</Text>
+                <Text>Step 2: eepy</Text>
+                <Text>Step 3: buh</Text>
+              </View>
+            </JobDropdown>
+          </View>
+          <SocialServicesCategories
+            socialServices={socialServices}
+            currentIndex={currentSocialServicesCategoriesIndex}
+            onSelect={setCurrentSocialServicesCategoriesIndex}
           />
-        </View>
-        <View style={styles.checkboxContainer}>
-          <Checkbox
-            size={"small"}
-            checked={smallChecked}
-            onCheckedChange={setSmallChecked}
+          <Button text="Sign up" onPress={myOnPress} preset="outline-cream" />
+          <Button text="Clear all" onPress={myOnPress} preset="outline" />
+          <Button
+            text="Apply"
+            onPress={myOnPress}
+            preset="secondary"
+            icon={SquareArrowOutUpRight}
           />
-
-          <Checkbox
-            size={"large"}
-            checked={largeChecked}
-            onCheckedChange={setLargeChecked}
+          <BaseInput />
+          <UsernameInput />
+          <PasswordInput />
+          <Text style={styles.sectionTitle}>Audio Buttons</Text>
+          <Text style={styles.sectionSubtitle}>Static Audio (Bundled)</Text>
+          <AudioButton
+            audioSource={require("../assets/audio/sample.mp3")}
+            variant={"default"}
           />
-        </View>
-
-        <Link path="/auth/sign-up">sign in</Link>
-
-        <View style={styles.linkContainer}>
-          <Text style={styles.sectionTitle}>Custom Link Component</Text>
-          <Link path="/dev">Go to Dev Page</Link>
-        </View>
-
-        <Text style={styles.colorDemoTitle}>Color Demo:</Text>
-
-        <View style={styles.dropdownContainer}>
-          <Text style={styles.sectionTitle}>Dropdown with Scroll</Text>
-          <Text style={styles.dropdownText}>
-            You chose: <Text style={styles.semibold}>{selectedDropdown}</Text>
+          <AudioButton
+            audioSource={require("../assets/audio/sample.mp3")}
+            disabled
+          />
+          <Text style={styles.sectionSubtitle}>Dynamic Audio from S3</Text>
+          <Text style={styles.exampleText}>
+            Example S3 audio from admin-uploaded content
           </Text>
-          <Dropdown
-            text={"--Select State--"}
-            options={dropdownOptions}
-            selected={selectedDropdown}
-            onSelect={setSelectedDropdown}
+          <AudioButton
+            audioSource={{
+              uri: `${process.env.EXPO_PUBLIC_API_URL}api/audio?key=CA138clip.mp3`,
+            }}
+            variant={"default"}
           />
-        </View>
 
-        <View style={styles.dropdownContainer}>
-          <Text style={styles.sectionTitle}>Dropdown - Disabled State</Text>
-          <Dropdown
-            text={"--Select State--"}
-            placeholder="Select a state"
-            options={dropdownOptions}
-            selected={null}
-            onSelect={() => {}}
-            disabled={true}
+          <LikeDislike
+            isClicked={isClickedDown}
+            setIsClicked={setIsClickedDown}
+            type="dislike"
           />
-        </View>
+          <LikeDislike
+            numLikes={numLikesUp}
+            isClicked={isClickedUp}
+            setIsClicked={handleLikeClick}
+            type="like"
+          />
+          <View style={styles.selectContainer}>
+            <Select
+              options={languageOptions}
+              selected={selectedLanguage}
+              onSelect={setSelectedLanguage}
+            />
+          </View>
+          <View style={styles.checkboxContainer}>
+            <Checkbox
+              size={"small"}
+              checked={smallChecked}
+              onCheckedChange={setSmallChecked}
+            />
 
-        <View style={styles.dropdownContainer}>
-          <Text style={styles.sectionTitle}>
-            Searchable Dropdown with Scroll
+            <Checkbox
+              size={"large"}
+              checked={largeChecked}
+              onCheckedChange={setLargeChecked}
+            />
+          </View>
+
+          <Link path="/auth/sign-up">sign in</Link>
+
+          <View style={styles.linkContainer}>
+            <Text style={styles.sectionTitle}>Custom Link Component</Text>
+            <Link path="/dev">Go to Dev Page</Link>
+          </View>
+
+          <Text style={styles.colorDemoTitle}>Color Demo:</Text>
+
+          <View style={styles.dropdownContainer}>
+            <Text style={styles.sectionTitle}>Dropdown with Scroll</Text>
+            <Text style={styles.dropdownText}>
+              You chose: <Text style={styles.semibold}>{selectedDropdown}</Text>
+            </Text>
+            <Dropdown
+              text={"--Select State--"}
+              options={dropdownOptions}
+              selected={selectedDropdown}
+              onSelect={setSelectedDropdown}
+            />
+          </View>
+
+          <View style={styles.dropdownContainer}>
+            <Text style={styles.sectionTitle}>Dropdown - Disabled State</Text>
+            <Dropdown
+              text={"--Select State--"}
+              placeholder="Select a state"
+              options={dropdownOptions}
+              selected={null}
+              onSelect={() => {}}
+              disabled={true}
+            />
+          </View>
+
+          <View style={styles.dropdownContainer}>
+            <Text style={styles.sectionTitle}>
+              Searchable Dropdown with Scroll
+            </Text>
+            <Text style={styles.dropdownText}>
+              You chose: <Text style={styles.semibold}>{selectedCity}</Text>
+            </Text>
+            <SearchableDropdown
+              placeholder="Search U.S. cities..."
+              text={"Champaign"}
+              options={cityOptions}
+              selected={selectedCity}
+              onSelect={setSelectedCity}
+            />
+          </View>
+
+          <View style={styles.dropdownContainer}>
+            <Text style={styles.sectionTitle}>
+              Searchable Dropdown - Disabled State
+            </Text>
+            <SearchableDropdown
+              placeholder="Search U.S. cities..."
+              text={"Champaign"}
+              options={cityOptions}
+              selected={null}
+              onSelect={() => {}}
+              disabled={true}
+            />
+          </View>
+
+          <View style={{ backgroundColor: colors.jila[400] }}>
+            <Text style={{ color: colors.white[400] }}>colors.jila[400]</Text>
+          </View>
+          <Text style={{ backgroundColor: colors.jila[300] }}>
+            colors.jila[300]
           </Text>
-          <Text style={styles.dropdownText}>
-            You chose: <Text style={styles.semibold}>{selectedCity}</Text>
+          <Text style={{ backgroundColor: colors.orange[400] }}>
+            colors.orange[400]
           </Text>
-          <SearchableDropdown
-            placeholder="Search U.S. cities..."
-            text={"Champaign"}
-            options={cityOptions}
-            selected={selectedCity}
-            onSelect={setSelectedCity}
-          />
-        </View>
-
-        <View style={styles.dropdownContainer}>
-          <Text style={styles.sectionTitle}>
-            Searchable Dropdown - Disabled State
+          <Text style={{ backgroundColor: colors.orange[300] }}>
+            colors.orange[300]
           </Text>
-          <SearchableDropdown
-            placeholder="Search U.S. cities..."
-            text={"Champaign"}
-            options={cityOptions}
-            selected={null}
-            onSelect={() => {}}
-            disabled={true}
-          />
-        </View>
+          <Text style={{ backgroundColor: colors.yellow[400] }}>
+            colors.yellow[400]
+          </Text>
+          <Text style={{ backgroundColor: colors.cream[300] }}>
+            colors.cream[300]
+          </Text>
+          <Text style={{ backgroundColor: colors.green[400] }}>
+            colors.green[400]
+          </Text>
+          <Text style={{ backgroundColor: colors.teal[400] }}>
+            colors.teal[400]
+          </Text>
+          <Text style={{ backgroundColor: colors.teal[300] }}>
+            colors.teal[300]
+          </Text>
+          <Text style={{ backgroundColor: colors.error[400] }}>
+            colors.error[400]
+          </Text>
+          <Text style={{ backgroundColor: colors.error[300] }}>
+            colors.error[300]
+          </Text>
+          <Text style={{ backgroundColor: colors.error[200] }}>
+            colors.error[200]
+          </Text>
+          <View style={{ backgroundColor: colors.type[400] }}>
+            <Text style={{ color: colors.white[400] }}>colors.type[400]</Text>
+          </View>
+          <Text style={{ backgroundColor: colors.white[400] }}>
+            colors.white[400]
+          </Text>
+          <Text style={{ backgroundColor: colors.gray[400] }}>
+            colors.gray[400]
+          </Text>
+          <Text style={{ backgroundColor: colors.gray[300] }}>
+            colors.gray[300]
+          </Text>
+          <Text style={{ backgroundColor: colors.gray[200] }}>
+            colors.gray[200]
+          </Text>
 
-        <View style={{ backgroundColor: colors.jila[400] }}>
-          <Text style={{ color: colors.white[400] }}>colors.jila[400]</Text>
-        </View>
-        <Text style={{ backgroundColor: colors.jila[300] }}>
-          colors.jila[300]
-        </Text>
-        <Text style={{ backgroundColor: colors.orange[400] }}>
-          colors.orange[400]
-        </Text>
-        <Text style={{ backgroundColor: colors.orange[300] }}>
-          colors.orange[300]
-        </Text>
-        <Text style={{ backgroundColor: colors.yellow[400] }}>
-          colors.yellow[400]
-        </Text>
-        <Text style={{ backgroundColor: colors.cream[300] }}>
-          colors.cream[300]
-        </Text>
-        <Text style={{ backgroundColor: colors.green[400] }}>
-          colors.green[400]
-        </Text>
-        <Text style={{ backgroundColor: colors.teal[400] }}>
-          colors.teal[400]
-        </Text>
-        <Text style={{ backgroundColor: colors.teal[300] }}>
-          colors.teal[300]
-        </Text>
-        <Text style={{ backgroundColor: colors.error[400] }}>
-          colors.error[400]
-        </Text>
-        <Text style={{ backgroundColor: colors.error[300] }}>
-          colors.error[300]
-        </Text>
-        <Text style={{ backgroundColor: colors.error[200] }}>
-          colors.error[200]
-        </Text>
-        <View style={{ backgroundColor: colors.type[400] }}>
-          <Text style={{ color: colors.white[400] }}>colors.type[400]</Text>
-        </View>
-        <Text style={{ backgroundColor: colors.white[400] }}>
-          colors.white[400]
-        </Text>
-        <Text style={{ backgroundColor: colors.gray[400] }}>
-          colors.gray[400]
-        </Text>
-        <Text style={{ backgroundColor: colors.gray[300] }}>
-          colors.gray[300]
-        </Text>
-        <Text style={{ backgroundColor: colors.gray[200] }}>
-          colors.gray[200]
-        </Text>
-
-        {/* coordinates for start and end positions
+          {/* coordinates for start and end positions
       top-left corner: { x: 0, y: 0}
       top-right corner: { x: 1, y: 0}
       bottom-left corner: { x: 1, y: 0}
       bottom-right corner: { x: 1, y: 1} */}
 
-        {/* gradient-green: green-400 & yellow-??? */}
-        <LinearGradient
-          colors={[colors.green[400], colors.yellow[400]]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-        >
-          <Text>gradient-green (left-diagonal)</Text>
-        </LinearGradient>
+          {/* gradient-green: green-400 & yellow-??? */}
+          <LinearGradient
+            colors={[colors.green[400], colors.yellow[400]]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+          >
+            <Text>gradient-green (left-diagonal)</Text>
+          </LinearGradient>
 
-        {/* gradient-red: jila-400 & orange-400 */}
-        <LinearGradient
-          colors={[colors.jila[400], colors.orange[400]]}
-          start={{ x: 1, y: 0 }}
-          end={{ x: 0, y: 1 }}
-        >
-          <Text>gradient-red (right-diagonal)</Text>
-        </LinearGradient>
+          {/* gradient-red: jila-400 & orange-400 */}
+          <LinearGradient
+            colors={[colors.jila[400], colors.orange[400]]}
+            start={{ x: 1, y: 0 }}
+            end={{ x: 0, y: 1 }}
+          >
+            <Text>gradient-red (right-diagonal)</Text>
+          </LinearGradient>
 
-        {/* gradient-blue: teal-400 & green-300 */}
-        <LinearGradient
-          colors={[colors.teal[400], colors.green[300]]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 0, y: 1 }}
-        >
-          <Text>gradient-blue (vertical)</Text>
-        </LinearGradient>
+          {/* gradient-blue: teal-400 & green-300 */}
+          <LinearGradient
+            colors={[colors.teal[400], colors.green[300]]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 0, y: 1 }}
+          >
+            <Text>gradient-blue (vertical)</Text>
+          </LinearGradient>
 
-        {/* gradient-yellow: yellow-400 & orange-400 */}
-        <LinearGradient
-          colors={[colors.yellow[400], colors.orange[400]]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0 }}
-        >
-          <Text>gradient-yellow (horizontal)</Text>
-        </LinearGradient>
+          {/* gradient-yellow: yellow-400 & orange-400 */}
+          <LinearGradient
+            colors={[colors.yellow[400], colors.orange[400]]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+          >
+            <Text>gradient-yellow (horizontal)</Text>
+          </LinearGradient>
 
-        <ResourceCard
-          title="test"
-          address="my house"
-          phone="18943765928"
-          description="a flip cared gggg"
+          <ResourceCard
+            title="test"
+            address="my house"
+            phone="18943765928"
+            description="a flip cared gggg"
+          />
+          <LegalButton />
+          <EducationButton />
+          <MedicalButton />
+          <TransportButton />
+          <CareerButton />
+          <OtherButton />
+        </ScrollView>
+        <JobBottomDrawer
+          applyUrl="https://www.linkedin.com/"
+          company="Stripe"
+          role="Product Designer"
+          companyLocation="Champaign, IL"
+          salary="$188.1K/yr - $282.1K/yr"
+          workLocation="Remote"
+          jobType="Full-time"
+          jobDescription="Stripe is a financial infrastructure platform for businesses. Millions of companies - from the world's largest enterprises to the most ambitious startups - use Stripe to accept payments, grow their revenue, and accelerate new business opportunities. Our mission is to increase the GDP of the internet, and we have a staggering amount of work ahead. That means you have an unprecedented opportunity to put the global economy within everyone's reach while doing the most important work of your career."
         />
-        <LegalButton />
-        <EducationButton />
-        <MedicalButton />
-        <TransportButton />
-        <CareerButton />
-        <OtherButton />
-      </ScrollView>
-    </>
+      </View>
+    </GestureHandlerRootView>
   );
 }
 
@@ -514,11 +610,11 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     marginTop: 8,
     marginBottom: 4,
-    color: colors.gray[600],
+    color: colors.gray[400],
   },
   exampleText: {
     fontSize: 12,
-    color: colors.gray[500],
+    color: colors.gray[400],
     marginBottom: 8,
   },
   selectContainer: {

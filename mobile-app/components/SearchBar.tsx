@@ -9,8 +9,9 @@ interface SearchBarProps {
   value: string;
   onChange: (value: string) => void;
   isFocused: boolean;
-  onFocus: () => void;
-  onBlur: () => void;
+  onFocus?: () => void;
+  onBlur?: () => void;
+  style?: any;
 }
 
 export default function SearchBar({
@@ -20,11 +21,13 @@ export default function SearchBar({
   isFocused,
   onFocus,
   onBlur,
+  style,
 }: SearchBarProps) {
   return (
     <View
       style={[
         styles.container,
+        style,
         isFocused ? styles.containerFocused : styles.containerUnfocused,
       ]}
     >
