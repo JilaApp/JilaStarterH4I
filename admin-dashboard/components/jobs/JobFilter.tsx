@@ -2,7 +2,6 @@ import RadioButtonGroup from "../forms/RadioButtonGroup";
 import { useState, useMemo, useEffect } from "react";
 import { TextInput } from "../ui/Input";
 import SearchBar from "../forms/SearchBar";
-import { trpc } from "@/lib/trpc";
 import { Search } from "lucide-react";
 import { JobFilters } from "@/lib/types";
 import { DEFAULT_MIN_SALARY, DEFAULT_MAX_SALARY } from "@/lib/constants";
@@ -12,12 +11,21 @@ interface JobFilterProps {
   onClose: () => void;
   onApply: (filters: JobFilters) => void;
   initialFilters?: JobFilters | null;
+  allJobs?: {
+    locationType: string;
+    jobType: string;
+    salary: number;
+    city: string;
+    state: string;
+    acceptedLanguages: string[];
+  }[];
 }
 
 export default function JobFilter({
   onClose,
   onApply,
   initialFilters,
+  allJobs = [],
 }: JobFilterProps) {
   const speakerOptions = [
     { name: "Non-English" },
@@ -26,7 +34,7 @@ export default function JobFilter({
   ];
   const [selectedSpeakerOptions, setSelectedSpeakerOptions] = useState<
     string[]
-  >(initialFilters?.speakerTags || [""]);
+  >(initialFilters?.speakerTags || []);
 
   const locationOptions = [
     { name: "Remote" },
@@ -35,7 +43,7 @@ export default function JobFilter({
   ];
   const [selectedLocationOptions, setSelectedLocationOptions] = useState<
     string[]
-  >(initialFilters?.locationTypes || [""]);
+  >(initialFilters?.locationTypes || []);
 
   const jobTypeOptions = [
     { name: "Internship" },
@@ -47,7 +55,7 @@ export default function JobFilter({
   ];
   const [selectedJobTypeOptions, setSelectedJobTypeOptions] = useState<
     string[]
-  >(initialFilters?.jobTypes || [""]);
+  >(initialFilters?.jobTypes || []);
 
   const [minInput, setMinInput] = useState(
     initialFilters?.minSalary || DEFAULT_MIN_SALARY,
@@ -81,12 +89,10 @@ export default function JobFilter({
   );
   const [showLocationDropdown, setShowLocationDropdown] = useState(false);
 
-  const { data: allJobs } = trpc.jobs.getAllJobs.useQuery();
-
   const uniqueLocations = useMemo(() => {
     if (!allJobs) return [];
     const locations = new Set<string>();
-    allJobs.forEach((job: { city: string; state: string }) => {
+    allJobs.forEach((job) => {
       locations.add(`${job.city}, ${job.state}`);
     });
     return Array.from(locations).sort();
@@ -111,61 +117,64 @@ export default function JobFilter({
   }, []);
 
   const filteredJobCount = useMemo(() => {
-    if (!allJobs) return 0;
+    if (!allJobs || allJobs.length === 0) return 0;
 
-    return allJobs.filter(
-      (job: {
-        locationType: string;
-        jobType: string;
-        salary: number;
-        city: string;
-        state: string;
-      }) => {
+    return allJobs.filter((job) => {
+      const activeSpeakerOptions = selectedSpeakerOptions.filter(
+        (opt) => opt !== "",
+      );
+      if (activeSpeakerOptions.length > 0) {
+        const speakerMatch = activeSpeakerOptions.some((speaker) =>
+          job.acceptedLanguages.includes(speaker),
+        );
+        if (!speakerMatch) return false;
+      }
+
+      const activeLocationOptions = selectedLocationOptions.filter(
+        (opt) => opt !== "",
+      );
+      if (activeLocationOptions.length > 0) {
+        const locationMatch = activeLocationOptions.some((loc) => {
+          if (loc === "Remote") return job.locationType === "REMOTE";
+          if (loc === "Hybrid") return job.locationType === "HYBRID";
+          if (loc === "In person") return job.locationType === "INPERSON";
+          return false;
+        });
+        if (!locationMatch) return false;
+      }
+
+      const activeJobTypeOptions = selectedJobTypeOptions.filter(
+        (opt) => opt !== "",
+      );
+      if (activeJobTypeOptions.length > 0) {
+        const jobTypeMatch = activeJobTypeOptions.some((type) => {
+          const typeUpper = type.toUpperCase().replace(/-/g, "");
+          return job.jobType === typeUpper;
+        });
+        if (!jobTypeMatch) return false;
+      }
+
+      if (job.salary < minInput || job.salary > maxInput) {
+        return false;
+      }
+
+      if (searchQuery) {
+        const query = searchQuery.toLowerCase();
+        const fullLocation = `${job.city}, ${job.state}`.toLowerCase();
         if (
-          selectedLocationOptions.length > 0 &&
-          selectedLocationOptions[0] !== ""
+          !fullLocation.includes(query) &&
+          !job.city.toLowerCase().includes(query) &&
+          !job.state.toLowerCase().includes(query)
         ) {
-          const locationMatch = selectedLocationOptions.some((loc) => {
-            if (loc === "Remote") return job.locationType === "REMOTE";
-            if (loc === "Hybrid") return job.locationType === "HYBRID";
-            if (loc === "In person") return job.locationType === "INPERSON";
-            return false;
-          });
-          if (!locationMatch) return false;
-        }
-
-        if (
-          selectedJobTypeOptions.length > 0 &&
-          selectedJobTypeOptions[0] !== ""
-        ) {
-          const jobTypeMatch = selectedJobTypeOptions.some((type) => {
-            const typeUpper = type.toUpperCase().replace(/-/g, "");
-            return job.jobType === typeUpper;
-          });
-          if (!jobTypeMatch) return false;
-        }
-
-        if (job.salary < minInput || job.salary > maxInput) {
           return false;
         }
+      }
 
-        if (searchQuery) {
-          const query = searchQuery.toLowerCase();
-          const fullLocation = `${job.city}, ${job.state}`.toLowerCase();
-          if (
-            !fullLocation.includes(query) &&
-            !job.city.toLowerCase().includes(query) &&
-            !job.state.toLowerCase().includes(query)
-          ) {
-            return false;
-          }
-        }
-
-        return true;
-      },
-    ).length;
+      return true;
+    }).length;
   }, [
     allJobs,
+    selectedSpeakerOptions,
     selectedLocationOptions,
     selectedJobTypeOptions,
     minInput,
@@ -186,9 +195,9 @@ export default function JobFilter({
   };
 
   const handleClearAll = () => {
-    setSelectedSpeakerOptions([""]);
-    setSelectedLocationOptions([""]);
-    setSelectedJobTypeOptions([""]);
+    setSelectedSpeakerOptions([]);
+    setSelectedLocationOptions([]);
+    setSelectedJobTypeOptions([]);
     setMinInput(DEFAULT_MIN_SALARY);
     setMaxInput(DEFAULT_MAX_SALARY);
     setSearchQuery("");

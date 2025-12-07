@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import FormField from "@/components/forms/FormField";
 import { TextInput } from "@/components/ui/Input";
 import Dropdown from "@/components/ui/Dropdown";
@@ -15,6 +15,7 @@ import {
   validateEmail,
   validateDropdownIndex,
   validateNumber,
+  validateURL,
 } from "@/lib/validators";
 import SubmitButton from "@/components/ui/SubmitButton";
 import { US_STATES } from "@/lib/constants";
@@ -55,26 +56,29 @@ const LANGUAGE_OPTIONS = [
   { name: "Q'anjob'al", disabled: false },
 ];
 
-export default function JobRequestPage() {
+function JobRequestForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const communityOrgId = searchParams.get("communityOrgId");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState("");
 
-  const { fields, setFieldValue, validateAllFields, resetForm } = useForm({
-    contactEmail: createField(""),
-    jobTitleEnglish: createField(""),
-    jobTitleQanjobal: createField(""),
-    companyName: createField(""),
-    jobTypeIndex: createField<number | undefined>(undefined),
-    acceptedLanguages: createField<string[]>([]),
-    locationTypeIndex: createField<number | undefined>(undefined),
-    city: createField(""),
-    stateIndex: createField<number | undefined>(undefined),
-    applicationLink: createField(""),
-    salary: createField(""),
-    expirationDate: createField(""),
-  });
+  const { fields, setFieldValue, validateAllFields, resetForm, formRef } =
+    useForm({
+      contactEmail: createField(""),
+      jobTitleEnglish: createField(""),
+      jobTitleQanjobal: createField(""),
+      companyName: createField(""),
+      jobTypeIndex: createField<number | undefined>(undefined),
+      acceptedLanguages: createField<string[]>([]),
+      locationTypeIndex: createField<number | undefined>(undefined),
+      city: createField(""),
+      stateIndex: createField<number | undefined>(undefined),
+      applicationLink: createField(""),
+      salary: createField(""),
+      expirationDate: createField(""),
+    });
 
   const addJobMutation = trpc.jobs.addJob.useMutation();
 
@@ -85,13 +89,18 @@ export default function JobRequestPage() {
       jobTitleQanjobal: validateRequired,
       companyName: validateRequired,
       jobTypeIndex: validateDropdownIndex,
-      applicationLink: validateRequired,
+      applicationLink: validateURL,
       salary: fields.salary.value ? validateNumber : undefined,
     };
 
     const isValid = validateAllFields(validationRules);
 
-    if (!isValid) return;
+    if (!isValid) {
+      if (formRef.current) {
+        formRef.current.scrollTo({ top: 0, behavior: "smooth" });
+      }
+      return;
+    }
 
     setIsSubmitting(true);
 
@@ -119,15 +128,19 @@ export default function JobRequestPage() {
         salary: fields.salary.value ? parseInt(fields.salary.value) : 0,
         expirationDate: fields.expirationDate.value
           ? new Date(fields.expirationDate.value)
-          : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // Default 30 days from now
+          : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
         descriptionEnglish: "",
         descriptionQanjobal: "",
         status: JobStatus.PENDING,
+        communityOrgId: communityOrgId || undefined,
       });
 
       setError("");
       setIsSuccess(true);
       setIsSubmitting(false);
+      if (formRef.current) {
+        formRef.current.scrollTo({ top: 0, behavior: "smooth" });
+      }
     } catch (error: any) {
       let errorMessage = "Failed to submit job request. Please try again.";
 
@@ -146,11 +159,17 @@ export default function JobRequestPage() {
     setIsSuccess(false);
     setError("");
     resetForm();
+    if (formRef.current) {
+      formRef.current.scrollTo({ top: 0, behavior: "smooth" });
+    }
   };
 
   return (
     <PageBackground>
-      <div className="flex flex-col items-center w-full h-full overflow-y-auto px-6 lg:px-24 py-12">
+      <div
+        ref={formRef as React.RefObject<HTMLDivElement>}
+        className="flex flex-col items-center w-full h-full overflow-y-auto px-6 lg:px-24 py-12"
+      >
         <h1 className="body1-desktop-semi-text text-type-400 text-center mb-5">
           Submit Job Posting
         </h1>
@@ -420,5 +439,21 @@ export default function JobRequestPage() {
         )}
       </div>
     </PageBackground>
+  );
+}
+
+export default function JobRequestPage() {
+  return (
+    <Suspense
+      fallback={
+        <PageBackground>
+          <div className="flex items-center justify-center h-full">
+            Loading...
+          </div>
+        </PageBackground>
+      }
+    >
+      <JobRequestForm />
+    </Suspense>
   );
 }

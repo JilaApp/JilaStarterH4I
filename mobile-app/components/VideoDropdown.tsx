@@ -1,8 +1,9 @@
 import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
 import { colors } from "@/colors";
+import { formatDuration } from "@/utils/formatters";
+import { sizes } from "@/constants/sizes";
 import { useRouter } from "expo-router";
 import Accordion from "@/components/Accordion";
-import { sizes } from "@/constants/sizes";
 
 type VideoDropdownPart = {
   videoUrl: string;
@@ -88,17 +89,9 @@ export default function VideoDropdown({
   );
 }
 
-function formatDuration(duration: number) {
-  const mins = Math.floor(duration / 60)
-    .toString()
-    .padStart(2, "0");
-  const secs = (duration % 60).toString().padStart(2, "0");
-  return `${mins}:${secs}`;
-}
-
 const styles = StyleSheet.create({
   partCountText: {
-    fontSize: sizes.fontSize.xs,
+    fontSize: 12,
     fontWeight: "400",
     color: colors.black,
   },
@@ -119,7 +112,7 @@ const styles = StyleSheet.create({
     borderBottomColor: colors.gray[200],
   },
   dropdownItemText: {
-    fontSize: sizes.fontSize.base,
+    fontSize: 14,
     fontWeight: "600",
     color: colors.black,
     flex: 1,
@@ -134,7 +127,7 @@ const styles = StyleSheet.create({
     minWidth: 58,
   },
   timerText: {
-    fontSize: sizes.fontSize.sm,
+    fontSize: 12,
     fontWeight: "300",
     color: colors.black,
   },

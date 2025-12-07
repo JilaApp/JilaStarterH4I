@@ -1,16 +1,25 @@
 "use client";
 
-import { useUser } from "@clerk/nextjs";
+import { useUser, useClerk } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { ReactNode, useEffect, useState } from "react";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import { logger } from "@/lib/logger";
 
+const isValidAdminType = (userType: unknown): boolean => {
+  return (
+    userType === "admin" ||
+    userType === "JilaAdmin" ||
+    userType === "CommunityOrgAdmin"
+  );
+};
+
 const AuthWrapper = ({ children }: { children: ReactNode }) => {
   const { user, isLoaded } = useUser();
+  const { signOut } = useClerk();
   const router = useRouter();
   const [verificationStatus, setVerificationStatus] = useState<
-    "verifying" | "success" | "failed"
+    "verifying" | "success" | "failed" | "not_signed_in"
   >("verifying");
 
   useEffect(() => {
@@ -19,18 +28,18 @@ const AuthWrapper = ({ children }: { children: ReactNode }) => {
     }
 
     if (!user) {
-      setVerificationStatus("failed");
+      setVerificationStatus("not_signed_in");
       return;
     }
 
     const checkUserRole = async () => {
-      if (user.publicMetadata?.userType === "admin") {
+      if (isValidAdminType(user.publicMetadata?.userType)) {
         setVerificationStatus("success");
         return;
       }
       try {
         await user.reload();
-        if (user.publicMetadata?.userType === "admin") {
+        if (isValidAdminType(user.publicMetadata?.userType)) {
           setVerificationStatus("success");
         } else {
           setVerificationStatus("failed");
@@ -45,10 +54,12 @@ const AuthWrapper = ({ children }: { children: ReactNode }) => {
   }, [isLoaded, user]);
 
   useEffect(() => {
-    if (verificationStatus === "failed") {
-      router.push("/sign-in");
+    if (verificationStatus === "not_signed_in") {
+      router.replace("/sign-in");
+    } else if (verificationStatus === "failed") {
+      signOut({ redirectUrl: "/sign-in" });
     }
-  }, [verificationStatus, router]);
+  }, [verificationStatus, signOut, router]);
 
   if (verificationStatus !== "success") {
     return (

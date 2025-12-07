@@ -32,7 +32,14 @@ export default function InviteSignUpPage() {
   const [isTicketProcessed, setIsTicketProcessed] = useState(false);
 
   useEffect(() => {
-    if (isLoaded && user && user.publicMetadata?.userType === "admin") {
+    const userType = user?.publicMetadata?.userType;
+    if (
+      isLoaded &&
+      user &&
+      (userType === "JilaAdmin" ||
+        userType === "CommunityOrgAdmin" ||
+        userType === "admin")
+    ) {
       router.push("/dashboard");
     }
   }, [isLoaded, user, router]);
@@ -118,6 +125,11 @@ export default function InviteSignUpPage() {
       if (result.status === "complete") {
         await setActive({ session: result.createdSessionId });
         await finalizeSignUpMutation.mutateAsync();
+
+        if (user) {
+          await user.reload();
+        }
+
         router.push("/dashboard");
       } else {
         setError("Could not complete your sign up. Please try again.");

@@ -1,6 +1,6 @@
-import { protectedProcedure, router } from "../trpc";
-import { clerkClient } from "@clerk/nextjs/server";
 import { TRPCError } from "@trpc/server";
+import { clerkClient } from "@clerk/nextjs/server";
+import { router, protectedProcedure } from "../trpc";
 import { logger } from "@/lib/logger";
 
 export const userRouter = router({
@@ -16,9 +16,25 @@ export const userRouter = router({
 
     try {
       const client = await clerkClient();
+      const user = await client.users.getUser(userId);
+
+      const existingUserType = user.publicMetadata?.userType;
+      if (
+        existingUserType === "JilaAdmin" ||
+        existingUserType === "CommunityOrgAdmin"
+      ) {
+        return { success: true };
+      }
+
+      const communityOrgId = user.publicMetadata?.communityOrgId as
+        | string
+        | undefined;
+      const userType = communityOrgId ? "CommunityOrgAdmin" : "JilaAdmin";
+
       await client.users.updateUserMetadata(userId, {
         publicMetadata: {
-          userType: "admin",
+          userType,
+          ...(communityOrgId && { communityOrgId }),
         },
       });
       return { success: true };

@@ -1,9 +1,11 @@
-import { router, publicProcedure } from "../trpc";
-import prisma from "@/lib/prisma";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
+import { router, protectedProcedure } from "../trpc";
+import { requireCommunityOrgAdmin, getUserCommunityOrgId } from "../utils";
 import { SocialServiceCategory } from "@/lib/types";
 import { logger } from "@/lib/logger";
+import { uploadAudioToS3, deleteAudioFromS3 } from "@/lib/s3Utils";
+import prisma from "@/lib/prisma";
 
 const addSocialServiceInput = z.object({
   title: z.string(),
@@ -44,7 +46,10 @@ type AddSocialServiceInput = z.infer<typeof addSocialServiceInput>;
 type RemoveSocialServiceInput = z.infer<typeof removeSocialServiceInput>;
 type EditSocialServiceInput = z.infer<typeof editSocialServiceInput>;
 
-async function addSocialService(input: AddSocialServiceInput) {
+async function addSocialService(
+  input: AddSocialServiceInput,
+  communityOrgId: string | null,
+) {
   try {
     const existing = await prisma.socialServices.findUnique({
       where: { phone_number: input.phone_number },
@@ -58,6 +63,26 @@ async function addSocialService(input: AddSocialServiceInput) {
       });
     }
 
+    // Upload audio files to S3 if provided
+    let titleAudioS3Key: string | undefined;
+    let descriptionAudioS3Key: string | undefined;
+
+    if (input.titleAudioFile && input.titleAudioFilename) {
+      titleAudioS3Key = await uploadAudioToS3(
+        input.titleAudioFile,
+        input.titleAudioFilename,
+        "social-services/titles",
+      );
+    }
+
+    if (input.descriptionAudioFile && input.descriptionAudioFilename) {
+      descriptionAudioS3Key = await uploadAudioToS3(
+        input.descriptionAudioFile,
+        input.descriptionAudioFilename,
+        "social-services/descriptions",
+      );
+    }
+
     await prisma.socialServices.create({
       data: {
         title: input.title,
@@ -66,6 +91,13 @@ async function addSocialService(input: AddSocialServiceInput) {
         address: input.address,
         description: input.description,
         url: input.url,
+        titleAudioFilename: input.titleAudioFilename,
+        titleAudioFileSize: input.titleAudioFileSize,
+        titleAudioFileS3Key: titleAudioS3Key,
+        descriptionAudioFilename: input.descriptionAudioFilename,
+        descriptionAudioFileSize: input.descriptionAudioFileSize,
+        descriptionAudioFileS3Key: descriptionAudioS3Key,
+        communityOrgId: communityOrgId,
       },
     });
 
@@ -95,6 +127,14 @@ async function removeSocialService(input: RemoveSocialServiceInput) {
         code: "NOT_FOUND",
         message: "Resource not found",
       });
+    }
+
+    // Delete audio files from S3 if they exist
+    if (existing.titleAudioFileS3Key) {
+      await deleteAudioFromS3(existing.titleAudioFileS3Key);
+    }
+    if (existing.descriptionAudioFileS3Key) {
+      await deleteAudioFromS3(existing.descriptionAudioFileS3Key);
     }
 
     await prisma.socialServices.delete({
@@ -131,7 +171,7 @@ async function editSocialService(input: EditSocialServiceInput) {
       });
     }
 
-    const removing_undefined_vals = {
+    const dataToUpdate: Record<string, any> = {
       title: input.title,
       category: input.category,
       phone_number: input.phone_number,
@@ -140,10 +180,66 @@ async function editSocialService(input: EditSocialServiceInput) {
       url: input.url,
     };
 
+    // Handle title audio file
+    if (input.titleAudioFile !== undefined) {
+      if (input.titleAudioFile === "") {
+        // Delete old file from S3
+        if (existing.titleAudioFileS3Key) {
+          await deleteAudioFromS3(existing.titleAudioFileS3Key);
+        }
+        dataToUpdate.titleAudioFileS3Key = null;
+        dataToUpdate.titleAudioFilename = null;
+        dataToUpdate.titleAudioFileSize = null;
+      } else {
+        // Upload new file to S3
+        const s3Key = await uploadAudioToS3(
+          input.titleAudioFile,
+          input.titleAudioFilename!,
+          "social-services/titles",
+        );
+
+        // Delete old file from S3
+        if (existing.titleAudioFileS3Key) {
+          await deleteAudioFromS3(existing.titleAudioFileS3Key);
+        }
+
+        dataToUpdate.titleAudioFileS3Key = s3Key;
+        dataToUpdate.titleAudioFilename = input.titleAudioFilename;
+        dataToUpdate.titleAudioFileSize = input.titleAudioFileSize;
+      }
+    }
+
+    // Handle description audio file
+    if (input.descriptionAudioFile !== undefined) {
+      if (input.descriptionAudioFile === "") {
+        // Delete old file from S3
+        if (existing.descriptionAudioFileS3Key) {
+          await deleteAudioFromS3(existing.descriptionAudioFileS3Key);
+        }
+        dataToUpdate.descriptionAudioFileS3Key = null;
+        dataToUpdate.descriptionAudioFilename = null;
+        dataToUpdate.descriptionAudioFileSize = null;
+      } else {
+        // Upload new file to S3
+        const s3Key = await uploadAudioToS3(
+          input.descriptionAudioFile,
+          input.descriptionAudioFilename!,
+          "social-services/descriptions",
+        );
+
+        // Delete old file from S3
+        if (existing.descriptionAudioFileS3Key) {
+          await deleteAudioFromS3(existing.descriptionAudioFileS3Key);
+        }
+
+        dataToUpdate.descriptionAudioFileS3Key = s3Key;
+        dataToUpdate.descriptionAudioFilename = input.descriptionAudioFilename;
+        dataToUpdate.descriptionAudioFileSize = input.descriptionAudioFileSize;
+      }
+    }
+
     const data = Object.fromEntries(
-      Object.entries(removing_undefined_vals).filter(
-        ([_, value]) => value !== undefined,
-      ),
+      Object.entries(dataToUpdate).filter(([_, value]) => value !== undefined),
     );
 
     await prisma.socialServices.update({
@@ -168,9 +264,11 @@ async function editSocialService(input: EditSocialServiceInput) {
   }
 }
 
-async function getAllSocialServices() {
+async function getAllSocialServices(communityOrgId: string | null) {
   try {
-    const services = await prisma.socialServices.findMany();
+    const services = await prisma.socialServices.findMany({
+      where: communityOrgId ? { communityOrgId } : undefined,
+    });
     return services;
   } catch (error) {
     logger.error("[getAllSocialServices] Database error", error);
@@ -183,14 +281,27 @@ async function getAllSocialServices() {
 }
 
 export const socialServicesRouter = router({
-  addSocialService: publicProcedure
+  addSocialService: protectedProcedure
     .input(addSocialServiceInput)
-    .mutation(({ input }) => addSocialService(input)),
-  getAllSocialServices: publicProcedure.query(getAllSocialServices),
-  removeSocialService: publicProcedure
+    .mutation(async ({ input, ctx }) => {
+      await requireCommunityOrgAdmin(ctx.auth.userId!);
+      const communityOrgId = await getUserCommunityOrgId(ctx.auth.userId!);
+      return addSocialService(input, communityOrgId);
+    }),
+  getAllSocialServices: protectedProcedure.query(async ({ ctx }) => {
+    const communityOrgId = await getUserCommunityOrgId(ctx.auth.userId!);
+    return getAllSocialServices(communityOrgId);
+  }),
+  removeSocialService: protectedProcedure
     .input(removeSocialServiceInput)
-    .mutation(({ input }) => removeSocialService(input)),
-  editSocialService: publicProcedure
+    .mutation(async ({ input, ctx }) => {
+      await requireCommunityOrgAdmin(ctx.auth.userId!);
+      return removeSocialService(input);
+    }),
+  editSocialService: protectedProcedure
     .input(editSocialServiceInput)
-    .mutation(({ input }) => editSocialService(input)),
+    .mutation(async ({ input, ctx }) => {
+      await requireCommunityOrgAdmin(ctx.auth.userId!);
+      return editSocialService(input);
+    }),
 });

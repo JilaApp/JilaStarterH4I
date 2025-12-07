@@ -1,28 +1,58 @@
 import Image from "next/image";
+import Link from "next/link";
 import TempJilaLogo from "@/assets/jila-white.svg";
-import { LayoutDashboard, Settings } from "lucide-react";
-import { logger } from "@/lib/logger";
+import {
+  LayoutDashboard,
+  Send,
+  BarChart3,
+  Upload,
+  Briefcase,
+  ClipboardList,
+} from "lucide-react";
+import { useUser } from "@clerk/nextjs";
 
 interface SidebarProps {
   activeButton: string;
-  setActiveButton: (id: string) => void;
 }
 
-export default function Sidebar({
-  activeButton,
-  setActiveButton,
-}: SidebarProps) {
-  const buttons = [
-    { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
-    { id: "upload", label: "Upload", icon: LayoutDashboard },
-    { id: "jobs", label: "Job postings", icon: LayoutDashboard },
-    { id: "job-requests", label: "Job requests", icon: LayoutDashboard },
-    { id: "metrics", label: "Metrics", icon: LayoutDashboard },
-  ];
+const jilaAdminButtons = [
+  {
+    id: "metrics",
+    label: "Metrics",
+    icon: BarChart3,
+    href: "/dashboard/metrics",
+  },
+  { id: "invite", label: "Invite", icon: Send, href: "/dashboard/invite" },
+];
 
-  const dummyButtonClick = () => {
-    logger.info("[dummyButtonClick] Settings button clicked", undefined);
-  };
+const communityOrgAdminButtons = [
+  {
+    id: "dashboard",
+    label: "Dashboard",
+    icon: LayoutDashboard,
+    href: "/dashboard/home",
+  },
+  { id: "upload", label: "Upload", icon: Upload, href: "/dashboard/upload" },
+  {
+    id: "jobs",
+    label: "Job postings",
+    icon: Briefcase,
+    href: "/dashboard/jobs",
+  },
+  {
+    id: "job-requests",
+    label: "Job requests",
+    icon: ClipboardList,
+    href: "/dashboard/job-requests",
+  },
+];
+
+export default function Sidebar({ activeButton }: SidebarProps) {
+  const { user } = useUser();
+  const userType = user?.publicMetadata?.userType;
+
+  const buttons =
+    userType === "JilaAdmin" ? jilaAdminButtons : communityOrgAdminButtons;
 
   return (
     <div className="relative h-screen">
@@ -35,7 +65,7 @@ export default function Sidebar({
         />
 
         <div className="flex flex-col gap-[22px] font-semibold relative top-[137px] ml-[6px]">
-          {buttons.map(({ id, label, icon: Icon }) => {
+          {buttons.map(({ id, label, icon: Icon, href }) => {
             const clicked = activeButton === id;
             return (
               <div
@@ -52,8 +82,8 @@ export default function Sidebar({
                   </div>
                 )}
 
-                <button
-                  onClick={() => setActiveButton(id)}
+                <Link
+                  href={href}
                   className={`relative flex flex-row items-center gap-[16px] h-[44px] ml-[3px] w-[178px] pl-[16px] z-30 cursor-pointer ${
                     clicked
                       ? "text-type-400 bg-[linear-gradient(90deg,#D4928F_0%,rgba(224,140,150,0.30)_100%)] rounded-[10px]"
@@ -64,18 +94,11 @@ export default function Sidebar({
                     className={clicked ? "text-type-400" : "text-white-400"}
                   />
                   {label}
-                </button>
+                </Link>
               </div>
             );
           })}
         </div>
-
-        <button
-          onClick={() => dummyButtonClick()}
-          className="flex font-semibold flex-row gap-[16px] left-[24px] absolute bottom-[24px] text-white-400 cursor-pointer"
-        >
-          <Settings className="text-white-400" /> Settings
-        </button>
       </div>
     </div>
   );

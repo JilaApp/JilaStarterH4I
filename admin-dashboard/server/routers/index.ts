@@ -1,16 +1,18 @@
 import { router } from "../trpc";
+import { communityRouter } from "./community";
 import { helloRouter } from "./hello";
-import { videosRouter } from "./videos";
+import { jobsRouter } from "./jobs";
 import { socialServicesRouter } from "./social-services";
 import { userRouter } from "./user";
-import { jobsRouter } from "./jobs";
+import { videosRouter } from "./videos";
 
 export const appRouter = router({
+  community: communityRouter,
   hello: helloRouter,
-  videos: videosRouter,
+  jobs: jobsRouter,
   socialServices: socialServicesRouter,
   user: userRouter,
-  jobs: jobsRouter,
+  videos: videosRouter,
 });
 
 export type AppRouter = typeof appRouter;

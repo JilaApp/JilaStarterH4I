@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 
 export type FormInputState = "default" | "error" | "pending" | "complete";
 
@@ -22,6 +22,14 @@ export function createField<T>(value: T): FieldConfig<T> {
 
 export function useForm<T extends FormConfig>(initialConfig: T) {
   const [fields, setFields] = useState<T>(initialConfig);
+  const [formError, setFormError] = useState("");
+  const formRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    if (formError && formRef.current) {
+      formRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [formError]);
 
   const setFieldValue = useCallback(
     <K extends keyof T>(fieldName: K, value: T[K]["value"]) => {
@@ -34,6 +42,7 @@ export function useForm<T extends FormConfig>(initialConfig: T) {
           state: "default" as FormInputState,
         },
       }));
+      setFormError("");
     },
     [],
   );
@@ -71,8 +80,16 @@ export function useForm<T extends FormConfig>(initialConfig: T) {
     [],
   );
 
+  const clearFormError = useCallback(() => {
+    setFormError("");
+  }, []);
+
   const resetForm = useCallback(() => {
     setFields(initialConfig);
+    setFormError("");
+    if (formRef.current) {
+      formRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
   }, [initialConfig]);
 
   const validateField = useCallback(
@@ -112,6 +129,9 @@ export function useForm<T extends FormConfig>(initialConfig: T) {
           isValid = false;
         }
       });
+      if (!isValid && formRef.current) {
+        formRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
       return isValid;
     },
     [validateField],
@@ -125,5 +145,9 @@ export function useForm<T extends FormConfig>(initialConfig: T) {
     resetForm,
     validateField,
     validateAllFields,
+    formError,
+    setFormError,
+    clearFormError,
+    formRef,
   };
 }

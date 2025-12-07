@@ -25,31 +25,40 @@ import {
 import { trpc } from "@/lib/trpc";
 import { ArrowLeft } from "lucide-react";
 import { logger } from "@/lib/logger";
+import FormError from "@/components/shared/FormError";
 
 interface JobPostingFormProps {
   onBack?: () => void;
 }
 
 export default function JobPostingForm({ onBack }: JobPostingFormProps = {}) {
-  const { fields, setFieldValue, setFieldError, resetForm, validateAllFields } =
-    useForm({
-      jobTitleEnglish: createField(""),
-      jobTitleQanjobal: createField(""),
-      companyName: createField(""),
-      jobTypeIndex: createField<number | undefined>(undefined),
-      acceptedLanguages: createField<string[]>([]),
-      locationTypeIndex: createField<number | undefined>(undefined),
-      city: createField(""),
-      stateIndex: createField<number | undefined>(undefined),
-      applicationLink: createField(""),
-      salary: createField(""),
-      expirationDate: createField(""),
-      descriptionEnglish: createField(""),
-      descriptionQanjobal: createField(""),
-    });
+  const {
+    fields,
+    setFieldValue,
+    setFieldError,
+    resetForm,
+    validateAllFields,
+    formError,
+    setFormError,
+    formRef,
+  } = useForm({
+    jobTitleEnglish: createField(""),
+    jobTitleQanjobal: createField(""),
+    companyName: createField(""),
+    jobTypeIndex: createField<number | undefined>(undefined),
+    acceptedLanguages: createField<string[]>([]),
+    locationTypeIndex: createField<number | undefined>(undefined),
+    city: createField(""),
+    stateIndex: createField<number | undefined>(undefined),
+    applicationLink: createField(""),
+    salary: createField(""),
+    expirationDate: createField(""),
+    descriptionEnglish: createField(""),
+    descriptionQanjobal: createField(""),
+  });
 
   const { showNotification, NotificationContainer } = useNotification();
-  const addJobMutation = trpc.jobs.addJob.useMutation();
+  const addJobMutation = trpc.jobs.addJobAsAdmin.useMutation();
 
   const submitForm = async () => {
     const isValid = validateAllFields({
@@ -103,14 +112,19 @@ export default function JobPostingForm({ onBack }: JobPostingFormProps = {}) {
       if (onBack) {
         setTimeout(() => onBack(), NAVIGATION_DELAY_MS);
       }
-    } catch (err) {
+    } catch (err: any) {
       logger.error("[submitForm] Failed to submit job posting", err);
-      showNotification("Error submitting job posting.");
+      const errorMessage =
+        err?.message || "Failed to submit job posting. Please try again.";
+      setFormError(errorMessage);
     }
   };
 
   return (
-    <div className="flex flex-col gap-[10px] w-full">
+    <div
+      ref={formRef as React.RefObject<HTMLDivElement>}
+      className="flex flex-col gap-[10px] w-full"
+    >
       {onBack && (
         <button
           onClick={onBack}
@@ -323,6 +337,8 @@ export default function JobPostingForm({ onBack }: JobPostingFormProps = {}) {
             />
           )}
         </FormField>
+
+        {formError && <FormError message={formError} />}
 
         <div className="flex justify-end">
           <SubmitButton

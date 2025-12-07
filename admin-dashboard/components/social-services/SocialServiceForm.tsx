@@ -21,24 +21,36 @@ import {
   validateDropdownIndex,
 } from "@/lib/validators";
 import { logger } from "@/lib/logger";
-import { getFileUploadState } from "@/lib/fileUploadUtils";
+import {
+  getFileUploadState,
+  shouldShowSuccessMessage,
+} from "@/lib/fileUploadUtils";
+import FormError from "@/components/shared/FormError";
 
 export default function SocialServiceForm() {
-  const { fields, setFieldValue, setFieldError, resetForm, validateAllFields } =
-    useForm({
-      englishTitle: createField(""),
-      qanjobalTitle: createField(""),
-      titleFile: createField<File | undefined>(undefined),
-      topicIndex: createField<number | undefined>(undefined),
-      phoneNumber: createField(""),
-      addressLine: createField(""),
-      city: createField(""),
-      stateIndex: createField<number | undefined>(undefined),
-      link: createField(""),
-      englishDescription: createField(""),
-      qanjobalDescription: createField(""),
-      descriptionFile: createField<File | undefined>(undefined),
-    });
+  const {
+    fields,
+    setFieldValue,
+    setFieldError,
+    resetForm,
+    validateAllFields,
+    formError,
+    setFormError,
+    formRef,
+  } = useForm({
+    englishTitle: createField(""),
+    qanjobalTitle: createField(""),
+    titleFile: createField<File | undefined>(undefined),
+    topicIndex: createField<number | undefined>(undefined),
+    phoneNumber: createField(""),
+    addressLine: createField(""),
+    city: createField(""),
+    stateIndex: createField<number | undefined>(undefined),
+    link: createField(""),
+    englishDescription: createField(""),
+    qanjobalDescription: createField(""),
+    descriptionFile: createField<File | undefined>(undefined),
+  });
 
   const { showNotification, NotificationContainer } = useNotification();
   const addSocialServiceMutation =
@@ -56,28 +68,84 @@ export default function SocialServiceForm() {
 
     if (!isValid) return;
 
-    try {
-      await addSocialServiceMutation.mutateAsync({
-        title: fields.englishTitle.value,
-        category: SOCIAL_SERVICE_CATEGORY_DISPLAY_OPTIONS[
-          fields.topicIndex.value!
-        ].toUpperCase() as SocialServiceCategory,
-        phone_number: fields.phoneNumber.value,
-        address: fields.addressLine.value || undefined,
-        description: fields.englishDescription.value || undefined,
-        url: fields.link.value || undefined,
-      });
+    const filesToProcess: Array<{ file: File; type: "title" | "description" }> =
+      [];
 
-      showNotification("Social service submitted successfully!");
-      resetForm();
-    } catch (err) {
-      logger.error("[submitForm] Failed to submit social service", err);
-      showNotification("Error submitting social service.");
+    if (fields.titleFile.value) {
+      filesToProcess.push({ file: fields.titleFile.value, type: "title" });
+    }
+    if (fields.descriptionFile.value) {
+      filesToProcess.push({
+        file: fields.descriptionFile.value,
+        type: "description",
+      });
+    }
+
+    const mutationPayload: any = {
+      title: fields.englishTitle.value,
+      category: SOCIAL_SERVICE_CATEGORY_DISPLAY_OPTIONS[
+        fields.topicIndex.value!
+      ].toUpperCase() as SocialServiceCategory,
+      phone_number: fields.phoneNumber.value,
+      address: fields.addressLine.value || undefined,
+      description: fields.englishDescription.value || undefined,
+      url: fields.link.value || undefined,
+    };
+
+    if (filesToProcess.length > 0) {
+      let processedCount = 0;
+
+      filesToProcess.forEach(({ file, type }) => {
+        const reader = new FileReader();
+        reader.onload = async () => {
+          const base64Data = reader.result?.toString().split(",")[1];
+
+          if (type === "title") {
+            mutationPayload.titleAudioFile = base64Data;
+            mutationPayload.titleAudioFilename = file.name;
+            mutationPayload.titleAudioFileSize = file.size;
+          } else {
+            mutationPayload.descriptionAudioFile = base64Data;
+            mutationPayload.descriptionAudioFilename = file.name;
+            mutationPayload.descriptionAudioFileSize = file.size;
+          }
+
+          processedCount++;
+          if (processedCount === filesToProcess.length) {
+            try {
+              await addSocialServiceMutation.mutateAsync(mutationPayload);
+              showNotification("Social service submitted successfully!");
+              resetForm();
+            } catch (err: any) {
+              logger.error("[submitForm] Failed to submit social service", err);
+              const errorMessage =
+                err?.message ||
+                "Failed to submit social service. Please try again.";
+              setFormError(errorMessage);
+            }
+          }
+        };
+        reader.readAsDataURL(file);
+      });
+    } else {
+      try {
+        await addSocialServiceMutation.mutateAsync(mutationPayload);
+        showNotification("Social service submitted successfully!");
+        resetForm();
+      } catch (err: any) {
+        logger.error("[submitForm] Failed to submit social service", err);
+        const errorMessage =
+          err?.message || "Failed to submit social service. Please try again.";
+        setFormError(errorMessage);
+      }
     }
   };
 
   return (
-    <div className="flex flex-col gap-[26px] py-[30px] px-[35px] rounded-3xl bg-white">
+    <div
+      ref={formRef as React.RefObject<HTMLDivElement>}
+      className="flex flex-col gap-[26px] py-[30px] px-[35px] rounded-3xl bg-white"
+    >
       <div className="h-[60px] font-medium text-2xl">
         Add new social service
       </div>
@@ -125,6 +193,9 @@ export default function SocialServiceForm() {
             onDelete={() => setFieldValue("titleFile", undefined)}
             state={getFileUploadState(
               fields.titleFile.state,
+              fields.titleFile.value,
+            )}
+            showSuccessMessage={shouldShowSuccessMessage(
               fields.titleFile.value,
             )}
             extendedText="Upload an audio recording of the resource title in Q'anjob'al"
@@ -241,10 +312,15 @@ export default function SocialServiceForm() {
               fields.descriptionFile.state,
               fields.descriptionFile.value,
             )}
+            showSuccessMessage={shouldShowSuccessMessage(
+              fields.descriptionFile.value,
+            )}
             extendedText="Upload an audio recording of the description in Q'anjob'al"
           />
         )}
       </FormField>
+
+      {formError && <FormError message={formError} />}
 
       <div className="flex justify-end">
         <SubmitButton

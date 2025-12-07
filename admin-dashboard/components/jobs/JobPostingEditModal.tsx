@@ -68,15 +68,22 @@ export default function JobPostingEditModal({
     [],
   );
 
-  const { fields, setFieldValue, setFieldError, resetForm, validateAllFields } =
-    useForm(initialFormConfig);
+  const {
+    fields,
+    setFieldValue,
+    setFieldError,
+    resetForm,
+    validateAllFields,
+    formError,
+    setFormError,
+    formRef,
+  } = useForm(initialFormConfig);
 
   const [isSaving, setIsSaving] = useState(false);
-  const [error, setError] = useState("");
   const modalRef = useRef<HTMLDivElement>(null);
 
   const updateJobMutation = trpc.jobs.updateJob.useMutation();
-  const addJobMutation = trpc.jobs.addJob.useMutation();
+  const addJobMutation = trpc.jobs.addJobAsAdmin.useMutation();
 
   useClickOutside(modalRef, () => {
     if (!isSaving) {
@@ -86,7 +93,7 @@ export default function JobPostingEditModal({
 
   useEffect(() => {
     if (isOpen) {
-      setError("");
+      setFormError("");
       if (jobData) {
         setFieldValue("jobTitleEnglish", jobData.titleEnglish || "");
         setFieldValue("jobTitleQanjobal", jobData.titleQanjobal || "");
@@ -220,7 +227,7 @@ export default function JobPostingEditModal({
         errorMessage = error.message;
       }
 
-      setError(errorMessage);
+      setFormError(errorMessage);
       setIsSaving(false);
     }
   };
@@ -233,7 +240,10 @@ export default function JobPostingEditModal({
         ref={modalRef}
         className="relative flex flex-col bg-white rounded-[10px] w-[49%] h-[90%] p-[26.48px] overflow-y-auto"
       >
-        <div className="flex flex-col gap-[19.67px] items-start w-full">
+        <div
+          ref={formRef as React.RefObject<HTMLDivElement>}
+          className="flex flex-col gap-[19.67px] items-start w-full"
+        >
           <div className="flex justify-between items-start w-full">
             <div className="flex flex-col w-[353px]">
               <p className="font-bold text-[18.16px] leading-[21.19px] text-type-400">
@@ -497,7 +507,7 @@ export default function JobPostingEditModal({
             )}
           </FormField>
 
-          {error && <FormError message={error} />}
+          {formError && <FormError message={formError} />}
 
           {isEditing && (
             <div className="flex gap-3 justify-end mt-[26px] gap-x-[26px] w-full">

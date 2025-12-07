@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo, useCallback } from "react";
-import { Plus, SlidersHorizontal } from "lucide-react";
+import { SlidersHorizontal, Plus } from "lucide-react";
 import Table from "@/components/shared/Table";
 import { ColumnDefinition, DataRow, JobFilters } from "@/lib/types";
 import SearchBar from "@/components/forms/SearchBar";
@@ -14,9 +14,12 @@ import JobFilter from "@/components/jobs/JobFilter";
 import Tabs from "@/components/shared/Tabs";
 import BulkActionBar from "@/components/shared/BulkActionBar";
 import { useNotification } from "@/hooks/useNotification";
+import { useSorting } from "@/hooks/useSorting";
 import Pagination from "@/components/shared/Pagination";
 import { logger } from "@/lib/logger";
 import { FullJobType } from "@/lib/types";
+import EmptyState from "@/components/shared/EmptyState";
+import IconButton from "@/components/shared/AddButton";
 
 interface JobResourceData extends DataRow {
   id: number;
@@ -53,6 +56,7 @@ export default function JobPostings({
 
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const { showNotification, NotificationContainer } = useNotification();
+  const { sortConfig, handleSort } = useSorting();
 
   const {
     data: jobsData,
@@ -111,8 +115,8 @@ export default function JobPostings({
   }, [jobsData]);
 
   const jobColumns: ColumnDefinition<JobResourceData>[] = [
-    { header: "Position", accessorKey: "position" },
-    { header: "Job type", accessorKey: "jobType" },
+    { header: "Position", accessorKey: "position", sortable: true },
+    { header: "Job type", accessorKey: "jobType", sortable: true },
     { header: "Company", accessorKey: "company" },
     {
       header: "Application link",
@@ -221,7 +225,7 @@ export default function JobPostings({
     setIsBulkDeleteModalOpen(false);
   };
 
-  const applyFiltersToData = useCallback(
+  const applyFiltersAndSort = useCallback(
     (data: JobResourceData[]) => {
       let filtered = data;
 
@@ -310,30 +314,42 @@ export default function JobPostings({
         }
       }
 
+      if (sortConfig) {
+        filtered = [...filtered].sort((a, b) => {
+          const aValue = a[sortConfig.key as keyof JobResourceData];
+          const bValue = b[sortConfig.key as keyof JobResourceData];
+
+          if (aValue === bValue) return 0;
+
+          const comparison = String(aValue).localeCompare(String(bValue));
+          return sortConfig.direction === "asc" ? comparison : -comparison;
+        });
+      }
+
       return filtered;
     },
-    [searchQuery, appliedFilters, jobsData],
+    [searchQuery, appliedFilters, jobsData, sortConfig],
   );
 
   const allJobsData = useMemo(
-    () => applyFiltersToData(jobResourcesData),
-    [jobResourcesData, applyFiltersToData],
+    () => applyFiltersAndSort(jobResourcesData),
+    [jobResourcesData, applyFiltersAndSort],
   );
 
   const activeJobsData = useMemo(
     () =>
-      applyFiltersToData(
+      applyFiltersAndSort(
         jobResourcesData.filter((job) => job.status === JobStatus.ACTIVE),
       ),
-    [jobResourcesData, applyFiltersToData],
+    [jobResourcesData, applyFiltersAndSort],
   );
 
   const archivedJobsData = useMemo(
     () =>
-      applyFiltersToData(
+      applyFiltersAndSort(
         jobResourcesData.filter((job) => job.status === JobStatus.ARCHIVED),
       ),
-    [jobResourcesData, applyFiltersToData],
+    [jobResourcesData, applyFiltersAndSort],
   );
 
   const allJobsTotalPages = Math.ceil(allJobsData.length / itemsPerPage);
@@ -372,7 +388,32 @@ export default function JobPostings({
     setAllJobsCurrentPage(1);
     setActiveJobsCurrentPage(1);
     setArchivedJobsCurrentPage(1);
-  }, [searchQuery, appliedFilters]);
+  }, [searchQuery, appliedFilters, sortConfig]);
+
+  const hasFilters = Boolean(searchQuery || appliedFilters);
+  const isAllJobsFiltered =
+    hasFilters && allJobsData.length === 0 && jobResourcesData.length > 0;
+  const isActiveJobsFiltered =
+    hasFilters &&
+    activeJobsData.length === 0 &&
+    jobResourcesData.filter((job) => job.status === JobStatus.ACTIVE).length >
+      0;
+  const isArchivedJobsFiltered =
+    hasFilters &&
+    archivedJobsData.length === 0 &&
+    jobResourcesData.filter((job) => job.status === JobStatus.ARCHIVED).length >
+      0;
+
+  const getEmptyState = (isFiltered: boolean) => (
+    <EmptyState
+      heading="No job postings added"
+      subtext="Get started by adding a new job"
+      showButton={true}
+      buttonLabel="Add job posting"
+      onButtonClick={handleAddJobPosting}
+      isFiltered={isFiltered}
+    />
+  );
 
   const tabs = [
     {
@@ -393,6 +434,9 @@ export default function JobPostings({
           handleRowClick={handleJobRowClick}
           selectedRows={selectedRows}
           onSelectedRowsChange={setSelectedRows}
+          sortConfig={sortConfig}
+          onSort={handleSort}
+          emptyState={getEmptyState(isAllJobsFiltered)}
         />
       ),
     },
@@ -414,6 +458,9 @@ export default function JobPostings({
           handleRowClick={handleJobRowClick}
           selectedRows={selectedRows}
           onSelectedRowsChange={setSelectedRows}
+          sortConfig={sortConfig}
+          onSort={handleSort}
+          emptyState={getEmptyState(isActiveJobsFiltered)}
         />
       ),
     },
@@ -435,6 +482,9 @@ export default function JobPostings({
           handleRowClick={handleJobRowClick}
           selectedRows={selectedRows}
           onSelectedRowsChange={setSelectedRows}
+          sortConfig={sortConfig}
+          onSort={handleSort}
+          emptyState={getEmptyState(isArchivedJobsFiltered)}
         />
       ),
     },
@@ -450,13 +500,11 @@ export default function JobPostings({
             placeholder="Search"
             defaultClassName="w-[404px] h-[46px]"
           />
-          <button
+          <IconButton
             onClick={handleAddJobPosting}
-            className="flex items-center gap-[10px] bg-jila-400 text-white px-[10px] py-[10px] h-[46px] rounded-[10px] hover:bg-type-400 cursor-pointer font-bold text-lg"
-          >
-            <Plus size={24} />
-            Add job posting
-          </button>
+            label="Add job posting"
+            icon={<Plus size={24} />}
+          />
         </div>
 
         <Tabs
@@ -513,6 +561,7 @@ export default function JobPostings({
           onClose={() => setIsFilterOpen(false)}
           onApply={(filters) => setAppliedFilters(filters)}
           initialFilters={appliedFilters}
+          allJobs={jobsData || []}
         />
       )}
 
