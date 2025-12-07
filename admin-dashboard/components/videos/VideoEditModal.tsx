@@ -124,7 +124,7 @@ export default function VideoEditModal({
       setSaveStatus("idle");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen, videoData]);
+  }, [isOpen, videoData?.id]);
 
   const { handleLinkChange, handleAddLink, handleRemoveLink } = useVideoLinks(
     fields.videoLinks.value,
@@ -172,8 +172,8 @@ export default function VideoEditModal({
       titleEnglish: fields.englishTitle.value,
       titleQanjobal: fields.qanjobalTitle.value,
       urls: fields.videoLinks.value,
-      descriptionEnglish: fields.englishDescription.value,
-      descriptionQanjobal: fields.qanjobalDescription.value,
+      descriptionEnglish: fields.englishDescription.value || null,
+      descriptionQanjobal: fields.qanjobalDescription.value || null,
       topic:
         fields.dropdownIndex.value !== undefined
           ? (VIDEO_TOPIC_OPTIONS[fields.dropdownIndex.value] as VideoTopic)
@@ -354,10 +354,7 @@ export default function VideoEditModal({
             Video links <span className="text-red-500">*</span>
           </label>
           {fields.videoLinks.value.map((link, index) => (
-            <div
-              key={`link-${index}`}
-              className="flex gap-2 mb-2 items-center"
-            >
+            <div key={`link-${index}`} className="flex gap-2 mb-2 items-center">
               <div className="flex-1">
                 <TextInput
                   id={`video-input-${index}`}

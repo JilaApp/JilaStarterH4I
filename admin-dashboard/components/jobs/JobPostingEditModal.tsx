@@ -141,7 +141,7 @@ export default function JobPostingEditModal({
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen, jobData]);
+  }, [isOpen, jobData?.id]);
 
   useModalOverflow(isOpen);
 

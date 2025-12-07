@@ -23,7 +23,11 @@ interface ResourceCardProps {
 }
 
 // Helper to format address from separate fields
-const formatAddress = (addressLine?: string, city?: string, state?: string): string | undefined => {
+const formatAddress = (
+  addressLine?: string,
+  city?: string,
+  state?: string,
+): string | undefined => {
   const parts = [addressLine, city, state].filter(Boolean);
   return parts.length > 0 ? parts.join(", ") : undefined;
 };
@@ -43,7 +47,13 @@ const ResourceCardBack = ({ description }: ResourceCardProps) => {
   );
 };
 
-const ResourceCardFront = ({ title, phone, addressLine, city, state }: ResourceCardProps) => {
+const ResourceCardFront = ({
+  title,
+  phone,
+  addressLine,
+  city,
+  state,
+}: ResourceCardProps) => {
   const address = formatAddress(addressLine, city, state);
 
   return (
