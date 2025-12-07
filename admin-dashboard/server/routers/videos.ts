@@ -94,12 +94,14 @@ async function getYoutubeDuration(url: string) {
 }
 
 async function getAuthClient() {
+  const json = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_JSON);
+
   const auth = new GoogleAuth({
-    keyFile: process.env.DRIVE_KEY_PATH,
+    credentials: json,
     scopes: ["https://www.googleapis.com/auth/drive.readonly"],
   });
-  const client = await auth.getClient();
-  return client;
+
+  return await auth.getClient();
 }
 
 async function getDriveDuration(url: string): Promise<number> {
