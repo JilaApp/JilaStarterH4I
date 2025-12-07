@@ -1,4 +1,10 @@
-import { View, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator } from "react-native";
+import {
+  View,
+  StyleSheet,
+  FlatList,
+  TouchableOpacity,
+  ActivityIndicator,
+} from "react-native";
 import { useState, useRef } from "react";
 import { colors } from "@/colors";
 import { sizes } from "@/constants/sizes";
@@ -56,7 +62,11 @@ export default function JobBoard() {
   const [languageSelected, setLanguageSelected] = useState(new Set<string>());
   const [location, setLocation] = useState("");
 
-  const { data: jobs, isLoading, error } = (trpc as any).jobs.getAllJobs.useQuery();
+  const {
+    data: jobs,
+    isLoading,
+    error,
+  } = (trpc as any).jobs.getAllJobs.useQuery();
 
   const audioButtonRef = useRef<AudioButtonHandle>(null);
   const jobBoardTitleAudio = sampleAudio;
@@ -148,10 +158,7 @@ export default function JobBoard() {
         {/* Title with audio button */}
         <View style={styles.titleRow}>
           <Text style={styles.title}>Job Board</Text>
-          <AudioButton
-            audioSource={jobBoardTitleAudio}
-            ref={audioButtonRef}
-          />
+          <AudioButton audioSource={jobBoardTitleAudio} ref={audioButtonRef} />
         </View>
 
         {/* Filter button */}
