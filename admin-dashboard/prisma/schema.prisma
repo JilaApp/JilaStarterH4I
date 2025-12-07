@@ -16,8 +16,8 @@ model CommunityOrg {
   name          String          @unique
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
-  city          String
-  state         String
+  city          String          @default("Champaign")
+  state         String          @default("Illinois")
   adminUsers    AdminUser[]
   videos        Videos[]
   socialServices SocialServices[]
@@ -72,7 +72,9 @@ model SocialServices {
   title                     String
   category                  SocialServiceCategory
   phone_number              String                @unique @db.VarChar(20)
-  address                   String?
+  addressLine               String?
+  city                      String?
+  state                     String?
   description               String?
   url                       String?               @unique
   titleAudioFilename        String?

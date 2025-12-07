@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   TouchableOpacity,
@@ -7,10 +7,13 @@ import {
   StyleSheet,
   ScrollView,
   TextInput,
+  FlatList,
+  SafeAreaView,
 } from "react-native";
 import { Search, X } from "lucide-react-native";
 import { colors } from "@/colors";
 import { sizes } from "@/constants/sizes";
+// import Text from "@/components/JilaText";
 
 interface SearchableDropdownProps {
   text: string;
@@ -19,6 +22,7 @@ interface SearchableDropdownProps {
   onSelect: (option: string) => void;
   disabled?: boolean;
   placeholder?: string;
+  citySearch: boolean;
 }
 
 const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
@@ -28,13 +32,62 @@ const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
   onSelect,
   disabled = false,
   placeholder,
+  citySearch,
 }: SearchableDropdownProps) => {
+  const [city, setCity] = useState("");
+  const [suggestions, setSuggestions] = useState([]);
+
+  useEffect(() => {
+    // Only fetch if the input has at least 3 characters
+    if (city.length > 2) {
+      fetchCitySuggestions(city);
+    } else {
+      setSuggestions([]);
+    }
+  }, [city]); // Dependency array: runs every time the 'city' state changes
+
+  const fetchCitySuggestions = async (input) => {
+    // The API URL for the geob ytes autocomplete
+    const url = `gd.geobytes.com{input}`;
+
+    try {
+      // Use fetch API, which works in React Native for standard JSON endpoints
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      // Parse the response as JSON (React Native handles the response format)
+      const jsonResponse = await response.json();
+
+      // The API returns an array of strings (e.g., ["City, Country"])
+      setSuggestions(jsonResponse);
+    } catch (error) {
+      console.error("Fetching error:", error.message);
+      setSuggestions([]); // Clear suggestions on error
+    }
+  };
+
+  const handleSelectCity = (selectedCity) => {
+    // When a user selects a city, set the input value and clear the list
+    setCity(selectedCity);
+    setSuggestions([]);
+  };
+
+  const renderItem = ({ item }) => (
+    <TouchableOpacity
+      style={styles.item}
+      onPress={() => handleSelectCity(item)}
+    >
+      <Text>{item}</Text>
+    </TouchableOpacity>
+  );
+
   const [open, setOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isEditing, setIsEditing] = useState(false);
 
   const filteredOptions = options.filter((option) =>
-    option.toLowerCase().includes(searchQuery.toLowerCase()),
+    option.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const displayValue = isEditing ? searchQuery : selected || "";

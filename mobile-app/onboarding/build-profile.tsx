@@ -1,4 +1,4 @@
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, ScrollView } from "react-native";
 import { useState } from "react";
 import { colors } from "@/colors";
 import { sizes } from "@/constants/sizes";
@@ -18,6 +18,8 @@ import { useSignIn, useSignUp } from "@clerk/clerk-expo";
 import { useRouter } from "expo-router";
 import React from "react";
 import Checkbox from "@/components/Checkbox";
+import { trpc } from "@/lib/trpc";
+import { Loader } from "lucide-react-native";
 
 const COMMUNITY_ORGS = [
   "Community Org 1",
@@ -59,7 +61,7 @@ export default function BuildProfile() {
   const [password, setPassword] = React.useState("");
 
   const [confirmPassword, setConfirmPassword] = React.useState("");
-  const [communityOrg, setCommunityOrg] = React.useState(COMMUNITY_ORGS[0]);
+  // const [communityOrg, setCommunityOrg] = React.useState(COMMUNITY_ORGS[0]);
   // const [language, setLanguage] = React.useState(LANGUAGES[0]);
   const [error, setError] = React.useState("");
   const [loading, setLoading] = React.useState(false);
@@ -187,70 +189,36 @@ export default function BuildProfile() {
   const [currentStep, setCurrentStep] = useState(0);
 
   const handleContinue = () => {
-    setCurrentStep((prev) => (prev < 3 ? prev + 1 : prev));
+    setCurrentStep((prev) => (prev < 4 ? prev + 1 : prev));
   };
+
+  const {
+    data: communityOrgs,
+    isLoading,
+    fetchError,
+  } = trpc.community.getAllCommunityOrgs.useQuery();
+
+  let largestOrg;
+  if (communityOrgs) {
+    largestOrg = communityOrgs[0];
+    for (let org of communityOrgs) {
+      if (org.videos && org.videos.length > largestOrg.videos.length) {
+        largestOrg = org;
+      }
+    }
+  }
+
+  const [communityOrg, setCommunityOrg] = useState("");
+  const [areaOrg, setAreaorg] = useState(largestOrg);
 
   return (
     <Background>
       <DisplayBox>
         {/* select language */}
-        {/* <View style={styles.container}>
-          <Text style={styles.title}>Select your language</Text>
-          <View style={styles.exampleContainer}>
-            <View style={styles.selectContainer}>
-                <Select
-                options={languageOptions}
-                selected={selectedLanguage}
-                onSelect={setSelectedLanguage}
-                />
-            </View>
-            <View style={styles.toggle}>
-              <Toggle />
-            </View>
-            <Button text="Continue" onPress={handleContinue} />
-            <Stepper totalSteps={4} currentStep={currentStep} />
-          </View>
-        </View> */}
-
-        {/* username/password */}
-        {/* <View style={styles.container}>
-          <Text style={styles.title}>Create profile</Text>
-          
-          <View style={styles.exampleContainer}>
-            <Text style={{ fontWeight: 'bold', fontSize: 16 }}>Username</Text>
-            <UsernameInput onChange={setUsername} />
-
-            <Text style={{ fontWeight: 'bold', fontSize: 16, marginTop: "5%" }}>Password</Text>
-            <View style={{marginBottom: "5%"}}>
-              <PasswordInput onChange={setPassword} />
-            </View>
-
-            <Button text="Continue" onPress={handleContinue} />
-            <Stepper totalSteps={4} currentStep={currentStep} />
-          </View>
-        </View> */}
-
-        {/* community */}
-        <View style={styles.container}>
-          <Text style={styles.title}>Select Community</Text>
-
-          {customCommunity ? (
+        {currentStep === 0 && (
+          <View style={styles.container}>
+            <Text style={styles.title}>Select your language</Text>
             <View style={styles.exampleContainer}>
-              <View style={{ marginBottom: "5%" }}>
-                <View>
-                  <Text style={styles.sectionTitle}>
-                    Search organization name:
-                  </Text>
-                  <SearchableDropdown
-                    placeholder="Search organization..."
-                    text="Search organization..."
-                    options={cityOptions}
-                    selected={selectedCity}
-                    onSelect={setSelectedCity}
-                  />
-                </View>
-              </View>
-
               <View style={styles.selectContainer}>
                 <Select
                   options={languageOptions}
@@ -258,100 +226,216 @@ export default function BuildProfile() {
                   onSelect={setSelectedLanguage}
                 />
               </View>
-              <Button
-                text="Finish!"
-                onPress={() => {
-                  handleContinue();
-                }}
-              />
+              <View style={styles.toggle}>
+                <Toggle />
+              </View>
+              <Button text="Continue" onPress={handleContinue} />
               <Stepper totalSteps={4} currentStep={currentStep} />
             </View>
-          ) : (
-            <View style={{ ...styles.exampleContainer, gap: 14 }}>
-              <View>
-                <Text style={{ marginTop: 5, fontSize: 20, fontWeight: "700" }}>
-                  Your Organization
-                </Text>
-                <Text>Default largest organization in your area</Text>
-              </View>
-              <Select
-                options={[
-                  {
-                    id: "1",
-                    title: "hi",
-                    audioSource: require("../assets/audio/sample.mp3"),
-                    disabled: chooseCommunity,
-                  },
-                ]}
-                selected="1"
-                onSelect={() => {}}
-              />
-              <View style={{ display: "flex", flexDirection: "row", gap: 5 }}>
-                <Checkbox
-                  size="small"
-                  checked={chooseCommunity}
-                  onCheckedChange={() => {
-                    setChooseCommunity(!chooseCommunity);
-                  }}
-                />
-                <Text>Choose my own community</Text>
+          </View>
+        )}
+
+        {/* username/password */}
+        {currentStep === 1 && (
+          <View style={styles.container}>
+            <Text style={styles.title}>Create profile</Text>
+
+            <View style={styles.exampleContainer}>
+              <Text style={{ fontWeight: "bold", fontSize: 16 }}>Username</Text>
+              <UsernameInput onChange={setUsername} />
+
+              <Text
+                style={{ fontWeight: "bold", fontSize: 16, marginTop: "5%" }}
+              >
+                Password
+              </Text>
+              <View style={{ marginBottom: "5%" }}>
+                <PasswordInput onChange={setPassword} />
               </View>
 
-              <Button
-                text={chooseCommunity ? "Continue" : "Finish!"}
-                onPress={() => {
-                  if (chooseCommunity) {
-                    setCustomCommunity(true);
-                  } else {
-                    handleContinue();
-                  }
-                }}
-              />
+              <Button text="Continue" onPress={handleContinue} />
               <Stepper totalSteps={4} currentStep={currentStep} />
             </View>
-          )}
-        </View>
+          </View>
+        )}
 
-        {/* VIEW 3 WIP */}
-        {/* <View style={styles.container}>
-          <Text style={styles.title}>Select your location</Text>
+        {/* state/city is WIP */}
+        {currentStep === 2 && (
+          <View style={styles.container}>
+            <Text style={styles.title}>Select your location</Text>
 
-          <View style={styles.exampleContainer}>
-            <Text style={{ fontWeight: "bold", fontSize: 16 }}>State</Text>
-            <View style={styles.dropdownContainer}>
-              <View style={styles.stateDropdown}>
-                <Dropdown
-                  text={"--Select State--"}
-                  options={dropdownOptions}
-                  selected={selectedDropdown}
-                  onSelect={setSelectedDropdown}
-                />
+            <View style={styles.exampleContainer}>
+              <Text style={{ fontWeight: "bold", fontSize: 16 }}>State</Text>
+              <View style={styles.dropdownContainer}>
+                <View style={styles.stateDropdown}>
+                  <Dropdown
+                    text={"--Select State--"}
+                    options={dropdownOptions}
+                    selected={selectedDropdown}
+                    onSelect={setSelectedDropdown}
+                  />
+                </View>
               </View>
-            </View>
-            <Button text="Continue" onPress={handleContinue} />
-            <Stepper totalSteps={4} currentStep={currentStep} />
+              <Button text="Continue" onPress={handleContinue} />
+              <Stepper totalSteps={4} currentStep={currentStep} />
 
-            <Text
-              style={{ fontWeight: "bold", fontSize: 16, marginTop: "-10%" }}
-            >
-              City (optional)
-            </Text>
-            <View style={{ marginBottom: "5%" }}>
-              <View>
-                <SearchableDropdown
-                  placeholder="Search U.S. cities..."
-                  text={"Champaign"}
-                  options={cityOptions}
-                  selected={selectedCity}
-                  onSelect={setSelectedCity}
-                />
+              <Text
+                style={{ fontWeight: "bold", fontSize: 16, marginTop: "-10%" }}
+              >
+                City (optional)
+              </Text>
+              <View style={{ marginBottom: "5%" }}>
+                <View>
+                  <SearchableDropdown
+                    placeholder="Search U.S. cities..."
+                    text={"Champaign"}
+                    options={cityOptions}
+                    selected={selectedCity}
+                    onSelect={setSelectedCity}
+                    citySearch={true}
+                  />
+                </View>
               </View>
-            </View>
 
-            <Button text="Continue" onPress={handleContinue} />
-            <Stepper totalSteps={4} currentStep={currentStep} />
-          </View> 
-        </View>*/}
+              <Button text="Continue" onPress={handleContinue} />
+              <Stepper totalSteps={4} currentStep={currentStep} />
+            </View>
+          </View>
+        )}
+
+        {/* community */}
+        {currentStep === 3 && (
+          <View style={styles.container}>
+            {isLoading || !communityOrgs ? (
+              <Loader />
+            ) : (
+              <>
+                <Text style={styles.title}>Select Community</Text>
+
+                {customCommunity ? (
+                  <View style={styles.exampleContainer}>
+                    <View style={{ marginBottom: "5%" }}>
+                      <View>
+                        <Text style={styles.sectionTitle}>
+                          Search organization name:
+                        </Text>
+                        <SearchableDropdown
+                          placeholder="Search organization..."
+                          text="Search organization..."
+                          options={communityOrgs.map((c) => c.name)}
+                          selected={areaOrg}
+                          onSelect={setAreaorg}
+                          citySearch={false}
+                          disabled={communityOrg !== ""}
+                        />
+                      </View>
+                    </View>
+                    <Text
+                      style={{
+                        color: colors.jila[400],
+                        fontWeight: "800",
+                        margin: "auto",
+                        fontSize: 20,
+                      }}
+                    >
+                      OR
+                    </Text>
+
+                    <Text style={styles.sectionTitle}>
+                      Select from your area:
+                    </Text>
+                    <ScrollView
+                      persistentScrollbar={true}
+                      showsVerticalScrollIndicator={true}
+                      indicatorStyle="black"
+                      style={{
+                        ...styles.selectContainer,
+                        height: 200,
+                        paddingRight: 10,
+                      }}
+                    >
+                      <Select
+                        options={communityOrgs.map((c) => {
+                          return {
+                            id: c.name,
+                            title:
+                              c.name.length < 17
+                                ? c.name
+                                : c.name.substring(0, 17) + "...",
+                            audioSource: require("../assets/audio/sample.mp3"),
+                          };
+                        })}
+                        selected={communityOrg}
+                        onSelect={setCommunityOrg}
+                      />
+                    </ScrollView>
+                    <Button
+                      text="Finish!"
+                      onPress={() => {
+                        handleContinue();
+                      }}
+                    />
+                    <Stepper totalSteps={4} currentStep={currentStep} />
+                  </View>
+                ) : (
+                  <View style={{ ...styles.exampleContainer, gap: 14 }}>
+                    <View>
+                      <Text
+                        style={{
+                          marginTop: 5,
+                          fontSize: 20,
+                          fontWeight: "700",
+                        }}
+                      >
+                        Your Organization
+                      </Text>
+                      <Text>Default largest organization in your area</Text>
+                    </View>
+                    <Select
+                      options={[
+                        {
+                          id: "1",
+                          title:
+                            largestOrg.name.length < 15
+                              ? largestOrg.name
+                              : largestOrg.name.substring(0, 15) + "...",
+                          audioSource: require("../assets/audio/sample.mp3"),
+                          disabled: chooseCommunity,
+                        },
+                      ]}
+                      selected="1"
+                      onSelect={() => {}}
+                    />
+                    <View
+                      style={{ display: "flex", flexDirection: "row", gap: 5 }}
+                    >
+                      <Checkbox
+                        size="small"
+                        checked={chooseCommunity}
+                        onCheckedChange={() => {
+                          setChooseCommunity(!chooseCommunity);
+                        }}
+                      />
+                      <Text>Choose my own community</Text>
+                    </View>
+
+                    <Button
+                      text={chooseCommunity ? "Continue" : "Finish!"}
+                      onPress={() => {
+                        if (chooseCommunity) {
+                          setCustomCommunity(true);
+                        } else {
+                          handleContinue();
+                        }
+                      }}
+                    />
+                    <Stepper totalSteps={4} currentStep={currentStep} />
+                  </View>
+                )}
+              </>
+            )}
+          </View>
+        )}
       </DisplayBox>
     </Background>
   );

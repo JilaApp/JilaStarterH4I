@@ -30,7 +30,7 @@ export const communityRouter = router({
   }),
 
   getAllCommunityOrgs: protectedProcedure.query(async ({ ctx }) => {
-    await requireJilaAdmin(ctx.auth.userId!);
+    // await requireJilaAdmin(ctx.auth.userId!);
 
     const communityOrgs = await prisma.communityOrg.findMany({
       orderBy: { name: "asc" },
@@ -54,7 +54,7 @@ export const communityRouter = router({
       z.object({
         email: z.string().email(),
         communityOrgId: z.string(),
-      }),
+      })
     )
     .mutation(async ({ input, ctx }) => {
       await requireJilaAdmin(ctx.auth.userId!);
@@ -85,7 +85,7 @@ export const communityRouter = router({
       z.object({
         email: z.string().email(),
         communityName: z.string().min(1),
-      }),
+      })
     )
     .mutation(async ({ input, ctx }) => {
       await requireJilaAdmin(ctx.auth.userId!);
