@@ -289,7 +289,6 @@ export const socialServicesRouter = router({
       return addSocialService(input, communityOrgId);
     }),
   getAllSocialServices: protectedProcedure.query(async ({ ctx }) => {
-    await requireCommunityOrgAdmin(ctx.auth.userId!);
     const communityOrgId = await getUserCommunityOrgId(ctx.auth.userId!);
     return getAllSocialServices(communityOrgId);
   }),

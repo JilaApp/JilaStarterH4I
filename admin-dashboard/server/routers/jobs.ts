@@ -416,7 +416,6 @@ export const jobsRouter = router({
     }),
 
   getAllJobs: protectedProcedure.query(async ({ ctx }) => {
-    await requireCommunityOrgAdmin(ctx.auth.userId!);
     const communityOrgId = await getUserCommunityOrgId(ctx.auth.userId!);
     return getAllJobs(communityOrgId);
   }),

@@ -23,6 +23,7 @@ import { useNotification } from "@/hooks/useNotification";
 import { useSorting } from "@/hooks/useSorting";
 import { logger } from "@/lib/logger";
 import EmptyState from "@/components/shared/EmptyState";
+import { formatTime } from "../forms/AudioDisplay";
 
 type FullVideoType = Videos;
 
@@ -32,6 +33,7 @@ interface VideoResourceData extends DataRow {
   topic: string;
   phoneNumber: string;
   link: string;
+  duration: string;
 }
 
 interface SocialServiceData extends DataRow {
@@ -154,6 +156,7 @@ export default function DashboardView() {
           topic: TOPIC_MAP[video.topic] || "Other",
           phoneNumber: "N/A",
           link: video.urls[0],
+          duration: formatTime(video.durations[0]),
         }))
         .sort((a, b) => a.title.localeCompare(b.title)) || [],
     [videosData],
@@ -328,7 +331,7 @@ export default function DashboardView() {
       accessorKey: "topic",
       cell: (value) => <TopicTag variant={value as TopicVariant} />,
     },
-    { header: "Phone number", accessorKey: "phoneNumber" },
+    { header: "Duration", accessorKey: "duration" },
     {
       header: "Link",
       accessorKey: "link",
