@@ -298,7 +298,6 @@ export const videosRouter = router({
       return addVideo(input, communityOrgId);
     }),
   getAllVideos: protectedProcedure.query(async ({ ctx }) => {
-    await requireCommunityOrgAdmin(ctx.auth.userId!);
     const communityOrgId = await getUserCommunityOrgId(ctx.auth.userId!);
     return getAllVideos(communityOrgId);
   }),
