@@ -205,7 +205,9 @@ export default function DevPage() {
     audioFilename: "intro_health.mp3",
     audioFileSize: 1024000,
     audioFileS3Key: "audio/intro_health.mp3",
-    youtube_url: [true, true, true, true, true],
+    durations: [60, 60, 60, 60, 60],
+    uploadDate: new Date(),
+    communityOrgId: "1",
   };
 
   return (

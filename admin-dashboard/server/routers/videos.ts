@@ -64,7 +64,19 @@ async function getYoutubeDuration(url: string) {
   let result = await fetch(
     `https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id=${id}&key=${process.env.GOOGLE_API_KEY}`,
   );
+
+  if (!result.ok) {
+    console.error(`YouTube API error: ${result.status} ${result.statusText}`);
+    return 0;
+  }
+
   let r = await result.json();
+
+  if (!r.items || r.items.length === 0) {
+    console.error(`No video found for id: ${id}`);
+    return 0;
+  }
+
   let str = r.items[0].contentDetails.duration.substring(2);
   let secs = 0;
   if (str.includes("H")) {

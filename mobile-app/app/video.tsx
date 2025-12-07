@@ -52,6 +52,8 @@ export default function VideoPage({
         ? Number(params.clickIndex)
         : 0;
 
+  const category = params.category;
+
   // Safety Check
   if (!videos || !videos.urls) {
     return (
@@ -63,15 +65,12 @@ export default function VideoPage({
 
   // 4. Extract variables
   const video_urls = videos.urls;
-  const video_youtube_list = videos.youtube_url || [];
   const total_urls = video_urls.length;
   const title = videos.titleEnglish;
   const uri = video_urls[clickIndex];
 
   // Handle youtube type logic safely
-  const isYoutube = Array.isArray(video_youtube_list)
-    ? video_youtube_list[clickIndex]
-    : video_youtube_list;
+  const isYoutube = uri.includes("youtube.com") || uri.includes("youtu.be");
 
   const type = isYoutube ? VideoType.YouTube : VideoType.GoogleDrive;
   const showNext = clickIndex < total_urls - 1;
@@ -90,6 +89,7 @@ export default function VideoPage({
       params: {
         clickIndex: clickIndex + 1,
         videos: JSON.stringify(videos),
+        category: category,
       },
     });
   };
@@ -103,7 +103,14 @@ export default function VideoPage({
       <View
         style={{ flexDirection: "row", alignItems: "center", marginBottom: 45 }}
       >
-        <TouchableOpacity onPress={() => router.push("/video-router")}>
+        <TouchableOpacity
+          onPress={() =>
+            router.push({
+              pathname: "/video-router",
+              params: { category: category },
+            })
+          }
+        >
           <ChevronLeft
             style={{ marginLeft: 15, marginRight: 15 }}
             hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
@@ -161,10 +168,10 @@ export default function VideoPage({
           >
             <VideoUpNext
               title={`Part ${clickIndex + 2}`}
-              duration={67}
+              duration={videos.durations[clickIndex + 1] || 0}
               videoUrl="sigma.com"
               onPress={handleNextVideo}
-            />{" "}
+            />
             {/*need to figure out duration */}
           </View>
         </View>

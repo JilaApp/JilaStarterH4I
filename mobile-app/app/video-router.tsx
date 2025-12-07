@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View, StyleSheet, ActivityIndicator } from "react-native";
-import { Link, useLocalSearchParams } from "expo-router";
+import { Link, useLocalSearchParams, useRouter } from "expo-router";
 import Text from "@/components/JilaText";
 import Header from "@/components/Header";
 import { colors } from "@/colors";
@@ -13,6 +13,7 @@ import { ChevronLeft } from "lucide-react-native";
 
 export default function VideoRouter() {
   const { category } = useLocalSearchParams<{ category: string }>();
+  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const onSearchChange = (query: string) => {
     setSearchQuery(query);
@@ -27,7 +28,7 @@ export default function VideoRouter() {
   const filteredVideos =
     videos?.filter((video: VideoData) => {
       const matchesCategory =
-        category === null || video.topic === category.toUpperCase();
+        !category || video.topic === category.toUpperCase();
 
       const matchesSearch =
         !searchQuery ||
@@ -101,6 +102,16 @@ export default function VideoRouter() {
                       name: `Part ${i + 1}`,
                     };
                   })}
+                  onVideoSelect={(index) => {
+                    router.push({
+                      pathname: "/video",
+                      params: {
+                        clickIndex: index,
+                        videos: JSON.stringify(vid),
+                        category: category,
+                      },
+                    });
+                  }}
                 />
               );
             })}

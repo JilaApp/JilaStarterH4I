@@ -62,7 +62,6 @@ export type VideoData = {
   audioFileSize: number | null;
   audioFileS3Key: string | null;
   communityOrgId: string | null;
-  youtube_url: Boolean[];
 };
 
 export type Job = {
