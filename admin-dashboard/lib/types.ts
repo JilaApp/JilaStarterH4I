@@ -24,6 +24,14 @@ export interface ColumnDefinition<
   header: string;
   accessorKey: K;
   cell?: (value: T[K]) => React.ReactNode;
+  sortable?: boolean;
+}
+
+export type SortDirection = "asc" | "desc";
+
+export interface SortConfig {
+  key: string;
+  direction: SortDirection;
 }
 
 export type TopicVariant =
