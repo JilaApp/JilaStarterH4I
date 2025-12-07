@@ -11,13 +11,33 @@ datasource db {
   directUrl = env("JILA_BACKEND_POSTGRES_URL") // uses a direct connection
 }
 
+model CommunityOrg {
+  id            String          @id @default(cuid())
+  name          String          @unique
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  city          String
+  state         String
+  adminUsers    AdminUser[]
+  videos        Videos[]
+  socialServices SocialServices[]
+  jobs          Jobs[]
+}
+
 model AdminUser {
-  id           String   @id @default(cuid())
-  clerkId      String   @unique
-  email        String   @unique
-  communityOrg String
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id             String        @id @default(cuid())
+  clerkId        String        @unique
+  email          String        @unique
+  role           AdminRole     @default(COMMUNITY_ORG_ADMIN)
+  communityOrgId String?
+  communityOrg   CommunityOrg? @relation(fields: [communityOrgId], references: [id])
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+}
+
+enum AdminRole {
+  JILA_ADMIN
+  COMMUNITY_ORG_ADMIN
 }
 
 model AppUser {
@@ -31,33 +51,38 @@ model AppUser {
 }
 
 model Videos {
-  id                  Int      @id @default(autoincrement())
+  id                  Int           @id @default(autoincrement())
   titleEnglish        String
   titleQanjobal       String
-  audioFile           Bytes?
+  audioFileS3Key      String?
   audioFilename       String?
   audioFileSize       Int?
   topic               VideoTopic
   urls                String[]
+  durations           Int[]
   uploadDate          DateTime
   descriptionEnglish  String?
   descriptionQanjobal String?
+  communityOrgId      String?
+  communityOrg        CommunityOrg? @relation(fields: [communityOrgId], references: [id])
 }
 
 model SocialServices {
-  id           Int                   @id @default(autoincrement())
-  title        String
-  category     SocialServiceCategory
-  phone_number String                @unique @db.VarChar(20)
-  address      String?
-  description  String?
-  url          String?               @unique
-  titleAudioFilename String?
-  titleAudioFileSize Int?
-  titleAudioFile String? // base64 encoded
-  descriptionAudioFilename String?
-  descriptionAudioFileSize Int?
-  descriptionAudioFile String?
+  id                        Int                   @id @default(autoincrement())
+  title                     String
+  category                  SocialServiceCategory
+  phone_number              String                @unique @db.VarChar(20)
+  address                   String?
+  description               String?
+  url                       String?               @unique
+  titleAudioFilename        String?
+  titleAudioFileSize        Int?
+  titleAudioFileS3Key       String?
+  descriptionAudioFilename  String?
+  descriptionAudioFileSize  Int?
+  descriptionAudioFileS3Key String?
+  communityOrgId            String?
+  communityOrg              CommunityOrg?         @relation(fields: [communityOrgId], references: [id])
 }
 
 model Jobs {
@@ -80,6 +105,8 @@ model Jobs {
   unread               Boolean          @default(true)
   createdAt            DateTime         @default(now())
   updatedAt            DateTime         @updatedAt
+  communityOrgId       String?
+  communityOrg         CommunityOrg?    @relation(fields: [communityOrgId], references: [id])
 }
 
 enum VideoTopic {
