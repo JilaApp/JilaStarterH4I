@@ -46,6 +46,8 @@ model AppUser {
   username     String   @unique
   communityOrg String
   language     String
+  city         String?
+  state        String
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }

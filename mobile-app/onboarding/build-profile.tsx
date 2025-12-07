@@ -1,5 +1,5 @@
-import { View, StyleSheet, ScrollView } from "react-native";
-import { useState } from "react";
+import { View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
+import { useState, useEffect } from "react";
 import { colors } from "@/colors";
 import { sizes } from "@/constants/sizes";
 import Background from "@/components/Background";
@@ -19,7 +19,7 @@ import { useRouter } from "expo-router";
 import React from "react";
 import Checkbox from "@/components/Checkbox";
 import { trpc } from "@/lib/trpc";
-import { Loader } from "lucide-react-native";
+import { Loader, ChevronLeft } from "lucide-react-native";
 
 const COMMUNITY_ORGS = [
   "Community Org 1",
@@ -71,13 +71,8 @@ export default function BuildProfile() {
   const [chooseCommunity, setChooseCommunity] = useState(false);
   const [customCommunity, setCustomCommunity] = useState(false);
 
-  const onSignUpPress = async () => {
+  const onSignUpPress = async (selectedCommunityOrgName: string) => {
     if (!isLoaded) return;
-
-    if (password !== confirmPassword) {
-      setError("Passwords do not match");
-      return;
-    }
 
     if (password.length < 8) {
       setError("Password must be at least 8 characters");
@@ -89,26 +84,39 @@ export default function BuildProfile() {
       return;
     }
 
+    if (!selectedLanguage) {
+      setError("Please select a language");
+      return;
+    }
+
+    if (!selectedDropdown) {
+      setError("Please select a state");
+      return;
+    }
+
+    if (!selectedCommunityOrgName) {
+      setError("Please select a community organization");
+      return;
+    }
+
     setError("");
     setLoading(true);
 
     try {
-      // Create sign up with username and password
-      // Store community org and language in unsafe metadata (will be moved to database by webhook)
       await signUp.create({
         username,
         password,
         unsafeMetadata: {
-          communityOrg,
-          language,
+          communityOrg: selectedCommunityOrgName,
+          language: selectedLanguage,
+          state: selectedDropdown,
+          city: selectedCity || null,
         },
       });
 
-      // Set the session active
       await setActive({ session: signUp.createdSessionId });
 
-      // Navigate to home
-      router.replace("/");
+      setCurrentStep(5);
     } catch (err: any) {
       console.error("Sign up error:", JSON.stringify(err, null, 2));
       setError(err.errors?.[0]?.message || "Failed to sign up");
@@ -119,7 +127,6 @@ export default function BuildProfile() {
 
   const [selectedDropdown, setSelectedDropdown] = useState<string | null>(null);
   const dropdownOptions = [
-    "",
     "Alabama",
     "Alaska",
     "Arizona",
@@ -173,23 +180,43 @@ export default function BuildProfile() {
   ];
 
   const [selectedCity, setSelectedCity] = useState<string | null>(null);
-  const cityOptions = [
-    "Champaign",
-    "Urbana",
-    "Chicago",
-    "Springfield",
-    "Peoria",
-    "Rockford",
-    "Naperville",
-    "Aurora",
-    "Joliet",
-    "Elgin",
-  ];
+  const [citySuggestions, setCitySuggestions] = useState<string[]>([]);
+  const [citySearchText, setCitySearchText] = useState("");
 
-  const [currentStep, setCurrentStep] = useState(0);
+  const [currentStep, setCurrentStep] = useState(1);
 
   const handleContinue = () => {
     setCurrentStep((prev) => (prev < 4 ? prev + 1 : prev));
+  };
+
+  const handleBack = () => {
+    if (currentStep > 1) {
+      setCurrentStep((prev) => prev - 1);
+    }
+  };
+
+  useEffect(() => {
+    if (citySearchText.length > 2) {
+      fetchCitySuggestions(citySearchText);
+    } else {
+      setCitySuggestions([]);
+    }
+  }, [citySearchText]);
+
+  const fetchCitySuggestions = async (input: string) => {
+    const url = `http://gd.geobytes.com/AutoCompleteCity?q=${encodeURIComponent(input)}`;
+    try {
+      const response = await fetch(url);
+      if (!response.ok) throw new Error("Network response was not ok");
+      const json = await response.json();
+      const cityNames = (json || []).map((fullName: string) => {
+        return fullName.split(',')[0].trim();
+      });
+      setCitySuggestions(cityNames);
+    } catch (error) {
+      console.error("Fetching city error:", error);
+      setCitySuggestions([]);
+    }
   };
 
   const {
@@ -199,11 +226,35 @@ export default function BuildProfile() {
   } = trpc.community.getAllCommunityOrgs.useQuery();
 
   let largestOrg;
-  if (communityOrgs) {
-    largestOrg = communityOrgs[0];
-    for (let org of communityOrgs) {
-      if (org.videos && org.videos.length > largestOrg.videos.length) {
-        largestOrg = org;
+  let showStateWarning = false;
+
+  if (communityOrgs && communityOrgs.length > 0) {
+    if (selectedDropdown) {
+      const orgsInUserState = communityOrgs.filter(org => org.state === selectedDropdown);
+
+      if (orgsInUserState.length > 0) {
+        largestOrg = orgsInUserState[0];
+        for (let org of orgsInUserState) {
+          if (org.videos && largestOrg.videos && org.videos.length > largestOrg.videos.length) {
+            largestOrg = org;
+          }
+        }
+        showStateWarning = false;
+      } else {
+        largestOrg = communityOrgs[0];
+        for (let org of communityOrgs) {
+          if (org.videos && largestOrg.videos && org.videos.length > largestOrg.videos.length) {
+            largestOrg = org;
+          }
+        }
+        showStateWarning = true;
+      }
+    } else {
+      largestOrg = communityOrgs[0];
+      for (let org of communityOrgs) {
+        if (org.videos && largestOrg.videos && org.videos.length > largestOrg.videos.length) {
+          largestOrg = org;
+        }
       }
     }
   }
@@ -215,7 +266,7 @@ export default function BuildProfile() {
     <Background>
       <DisplayBox>
         {/* select language */}
-        {currentStep === 0 && (
+        {currentStep === 1 && (
           <View style={styles.container}>
             <Text style={styles.title}>Select your language</Text>
             <View style={styles.exampleContainer}>
@@ -229,15 +280,19 @@ export default function BuildProfile() {
               <View style={styles.toggle}>
                 <Toggle />
               </View>
-              <Button text="Continue" onPress={handleContinue} />
-              <Stepper totalSteps={4} currentStep={currentStep} />
+              <Button text="Continue" onPress={handleContinue} disabled={!selectedLanguage} />
+              <Stepper totalSteps={4} currentStep={currentStep - 1} />
             </View>
           </View>
         )}
 
         {/* username/password */}
-        {currentStep === 1 && (
+        {currentStep === 2 && (
           <View style={styles.container}>
+            <TouchableOpacity style={styles.backButton} onPress={handleBack}>
+              <ChevronLeft size={20} color={colors.jila[400]} />
+              <Text style={styles.backText}>Back</Text>
+            </TouchableOpacity>
             <Text style={styles.title}>Create profile</Text>
 
             <View style={styles.exampleContainer}>
@@ -253,15 +308,19 @@ export default function BuildProfile() {
                 <PasswordInput onChange={setPassword} />
               </View>
 
-              <Button text="Continue" onPress={handleContinue} />
-              <Stepper totalSteps={4} currentStep={currentStep} />
+              <Button text="Continue" onPress={handleContinue} disabled={!username || !password || password.length < 8} />
+              <Stepper totalSteps={4} currentStep={currentStep - 1} />
             </View>
           </View>
         )}
 
         {/* state/city is WIP */}
-        {currentStep === 2 && (
+        {currentStep === 3 && (
           <View style={styles.container}>
+            <TouchableOpacity style={styles.backButton} onPress={handleBack}>
+              <ChevronLeft size={20} color={colors.jila[400]} />
+              <Text style={styles.backText}>Back</Text>
+            </TouchableOpacity>
             <Text style={styles.title}>Select your location</Text>
 
             <View style={styles.exampleContainer}>
@@ -276,11 +335,9 @@ export default function BuildProfile() {
                   />
                 </View>
               </View>
-              <Button text="Continue" onPress={handleContinue} />
-              <Stepper totalSteps={4} currentStep={currentStep} />
 
               <Text
-                style={{ fontWeight: "bold", fontSize: 16, marginTop: "-10%" }}
+                style={{ fontWeight: "bold", fontSize: 16, marginTop: "5%" }}
               >
                 City (optional)
               </Text>
@@ -288,28 +345,33 @@ export default function BuildProfile() {
                 <View>
                   <SearchableDropdown
                     placeholder="Search U.S. cities..."
-                    text={"Champaign"}
-                    options={cityOptions}
+                    text={"Search U.S. cities..."}
+                    options={citySuggestions}
                     selected={selectedCity}
                     onSelect={setSelectedCity}
                     citySearch={true}
+                    onSearchChange={setCitySearchText}
                   />
                 </View>
               </View>
 
-              <Button text="Continue" onPress={handleContinue} />
-              <Stepper totalSteps={4} currentStep={currentStep} />
+              <Button text="Continue" onPress={handleContinue} disabled={!selectedDropdown} />
+              <Stepper totalSteps={4} currentStep={currentStep - 1} />
             </View>
           </View>
         )}
 
         {/* community */}
-        {currentStep === 3 && (
+        {currentStep === 4 && (
           <View style={styles.container}>
-            {isLoading || !communityOrgs ? (
+            {isLoading || !communityOrgs || !largestOrg ? (
               <Loader />
             ) : (
               <>
+                <TouchableOpacity style={styles.backButton} onPress={handleBack}>
+                  <ChevronLeft size={20} color={colors.jila[400]} />
+                  <Text style={styles.backText}>Back</Text>
+                </TouchableOpacity>
                 <Text style={styles.title}>Select Community</Text>
 
                 {customCommunity ? (
@@ -372,10 +434,12 @@ export default function BuildProfile() {
                     <Button
                       text="Finish!"
                       onPress={() => {
-                        handleContinue();
+                        const selectedOrg = communityOrg || areaOrg?.name || "";
+                        onSignUpPress(selectedOrg);
                       }}
+                      disabled={loading || (!communityOrg && !areaOrg)}
                     />
-                    <Stepper totalSteps={4} currentStep={currentStep} />
+                    <Stepper totalSteps={4} currentStep={currentStep - 1} />
                   </View>
                 ) : (
                   <View style={{ ...styles.exampleContainer, gap: 14 }}>
@@ -406,6 +470,15 @@ export default function BuildProfile() {
                       selected="1"
                       onSelect={() => {}}
                     />
+
+                    {showStateWarning && (
+                      <View style={styles.warningContainer}>
+                        <Text style={styles.warningText}>
+                          ⚠ Resources may not be local to your area
+                        </Text>
+                      </View>
+                    )}
+
                     <View
                       style={{ display: "flex", flexDirection: "row", gap: 5 }}
                     >
@@ -425,15 +498,36 @@ export default function BuildProfile() {
                         if (chooseCommunity) {
                           setCustomCommunity(true);
                         } else {
-                          handleContinue();
+                          onSignUpPress(largestOrg.name);
                         }
                       }}
+                      disabled={loading}
                     />
-                    <Stepper totalSteps={4} currentStep={currentStep} />
+                    <Stepper totalSteps={4} currentStep={currentStep - 1} />
                   </View>
                 )}
               </>
             )}
+          </View>
+        )}
+
+        {/* Step 5: Video Welcome Screen */}
+        {currentStep === 5 && (
+          <View style={styles.videoContainer}>
+            <Text style={styles.videoTitle}>Welcome!</Text>
+            <Text style={styles.videoSubtitle}>
+              Watch this video to learn how to use the app!
+            </Text>
+
+            <View style={styles.videoWrapper}>
+              <VideoEmbed
+                uri="https://youtu.be/tXlPRgp1zhY"
+                type={VideoType.YouTube}
+                height={250}
+              />
+            </View>
+
+            <Button text="Continue" onPress={() => router.replace("/")} />
           </View>
         )}
       </DisplayBox>
@@ -443,9 +537,7 @@ export default function BuildProfile() {
 
 const styles = StyleSheet.create({
   stateDropdown: {
-    width: "140%",
-    marginLeft: -40,
-    marginTop: -40,
+    width: "100%",
   },
   container: {
     flex: 1,
@@ -503,12 +595,61 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
   dropdownContainer: {
-    margin: 40,
+    marginBottom: sizes.spacing.sm,
   },
   dropdownText: {
     color: colors.gray[700],
   },
   semibold: {
     fontWeight: "600",
+  },
+  backButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    alignSelf: "flex-start",
+    marginBottom: sizes.spacing.sm,
+    marginLeft: -sizes.spacing.md,
+  },
+  backText: {
+    fontSize: sizes.fontSize.base,
+    color: colors.jila[400],
+    marginLeft: sizes.spacing.xs,
+  },
+  warningContainer: {
+    backgroundColor: colors.cream[200],
+    padding: sizes.spacing.sm,
+    borderRadius: sizes.borderRadius.sm,
+    borderLeftWidth: 3,
+    borderLeftColor: colors.error[400],
+  },
+  warningText: {
+    fontSize: sizes.fontSize.sm,
+    color: colors.error[400],
+    fontWeight: "600",
+  },
+  videoContainer: {
+    flex: 1,
+    width: "93%",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    backgroundColor: colors.white[400],
+    marginHorizontal: "auto",
+    paddingTop: sizes.spacing.xl,
+    gap: sizes.spacing.md,
+  },
+  videoTitle: {
+    fontSize: sizes.fontSize.xxl,
+    fontWeight: "700",
+    color: colors.jila[400],
+  },
+  videoSubtitle: {
+    fontSize: sizes.fontSize.base,
+    color: colors.type[400],
+    textAlign: "center",
+    paddingHorizontal: sizes.spacing.md,
+  },
+  videoWrapper: {
+    width: "100%",
+    paddingHorizontal: sizes.spacing.md,
   },
 });
