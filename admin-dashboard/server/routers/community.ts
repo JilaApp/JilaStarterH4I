@@ -86,13 +86,19 @@ export const communityRouter = router({
       z.object({
         email: z.string().email(),
         communityName: z.string().min(1),
+        city: z.string().min(1),
+        state: z.string().min(1),
       }),
     )
     .mutation(async ({ input, ctx }) => {
       await requireJilaAdmin(ctx.auth.userId!);
 
       const communityOrg = await prisma.communityOrg.create({
-        data: { name: input.communityName },
+        data: {
+          name: input.communityName,
+          city: input.city,
+          state: input.state,
+        },
       });
 
       try {

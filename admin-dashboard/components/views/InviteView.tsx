@@ -11,6 +11,7 @@ import { useForm, createField } from "@/hooks/useForm";
 import { validateEmail, validateRequired } from "@/lib/validators";
 import { logger } from "@/lib/logger";
 import FormError from "@/components/shared/FormError";
+import { US_STATES } from "@/lib/constants";
 
 type InviteMode = "existing" | "new";
 
@@ -30,6 +31,8 @@ export default function InviteView() {
   } = useForm({
     email: createField(""),
     communityName: createField(""),
+    city: createField(""),
+    stateIndex: createField<number | undefined>(undefined),
     selectedCommunityIndex: createField<number | undefined>(undefined),
   });
 
@@ -98,9 +101,22 @@ export default function InviteView() {
         return;
       }
 
+      const cityError = validateRequired(fields.city.value);
+      if (cityError) {
+        setFieldError("city", cityError);
+        return;
+      }
+
+      if (fields.stateIndex.value === undefined) {
+        setFieldError("stateIndex", "Please select a state");
+        return;
+      }
+
       sendInvitationWithNewCommunityMutation.mutate({
         email: fields.email.value,
         communityName: fields.communityName.value,
+        city: fields.city.value,
+        state: US_STATES[fields.stateIndex.value],
       });
     }
   };
@@ -170,83 +186,164 @@ export default function InviteView() {
         </button>
       </div>
 
-      <div className="flex gap-6 items-start">
-        <div className="w-[308px]">
-          {inviteMode === "existing" ? (
-            <FormField
-              title="Community name"
-              required
-              state={fields.selectedCommunityIndex.state}
-              errorString={fields.selectedCommunityIndex.error}
-            >
-              {() => (
-                <Dropdown
-                  options={communityOrgNames}
-                  value={fields.selectedCommunityIndex.value}
-                  onChange={(val) =>
-                    setFieldValue("selectedCommunityIndex", val)
-                  }
-                  placeholder="Select a community"
-                  state={fields.selectedCommunityIndex.state}
-                />
-              )}
-            </FormField>
-          ) : (
-            <FormField
-              title="Community name"
-              required
-              state={fields.communityName.state}
-              errorString={fields.communityName.error}
-              value={fields.communityName.value}
-              onChange={(val) => setFieldValue("communityName", val)}
-            >
-              {(props) => (
-                <TextInput
-                  {...props}
-                  placeholder="Enter community name"
-                  className="w-full h-[60px]"
-                />
-              )}
-            </FormField>
-          )}
-        </div>
+      <div className="flex flex-col gap-6 w-full max-w-[1000px]">
+        {inviteMode === "existing" ? (
+          <div className="flex gap-6 items-start">
+            <div className="w-[308px]">
+              <FormField
+                title="Community name"
+                required
+                state={fields.selectedCommunityIndex.state}
+                errorString={fields.selectedCommunityIndex.error}
+              >
+                {() => (
+                  <Dropdown
+                    options={communityOrgNames}
+                    value={fields.selectedCommunityIndex.value}
+                    onChange={(val) =>
+                      setFieldValue("selectedCommunityIndex", val)
+                    }
+                    placeholder="Select a community"
+                    state={fields.selectedCommunityIndex.state}
+                  />
+                )}
+              </FormField>
+            </div>
 
-        <div className="w-[631px]">
-          <FormField
-            title="Email"
-            required
-            state={fields.email.state}
-            errorString={fields.email.error}
-            value={fields.email.value}
-            onChange={(val) => setFieldValue("email", val)}
-          >
-            {(props) => (
-              <EmailInput
-                {...props}
-                placeholder="Enter email address"
-                className="w-full h-[60px]"
-              />
-            )}
-          </FormField>
-        </div>
+            <div className="flex-1">
+              <FormField
+                title="Email"
+                required
+                state={fields.email.state}
+                errorString={fields.email.error}
+                value={fields.email.value}
+                onChange={(val) => setFieldValue("email", val)}
+              >
+                {(props) => (
+                  <EmailInput
+                    {...props}
+                    placeholder="Enter email address"
+                    className="w-full h-[60px]"
+                  />
+                )}
+              </FormField>
+            </div>
+
+            <button
+              onClick={handleSubmit}
+              disabled={isLoading}
+              className={`w-[56px] h-[60px] mt-[34px] rounded-[10px] bg-jila-400 flex items-center justify-center transition-opacity ${
+                isLoading
+                  ? "opacity-50 cursor-not-allowed"
+                  : "hover:opacity-90 cursor-pointer"
+              }`}
+            >
+              <Send className="w-6 h-6 text-white" />
+            </button>
+          </div>
+        ) : (
+          <>
+            <div className="flex gap-6">
+              <div className="flex-1">
+                <FormField
+                  title="Community name"
+                  required
+                  state={fields.communityName.state}
+                  errorString={fields.communityName.error}
+                  value={fields.communityName.value}
+                  onChange={(val) => setFieldValue("communityName", val)}
+                >
+                  {(props) => (
+                    <TextInput
+                      {...props}
+                      placeholder="Community name"
+                      className="w-full h-[60px]"
+                    />
+                  )}
+                </FormField>
+              </div>
+            </div>
+
+            <div className="flex gap-6">
+              <div className="flex-1">
+                <FormField
+                  title="City"
+                  required
+                  state={fields.city.state}
+                  errorString={fields.city.error}
+                  value={fields.city.value}
+                  onChange={(val) => setFieldValue("city", val)}
+                >
+                  {(props) => (
+                    <TextInput
+                      {...props}
+                      placeholder="City"
+                      className="w-full h-[60px]"
+                    />
+                  )}
+                </FormField>
+              </div>
+
+              <div className="flex-1">
+                <FormField
+                  title="State"
+                  required
+                  state={fields.stateIndex.state}
+                  errorString={fields.stateIndex.error}
+                >
+                  {() => (
+                    <Dropdown
+                      options={[...US_STATES]}
+                      value={fields.stateIndex.value}
+                      onChange={(val) => setFieldValue("stateIndex", val)}
+                      placeholder="-"
+                      state={fields.stateIndex.state}
+                    />
+                  )}
+                </FormField>
+              </div>
+            </div>
+
+            <div className="flex gap-6 items-start">
+              <div className="flex-1">
+                <FormField
+                  title="Email"
+                  required
+                  state={fields.email.state}
+                  errorString={fields.email.error}
+                  value={fields.email.value}
+                  onChange={(val) => setFieldValue("email", val)}
+                >
+                  {(props) => (
+                    <EmailInput
+                      {...props}
+                      placeholder="Email"
+                      className="w-full h-[60px]"
+                    />
+                  )}
+                </FormField>
+              </div>
+
+              <button
+                onClick={handleSubmit}
+                disabled={isLoading}
+                className={`w-[56px] h-[60px] mt-[34px] rounded-[10px] bg-jila-400 flex items-center justify-center transition-opacity ${
+                  isLoading
+                    ? "opacity-50 cursor-not-allowed"
+                    : "hover:opacity-90 cursor-pointer"
+                }`}
+              >
+                <Send className="w-6 h-6 text-white" />
+              </button>
+            </div>
+          </>
+        )}
 
         {formError && (
-          <div className="w-[631px]">
+          <div className="w-full">
             <FormError message={formError} />
           </div>
         )}
-
-        <button
-          onClick={handleSubmit}
-          disabled={isLoading}
-          className={`w-[56px] h-[60px] mt-[34px] rounded-[10px] bg-jila-400 flex items-center justify-center transition-opacity ${
-            isLoading
-              ? "opacity-50 cursor-not-allowed"
-              : "hover:opacity-90 cursor-pointer"
-          }`}
-        >
-          <Send className="w-6 h-6 text-white" />
-        </button>
       </div>
     </div>
   );
