@@ -6,6 +6,7 @@ import { sizes } from "@/constants/sizes";
 
 export function UsernameInput({
   placeholder = inputVariants.username.placeholder,
+  onChange,
   ...props
 }: CommonInputProps) {
   const { type, icon: Icon } = inputVariants.username;
@@ -13,6 +14,7 @@ export function UsernameInput({
     <BaseInput
       type={type}
       placeholder={placeholder}
+      onChange={onChange}
       icon={<Icon size={sizes.icon.md} color={colors.gray[300]} />}
       {...props}
     />
