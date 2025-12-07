@@ -42,6 +42,7 @@ import VideoEmbed, { VideoType } from "@/components/VideoEmbed";
 import VideoUpNext from "@/components/VideoUpNext";
 import JobCard from "@/components/JobCard";
 import VideoPage from "@/components/VideoPage";
+import { VideoData } from "@/types/api";
 
 export default function DevPage() {
   const [
@@ -187,14 +188,30 @@ export default function DevPage() {
   const videoEmbedGoogleDriveURL =
     "https://drive.google.com/file/d/1OqRpiJnv6jykHuMxv1pJM6FqPzdgW4VD/view?usp=sharing";
 
+  const mockVideo: VideoData = {
+    id: 1,
+    titleEnglish: "Introduction to Healthcare",
+    titleQanjobal: "Yichbanil Yetok An",
+    topic: "HEALTH",
+    urls: [
+      "https://www.youtube.com/watch?v=H2VWkcUoCqs",
+      "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+      "https://www.youtube.com/watch?v=HxdqdqDORcY",
+      "https://www.youtube.com/watch?v=wgVOgGLtPtc",
+      "https://www.youtube.com/watch?v=7QJ-N-AQJYc",
+    ],
+    descriptionEnglish: "A basic introduction to the healthcare system.",
+    descriptionQanjobal: "Jun yichbanil tzet yetal chi yala yetok an.",
+    audioFilename: "intro_health.mp3",
+    audioFileSize: 1024000,
+    audioFileS3Key: "audio/intro_health.mp3",
+    youtube_url: [true, true, true, true, true],
+}
+
   return (
     <View>
-      <VideoPage uri={videoEmbedYoutubeURL} type={VideoType.YouTube} />
-      <VideoEmbed
-        uri={videoEmbedYoutubeURL}
-        type={VideoType.YouTube}
-        height={500}
-      />
+      <VideoPage clickIndex={3} videos={mockVideo}/>
+      
     </View>
   );
 }

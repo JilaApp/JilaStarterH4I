@@ -24,17 +24,18 @@ export type SocialService = {
   descriptionAudioFileS3Key?: string | null;
 };
 
-export type VideoData = {
+export type VideoData = { //this component is 1 video topic and there are multiple urls attached to it
   id: string | number;
   titleEnglish: string;
   titleQanjobal: string;
   topic: string;
-  urls: string[];
+  urls: string[]; 
   descriptionEnglish: string | null;
   descriptionQanjobal: string | null;
-  audioFilename: string | null;
-  audioFileSize: number | null;
-  audioFileS3Key: string | null;
+  audioFilename: string | null; //not sure how this plays into multiple urls
+  audioFileSize: number | null; //not sure how this plays into multiple urls
+  audioFileS3Key: string | null; //not sure how this plays into multiple urls
+  youtube_url: Boolean[]; //true means youtube, false means google drive
 };
 
 export type AppRouter = {
