@@ -44,7 +44,18 @@ export default function SignUpScreen() {
         },
     ];
 
-    const [formData, setFormData] = useState({
+    interface FormData {
+        username: string;
+        password: string;
+        selectedLanguage: string | null;
+        ttsEnabled: boolean;
+        selectedDropdown: string | null;
+        selectedCity: string | null;
+        communityOrg: string;
+        areaOrg: any;
+    }
+
+    const [formData, setFormData] = useState<FormData>({
         username: "",
         password: "",
         selectedLanguage: null,
@@ -271,10 +282,6 @@ export default function SignUpScreen() {
                 {/* select language */}
                 {currentStep === 1 && (
                     <View style={styles.container}>
-                        <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-                            <ChevronLeft size={20} color={colors.jila[400]} />
-                            <Text style={styles.backText}>Back</Text>
-                        </TouchableOpacity>
                         <Text style={styles.title}>Select your language</Text>
                         <View style={styles.exampleContainer}>
                             <View style={styles.selectContainer}>
@@ -313,10 +320,7 @@ export default function SignUpScreen() {
 
                 {/* username/password */}
                 {currentStep === 2 && (
-                    <KeyboardAvoidingView
-                        behavior={Platform.OS === "ios" ? "padding" : "height"}
-                        style={styles.container}
-                    >
+                    <View style={styles.container}>
                         <TouchableOpacity style={styles.backButton} onPress={handleBack}>
                             <ChevronLeft size={20} color={colors.jila[400]} />
                             <Text style={styles.backText}>Back</Text>
@@ -359,15 +363,12 @@ export default function SignUpScreen() {
                             />
                             <Stepper totalSteps={4} currentStep={currentStep - 1} />
                         </View>
-                    </KeyboardAvoidingView>
+                    </View>
                 )}
 
                 {/* state/city is WIP */}
                 {currentStep === 3 && (
-                    <KeyboardAvoidingView
-                        behavior={Platform.OS === "ios" ? "padding" : "height"}
-                        style={styles.container}
-                    >
+                    <View style={styles.container}>
                         <TouchableOpacity style={styles.backButton} onPress={handleBack}>
                             <ChevronLeft size={20} color={colors.jila[400]} />
                             <Text style={styles.backText}>Back</Text>
@@ -417,7 +418,7 @@ export default function SignUpScreen() {
                             />
                             <Stepper totalSteps={4} currentStep={currentStep - 1} />
                         </View>
-                    </KeyboardAvoidingView>
+                    </View>
                 )}
 
                 {/* community */}
@@ -587,7 +588,7 @@ export default function SignUpScreen() {
                     </View>
                 )}
             </DisplayBox>
-        </Background>
+        </Background >
     );
 }
 
@@ -596,17 +597,18 @@ const styles = StyleSheet.create({
         width: "100%",
     },
     container: {
+        flex: 1,
         width: "93%",
         alignItems: "center",
+        justifyContent: "center",
         backgroundColor: colors.white[400],
-        alignSelf: "center",
+        marginHorizontal: "auto",
     },
     toggle: {
         width: "100%",
         alignItems: "center",
-        marginVertical: sizes.spacing.xs,
+        marginVertical: sizes.spacing.sm,
     },
-
     title: {
         fontSize: sizes.fontSize.lg,
         fontWeight: "700",
@@ -627,11 +629,33 @@ const styles = StyleSheet.create({
         color: colors.type[400],
     },
     selectContainer: {
-        paddingVertical: sizes.spacing.sm,
+        paddingVertical: 20,
         marginBottom: 0,
+    },
+    checkboxContainer: {
+        flexDirection: "column",
+        alignItems: "center",
+        paddingVertical: 10,
+        gap: 25,
+    },
+    linkContainer: {
+        paddingVertical: 20,
+        paddingHorizontal: 10,
+        gap: 15,
+        backgroundColor: colors.cream[300],
+    },
+    colorDemoTitle: {
+        fontSize: 30,
+        fontWeight: "700",
     },
     dropdownContainer: {
         marginBottom: sizes.spacing.sm,
+    },
+    dropdownText: {
+        color: colors.gray[700],
+    },
+    semibold: {
+        fontWeight: "600",
     },
     backButton: {
         flexDirection: "row",
@@ -654,6 +678,31 @@ const styles = StyleSheet.create({
         fontSize: sizes.fontSize.sm,
         color: colors.jila[400],
         fontWeight: "600",
+    },
+    videoContainer: {
+        flex: 1,
+        width: "93%",
+        alignItems: "center",
+        justifyContent: "flex-start",
+        backgroundColor: colors.white[400],
+        marginHorizontal: "auto",
+        paddingTop: sizes.spacing.xl,
+        gap: sizes.spacing.md,
+    },
+    videoTitle: {
+        fontSize: sizes.fontSize.xxl,
+        fontWeight: "700",
+        color: colors.jila[400],
+    },
+    videoSubtitle: {
+        fontSize: sizes.fontSize.base,
+        color: colors.type[400],
+        textAlign: "center",
+        paddingHorizontal: sizes.spacing.md,
+    },
+    videoWrapper: {
+        width: "100%",
+        paddingHorizontal: sizes.spacing.md,
     },
     errorText: {
         color: colors.error[400],

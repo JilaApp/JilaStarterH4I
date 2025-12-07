@@ -18,7 +18,7 @@ export default function DisplayBox({
     <View style={styles.container}>
       <View style={[styles.innerBox, { minHeight, maxHeight }]}>
         <ScrollView
-          style={[styles.scrollView, { flex: 1 }]}
+          style={styles.scrollView}
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={true}
           nestedScrollEnabled={true}
@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
   tail: {
     position: "absolute",
     bottom: -componentSizes.displayBox.tailSize * 0.6,
-    right: -componentSizes.displayBox.tailSize * 0.2,
+    right: -componentSizes.displayBox.tailSize * 0.3,
     width: componentSizes.displayBox.tailSize,
     height: componentSizes.displayBox.tailSize,
     zIndex: 1,

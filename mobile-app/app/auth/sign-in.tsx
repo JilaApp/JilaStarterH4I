@@ -52,53 +52,44 @@ export default function SignInScreen() {
   return (
     <Background>
       <DisplayBox>
-        <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-          style={styles.keyboardAvoidingView}
-        >
-          <View style={styles.contentContainer}>
-            <Text style={styles.title}>Sign In</Text>
+        <View style={styles.contentContainer}>
+          <Text style={styles.title}>Sign In</Text>
 
-            <View style={styles.formContainer}>
-              <Text style={styles.label}>Username</Text>
-              <UsernameInput value={username} onChange={setUsername} />
+          <View style={styles.formContainer}>
+            <Text style={styles.label}>Username</Text>
+            <UsernameInput value={username} onChange={setUsername} />
 
-              <Text style={[styles.label, { marginTop: sizes.spacing.md }]}>
-                Password
+            <Text style={[styles.label, { marginTop: sizes.spacing.md }]}>
+              Password
+            </Text>
+            <PasswordInput value={password} onChange={setPassword} />
+
+            {error ? <Text style={styles.errorText}>{error}</Text> : null}
+
+            <View style={{ marginTop: sizes.spacing.md }}>
+              <Button
+                text={loading ? "Signing in..." : "Sign in"}
+                onPress={onSignInPress}
+                disabled={loading}
+              />
+            </View>
+
+            <View style={styles.signUpContainer}>
+              <Text style={styles.signUpText}>
+                Don't have an account?{" "}
               </Text>
-              <PasswordInput value={password} onChange={setPassword} />
-
-              {error ? <Text style={styles.errorText}>{error}</Text> : null}
-
-              <View style={{ marginTop: sizes.spacing.md }}>
-                <Button
-                  text={loading ? "Signing in..." : "Sign in"}
-                  onPress={onSignInPress}
-                  disabled={loading}
-                />
-              </View>
-
-              <View style={styles.signUpContainer}>
-                <Text style={styles.signUpText}>
-                  Don't have an account?{" "}
-                </Text>
-                <TouchableOpacity onPress={() => router.push("/auth/sign-up")}>
-                  <Text style={styles.signUpLink}>Sign Up</Text>
-                </TouchableOpacity>
-              </View>
+              <TouchableOpacity onPress={() => router.push("/auth/sign-up")}>
+                <Text style={styles.signUpLink}>Sign Up</Text>
+              </TouchableOpacity>
             </View>
           </View>
-        </KeyboardAvoidingView>
+        </View>
       </DisplayBox>
     </Background>
   );
 }
 
 const styles = StyleSheet.create({
-  keyboardAvoidingView: {
-    flex: 1,
-    width: "100%",
-  },
   contentContainer: {
     width: "100%",
     alignItems: "center",

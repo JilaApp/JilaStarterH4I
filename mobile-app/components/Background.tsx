@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Image, StyleSheet } from "react-native";
+import { View, Image, StyleSheet, KeyboardAvoidingView, Platform } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { colors } from "@/colors";
 import { sizes, componentSizes } from "@/constants/sizes";
@@ -7,6 +7,7 @@ import BottomBackground from "./BottomBackground";
 
 interface BackgroundProps {
   children: React.ReactNode;
+  showLogo?: boolean;
 }
 
 function LogoPanel() {
@@ -21,7 +22,10 @@ function LogoPanel() {
   );
 }
 
-export default function Background({ children }: BackgroundProps) {
+export default function Background({
+  children,
+  showLogo = true,
+}: BackgroundProps) {
   return (
     <View style={styles.container}>
       <View style={styles.redRevealLayer} />
@@ -31,7 +35,7 @@ export default function Background({ children }: BackgroundProps) {
         end={{ x: 0, y: 1 }}
         style={styles.topHalf}
       >
-        <LogoPanel />
+        {showLogo && <LogoPanel />}
       </LinearGradient>
       <BottomBackground />
       <View style={styles.contentContainer}>{children}</View>
@@ -64,7 +68,7 @@ const styles = StyleSheet.create({
   logoContainer: {
     justifyContent: "center",
     alignItems: "center",
-    marginTop: sizes.screen.height * 0.1,
+    marginTop: sizes.screen.height * 0.05,
   },
   logo: {
     width: componentSizes.logo.background.width,

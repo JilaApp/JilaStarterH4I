@@ -162,9 +162,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: sizes.spacing.sm,
-    width: "135%",
-    flex: 1,
-    // marginHorizontal: "auto",
+    width: "100%",
   },
   titleText: {
     fontSize: sizes.fontSize.md,
