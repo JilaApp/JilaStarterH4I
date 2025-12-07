@@ -5,7 +5,7 @@ import { Check } from "lucide-react-native";
 import { colors } from "@/colors";
 import { sizes } from "@/constants/sizes";
 
-type AudioSource = number | { uri: string };
+type AudioSource = number | { uri: string } | null;
 
 interface SelectOption {
   id: string;

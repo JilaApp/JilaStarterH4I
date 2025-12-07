@@ -5,6 +5,7 @@ import { View, Image, StyleSheet } from "react-native";
 import { componentSizes } from "@/constants/sizes";
 import { Button } from "@/components/Button";
 import { useRouter } from "expo-router";
+import AudioButton from "@/components/AudioButton";
 
 export default function LandingPage() {
   const router = useRouter();
@@ -20,11 +21,18 @@ export default function LandingPage() {
       >
         <View style={styles.logoContainer}>
           <Text style={styles.welcomeText}>Welcome to</Text>
-          <Image
-            source={require("../assets/images/jila-logo.png")}
-            style={styles.logo}
-            resizeMode="contain"
-          />
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <Image
+              source={require("../assets/images/jila-logo.png")}
+              style={styles.logo}
+              resizeMode="contain"
+            />
+            <View style={styles.audioButtonContainer}>
+              <AudioButton
+                audioSource={require("../assets/audio/welcome_to_jila.mp3")}
+              />
+            </View>
+          </View>
         </View>
         <View style={styles.buttonContainer}>
           <Button
@@ -57,9 +65,12 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: "30%",
   },
+  audioButtonContainer: {
+    marginLeft: -16,
+  },
   welcomeText: {
-    fontSize: 32,
-    fontWeight: "400",
+    fontSize: 48,
+    fontWeight: "600",
     color: colors.white[400],
     marginBottom: -200,
   },

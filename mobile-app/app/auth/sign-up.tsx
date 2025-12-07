@@ -27,12 +27,12 @@ export default function SignUpScreen() {
     {
       id: "english",
       title: "English",
-      audioSource: require("../../assets/audio/sample.mp3"),
+      audioSource: null,
     },
     {
       id: "qanjobal",
       title: "Q'anjob'al",
-      audioSource: require("../../assets/audio/sample.mp3"),
+      audioSource: null,
     },
   ];
 
