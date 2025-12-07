@@ -13,6 +13,13 @@ interface AudioDisplayProps {
   editable?: boolean;
 }
 
+export const formatTime = (time: number) => {
+  if (isNaN(time)) return "0:00";
+  const minutes = Math.floor(time / 60);
+  const seconds = Math.floor(time % 60);
+  return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+};
+
 export default function AudioDisplay({
   file,
   audioUrl: audioUrlProp,
@@ -72,13 +79,6 @@ export default function AudioDisplay({
       audio.play();
     }
     setIsPlaying(!isPlaying);
-  };
-
-  const formatTime = (time: number) => {
-    if (isNaN(time)) return "0:00";
-    const minutes = Math.floor(time / 60);
-    const seconds = Math.floor(time % 60);
-    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
   };
 
   const progress = duration > 0 ? (currentTime / duration) * 100 : 0;

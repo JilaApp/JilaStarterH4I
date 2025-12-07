@@ -11,7 +11,9 @@ const addSocialServiceInput = z.object({
   title: z.string(),
   category: z.nativeEnum(SocialServiceCategory),
   phone_number: z.string(),
-  address: z.string().optional(),
+  addressLine: z.string().optional(),
+  city: z.string().optional(),
+  state: z.string().optional(),
   description: z.string().optional(),
   url: z.string().optional(),
   titleAudioFile: z.string().optional(),
@@ -31,9 +33,11 @@ const editSocialServiceInput = z.object({
   title: z.string().optional(),
   category: z.nativeEnum(SocialServiceCategory).optional(),
   phone_number: z.string().optional(),
-  address: z.string().optional(),
-  description: z.string().optional(),
-  url: z.string().optional(),
+  addressLine: z.string().nullish(),
+  city: z.string().nullish(),
+  state: z.string().nullish(),
+  description: z.string().nullish(),
+  url: z.string().nullish(),
   titleAudioFile: z.string().optional(),
   titleAudioFilename: z.string().optional(),
   titleAudioFileSize: z.number().optional(),
@@ -88,7 +92,9 @@ async function addSocialService(
         title: input.title,
         category: input.category,
         phone_number: input.phone_number,
-        address: input.address,
+        addressLine: input.addressLine,
+        city: input.city,
+        state: input.state,
         description: input.description,
         url: input.url,
         titleAudioFilename: input.titleAudioFilename,
@@ -175,7 +181,9 @@ async function editSocialService(input: EditSocialServiceInput) {
       title: input.title,
       category: input.category,
       phone_number: input.phone_number,
-      address: input.address,
+      addressLine: input.addressLine,
+      city: input.city,
+      state: input.state,
       description: input.description,
       url: input.url,
     };
@@ -289,7 +297,6 @@ export const socialServicesRouter = router({
       return addSocialService(input, communityOrgId);
     }),
   getAllSocialServices: protectedProcedure.query(async ({ ctx }) => {
-    await requireCommunityOrgAdmin(ctx.auth.userId!);
     const communityOrgId = await getUserCommunityOrgId(ctx.auth.userId!);
     return getAllSocialServices(communityOrgId);
   }),

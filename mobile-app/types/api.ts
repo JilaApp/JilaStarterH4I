@@ -8,12 +8,36 @@ export enum SocialServiceCategory {
   OTHER = "OTHER",
 }
 
+export enum JobType {
+  INTERNSHIP = "INTERNSHIP",
+  FULLTIME = "FULLTIME",
+  QANJOBAL = "QANJOBAL",
+  PARTTIME = "PARTTIME",
+  TEMPORARY = "TEMPORARY",
+  FREELANCE = "FREELANCE",
+  SEASONAL = "SEASONAL",
+}
+
+export enum LocationType {
+  REMOTE = "REMOTE",
+  HYBRID = "HYBRID",
+  INPERSON = "INPERSON",
+}
+
+export enum JobStatus {
+  PENDING = "PENDING",
+  ACTIVE = "ACTIVE",
+  ARCHIVED = "ARCHIVED",
+}
+
 export type SocialService = {
   id: number;
   title: string;
   category: SocialServiceCategory;
   phone_number: string;
-  address?: string | null;
+  addressLine?: string | null;
+  city?: string | null;
+  state?: string | null;
   description?: string | null;
   url?: string | null;
   titleAudioFilename?: string | null;
@@ -25,18 +49,43 @@ export type SocialService = {
 };
 
 export type VideoData = {
-  //this component is 1 video topic and there are multiple urls attached to it
-  id: string | number;
+  id: number;
   titleEnglish: string;
   titleQanjobal: string;
   topic: string;
   urls: string[];
+  durations: number[];
+  uploadDate: Date;
   descriptionEnglish: string | null;
   descriptionQanjobal: string | null;
-  audioFilename: string | null; //not sure how this plays into multiple urls
-  audioFileSize: number | null; //not sure how this plays into multiple urls
-  audioFileS3Key: string | null; //not sure how this plays into multiple urls
-  youtube_url: Boolean[]; //true means youtube, false means google drive
+  audioFilename: string | null;
+  audioFileSize: number | null;
+  audioFileS3Key: string | null;
+  communityOrgId: string | null;
+  youtube_url: Boolean[];
+};
+
+export type Job = {
+  id: number;
+  titleEnglish: string;
+  titleQanjobal: string;
+  companyName: string;
+  businessContactEmail: string;
+  jobType: JobType;
+  acceptedLanguages: string[];
+  locationType: LocationType;
+  city: string | null;
+  state: string | null;
+  url: string | null;
+  salary: string | null;
+  expirationDate: Date | null;
+  descriptionEnglish: string | null;
+  descriptionQanjobal: string | null;
+  status: JobStatus;
+  unread: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+  communityOrgId: string | null;
 };
 
 export type AppRouter = {
@@ -44,6 +93,18 @@ export type AppRouter = {
     getAllSocialServices: {
       input: void;
       output: SocialService[];
+    };
+  };
+  videos: {
+    getAllVideos: {
+      input: void;
+      output: VideoData[];
+    };
+  };
+  jobs: {
+    getAllJobs: {
+      input: void;
+      output: Job[];
     };
   };
 };

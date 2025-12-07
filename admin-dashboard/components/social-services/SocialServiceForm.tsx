@@ -87,7 +87,12 @@ export default function SocialServiceForm() {
         fields.topicIndex.value!
       ].toUpperCase() as SocialServiceCategory,
       phone_number: fields.phoneNumber.value,
-      address: fields.addressLine.value || undefined,
+      addressLine: fields.addressLine.value || undefined,
+      city: fields.city.value || undefined,
+      state:
+        fields.stateIndex.value !== undefined
+          ? US_STATES[fields.stateIndex.value]
+          : undefined,
       description: fields.englishDescription.value || undefined,
       url: fields.link.value || undefined,
     };

@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
     gap: sizes.spacing.sm,
   },
   parentText: {
-    fontSize: sizes.fontSize.base,
+    fontSize: 16,
     fontWeight: "600",
     color: colors.black,
   },
