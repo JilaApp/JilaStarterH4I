@@ -94,12 +94,22 @@ async function getYoutubeDuration(url: string) {
 }
 
 async function getAuthClient() {
+  const serviceAccountJson = process.env.GOOGLE_SERVICE_ACCOUNT_JSON;
+
+  if (!serviceAccountJson) {
+    throw new Error(
+      "GOOGLE_SERVICE_ACCOUNT_JSON environment variable is not set",
+    );
+  }
+
+  const json = JSON.parse(serviceAccountJson);
+
   const auth = new GoogleAuth({
-    keyFile: process.env.DRIVE_KEY_PATH,
+    credentials: json,
     scopes: ["https://www.googleapis.com/auth/drive.readonly"],
   });
-  const client = await auth.getClient();
-  return client;
+
+  return await auth.getClient();
 }
 
 async function getDriveDuration(url: string): Promise<number> {
