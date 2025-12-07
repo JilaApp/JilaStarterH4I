@@ -22,7 +22,7 @@ export default function App() {
   // Handle redirect in useEffect to avoid render-time navigation
   useEffect(() => {
     if (isLoaded && !user) {
-      router.replace("/onboarding");
+      router.replace("/landing");
     }
   }, [isLoaded, user, router]);
 

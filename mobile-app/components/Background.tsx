@@ -79,6 +79,6 @@ const styles = StyleSheet.create({
     zIndex: 3,
     justifyContent: "flex-start",
     alignItems: "center",
-    paddingHorizontal: sizes.spacing.xxl,
+    paddingHorizontal: sizes.spacing.lg,
   },
 });

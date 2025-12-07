@@ -35,9 +35,9 @@ const Switch = ({
 }: {
   value: SharedValue<number>;
   onPress: () => void;
-  style;
-  duration: number;
-  trackColors: { on: string; off: string };
+  style?: any;
+  duration?: number;
+  trackColors?: { on: string; off: string };
 }) => {
   const height = useSharedValue(0);
   const width = useSharedValue(0);
@@ -112,7 +112,7 @@ export function Toggle({
   checked: boolean;
   onCheckedChange: (value: boolean) => void;
 }) {
-  const isOn = useSharedValue(checked);
+  const isOn = useSharedValue(checked ? 1 : 0);
 
   React.useEffect(() => {
     isOn.value = withTiming(checked ? 1 : 0);
@@ -123,7 +123,7 @@ export function Toggle({
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <View style={styles.content}>
         <View style={styles.toggleRow}>
           <Switch value={isOn} onPress={handlePress} style={styles.switch} />
@@ -139,7 +139,7 @@ export function Toggle({
           </Text>
         </View>
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -151,8 +151,6 @@ const styles = StyleSheet.create({
     padding: sizes.spacing.xxs,
   },
   container: {
-    flex: 1,
-    margin: "auto",
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: sizes.spacing.lg,

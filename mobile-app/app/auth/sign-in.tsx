@@ -1,17 +1,20 @@
 import * as React from "react";
 import {
   Text,
-  TextInput,
   TouchableOpacity,
   View,
-  ScrollView,
   StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import { useSignIn } from "@clerk/clerk-expo";
 import { useRouter } from "expo-router";
-import { Eye, EyeOff } from "lucide-react-native";
 import { colors } from "@/colors";
 import { sizes } from "@/constants/sizes";
+import { Button } from "@/components/Button";
+import { UsernameInput, PasswordInput } from "@/components/Input";
+import Background from "@/components/Background";
+import DisplayBox from "@/components/DisplayBox";
 
 export default function SignInScreen() {
   const { isLoaded, signIn, setActive } = useSignIn();
@@ -21,7 +24,6 @@ export default function SignInScreen() {
   const [password, setPassword] = React.useState("");
   const [error, setError] = React.useState("");
   const [loading, setLoading] = React.useState(false);
-  const [showPassword, setShowPassword] = React.useState(false);
 
   const onSignInPress = async () => {
     if (!isLoaded) return;
@@ -48,155 +50,81 @@ export default function SignInScreen() {
   };
 
   return (
-    <ScrollView style={styles.scrollView}>
-      <View style={styles.container}>
-        <View style={styles.card}>
-          <Text style={[styles.pageTitle, styles.titleColor]}>Sign In</Text>
+    <Background>
+      <DisplayBox>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={styles.keyboardAvoidingView}
+        >
+          <View style={styles.contentContainer}>
+            <Text style={styles.title}>Sign In</Text>
 
-          <View style={styles.formContainer}>
-            <View>
-              <Text style={[styles.label, styles.labelColor]}>Username</Text>
-              <TextInput
-                style={styles.input}
-                autoCapitalize="none"
-                value={username}
-                placeholder="Enter username"
-                onChangeText={setUsername}
-                selectionColor={colors.jila[400]}
-              />
-            </View>
+            <View style={styles.formContainer}>
+              <Text style={styles.label}>Username</Text>
+              <UsernameInput value={username} onChange={setUsername} />
 
-            <View>
-              <Text style={[styles.label, styles.labelColor]}>Password</Text>
-              <View style={styles.passwordContainer}>
-                <TextInput
-                  style={styles.passwordInput}
-                  value={password}
-                  placeholder="Enter password"
-                  secureTextEntry={!showPassword}
-                  onChangeText={setPassword}
-                  selectionColor={colors.jila[400]}
+              <Text style={[styles.label, { marginTop: sizes.spacing.md }]}>
+                Password
+              </Text>
+              <PasswordInput value={password} onChange={setPassword} />
+
+              {error ? <Text style={styles.errorText}>{error}</Text> : null}
+
+              <View style={{ marginTop: sizes.spacing.md }}>
+                <Button
+                  text={loading ? "Signing in..." : "Sign in"}
+                  onPress={onSignInPress}
+                  disabled={loading}
                 />
-                <TouchableOpacity
-                  onPress={() => setShowPassword(!showPassword)}
-                  style={styles.eyeButton}
-                >
-                  {showPassword ? (
-                    <EyeOff size={24} color={colors.gray[400]} />
-                  ) : (
-                    <Eye size={24} color={colors.gray[400]} />
-                  )}
+              </View>
+
+              <View style={styles.signUpContainer}>
+                <Text style={styles.signUpText}>
+                  Don't have an account?{" "}
+                </Text>
+                <TouchableOpacity onPress={() => router.push("/auth/sign-up")}>
+                  <Text style={styles.signUpLink}>Sign Up</Text>
                 </TouchableOpacity>
               </View>
             </View>
-
-            {error ? <Text style={styles.errorText}>{error}</Text> : null}
-
-            <TouchableOpacity
-              onPress={onSignInPress}
-              disabled={loading}
-              style={[styles.signInButton, loading && styles.buttonDisabled]}
-            >
-              <Text style={styles.buttonText}>
-                {loading ? "Signing in..." : "Sign In"}
-              </Text>
-            </TouchableOpacity>
-
-            <View style={styles.signUpContainer}>
-              <Text style={styles.signUpText}>
-                Don&apos;t have an account?{" "}
-              </Text>
-              <TouchableOpacity onPress={() => router.push("/onboarding")}>
-                <Text style={styles.signUpLink}>Sign Up</Text>
-              </TouchableOpacity>
-            </View>
           </View>
-        </View>
-      </View>
-    </ScrollView>
+        </KeyboardAvoidingView>
+      </DisplayBox>
+    </Background>
   );
 }
 
 const styles = StyleSheet.create({
-  scrollView: {
+  keyboardAvoidingView: {
     flex: 1,
-    backgroundColor: colors.cream[300],
+    width: "100%",
   },
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    padding: sizes.spacing.lg,
-    minHeight: "100%",
+  contentContainer: {
+    width: "100%",
+    alignItems: "center",
+    paddingVertical: sizes.spacing.sm,
   },
-  card: {
-    backgroundColor: colors.white[400],
-    borderRadius: sizes.borderRadius.lg,
-    padding: sizes.spacing.lg,
-    shadowColor: colors.black,
-    shadowOffset: { width: 0, height: sizes.spacing.xs },
-    shadowOpacity: 0.1,
-    shadowRadius: sizes.spacing.sm,
-    elevation: 5,
-  },
-  pageTitle: {
-    fontSize: sizes.fontSize.xxxl,
+  title: {
+    fontSize: sizes.fontSize.xl,
     fontWeight: "700",
-    marginBottom: sizes.spacing.lg,
-  },
-  titleColor: {
     color: colors.jila[400],
+    marginBottom: sizes.spacing.md,
+    textAlign: "center",
   },
   formContainer: {
-    gap: sizes.spacing.md,
+    width: "100%",
+    paddingHorizontal: sizes.spacing.xs,
   },
   label: {
     fontSize: sizes.fontSize.base,
-    fontWeight: "600",
-    marginBottom: sizes.spacing.sm,
-  },
-  labelColor: {
-    color: colors.type[400],
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: colors.gray[300],
-    borderRadius: sizes.borderRadius.sm,
-    padding: sizes.spacing.md,
-    fontSize: sizes.fontSize.md,
-  },
-  passwordContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: colors.gray[300],
-    borderRadius: sizes.borderRadius.sm,
-  },
-  passwordInput: {
-    flex: 1,
-    padding: sizes.spacing.md,
-    fontSize: sizes.fontSize.md,
-  },
-  eyeButton: {
-    paddingRight: sizes.spacing.md,
+    fontWeight: "700",
+    color: colors.black,
+    marginBottom: sizes.spacing.xs,
   },
   errorText: {
     color: colors.error[400],
-    fontSize: sizes.fontSize.sm,
-  },
-  signInButton: {
-    backgroundColor: colors.jila[400],
-    borderRadius: sizes.borderRadius.sm,
-    padding: sizes.spacing.md,
-    marginTop: sizes.spacing.md,
-  },
-  buttonDisabled: {
-    opacity: 0.5,
-  },
-  buttonText: {
-    color: colors.white[400],
+    marginTop: sizes.spacing.sm,
     textAlign: "center",
-    fontWeight: "700",
-    fontSize: sizes.fontSize.md,
   },
   signUpContainer: {
     flexDirection: "row",
@@ -205,9 +133,12 @@ const styles = StyleSheet.create({
   },
   signUpText: {
     color: colors.gray[400],
+    fontSize: 16,
   },
   signUpLink: {
     color: colors.jila[400],
     fontWeight: "700",
+    fontSize: 16,
+    textDecorationLine: "underline",
   },
 });
