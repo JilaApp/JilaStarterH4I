@@ -96,8 +96,8 @@ const styles = StyleSheet.create({
     paddingVertical: sizes.spacing.sm,
   },
   title: {
-    fontSize: sizes.fontSize.xl,
-    fontWeight: "700",
+    fontSize: 24,
+    fontWeight: "600",
     color: colors.jila[400],
     marginBottom: sizes.spacing.md,
     textAlign: "center",
@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: sizes.spacing.xs,
   },
   label: {
-    fontSize: sizes.fontSize.base,
+    fontSize: 18,
     fontWeight: "700",
     color: colors.black,
     marginBottom: sizes.spacing.xs,

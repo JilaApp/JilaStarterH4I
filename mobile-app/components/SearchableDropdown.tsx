@@ -23,6 +23,7 @@ interface SearchableDropdownProps {
   citySearch: boolean;
   onSearchChange?: (text: string) => void;
   error?: boolean;
+  onFocus?: () => void;
 }
 
 const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
@@ -35,6 +36,7 @@ const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
   citySearch,
   onSearchChange,
   error = false,
+  onFocus,
 }: SearchableDropdownProps) => {
   const [open, setOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -79,6 +81,7 @@ const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
                 if (selected && !searchQuery) {
                   setSearchQuery(selected);
                 }
+                onFocus?.();
               }
             }}
             style={styles.searchInput}
@@ -199,7 +202,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   scrollView: {
-    maxHeight: 85,
+    maxHeight: 180,
   },
   option: {
     flexDirection: "row",

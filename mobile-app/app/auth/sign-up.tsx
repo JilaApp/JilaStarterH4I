@@ -64,6 +64,9 @@ export default function SignUpScreen() {
   const [chooseCommunity, setChooseCommunity] = useState(false);
   const [customCommunity, setCustomCommunity] = useState(false);
 
+  // Track keyboard offset based on focused input
+  const [keyboardOffset, setKeyboardOffset] = useState(0.4);
+
   const onSignUpPress = async (selectedCommunityOrgName: string) => {
     if (!isLoaded) return;
 
@@ -268,7 +271,7 @@ export default function SignUpScreen() {
 
   return (
     <Background>
-      <DisplayBox>
+      <DisplayBox keyboardOffsetMultiplier={keyboardOffset}>
         {/* select language */}
         {currentStep === 1 && (
           <View style={styles.container}>
@@ -324,6 +327,7 @@ export default function SignUpScreen() {
                 onChange={(value) =>
                   setFormData({ ...formData, username: value })
                 }
+                onFocus={() => setKeyboardOffset(0.2)}
               />
 
               <Text
@@ -337,6 +341,7 @@ export default function SignUpScreen() {
                   onChange={(value) =>
                     setFormData({ ...formData, password: value })
                   }
+                  onFocus={() => setKeyboardOffset(0.45)}
                 />
               </View>
 
@@ -376,6 +381,7 @@ export default function SignUpScreen() {
                     onSelect={(value) =>
                       setFormData({ ...formData, selectedDropdown: value })
                     }
+                    onFocus={() => setKeyboardOffset(0.3)}
                   />
                 </View>
               </View>
@@ -397,6 +403,7 @@ export default function SignUpScreen() {
                     }
                     citySearch={true}
                     onSearchChange={setCitySearchText}
+                    onFocus={() => setKeyboardOffset(0.5)}
                   />
                 </View>
               </View>

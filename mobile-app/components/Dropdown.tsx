@@ -19,6 +19,7 @@ interface DropdownProps {
   disabled?: boolean;
   placeholder?: string;
   error?: boolean;
+  onFocus?: () => void;
 }
 
 const Dropdown: React.FC<DropdownProps> = ({
@@ -29,6 +30,7 @@ const Dropdown: React.FC<DropdownProps> = ({
   disabled = false,
   placeholder,
   error = false,
+  onFocus,
 }: DropdownProps) => {
   const [open, setOpen] = useState(false);
 
@@ -36,7 +38,15 @@ const Dropdown: React.FC<DropdownProps> = ({
     <View style={styles.wrapper}>
       <View style={styles.container}>
         <TouchableOpacity
-          onPress={() => setOpen((prev) => !prev)}
+          onPress={() => {
+            setOpen((prev) => {
+              const newOpen = !prev;
+              if (newOpen && onFocus) {
+                onFocus();
+              }
+              return newOpen;
+            });
+          }}
           activeOpacity={0.7}
           disabled={disabled}
         >
@@ -176,7 +186,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   scrollView: {
-    maxHeight: 144,
+    maxHeight: 240,
   },
   option: {
     paddingHorizontal: sizes.spacing.md,
