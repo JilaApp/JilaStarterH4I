@@ -72,7 +72,7 @@ export default function Table<T extends DataRow>({
   return (
     <div className="flex flex-col h-full rounded-t-[20px] overflow-hidden">
       <div className="overflow-auto flex-1">
-        <table className="bg-white-400 border-collapse w-full">
+        <table className="bg-white-400 border-collapse w-full table-fixed">
           <thead className="sticky top-0 bg-white-400 z-10">
             <tr className="border-b-2 border-gray-300">
               {columns.map((col, index) => (
@@ -97,7 +97,7 @@ export default function Table<T extends DataRow>({
                   )}
                 </th>
               ))}
-              <th className="px-6 p-4 text-left text-gray-300">Actions</th>
+              <th className="px-6 p-4 text-center text-gray-300">Actions</th>
             </tr>
           </thead>
           <tbody className="font-medium">
@@ -135,18 +135,20 @@ export default function Table<T extends DataRow>({
                             : "px-6 p-4"
                         }
                       >
-                        {cellIndex === 0 && (
-                          <input
-                            type="checkbox"
-                            checked={selectedRows.includes(row.id)}
-                            onClick={(e) => e.stopPropagation()}
-                            onChange={() => handleCheckboxChange(row.id)}
-                            className="w-4 h-4 mr-6 align-middle accent-jila-400 cursor-pointer"
-                          />
-                        )}
-                        <span className="align-middle">
-                          {col.cell ? col.cell(value) : String(value)}
-                        </span>
+                        <div className="flex items-center">
+                          {cellIndex === 0 && (
+                            <input
+                              type="checkbox"
+                              checked={selectedRows.includes(row.id)}
+                              onClick={(e) => e.stopPropagation()}
+                              onChange={() => handleCheckboxChange(row.id)}
+                              className="w-4 h-4 mr-6 accent-jila-400 cursor-pointer"
+                            />
+                          )}
+                          <div className="align-middle text-ellipsis truncate">
+                            {col.cell ? col.cell(value) : String(value)}
+                          </div>
+                        </div>
                       </td>
                     );
                   })}
