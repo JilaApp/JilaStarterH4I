@@ -94,7 +94,15 @@ async function getYoutubeDuration(url: string) {
 }
 
 async function getAuthClient() {
-  const json = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_JSON);
+  const serviceAccountJson = process.env.GOOGLE_SERVICE_ACCOUNT_JSON;
+
+  if (!serviceAccountJson) {
+    throw new Error(
+      "GOOGLE_SERVICE_ACCOUNT_JSON environment variable is not set",
+    );
+  }
+
+  const json = JSON.parse(serviceAccountJson);
 
   const auth = new GoogleAuth({
     credentials: json,
