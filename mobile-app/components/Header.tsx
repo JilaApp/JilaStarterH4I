@@ -1,13 +1,17 @@
-import { View, Image, StyleSheet } from "react-native";
+import { View, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import Text from "@/components/JilaText";
 import SearchBar from "./SearchBar";
+import SignOutModal from "./SignOutModal";
 import React, { useState } from "react";
-import { Volume2, CircleHelp, Menu } from "lucide-react-native";
+import { Volume2, VolumeOff, CircleHelp, LogOut } from "lucide-react-native";
 import { colors } from "@/colors";
 import { sizes, componentSizes } from "@/constants/sizes";
 import { hp } from "@/utils/responsive";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useRouter } from "expo-router";
+import { useAuth } from "@clerk/clerk-expo";
+import { useTTS } from "@/context/TTSContext";
 
 interface HeaderProps {
   text?: string;
@@ -23,7 +27,16 @@ export default function Header({
   onSearchChange,
 }: HeaderProps) {
   const [searchFocused, setSearchFocused] = useState(false);
+  const [showSignOutModal, setShowSignOutModal] = useState(false);
   const insets = useSafeAreaInsets();
+  const router = useRouter();
+  const { signOut } = useAuth();
+  const { ttsEnabled, toggleTTS, isLoading } = useTTS();
+
+  const handleTTSToggle = () => {
+    console.log("TTS button pressed in Header");
+    toggleTTS();
+  };
 
   const getContainerHeight = () => {
     const baseHeight = toggleSearch
@@ -36,47 +49,73 @@ export default function Header({
     return baseHeight + insets.top;
   };
 
+  const handleSignOut = async () => {
+    setShowSignOutModal(false);
+    await signOut();
+    router.replace("/landing");
+  };
+
   return (
-    <View style={[styles.container, { height: getContainerHeight() }]}>
-      <LinearGradient
-        colors={[colors.orange[400], colors.jila[400]]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 0, y: 1 }}
-        style={[styles.gradient, { paddingTop: insets.top }]}
-      >
-        <View style={styles.topRow}>
-          <Image
-            source={require("../assets/images/jila-logo.png")}
-            style={styles.logo}
-            resizeMode="contain"
-          />
+    <>
+      <View style={[styles.container, { height: getContainerHeight() }]}>
+        <LinearGradient
+          colors={[colors.orange[400], colors.jila[400]]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 0, y: 1 }}
+          style={[styles.gradient, { paddingTop: insets.top }]}
+        >
+          <View style={styles.topRow}>
+            <Image
+              source={require("../assets/images/jila-logo.png")}
+              style={styles.logo}
+              resizeMode="contain"
+            />
 
-          <View style={styles.iconRow}>
-            <View style={styles.audioIconContainer}>
-              <Volume2 size={sizes.icon.xs} color={colors.white[400]} />
+            <View style={styles.iconRow}>
+              <TouchableOpacity
+                style={styles.audioIconContainer}
+                onPress={handleTTSToggle}
+                disabled={isLoading}
+              >
+                {ttsEnabled ? (
+                  <Volume2 size={sizes.icon.xs} color={colors.white[400]} />
+                ) : (
+                  <VolumeOff size={sizes.icon.xs} color={colors.white[400]} />
+                )}
+              </TouchableOpacity>
+
+              <TouchableOpacity onPress={() => router.push("/help")}>
+                <CircleHelp size={sizes.icon.md} color={colors.white[400]} />
+              </TouchableOpacity>
+
+              <TouchableOpacity onPress={() => setShowSignOutModal(true)}>
+                <LogOut size={sizes.icon.md} color={colors.white[400]} />
+              </TouchableOpacity>
             </View>
-
-            <CircleHelp size={sizes.icon.md} color={colors.white[400]} />
-
-            <Menu size={sizes.icon.md} color={colors.white[400]} />
           </View>
-        </View>
 
-        {text && <Text style={styles.headerText}>{text}</Text>}
-      </LinearGradient>
+          {text && <Text style={styles.headerText}>{text}</Text>}
+        </LinearGradient>
 
-      {toggleSearch && (
-        <View style={styles.searchBarContainer}>
-          <SearchBar
-            value={searchValue}
-            onChange={onSearchChange || (() => {})}
-            isFocused={searchFocused}
-            onFocus={() => setSearchFocused(true)}
-            onBlur={() => setSearchFocused(false)}
-          />
-        </View>
-      )}
-    </View>
+        {toggleSearch && (
+          <View style={styles.searchBarContainer}>
+            <SearchBar
+              value={searchValue}
+              onChange={onSearchChange || (() => {})}
+              isFocused={searchFocused}
+              onFocus={() => setSearchFocused(true)}
+              onBlur={() => setSearchFocused(false)}
+            />
+          </View>
+        )}
+      </View>
+
+      <SignOutModal
+        visible={showSignOutModal}
+        onCancel={() => setShowSignOutModal(false)}
+        onSignOut={handleSignOut}
+      />
+    </>
   );
 }
 
