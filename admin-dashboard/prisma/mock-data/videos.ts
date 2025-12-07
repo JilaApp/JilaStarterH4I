@@ -5,7 +5,10 @@ export const videosData = [
     titleEnglish: "How to Use the City Bus System",
     titleQanjobal: "Yalel B'eyb'al Yet' Autobus Yet' Konob'",
     topic: VideoTopic.TRANSPORT,
-    urls: ["https://www.youtube.com/watch?v=video1_transport", "https://www.youtube.com/watch?v=video1_transport"],
+    urls: [
+      "https://www.youtube.com/watch?v=video1_transport",
+      "https://www.youtube.com/watch?v=video1_transport",
+    ],
     durations: [420, 321],
     uploadDate: new Date("2025-01-15T10:00:00Z"),
     descriptionEnglish:
