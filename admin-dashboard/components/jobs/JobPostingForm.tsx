@@ -12,6 +12,7 @@ import {
   validateURL,
   validateNumber,
   validateDropdownIndex,
+  validateFutureDate,
 } from "@/lib/validators";
 import {
   US_STATES,
@@ -71,7 +72,7 @@ export default function JobPostingForm({ onBack }: JobPostingFormProps = {}) {
       stateIndex: validateDropdownIndex,
       applicationLink: validateURL,
       salary: validateNumber,
-      expirationDate: validateRequired,
+      expirationDate: validateFutureDate,
       descriptionEnglish: validateRequired,
       descriptionQanjobal: validateRequired,
     });

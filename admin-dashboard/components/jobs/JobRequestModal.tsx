@@ -99,7 +99,7 @@ export default function JobRequestModal({
       setIsEditing(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen, jobData]);
+  }, [isOpen, jobData?.id]);
 
   useModalOverflow(isOpen);
 

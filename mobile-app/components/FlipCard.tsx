@@ -16,9 +16,21 @@ import { sizes } from "@/constants/sizes";
 interface ResourceCardProps {
   title: string;
   phone: string;
-  address?: string;
+  addressLine?: string;
+  city?: string;
+  state?: string;
   description: string;
 }
+
+// Helper to format address from separate fields
+const formatAddress = (
+  addressLine?: string,
+  city?: string,
+  state?: string,
+): string | undefined => {
+  const parts = [addressLine, city, state].filter(Boolean);
+  return parts.length > 0 ? parts.join(", ") : undefined;
+};
 const ResourceCardBack = ({ description }: ResourceCardProps) => {
   return (
     <View style={cardStyles.cardContainer}>
@@ -35,7 +47,15 @@ const ResourceCardBack = ({ description }: ResourceCardProps) => {
   );
 };
 
-const ResourceCardFront = ({ title, phone, address }: ResourceCardProps) => {
+const ResourceCardFront = ({
+  title,
+  phone,
+  addressLine,
+  city,
+  state,
+}: ResourceCardProps) => {
+  const address = formatAddress(addressLine, city, state);
+
   return (
     <View style={cardStyles.cardContainer}>
       <View style={cardStyles.cardContentLeft}>
