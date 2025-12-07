@@ -355,7 +355,7 @@ export default function VideoEditModal({
           </label>
           {fields.videoLinks.value.map((link, index) => (
             <div
-              key={`link-${index}-${link}`}
+              key={`link-${index}`}
               className="flex gap-2 mb-2 items-center"
             >
               <div className="flex-1">

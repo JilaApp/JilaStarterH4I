@@ -134,7 +134,9 @@ export default function SocialServices() {
                   key={service.id}
                   title={service.title}
                   phone={service.phone_number}
-                  address={service.address || undefined}
+                  addressLine={service.addressLine || undefined}
+                  city={service.city || undefined}
+                  state={service.state || undefined}
                   description={
                     service.description || "No description available"
                   }

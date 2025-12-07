@@ -70,7 +70,9 @@ model SocialServices {
   title                     String
   category                  SocialServiceCategory
   phone_number              String                @unique @db.VarChar(20)
-  address                   String?
+  addressLine               String?
+  city                      String?
+  state                     String?
   description               String?
   url                       String?               @unique
   titleAudioFilename        String?

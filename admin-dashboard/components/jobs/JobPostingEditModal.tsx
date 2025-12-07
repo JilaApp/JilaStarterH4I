@@ -25,6 +25,7 @@ import {
   validateURL,
   validateNumber,
   validateDropdownIndex,
+  validateFutureDate,
 } from "@/lib/validators";
 import SubmitButton from "@/components/ui/SubmitButton";
 import { useClickOutside } from "@/hooks/useClickOutside";
@@ -156,7 +157,7 @@ export default function JobPostingEditModal({
       stateIndex: validateDropdownIndex,
       applicationLink: validateURL,
       salary: validateNumber,
-      expirationDate: validateRequired,
+      expirationDate: validateFutureDate,
       descriptionEnglish: validateRequired,
       descriptionQanjobal: validateRequired,
     };

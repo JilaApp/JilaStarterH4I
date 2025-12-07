@@ -2,3 +2,4 @@
 .playwright-mcp/
 node_modules/
 admin-dashboard/jila-*.json
+.gemini/
