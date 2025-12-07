@@ -127,11 +127,11 @@ export default function DashboardView() {
 
   useEffect(() => {
     setVideoCurrentPage(1);
-  }, [selectedFilters, videoSearchQuery, videoSortConfig]);
+  }, [selectedFilters, videoSearchQuery]);
 
   useEffect(() => {
     setSocialCurrentPage(1);
-  }, [selectedFilters, socialSearchQuery, socialSortConfig]);
+  }, [selectedFilters, socialSearchQuery]);
 
   useEffect(() => {
     setSelectedFilters([]);
