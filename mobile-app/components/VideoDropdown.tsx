@@ -17,6 +17,7 @@ type VideoDropdownProps = {
   ttsUrl: string;
   type?: "default" | "cream";
   onVideoSelect?: (index: number) => void;
+  category?: string;
 };
 
 export default function VideoDropdown({
@@ -25,6 +26,7 @@ export default function VideoDropdown({
   ttsUrl,
   type = "default",
   onVideoSelect,
+  category,
 }: VideoDropdownProps) {
   const router = useRouter();
 
@@ -92,6 +94,7 @@ export default function VideoDropdown({
         headerContent={headerContent}
         onPress={isSingleVideo ? handlePress : undefined}
         disabled={isSingleVideo}
+        category={category}
       >
         {dropdownContent}
       </Accordion>

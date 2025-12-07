@@ -19,6 +19,7 @@ type AccordionProps = {
   children: ReactNode;
   onPress?: () => void;
   disabled?: boolean;
+  category?: string;
 };
 
 export default function Accordion({
@@ -29,6 +30,7 @@ export default function Accordion({
   children,
   onPress,
   disabled = false,
+  category,
 }: AccordionProps) {
   const [contentHeight, setContentHeight] = useState(0);
   const [open, setOpen] = useState(false);
@@ -64,6 +66,10 @@ export default function Accordion({
     outputRange: [0, contentHeight],
   });
 
+  const formatCategory = (cat: string) => {
+    return cat.charAt(0).toUpperCase() + cat.slice(1).toLowerCase();
+  };
+
   return (
     <View>
       <TouchableOpacity
@@ -71,7 +77,12 @@ export default function Accordion({
         activeOpacity={0.7}
         style={[styles.parentRow, { backgroundColor }]}
       >
-        <Text style={styles.parentText}>{text}</Text>
+        <View style={styles.textContainer}>
+          {category && (
+            <Text style={styles.categoryText}>{formatCategory(category)}</Text>
+          )}
+          <Text style={styles.parentText}>{text}</Text>
+        </View>
         {headerContent}
 
         {ttsUrl ? <AudioButton audioSource={{ uri: ttsUrl }} /> : null}
@@ -114,14 +125,23 @@ const styles = StyleSheet.create({
     borderBottomColor: colors.gray[200],
     gap: sizes.spacing.sm,
   },
+  textContainer: {
+    flexDirection: "column",
+    gap: 2,
+  },
+  categoryText: {
+    fontSize: 12,
+    fontWeight: "400",
+    color: colors.black,
+  },
   parentText: {
     fontSize: 16,
     fontWeight: "600",
     color: colors.black,
   },
   iconWrap: {
-    marginHorizontal: sizes.spacing.sm,
     marginLeft: "auto",
+    marginRight: -sizes.spacing.md,
     alignItems: "center",
     justifyContent: "center",
   },
