@@ -16,6 +16,7 @@ type VideoDropdownProps = {
   parts: VideoDropdownPart[];
   ttsUrl: string;
   type?: "default" | "cream";
+  onVideoSelect?: (index: number) => void;
 };
 
 export default function VideoDropdown({
@@ -23,6 +24,7 @@ export default function VideoDropdown({
   parts,
   ttsUrl,
   type = "default",
+  onVideoSelect,
 }: VideoDropdownProps) {
   const router = useRouter();
 
@@ -31,13 +33,21 @@ export default function VideoDropdown({
 
   const handlePress = () => {
     if (isSingleVideo) {
-      // Navigate directly to video page with the single video URL
-      router.push(`/video?url=${encodeURIComponent(parts[0].videoUrl)}`);
+      if (onVideoSelect) {
+        onVideoSelect(0);
+      } else {
+        // Navigate directly to video page with the single video URL
+        router.push(`/video?url=${encodeURIComponent(parts[0].videoUrl)}`);
+      }
     }
   };
 
-  const handlePartPress = (videoUrl: string) => {
-    router.push(`/video?url=${encodeURIComponent(videoUrl)}`);
+  const handlePartPress = (index: number, videoUrl: string) => {
+    if (onVideoSelect) {
+      onVideoSelect(index);
+    } else {
+      router.push(`/video?url=${encodeURIComponent(videoUrl)}`);
+    }
   };
 
   const headerContent = !isSingleVideo && (
@@ -49,7 +59,7 @@ export default function VideoDropdown({
       {parts.map((part, idx) => (
         <TouchableOpacity
           key={idx}
-          onPress={() => handlePartPress(part.videoUrl)}
+          onPress={() => handlePartPress(idx, part.videoUrl)}
           activeOpacity={0.7}
           style={styles.dropdownItemWrapper}
         >
