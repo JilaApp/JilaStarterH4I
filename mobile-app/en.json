@@ -1,0 +1,93 @@
+{
+    "landing" : {
+        "message" : "Welcome to",
+        "get started": "Get started",
+        "sign in": "Sign in"
+    },
+
+    "SignUpPage" : {
+        "selectLang" : "Select your langauge",
+        "enable TTS" : "Enable text-to-speech?",
+        "continue" : "Continue",
+        "tts msg": "When enabled, you may click the speaker icons to read words out loud"
+
+    },
+
+    "CreateProfilePage": {
+        "create profile": "Create profile",
+        "EnterUser" : "Enter username",
+        "EnterPass" : "Enter password"
+    },
+
+    "LocationSelect": {
+        "state": "State",
+        "cityOpt": "City, (optional)"
+    },
+
+    "CommunitySelect": {
+        "commSelect": "Select Community",
+        "finish" : "Finish!",
+        "orgsInArea" : "Organizations in your area:"
+    },
+
+    "OnboardPage": {
+        "tutorial" : "Watch this video to learn how to use the app!"
+    },
+
+    "CommonWords" : {
+        "en" : "English",
+        "qb" : "Q'anjob'al",
+        "welcome" : "Welcome!",
+        "continue" : "Continue", 
+        "username" : "Username",
+        "password" : "Password"
+    },
+
+    "HomePage": {
+        "whatWouldYouLearn" : "Hi! What would you like to learn today?",
+        "search" : "Search",
+        "career" : "Career",
+        "legal" : "Legal",
+        "medical" : "Medical",
+        "transport" : "Transport",
+        "education" : "Education",
+        "other": "Other"
+    },
+
+    "VideoOptions": {
+        "noVideosAvail": "No videos available.",
+        "upNext": "Up Next",
+        "parts" : "parts",
+        "eight" : "Eight"
+    },
+
+    "SocialServicesPage" : {
+        "socServicesResources" : "Social Services Resources",
+        "emergency": "Emergency",
+        "shelters": "Shelters",
+        "food": "Food",
+        "transport": "Transport"
+    }, 
+
+    "JobBoardpage" : {
+        "filter": "Filter",
+        "jobBoard" : "Job Board", 
+        "language" : "Language",
+        "jobType" : "Job Type",
+        "partTime": "Part-time",
+        "fullTime" : "Full-time",
+        "internship" : "Internship",
+        "freelance" : "Freelance",
+        "contract" : "Contract",
+        "temporary" : "Temporary",
+        "seasonal": "Seasonal",
+        "nonEnglish": "Non-English",
+        "clearAll" : "Clear all",
+        "apply" : "Apply", 
+        "remote" : "Remote",
+        "hybrid" : "Hybrid", 
+        "inPerson" : "In Person"
+    }
+
+
+}

@@ -3,6 +3,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { icons } from "lucide-react-native";
 import { colors } from "@/colors";
 import { sizes, componentSizes } from "@/constants/sizes";
+import { useTranslation } from 'react-i18next';
 
 const Icons = icons;
 
@@ -16,12 +17,14 @@ interface GradientButtonProps {
 }
 
 export function EducationButton({ onPress }: { onPress?: () => void }) {
+  const { t } = useTranslation();
+
   return (
     <GradientButton
       icon="GraduationCap"
       bottomColor={colors.purple[500]}
       topColor={colors.purple[400]}
-      text="Education"
+      text={t('HomePage.education')}
       iconColor={colors.purple[300]}
       onPress={onPress}
     />
@@ -29,12 +32,13 @@ export function EducationButton({ onPress }: { onPress?: () => void }) {
 }
 
 export function MedicalButton({ onPress }: { onPress?: () => void }) {
+  const { t } = useTranslation();
   return (
     <GradientButton
       icon="HeartPulse"
       bottomColor={colors.yellow[400]}
       topColor={colors.orange[400]}
-      text="Medical"
+      text= {t('HomePage.medical')}
       iconColor={colors.orange[300]}
       onPress={onPress}
     />
@@ -42,12 +46,13 @@ export function MedicalButton({ onPress }: { onPress?: () => void }) {
 }
 
 export function TransportButton({ onPress }: { onPress?: () => void }) {
+  const { t } = useTranslation();
   return (
     <GradientButton
       icon="Bus"
       bottomColor={colors.teal[400]}
       topColor={colors.green[300]}
-      text="Transport"
+      text={t('HomePage.transport')}
       iconColor={colors.teal[300]}
       onPress={onPress}
     />
@@ -55,12 +60,13 @@ export function TransportButton({ onPress }: { onPress?: () => void }) {
 }
 
 export function OtherButton({ onPress }: { onPress?: () => void }) {
+  const { t } = useTranslation();
   return (
     <GradientButton
       icon="CircleEllipsis"
       bottomColor={colors.gray[300]}
       topColor={colors.gray[300]}
-      text="Other"
+      text={t('HomePage.other')}
       iconColor={colors.gray[200]}
       onPress={onPress}
     />
@@ -68,12 +74,13 @@ export function OtherButton({ onPress }: { onPress?: () => void }) {
 }
 
 export function LegalButton({ onPress }: { onPress?: () => void }) {
+  const { t } = useTranslation();
   return (
     <GradientButton
       icon="Scale"
       bottomColor={colors.jila[400]}
       topColor={colors.orange[400]}
-      text="Legal"
+      text={t('HomePage.legal')}
       iconColor={colors.jila[300]}
       onPress={onPress}
     />
@@ -81,12 +88,13 @@ export function LegalButton({ onPress }: { onPress?: () => void }) {
 }
 
 export function CareerButton({ onPress }: { onPress?: () => void }) {
+  const { t } = useTranslation();
   return (
     <GradientButton
       icon="BriefcaseBusiness"
       bottomColor={colors.green[400]}
       topColor={colors.yellow[400]}
-      text="Career"
+      text={t('HomePage.career')}
       iconColor={colors.green[300]}
       onPress={onPress}
     />

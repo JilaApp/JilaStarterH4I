@@ -19,11 +19,13 @@ import VideoDropdown from "@/components/VideoDropdown";
 import { VideoData } from "@/types/api";
 import Text from "@/components/JilaText";
 import { sizes } from "@/constants/sizes";
+import { useTranslation } from 'react-i18next';
 
 export default function App() {
   const { user, isLoaded } = useUser();
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
+  const { t } = useTranslation();
 
   // Fetch all videos for search
   const {
@@ -91,7 +93,7 @@ export default function App() {
   return (
     <>
       <Header
-        text={`Hi ${user.username}, what would you like to learn today?`}
+        text={t('HomePage.whatWouldYouLearn')}
         toggleSearch={true}
         searchValue={searchQuery}
         onSearchChange={onSearchChange}

@@ -4,11 +4,11 @@ export const inputVariants = {
   username: {
     type: "username",
     icon: UserRound,
-    placeholder: "Enter username",
+    placeholder: "Aktoq b'i q'anwom ",
   },
   password: {
     icon: LockKeyhole,
-    placeholder: "Enter password",
+    placeholder: "Aktoq latz'b'al (contraseña)",
   },
   text: {
     type: "text",

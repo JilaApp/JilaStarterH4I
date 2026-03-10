@@ -1,27 +1,31 @@
-import { View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
-import React, { useState, useEffect } from "react";
 import { colors } from "@/colors";
-import { sizes } from "@/constants/sizes";
 import Background from "@/components/Background";
-import DisplayBox from "@/components/DisplayBox";
-import { Stepper } from "@/components/Stepper";
 import { Button } from "@/components/Button";
-import Select from "@/components/Select";
-import { Toggle } from "@/components/Toggle";
-import Text from "@/components/JilaText";
-import { UsernameInput, PasswordInput } from "@/components/Input";
+import DisplayBox from "@/components/DisplayBox";
 import Dropdown from "@/components/Dropdown";
+import { PasswordInput, UsernameInput } from "@/components/Input";
+import Text from "@/components/JilaText";
 import SearchableDropdown from "@/components/SearchableDropdown";
+import Select from "@/components/Select";
+import { Stepper } from "@/components/Stepper";
+import { Toggle } from "@/components/Toggle";
+import { sizes } from "@/constants/sizes";
+import React, { useEffect, useState } from "react";
+import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 
-import { useSignUp } from "@clerk/clerk-expo";
-import { useRouter } from "expo-router";
 import Checkbox from "@/components/Checkbox";
 import { trpc } from "@/lib/trpc";
-import { Loader, ChevronLeft, AlertCircle } from "lucide-react-native";
+import { useSignUp } from "@clerk/clerk-expo";
+import { useRouter } from "expo-router";
+import { AlertCircle, ChevronLeft, Loader } from "lucide-react-native";
+
+import { useTranslation } from 'react-i18next';
 
 export default function SignUpScreen() {
   const { isLoaded, signUp, setActive } = useSignUp();
   const router = useRouter();
+  const { t } = useTranslation();
+
 
   const languageOptions = [
     {
@@ -275,7 +279,7 @@ export default function SignUpScreen() {
         {/* select language */}
         {currentStep === 1 && (
           <View style={styles.container}>
-            <Text style={styles.title}>Select your language</Text>
+            <Text style={styles.title}>{t('SignUpPage.selectLang')}</Text>
             <View style={styles.exampleContainer}>
               <View style={styles.selectContainer}>
                 <Select
@@ -295,7 +299,7 @@ export default function SignUpScreen() {
                 />
               </View>
               <Button
-                text="Continue"
+                text={t('SignUpPage.continue')}
                 onPress={handleContinue}
                 disabled={!formData.selectedLanguage}
               />
@@ -318,7 +322,7 @@ export default function SignUpScreen() {
               <ChevronLeft size={20} color={colors.jila[400]} />
               <Text style={styles.backText}>Back</Text>
             </TouchableOpacity>
-            <Text style={styles.title}>Create profile</Text>
+            <Text style={styles.title}>{t('CreateProfilePage.createProfile')}</Text>
 
             <View style={styles.exampleContainer}>
               <Text style={{ fontWeight: "bold", fontSize: 18 }}>Username</Text>
@@ -348,7 +352,7 @@ export default function SignUpScreen() {
               {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
               <Button
-                text="Continue"
+                text={t('SignUpPage.continue')}
                 onPress={handleContinue}
                 disabled={
                   !formData.username ||
@@ -389,7 +393,7 @@ export default function SignUpScreen() {
               <Text
                 style={{ fontWeight: "bold", fontSize: 16, marginTop: "5%" }}
               >
-                City (optional)
+                {t('LocationSelect.cityOpt')}
               </Text>
               <View style={{ marginBottom: "5%" }}>
                 <View>
@@ -409,7 +413,7 @@ export default function SignUpScreen() {
               </View>
 
               <Button
-                text="Continue"
+                text={t('CommonWords.continue')}
                 onPress={handleContinue}
                 disabled={!formData.selectedDropdown}
               />
@@ -432,7 +436,7 @@ export default function SignUpScreen() {
                   <ChevronLeft size={20} color={colors.jila[400]} />
                   <Text style={styles.backText}>Back</Text>
                 </TouchableOpacity>
-                <Text style={styles.title}>Select Community</Text>
+                <Text style={styles.title}>{t('CommunitySelect.commSelect')}</Text>
 
                 {customCommunity ? (
                   <View style={{ ...styles.exampleContainer, flex: 1 }}>
@@ -466,7 +470,7 @@ export default function SignUpScreen() {
                     </Text>
 
                     <Text style={styles.sectionTitle}>
-                      Select from your area:
+                     {t('CommunitySelect.orgsInArea')}
                     </Text>
                     <View style={{ flex: 1 }}>
                       <ScrollView
@@ -497,7 +501,7 @@ export default function SignUpScreen() {
                       </ScrollView>
                     </View>
                     <Button
-                      text="Finish!"
+                      text={t('CommunitySelect.finish')}
                       onPress={() => {
                         const selectedOrg =
                           formData.communityOrg ||

@@ -10,6 +10,8 @@ import JilaText from "@/components/JilaText";
 import AudioButton from "@/components/AudioButton";
 import VideoUpNext from "@/components/VideoUpNext";
 import { useTTS } from "@/context/TTSContext";
+import { useTranslation } from 'react-i18next';
+
 
 interface VideoPageProps {
   clickIndex?: number;
@@ -78,6 +80,8 @@ export default function VideoPage({
       },
     });
   };
+  
+  const { t } = useTranslation();
 
   return (
     <View style={{ height: "100%", backgroundColor: colors.cream[300] }}>
@@ -127,14 +131,14 @@ export default function VideoPage({
             <ArrowDownToLine />
           </TouchableOpacity>
 
-          <JilaText style={{ fontSize: 20 }}>Part {clickIndex + 1}</JilaText>
+          <JilaText style={{ fontSize: 20 }}> {t('VideoOptions.parts')} {clickIndex + 1}</JilaText>
         </View>
       </View>
 
       {showNext && (
         <View style={{ marginTop: 60 }}>
           <JilaText style={{ fontSize: 24, fontWeight: "600", marginLeft: 15 }}>
-            Up Next
+            {t('VideoOptions.upNext')}
           </JilaText>
 
           <View
@@ -154,7 +158,7 @@ export default function VideoPage({
             }}
           >
             <VideoUpNext
-              title={`Part ${clickIndex + 2}`}
+              title={`${t('VideoOptions.part')} ${clickIndex + 2}`}
               duration={videos.durations[clickIndex + 1] || 0}
               videoUrl="sigma.com"
               onPress={handleNextVideo}
