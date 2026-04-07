@@ -9,6 +9,7 @@ import { useFonts } from "expo-font";
 import TRPCProvider from "@/components/TRPCProvider";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { TTSProvider } from "@/context/TTSContext";
+import '../i18n'; 
 
 const NAV_ROUTES = new Set([
   "/",

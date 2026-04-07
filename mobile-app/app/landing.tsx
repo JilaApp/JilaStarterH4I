@@ -7,10 +7,12 @@ import { Button } from "@/components/Button";
 import { useRouter } from "expo-router";
 import AudioButton from "@/components/AudioButton";
 import { useAudioTranslation } from "@/hooks/useAudioTranslation";
+import { useTranslation } from 'react-i18next';
 
 export default function LandingPage() {
   const router = useRouter();
   const { getAudioSource } = useAudioTranslation();
+  const { t } = useTranslation();
 
   return (
     <View style={{ flex: 1 }}>
@@ -22,7 +24,7 @@ export default function LandingPage() {
         locations={[0.1, 0.9]}
       >
         <View style={styles.logoContainer}>
-          <Text style={styles.welcomeText}>Welcome to</Text>
+          <Text style={styles.welcomeText}>{t('landing.message')}</Text>
           <View style={{ flexDirection: "row", alignItems: "center" }}>
             <Image
               source={require("../assets/images/jila-logo.png")}
@@ -39,14 +41,14 @@ export default function LandingPage() {
         </View>
         <View style={styles.buttonContainer}>
           <Button
-            text="Get started"
+            text={t('landing.getStarted')}
             onPress={() => router.push("/auth/sign-up")}
             preset="outline"
             customStyle={{ ...styles.button, textColor: colors.white[400] }}
           />
           <View style={{ marginTop: 20 }}>
             <Button
-              text="Sign In"
+              text={t('landing.signIn')}
               onPress={() => router.push("/auth/sign-in")}
               preset="outline"
               customStyle={{ ...styles.button, textColor: colors.white[400] }}

@@ -5,17 +5,19 @@ import { sizes } from "@/constants/sizes";
 import { useRouter } from "expo-router";
 import VideoEmbed, { VideoType } from "@/components/VideoEmbed";
 import Background from "@/components/Background";
+import { useTranslation } from 'react-i18next';
 
 export default function WelcomePage() {
   const router = useRouter();
+  const { t } = useTranslation();
 
   return (
     <Background showLogo={false}>
       <View style={styles.contentContainer}>
-        <Text style={styles.title}>Welcome!</Text>
+        <Text style={styles.title}>{t('CommonWords.welcome')}</Text>
         <View style={styles.subtitleContainer}>
           <Text style={styles.subtitle}>
-            Watch this video to learn how to use the app!
+           {t('OnboardPage.tutorial')}
           </Text>
         </View>
 

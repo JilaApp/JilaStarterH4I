@@ -13,6 +13,8 @@ import { SocialServiceCategory } from "@/types/api";
 import JilaText from "@/components/JilaText";
 import BottomBackground from "@/components/BottomBackground";
 import { sizes } from "@/constants/sizes";
+import { useTranslation } from 'react-i18next';
+
 
 const CATEGORY_MAP: Record<
   Exclude<SocialServiceCategory, SocialServiceCategory.OTHER>,
@@ -20,19 +22,19 @@ const CATEGORY_MAP: Record<
 > = {
   [SocialServiceCategory.EMERGENCIA]: {
     icon: Ambulance,
-    name: "Emergency",
+    name: "Amank'wan ab'ix",
   },
   [SocialServiceCategory.SHELTERS]: {
     icon: House,
-    name: "Shelters",
+    name: "Wayub’",
   },
   [SocialServiceCategory.FOOD]: {
     icon: Apple,
-    name: "Food",
+    name: "Lob’ej",
   },
   [SocialServiceCategory.TRANSPORTATION]: {
     icon: Bus,
-    name: "Transport",
+    name: "Iqb'al ek' anima",
   },
 };
 
@@ -43,11 +45,16 @@ const DISPLAY_CATEGORIES = [
   SocialServiceCategory.TRANSPORTATION,
 ];
 
+
+
+
 export default function SocialServices() {
   const [currentCategoryIndex, setCurrentCategoryIndex] = useState<
     number | null
   >(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
+
+  const { t } = useTranslation();
 
   const {
     data: socialServices,
@@ -59,6 +66,8 @@ export default function SocialServices() {
     icon: CATEGORY_MAP[category].icon,
     name: CATEGORY_MAP[category].name,
   }));
+
+  
 
   const currentCategory =
     currentCategoryIndex !== null
@@ -94,7 +103,7 @@ export default function SocialServices() {
           style={styles.scrollView}
           contentContainerStyle={styles.scrollContent}
         >
-          <Title text="Social Services Resources" audioSource={null} />
+          <Title text= {t('SocialServicesPage.socServicesResources')} audioSource={null} />
 
           <SocialServicesCategories
             socialServices={categories}

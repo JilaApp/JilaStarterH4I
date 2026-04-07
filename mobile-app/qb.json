@@ -1,0 +1,93 @@
+{
+    "landing" : {
+        "message" : "Okaneq b'ay'",
+        "getStarted": "Chi elyich ",
+        "signIn": "Sign in"
+    },
+
+    "SignUpPage" : {
+        "selectLang" : "Sik' haq'anej",
+        "enableTTS" : "K'ex yet chelon ajoq-toxa' chab'ej",
+        "continue" : "B'eyantoq",
+        "ttsMsg": "Yet mayal jaqchaji, chi uj hatenon b'ay jun tx'oxb'anil yet chi aj nuq' axka tu chi uj yillay aj tzanoq q'anej yin miman nuq'al"
+
+    },
+
+    "CreateProfilePage": {
+        "createProfile": "Wat'nej junoq hechel",
+        "EnterUser" : "Aktoq b'i q'anwom",
+        "EnterPass" : "Aktoq latz'b'al (contraseña)"
+    },
+
+    "LocationSelect": {
+        "state": "Maqb'ej konob'",
+        "cityOpt": "Konob'al, sik'a'"
+    },
+
+    "CommunitySelect": {
+        "commSelect": "Sik' wajan okb'ejal",
+        "finish" : "Xlajwi",
+        "orgsInArea" : "Wajanb'ahilal b'ay kajan hach"
+    },
+
+    "OnboardPage": {
+        "tutorial" : "Il jun tx'oxb'anil tila axka tu chach kuychaj haq'anon jun mitx'q'ab'ti"
+    },
+
+    "CommonWords" : {
+        "en" : "Q'anej inglés",
+        "qb" : "Q'anjob'al",
+        "welcome" : "Okaneq",
+        "continue" : "B'eyantoq", 
+        "username" : "Username",
+        "password" : "Password"
+    },
+
+    "HomePage": {
+        "whatWouldYouLearn" : "Tzet chi hochej chi hakuy tinani'?",
+        "search" : "Sayb’al",
+        "career" : "Mulnajil",
+        "legal" : "Yajaw",
+        "medical" : "Amb’al",
+        "transport" : "Iqb'al ek' anima",
+        "education" : "Kuyoj",
+        "other": "Junoqxa"
+    },
+
+    "VideoOptions": {
+        "noVideosAvail": "K'am echelej ay",
+        "upNext": "Ak' ab'ix",
+        "parts" : "Stz'aqil",
+        "eight" : "Waxaqeb'"
+    },
+
+    "SocialServicesPage" : {
+        "socServicesResources" : "Smitx'q'ab' mulnajil b'ay konob'",
+        "emergency": "Amank'wan ab'ix",
+        "shelters": "Wayub’",
+        "food": "Lob’ej",
+        "transport": "Iqb'al ek' anima"
+    }, 
+
+    "JobBoardpage" : {
+        "filter": "Watx' saynej",
+        "jobBoard" : "Yab'ixal Mulnajil", 
+        "language" : "Ti'ej",
+        "jobType" : "Maqan mulnajil",
+        "partTime": "Nan k'u",
+        "fullTime" : "Masanil k'u",
+        "internship" : "Kuyoj mulnajil",
+        "freelance" : "Txonjom",
+        "contract" : "Lajti' yet mulnajil",
+        "temporary" : "Jayeb'nej k'u",
+        "seasonal": "K'exk'ex ab'il",
+        "nonEnglish": "Man Inglesoq",
+        "clearAll" : "I'el masanil",
+        "apply" : "Okan yin", 
+        "remote" : "Najat mulnajil",
+        "hybrid" : "Soman mulnajil", 
+        "inPerson" : "Yin animahil"
+    }
+
+
+}

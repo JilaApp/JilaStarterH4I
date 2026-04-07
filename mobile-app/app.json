@@ -1,4 +1,7 @@
 {
+  "ios": {
+    "bundleIdentifier": "com.illinoisenactus.jila"
+  },
   "expo": {
     "name": "mobile-app",
     "slug": "mobile-app",

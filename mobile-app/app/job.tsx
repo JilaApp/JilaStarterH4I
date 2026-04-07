@@ -21,8 +21,10 @@ import { BaseBottomSheet } from "@/components/BaseBottomSheet";
 import { Button } from "@/components/Button";
 import { trpc } from "@/lib/trpc";
 import { Job as BackendJob } from "@/types/api";
+import { useTranslation } from 'react-i18next';
 
 const sampleAudio = require("../assets/audio/short_sample.mp3");
+
 
 type Job = {
   id: string;
@@ -37,25 +39,27 @@ type Job = {
 };
 
 const JOB_TYPE_OPTIONS: TTSItem[] = [
-  { id: "internship", text: "Internship", audioSource: sampleAudio },
-  { id: "temporary", text: "Temporary", audioSource: sampleAudio },
-  { id: "full-time", text: "Full-time", audioSource: sampleAudio },
-  { id: "freelance", text: "Freelance", audioSource: sampleAudio },
-  { id: "part-time", text: "Part-time", audioSource: sampleAudio },
-  { id: "seasonal", text: "Seasonal", audioSource: sampleAudio },
-  { id: "contract", text: "Contract", audioSource: sampleAudio },
+  { id: "internship", text: "Kuyoj mulnajil", audioSource: sampleAudio },
+  { id: "temporary", text: "Jayeb'nej k'u", audioSource: sampleAudio },
+  { id: "full-time", text: "Masanil k'u", audioSource: sampleAudio },
+  { id: "freelance", text: "Txonjom", audioSource: sampleAudio },
+  { id: "part-time", text: "Nan k'u", audioSource: sampleAudio },
+  { id: "seasonal", text: "K'exk'ex ab'il", audioSource: sampleAudio },
+  { id: "contract", text: "Lajti' yet mulnajil", audioSource: sampleAudio },
 ];
 
 const LANGUAGE_OPTIONS: TTSItem[] = [
-  { id: "spanish", text: "Spanish", audioSource: sampleAudio },
+  { id: "spanish", text: "Sti' moso", audioSource: sampleAudio },
   { id: "qanjobal", text: "Q'anjob'al", audioSource: sampleAudio },
-  { id: "non-english", text: "Non-English", audioSource: sampleAudio },
+  { id: "non-english", text: "Man Inglesoq", audioSource: sampleAudio },
 ];
 
 export default function JobBoard() {
   const [searchValue, setSearchValue] = useState("");
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
   const [showFilters, setShowFilters] = useState(false);
+
+  const { t } = useTranslation();
 
   // Filter states
   const [jobTypeSelected, setJobTypeSelected] = useState(new Set<string>());
@@ -73,19 +77,19 @@ export default function JobBoard() {
 
   const jobTypeTitle: TTSItem = {
     id: "job-title-1",
-    text: "Job Type",
+    text: "Maqan mulnajil",
     audioSource: sampleAudio,
   };
 
   const languageTitle: TTSItem = {
     id: "language-title-1",
-    text: "Language",
+    text: "Ti'ej",
     audioSource: sampleAudio,
   };
 
   const locationTitle: TTSItem = {
     id: "location-title-1",
-    text: "Location",
+    text: "B'aytal ay",
     audioSource: sampleAudio,
   };
 
@@ -157,7 +161,7 @@ export default function JobBoard() {
       <View style={styles.content}>
         {/* Title with audio button */}
         <View style={styles.titleRow}>
-          <Text style={styles.title}>Job Board</Text>
+          <Text style={styles.title}> {t('JobBoardpage.jobBoard')} </Text>
           <AudioButton audioSource={jobBoardTitleAudio} ref={audioButtonRef} />
         </View>
 
@@ -242,14 +246,14 @@ export default function JobBoard() {
             <View style={styles.filterActions}>
               <View style={{ flex: 1 }}>
                 <Button
-                  text="Clear all"
+                  text="I'el masanil"
                   onPress={handleClearFilters}
                   preset="outline"
                 />
               </View>
               <View style={{ flex: 1 }}>
                 <Button
-                  text={`Apply (${filteredJobs.length})`}
+                  text={`Okan yin (${filteredJobs.length})`}
                   onPress={handleApplyFilters}
                   preset="secondary"
                   customStyle={{
