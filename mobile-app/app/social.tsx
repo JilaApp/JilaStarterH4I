@@ -54,6 +54,8 @@ export default function SocialServices() {
   >(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
 
+  const { t } = useTranslation();
+
   const {
     data: socialServices,
     isLoading,
@@ -101,7 +103,7 @@ export default function SocialServices() {
           style={styles.scrollView}
           contentContainerStyle={styles.scrollContent}
         >
-          <Title text="Smitx'q'ab' mulnajil b'ay konob'" audioSource={null} />
+          <Title text= {t('SocialServicesPage.socServicesResources')} audioSource={null} />
 
           <SocialServicesCategories
             socialServices={categories}

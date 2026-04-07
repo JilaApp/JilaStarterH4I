@@ -59,6 +59,8 @@ export default function JobBoard() {
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
   const [showFilters, setShowFilters] = useState(false);
 
+  const { t } = useTranslation();
+
   // Filter states
   const [jobTypeSelected, setJobTypeSelected] = useState(new Set<string>());
   const [languageSelected, setLanguageSelected] = useState(new Set<string>());
@@ -159,7 +161,7 @@ export default function JobBoard() {
       <View style={styles.content}>
         {/* Title with audio button */}
         <View style={styles.titleRow}>
-          <Text style={styles.title}>Yab'ixal Mulnajil</Text>
+          <Text style={styles.title}> {t('JobBoardpage.jobBoard')} </Text>
           <AudioButton audioSource={jobBoardTitleAudio} ref={audioButtonRef} />
         </View>
 

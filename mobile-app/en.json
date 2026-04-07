@@ -2,19 +2,19 @@
     "landing" : {
         "message" : "Welcome to",
         "get started": "Get started",
-        "sign in": "Sign in"
+        "signIn": "Sign in"
     },
 
     "SignUpPage" : {
         "selectLang" : "Select your langauge",
-        "enable TTS" : "Enable text-to-speech?",
+        "enableTTS" : "Enable text-to-speech?",
         "continue" : "Continue",
-        "tts msg": "When enabled, you may click the speaker icons to read words out loud"
+        "ttsMsg": "When enabled, you may click the speaker icons to read words out loud"
 
     },
 
     "CreateProfilePage": {
-        "create profile": "Create profile",
+        "createProfile": "Create profile",
         "EnterUser" : "Enter username",
         "EnterPass" : "Enter password"
     },

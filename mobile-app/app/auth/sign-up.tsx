@@ -24,7 +24,12 @@ import { useTranslation } from 'react-i18next';
 export default function SignUpScreen() {
   const { isLoaded, signUp, setActive } = useSignUp();
   const router = useRouter();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+
+  const languageMap: Record<string, string> = {
+    english: "en",
+    qanjobal: "qb",
+  };
 
 
   const languageOptions = [
@@ -285,8 +290,10 @@ export default function SignUpScreen() {
                 <Select
                   options={languageOptions}
                   selected={formData.selectedLanguage || ""}
-                  onSelect={(value) =>
-                    setFormData({ ...formData, selectedLanguage: value })
+                  onSelect={(value) => {
+                    setFormData({ ...formData, selectedLanguage: value });
+                    i18n.changeLanguage(languageMap[value]);
+                  }
                   }
                 />
               </View>

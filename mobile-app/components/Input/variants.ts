@@ -1,5 +1,6 @@
 import { UserRound, LockKeyhole } from "lucide-react-native";
 
+
 export const inputVariants = {
   username: {
     type: "username",
