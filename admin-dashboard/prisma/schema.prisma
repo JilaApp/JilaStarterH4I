@@ -1,27 +1,24 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
   provider  = "postgresql"
-  url       = env("JILA_BACKEND_PRISMA_DATABASE_URL") // uses connection pooling
-  directUrl = env("JILA_BACKEND_POSTGRES_URL") // uses a direct connection
+  url       = env("JILA_BACKEND_PRISMA_DATABASE_URL")
+  directUrl = env("JILA_BACKEND_POSTGRES_URL")
 }
 
 model CommunityOrg {
-  id            String          @id @default(cuid())
-  name          String          @unique
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
-  city          String          @default("Champaign")
-  state         String          @default("Illinois")
-  adminUsers    AdminUser[]
-  videos        Videos[]
+  id             String           @id @default(cuid())
+  name           String           @unique
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  city           String           @default("Champaign")
+  state          String           @default("Illinois")
+  adminUsers     AdminUser[]
+  jobs           Jobs[]
   socialServices SocialServices[]
-  jobs          Jobs[]
+  videos         Videos[]
 }
 
 model AdminUser {
@@ -30,14 +27,9 @@ model AdminUser {
   email          String        @unique
   role           AdminRole     @default(COMMUNITY_ORG_ADMIN)
   communityOrgId String?
-  communityOrg   CommunityOrg? @relation(fields: [communityOrgId], references: [id])
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
-}
-
-enum AdminRole {
-  JILA_ADMIN
-  COMMUNITY_ORG_ADMIN
+  communityOrg   CommunityOrg? @relation(fields: [communityOrgId], references: [id])
 }
 
 model AppUser {
@@ -91,27 +83,32 @@ model SocialServices {
 }
 
 model Jobs {
-  id                   Int              @id @default(autoincrement())
+  id                   Int           @id @default(autoincrement())
   titleEnglish         String
   titleQanjobal        String
   companyName          String
   businessContactEmail String
   jobType              JobType
-  acceptedLanguages    String[]         @default([])
+  acceptedLanguages    String[]      @default([])
   locationType         LocationType
   city                 String
   state                String
-  url                  String           @unique
+  url                  String        @unique
   salary               Int
   expirationDate       DateTime
   descriptionEnglish   String
   descriptionQanjobal  String
-  status               JobStatus        @default(ACTIVE)
-  unread               Boolean          @default(true)
-  createdAt            DateTime         @default(now())
-  updatedAt            DateTime         @updatedAt
+  status               JobStatus     @default(ACTIVE)
+  unread               Boolean       @default(true)
+  createdAt            DateTime      @default(now())
+  updatedAt            DateTime      @updatedAt
   communityOrgId       String?
-  communityOrg         CommunityOrg?    @relation(fields: [communityOrgId], references: [id])
+  communityOrg         CommunityOrg? @relation(fields: [communityOrgId], references: [id])
+}
+
+enum AdminRole {
+  JILA_ADMIN
+  COMMUNITY_ORG_ADMIN
 }
 
 enum VideoTopic {
