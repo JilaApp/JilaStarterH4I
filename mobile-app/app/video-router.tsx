@@ -86,6 +86,9 @@ export default function VideoRouter() {
             filteredVideos.map((vid: VideoData, i: number) => {
               const hasMultipleParts = vid.urls.length > 1;
               const maxLength = hasMultipleParts ? 18 : 28;
+              const audioUrl = vid.audioFileS3Key
+                ? `${process.env.EXPO_PUBLIC_API_URL}/api/audio?key=${vid.audioFileS3Key}`
+                : undefined;
               return (
                 <VideoDropdown
                   key={i}
@@ -93,7 +96,7 @@ export default function VideoRouter() {
                     vid.titleEnglish.substring(0, maxLength) +
                     (vid.titleEnglish.length > maxLength ? "..." : "")
                   }
-                  ttsUrl={vid.audioFilename || "url"}
+                  ttsUrl={audioUrl}
                   type="cream"
                   parts={vid.urls.map((url, i) => {
                     return {

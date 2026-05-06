@@ -19,7 +19,7 @@ import VideoDropdown from "@/components/VideoDropdown";
 import { VideoData } from "@/types/api";
 import Text from "@/components/JilaText";
 import { sizes } from "@/constants/sizes";
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 
 export default function App() {
   const { user, isLoaded } = useUser();
@@ -93,7 +93,7 @@ export default function App() {
   return (
     <>
       <Header
-        text={t('HomePage.whatWouldYouLearn')}
+        text={t("HomePage.whatWouldYouLearn")}
         toggleSearch={true}
         searchValue={searchQuery}
         onSearchChange={onSearchChange}
@@ -121,6 +121,9 @@ export default function App() {
               filteredVideos.map((vid: VideoData, i: number) => {
                 const hasMultipleParts = vid.urls.length > 1;
                 const maxLength = hasMultipleParts ? 18 : 28;
+                const audioUrl = vid.audioFileS3Key
+                  ? `${process.env.EXPO_PUBLIC_API_URL}/api/audio?key=${vid.audioFileS3Key}`
+                  : undefined;
                 return (
                   <VideoDropdown
                     key={i}
@@ -128,7 +131,7 @@ export default function App() {
                       vid.titleEnglish.substring(0, maxLength) +
                       (vid.titleEnglish.length > maxLength ? "..." : "")
                     }
-                    ttsUrl={vid.audioFilename || "url"}
+                    ttsUrl={audioUrl}
                     type="cream"
                     category={vid.topic}
                     parts={vid.urls.map((url, i) => {
