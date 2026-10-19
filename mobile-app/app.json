@@ -1,7 +1,4 @@
 {
-  "ios": {
-    "bundleIdentifier": "com.illinoisenactus.jila"
-  },
   "expo": {
     "name": "mobile-app",
     "slug": "mobile-app",
@@ -12,6 +9,7 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
+      "bundleIdentifier": "com.illinoisenactus.jila",
       "supportsTablet": true,
       "infoPlist": {
         "UIViewControllerBasedStatusBarAppearance": false
