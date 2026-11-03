@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -24,7 +24,7 @@ export default function DisplayBox({
   maxHeight = componentSizes.displayBox.maxHeight,
   keyboardOffsetMultiplier = 0.4,
 }: DisplayBoxProps) {
-  const translateY = useRef(new Animated.Value(0)).current;
+  const [translateY] = useState(() => new Animated.Value(0));
 
   useEffect(() => {
     const keyboardWillShow = Keyboard.addListener(

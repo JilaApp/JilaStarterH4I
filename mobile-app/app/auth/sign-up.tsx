@@ -19,7 +19,7 @@ import { useSignUp } from "@clerk/clerk-expo";
 import { useRouter } from "expo-router";
 import { AlertCircle, ChevronLeft, Loader } from "lucide-react-native";
 
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 
 export default function SignUpScreen() {
   const { isLoaded, signUp, setActive } = useSignUp();
@@ -30,7 +30,6 @@ export default function SignUpScreen() {
     english: "en",
     qanjobal: "qb",
   };
-
 
   const languageOptions = [
     {
@@ -205,7 +204,6 @@ export default function SignUpScreen() {
   ];
 
   const [citySuggestions, setCitySuggestions] = useState<string[]>([]);
-  const [citySearchText, setCitySearchText] = useState("");
 
   const [currentStep, setCurrentStep] = useState(1);
 
@@ -222,14 +220,6 @@ export default function SignUpScreen() {
     }
   };
 
-  useEffect(() => {
-    if (citySearchText.length > 2) {
-      fetchCitySuggestions(citySearchText);
-    } else {
-      setCitySuggestions([]);
-    }
-  }, [citySearchText]);
-
   const fetchCitySuggestions = async (input: string) => {
     const url = `http://gd.geobytes.com/AutoCompleteCity?q=${encodeURIComponent(input)}`;
     try {
@@ -243,6 +233,14 @@ export default function SignUpScreen() {
       setCitySuggestions(uniqueCityNames);
     } catch (error) {
       console.error("Fetching city error:", error);
+      setCitySuggestions([]);
+    }
+  };
+
+  const handleCitySearchChange = (text: string) => {
+    if (text.length > 2) {
+      fetchCitySuggestions(text);
+    } else {
       setCitySuggestions([]);
     }
   };
@@ -318,7 +316,7 @@ export default function SignUpScreen() {
         {/* select language */}
         {currentStep === 1 && (
           <View style={styles.container}>
-            <Text style={styles.title}>{t('SignUpPage.selectLang')}</Text>
+            <Text style={styles.title}>{t("SignUpPage.selectLang")}</Text>
             <View style={styles.exampleContainer}>
               <View style={styles.selectContainer}>
                 <Select
@@ -327,8 +325,7 @@ export default function SignUpScreen() {
                   onSelect={(value) => {
                     setFormData({ ...formData, selectedLanguage: value });
                     i18n.changeLanguage(languageMap[value]);
-                  }
-                  }
+                  }}
                 />
               </View>
               <View style={styles.toggle}>
@@ -340,7 +337,7 @@ export default function SignUpScreen() {
                 />
               </View>
               <Button
-                text={t('SignUpPage.continue')}
+                text={t("SignUpPage.continue")}
                 onPress={handleContinue}
                 disabled={!formData.selectedLanguage}
               />
@@ -363,7 +360,9 @@ export default function SignUpScreen() {
               <ChevronLeft size={20} color={colors.jila[400]} />
               <Text style={styles.backText}>Back</Text>
             </TouchableOpacity>
-            <Text style={styles.title}>{t('CreateProfilePage.createProfile')}</Text>
+            <Text style={styles.title}>
+              {t("CreateProfilePage.createProfile")}
+            </Text>
 
             <View style={styles.exampleContainer}>
               <Text style={{ fontWeight: "bold", fontSize: 18 }}>Username</Text>
@@ -393,7 +392,7 @@ export default function SignUpScreen() {
               {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
               <Button
-                text={t('SignUpPage.continue')}
+                text={t("SignUpPage.continue")}
                 onPress={handleContinue}
                 disabled={
                   !formData.username ||
@@ -434,7 +433,7 @@ export default function SignUpScreen() {
               <Text
                 style={{ fontWeight: "bold", fontSize: 16, marginTop: "5%" }}
               >
-                {t('LocationSelect.cityOpt')}
+                {t("LocationSelect.cityOpt")}
               </Text>
               <View style={{ marginBottom: "5%" }}>
                 <View>
@@ -447,14 +446,14 @@ export default function SignUpScreen() {
                       setFormData({ ...formData, selectedCity: value })
                     }
                     citySearch={true}
-                    onSearchChange={setCitySearchText}
+                    onSearchChange={handleCitySearchChange}
                     onFocus={() => setKeyboardOffset(0.5)}
                   />
                 </View>
               </View>
 
               <Button
-                text={t('CommonWords.continue')}
+                text={t("CommonWords.continue")}
                 onPress={handleContinue}
                 disabled={!formData.selectedDropdown}
               />
@@ -477,16 +476,15 @@ export default function SignUpScreen() {
                   <ChevronLeft size={20} color={colors.jila[400]} />
                   <Text style={styles.backText}>Back</Text>
                 </TouchableOpacity>
-                <Text style={styles.title}>{t('CommunitySelect.commSelect')}</Text>
+                <Text style={styles.title}>
+                  {t("CommunitySelect.commSelect")}
+                </Text>
 
                 <View style={{ ...styles.exampleContainer, gap: 14 }}>
                   <Text style={styles.errorText}>
                     Unable to load community organizations.
                   </Text>
-                  <Button
-                    text="Retry"
-                    onPress={() => refetchCommunityOrgs()}
-                  />
+                  <Button text="Retry" onPress={() => refetchCommunityOrgs()} />
                 </View>
               </>
             ) : (
@@ -498,7 +496,9 @@ export default function SignUpScreen() {
                   <ChevronLeft size={20} color={colors.jila[400]} />
                   <Text style={styles.backText}>Back</Text>
                 </TouchableOpacity>
-                <Text style={styles.title}>{t('CommunitySelect.commSelect')}</Text>
+                <Text style={styles.title}>
+                  {t("CommunitySelect.commSelect")}
+                </Text>
 
                 {customCommunity ? (
                   <View style={{ ...styles.exampleContainer, flex: 1 }}>
@@ -532,7 +532,7 @@ export default function SignUpScreen() {
                     </Text>
 
                     <Text style={styles.sectionTitle}>
-                      {t('CommunitySelect.orgsInArea')}
+                      {t("CommunitySelect.orgsInArea")}
                     </Text>
                     <View style={{ flex: 1 }}>
                       <ScrollView
@@ -562,9 +562,11 @@ export default function SignUpScreen() {
                         />
                       </ScrollView>
                     </View>
-                    {error ? <Text style={styles.errorText}>{error}</Text> : null}
+                    {error ? (
+                      <Text style={styles.errorText}>{error}</Text>
+                    ) : null}
                     <Button
-                      text={t('CommunitySelect.finish')}
+                      text={t("CommunitySelect.finish")}
                       onPress={() => {
                         const selectedOrg =
                           formData.communityOrg ||
@@ -605,7 +607,7 @@ export default function SignUpScreen() {
                         },
                       ]}
                       selected="1"
-                      onSelect={() => { }}
+                      onSelect={() => {}}
                     />
 
                     {showStateWarning && (
@@ -635,7 +637,9 @@ export default function SignUpScreen() {
                       <Text>Choose my own community</Text>
                     </View>
 
-                    {error ? <Text style={styles.errorText}>{error}</Text> : null}
+                    {error ? (
+                      <Text style={styles.errorText}>{error}</Text>
+                    ) : null}
                     <Button
                       text={chooseCommunity ? "Continue" : "Finish!"}
                       onPress={() => {

@@ -6,8 +6,7 @@ import { inputVariants } from "./variants";
 import { TextInputProps, Pressable } from "react-native";
 import { colors } from "@/colors";
 import { sizes } from "@/constants/sizes";
-import { useTranslation } from 'react-i18next';
-
+import { useTranslation } from "react-i18next";
 
 export function PasswordInput({
   placeholder = inputVariants.password.placeholder,
@@ -25,7 +24,7 @@ export function PasswordInput({
   return (
     <BaseInput
       type={showPassword ? "text" : "password"}
-      placeholder={placeholder ?? t('CreateProfilePage.EnterUser')}
+      placeholder={placeholder ?? t("CreateProfilePage.EnterUser")}
       icon={<Icon size={sizes.icon.md} color={colors.gray[300]} />}
       rightElement={
         <Pressable

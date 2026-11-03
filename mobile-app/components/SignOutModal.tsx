@@ -8,7 +8,6 @@ import {
 } from "react-native";
 import Text from "@/components/JilaText";
 import { colors } from "@/colors";
-import { sizes } from "@/constants/sizes";
 import { wp } from "@/utils/responsive";
 
 interface SignOutModalProps {

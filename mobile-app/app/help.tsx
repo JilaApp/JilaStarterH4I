@@ -10,7 +10,7 @@ import { colors } from "@/colors";
 import { sizes } from "@/constants/sizes";
 import { hp, wp } from "@/utils/responsive";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 
 export default function HelpPage() {
   const router = useRouter();
@@ -35,9 +35,7 @@ export default function HelpPage() {
 
         <View style={styles.headerContent}>
           <Text style={styles.title}>Need Help?</Text>
-          <Text style={styles.subtitle}>
-          {t('OnboardPage.tutorial')}
-          </Text>
+          <Text style={styles.subtitle}>{t("OnboardPage.tutorial")}</Text>
         </View>
       </LinearGradient>
 

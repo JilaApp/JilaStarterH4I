@@ -21,10 +21,9 @@ import { BaseBottomSheet } from "@/components/BaseBottomSheet";
 import { Button } from "@/components/Button";
 import { trpc } from "@/lib/trpc";
 import { Job as BackendJob } from "@/types/api";
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 
 const sampleAudio = require("../assets/audio/short_sample.mp3");
-
 
 type Job = {
   id: string;
@@ -161,7 +160,7 @@ export default function JobBoard() {
       <View style={styles.content}>
         {/* Title with audio button */}
         <View style={styles.titleRow}>
-          <Text style={styles.title}> {t('JobBoardpage.jobBoard')} </Text>
+          <Text style={styles.title}> {t("JobBoardpage.jobBoard")} </Text>
           <AudioButton audioSource={jobBoardTitleAudio} ref={audioButtonRef} />
         </View>
 

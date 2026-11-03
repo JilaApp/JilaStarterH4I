@@ -1,4 +1,4 @@
-import { useState, useRef, ReactNode, useEffect } from "react";
+import { useState, ReactNode, useEffect } from "react";
 import {
   View,
   TouchableOpacity,
@@ -34,7 +34,7 @@ export default function Accordion({
 }: AccordionProps) {
   const [contentHeight, setContentHeight] = useState(0);
   const [open, setOpen] = useState(false);
-  const anim = useRef(new Animated.Value(0)).current;
+  const [anim] = useState(() => new Animated.Value(0));
 
   const handlePress = () => {
     if (onPress) {

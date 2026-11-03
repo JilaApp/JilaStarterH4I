@@ -5,7 +5,7 @@ import { sizes } from "@/constants/sizes";
 import { useRouter } from "expo-router";
 import VideoEmbed, { VideoType } from "@/components/VideoEmbed";
 import Background from "@/components/Background";
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 
 export default function WelcomePage() {
   const router = useRouter();
@@ -14,11 +14,9 @@ export default function WelcomePage() {
   return (
     <Background showLogo={false}>
       <View style={styles.contentContainer}>
-        <Text style={styles.title}>{t('CommonWords.welcome')}</Text>
+        <Text style={styles.title}>{t("CommonWords.welcome")}</Text>
         <View style={styles.subtitleContainer}>
-          <Text style={styles.subtitle}>
-           {t('OnboardPage.tutorial')}
-          </Text>
+          <Text style={styles.subtitle}>{t("OnboardPage.tutorial")}</Text>
         </View>
 
         <View style={styles.videoWrapper}>

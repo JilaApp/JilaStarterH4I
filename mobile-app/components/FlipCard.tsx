@@ -128,7 +128,7 @@ const FlipCard = ({
   const [isFlippedState, setIsFlippedState] = useState(false);
 
   const handlePress = () => {
-    isFlipped.value = !isFlipped.value;
+    isFlipped.set(!isFlipped.get());
     setIsFlippedState(!isFlippedState);
   };
 
