@@ -251,7 +251,18 @@ export default function SignUpScreen() {
     data: communityOrgs,
     isLoading,
     refetch: refetchCommunityOrgs,
+    error: communityOrgsError,
   } = trpc.community.getAllCommunityOrgs.useQuery();
+
+  useEffect(() => {
+    if (communityOrgsError) {
+      console.error(
+        "Failed to load community orgs:",
+        communityOrgsError.message,
+        JSON.stringify(communityOrgsError.data ?? null),
+      );
+    }
+  }, [communityOrgsError]);
 
   let largestOrg: any;
   let showStateWarning = false;

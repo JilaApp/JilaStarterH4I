@@ -30,10 +30,16 @@ export default function TRPCProvider({
         httpBatchLink({
           url: `${API_URL}/api/trpc`,
           async headers() {
-            const authToken = await getToken();
-            return {
-              authorization: authToken ? `Bearer ${authToken}` : undefined,
-            };
+            // Don't let a Clerk token failure block every API request.
+            let authToken: string | null = null;
+            try {
+              authToken = await getToken();
+            } catch (err) {
+              console.warn("Could not get auth token:", err);
+            }
+            // Omit the header entirely when signed out: Expo's native fetch
+            // rejects header values that aren't strings (e.g. undefined).
+            return authToken ? { authorization: `Bearer ${authToken}` } : {};
           },
         }),
       ],
