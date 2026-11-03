@@ -48,11 +48,7 @@ export default function RootLayout() {
         <ClerkProvider tokenCache={tokenCache}>
           <TRPCProvider>
             <TTSProvider>
-              <StatusBar
-                barStyle="light-content"
-                backgroundColor="transparent"
-                translucent
-              />
+              <StatusBar barStyle="light-content" />
               <View style={styles.container}>
                 <View style={styles.content}>
                   <Slot />

@@ -1,6 +1,5 @@
-import { useState, useRef } from "react";
+import { useState, useRef, type ComponentRef } from "react";
 import { View, TextInput, StyleSheet } from "react-native";
-import type { TextInput as RNTextInput } from "react-native";
 import { BaseInputProps } from "./types";
 import { colors } from "@/colors";
 import { sizes } from "@/constants/sizes";
@@ -23,7 +22,7 @@ export function BaseInput({
   autoComplete,
 }: BaseInputProps) {
   const [isFocused, setIsFocused] = useState(false);
-  const inputRef = useRef<RNTextInput | null>(null);
+  const inputRef = useRef<ComponentRef<typeof TextInput> | null>(null);
 
   const handleChangeText = (text: string) => {
     onChange?.(text);
