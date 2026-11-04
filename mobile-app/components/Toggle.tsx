@@ -11,7 +11,7 @@ import Animated, {
 import Text from "./JilaText";
 import AudioButton from "./AudioButton";
 import { sizes } from "@/constants/sizes";
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 
 // Toggle-specific constants
 const SWITCH_BORDER_WIDTH = 2.5;
@@ -24,8 +24,6 @@ const SWITCH_COLORS = {
   border: "#7E0601",
   thumb: "#FFFFFF",
 };
-
-
 
 const Switch = ({
   value,
@@ -130,13 +128,11 @@ export function Toggle({
       <View style={styles.content}>
         <View style={styles.toggleRow}>
           <Switch value={isOn} onPress={handlePress} style={styles.switch} />
-          <Text style={styles.titleText}>{t('SignUpPage.enableTTS')}</Text>
+          <Text style={styles.titleText}>{t("SignUpPage.enableTTS")}</Text>
           <AudioButton audioSource={null} variant={"default"} />
         </View>
         <View style={styles.descriptionContainer}>
-          <Text style={styles.descriptionText}>
-          {t('SignUpPage.ttsMsg')}
-          </Text>
+          <Text style={styles.descriptionText}>{t("SignUpPage.ttsMsg")}</Text>
         </View>
       </View>
     </View>

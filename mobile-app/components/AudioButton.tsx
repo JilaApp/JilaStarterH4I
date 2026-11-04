@@ -1,11 +1,11 @@
 import { View, TouchableOpacity, StyleSheet } from "react-native";
 import { Volume2 } from "lucide-react-native";
 import {
-  Audio,
-  AVPlaybackSource,
-  InterruptionModeAndroid,
-  InterruptionModeIOS,
-} from "expo-av";
+  AudioPlayer,
+  AudioSource,
+  createAudioPlayer,
+  setAudioModeAsync,
+} from "expo-audio";
 import {
   useRef,
   useState,
@@ -18,7 +18,7 @@ import { sizes } from "@/constants/sizes";
 import { useTTS } from "@/context/TTSContext";
 
 type AudioButtonProps = {
-  audioSource?: AVPlaybackSource;
+  audioSource?: AudioSource;
   variant?: "default" | "light";
   disabled?: boolean;
   onPress?: () => void;
@@ -26,63 +26,76 @@ type AudioButtonProps = {
 };
 
 export interface AudioButtonHandle {
-  playSound: (audio: AVPlaybackSource) => Promise<void>;
+  playSound: (audio: AudioSource) => Promise<void>;
   stop: () => Promise<void>;
 }
 
 const AudioButton = forwardRef<AudioButtonHandle, AudioButtonProps>(
   ({ audioSource, onPress, disabled = false, alwaysShow = false }, ref) => {
     const { ttsEnabled } = useTTS();
-    const soundRef = useRef<Audio.Sound | null>(null);
+    const playerRef = useRef<AudioPlayer | null>(null);
+    const subscriptionRef = useRef<{ remove: () => void } | null>(null);
     const playingRef = useRef(false);
     const [variant, setVariant] = useState<"default" | "playing" | "disabled">(
       "default",
     );
 
     const setupAudioMode = async () => {
-      await Audio.setAudioModeAsync({
-        allowsRecordingIOS: false,
-        staysActiveInBackground: true,
-        playsInSilentModeIOS: true,
-        interruptionModeIOS: InterruptionModeIOS.DoNotMix,
-        shouldDuckAndroid: true,
-        interruptionModeAndroid: InterruptionModeAndroid.DoNotMix,
+      await setAudioModeAsync({
+        allowsRecording: false,
+        shouldPlayInBackground: true,
+        playsInSilentMode: true,
+        interruptionMode: "doNotMix",
+        interruptionModeAndroid: "doNotMix",
       });
     };
 
-    const playCustomSound = async (audio: AVPlaybackSource): Promise<void> => {
-      return new Promise(async (resolve, reject) => {
+    // Stops and frees the current player, if any.
+    const releasePlayer = () => {
+      subscriptionRef.current?.remove();
+      subscriptionRef.current = null;
+      if (playerRef.current) {
+        playerRef.current.pause();
+        playerRef.current.remove();
+        playerRef.current = null;
+      }
+      playingRef.current = false;
+    };
+
+    // Resolves when the clip finishes playing (TTSController awaits this to
+    // play items in sequence).
+    const playCustomSound = async (audio: AudioSource): Promise<void> => {
+      try {
+        await setupAudioMode();
+      } catch (error) {
+        console.error("Error setting audio mode:", error);
+      }
+
+      if (playerRef.current) {
+        releasePlayer();
+        setVariant("default");
+      }
+
+      return new Promise((resolve, reject) => {
         try {
-          await setupAudioMode();
-
-          if (playingRef.current && soundRef.current) {
-            await soundRef.current.stopAsync();
-            await soundRef.current.unloadAsync();
-            playingRef.current = false;
-            setVariant("default");
-          }
-
-          const { sound } = await Audio.Sound.createAsync(audio, {
-            shouldPlay: true,
-          });
-
-          soundRef.current = sound;
+          const player = createAudioPlayer(audio);
+          playerRef.current = player;
           playingRef.current = true;
           setVariant("playing");
 
-          sound.setOnPlaybackStatusUpdate((status) => {
-            if (!status.isLoaded) return;
-            if (status.didJustFinish) {
-              playingRef.current = false;
-              sound.unloadAsync();
+          subscriptionRef.current = player.addListener(
+            "playbackStatusUpdate",
+            (status) => {
+              if (!status.didJustFinish) return;
+              if (playerRef.current === player) releasePlayer();
               resolve();
-            }
-          });
+            },
+          );
 
-          await sound.playAsync();
+          player.play();
         } catch (error) {
           console.error("Error playing sound:", error);
-          playingRef.current = false;
+          releasePlayer();
           setVariant("default");
           reject(error);
         }
@@ -90,11 +103,7 @@ const AudioButton = forwardRef<AudioButtonHandle, AudioButtonProps>(
     };
 
     const stopSound = async () => {
-      if (playingRef.current && soundRef.current) {
-        await soundRef.current.stopAsync();
-        await soundRef.current.unloadAsync();
-        playingRef.current = false;
-      }
+      releasePlayer();
       setVariant("default");
     };
 
@@ -103,14 +112,8 @@ const AudioButton = forwardRef<AudioButtonHandle, AudioButtonProps>(
       stop: stopSound,
     }));
 
-    useEffect(() => {
-      return soundRef.current
-        ? () => {
-            console.log("Unloading sound");
-            soundRef.current?.unloadAsync();
-          }
-        : undefined;
-    }, []);
+    // Free the native player when the button unmounts.
+    useEffect(() => releasePlayer, []);
 
     const handlePress = async () => {
       if (onPress) {

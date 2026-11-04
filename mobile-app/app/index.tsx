@@ -28,11 +28,7 @@ export default function App() {
   const { t } = useTranslation();
 
   // Fetch all videos for search
-  const {
-    data: videos,
-    isLoading: videosLoading,
-    error: videosError,
-  } = trpc.videos.getAllVideos.useQuery();
+  const { data: videos } = trpc.videos.getAllVideos.useQuery();
 
   const onSearchChange = (query: string) => {
     setSearchQuery(query);

@@ -1,10 +1,10 @@
 import { Text, StyleSheet, TouchableOpacity } from "react-native";
 import { colors } from "@/colors";
-import { useRouter } from "expo-router";
+import { useRouter, type Href } from "expo-router";
 import { sizes } from "@/constants/sizes";
 
 type LinkProps = {
-  path: string;
+  path: Href;
   children: string;
 };
 

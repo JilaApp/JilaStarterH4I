@@ -19,7 +19,7 @@ import { useSignUp } from "@clerk/clerk-expo";
 import { useRouter } from "expo-router";
 import { AlertCircle, ChevronLeft, Loader } from "lucide-react-native";
 
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 
 export default function SignUpScreen() {
   const { isLoaded, signUp, setActive } = useSignUp();
@@ -30,7 +30,6 @@ export default function SignUpScreen() {
     english: "en",
     qanjobal: "qb",
   };
-
 
   const languageOptions = [
     {
@@ -108,7 +107,7 @@ export default function SignUpScreen() {
     setLoading(true);
 
     try {
-      await signUp.create({
+      const signUpAttempt = await signUp.create({
         username: formData.username,
         password: formData.password,
         unsafeMetadata: {
@@ -120,13 +119,32 @@ export default function SignUpScreen() {
         },
       });
 
-      await setActive({ session: signUp.createdSessionId });
+      if (signUpAttempt.status !== "complete") {
+        console.error(
+          "Sign up incomplete:",
+          JSON.stringify(signUpAttempt, null, 2),
+        );
+        setError("Sign up could not be completed. Please try again.");
+        return;
+      }
+
+      await setActive({ session: signUpAttempt.createdSessionId });
 
       // Redirect to Welcome Video page on success
       router.replace("/welcome");
     } catch (err: any) {
       console.error("Sign up error:", JSON.stringify(err, null, 2));
-      setError(err.errors?.[0]?.message || "Failed to sign up");
+      if (err.errors && Array.isArray(err.errors) && err.errors.length > 0) {
+        const messages = err.errors.map((e: any) => {
+          if (e.code === "form_password_pwned") {
+            return "This password was found in a data breach. Please go back to step 2 and choose a different password.";
+          }
+          return e.longMessage || e.message;
+        });
+        setError(messages.join("\n\n"));
+      } else {
+        setError(err.message || "Failed to sign up");
+      }
     } finally {
       setLoading(false);
     }
@@ -186,11 +204,11 @@ export default function SignUpScreen() {
   ];
 
   const [citySuggestions, setCitySuggestions] = useState<string[]>([]);
-  const [citySearchText, setCitySearchText] = useState("");
 
   const [currentStep, setCurrentStep] = useState(1);
 
   const handleContinue = () => {
+    setError("");
     setCurrentStep((prev) => (prev < 4 ? prev + 1 : prev));
   };
 
@@ -201,14 +219,6 @@ export default function SignUpScreen() {
       router.back();
     }
   };
-
-  useEffect(() => {
-    if (citySearchText.length > 2) {
-      fetchCitySuggestions(citySearchText);
-    } else {
-      setCitySuggestions([]);
-    }
-  }, [citySearchText]);
 
   const fetchCitySuggestions = async (input: string) => {
     const url = `http://gd.geobytes.com/AutoCompleteCity?q=${encodeURIComponent(input)}`;
@@ -227,8 +237,30 @@ export default function SignUpScreen() {
     }
   };
 
-  const { data: communityOrgs, isLoading } =
-    trpc.community.getAllCommunityOrgs.useQuery();
+  const handleCitySearchChange = (text: string) => {
+    if (text.length > 2) {
+      fetchCitySuggestions(text);
+    } else {
+      setCitySuggestions([]);
+    }
+  };
+
+  const {
+    data: communityOrgs,
+    isLoading,
+    refetch: refetchCommunityOrgs,
+    error: communityOrgsError,
+  } = trpc.community.getAllCommunityOrgs.useQuery();
+
+  useEffect(() => {
+    if (communityOrgsError) {
+      console.error(
+        "Failed to load community orgs:",
+        communityOrgsError.message,
+        JSON.stringify(communityOrgsError.data ?? null),
+      );
+    }
+  }, [communityOrgsError]);
 
   let largestOrg: any;
   let showStateWarning = false;
@@ -284,7 +316,7 @@ export default function SignUpScreen() {
         {/* select language */}
         {currentStep === 1 && (
           <View style={styles.container}>
-            <Text style={styles.title}>{t('SignUpPage.selectLang')}</Text>
+            <Text style={styles.title}>{t("SignUpPage.selectLang")}</Text>
             <View style={styles.exampleContainer}>
               <View style={styles.selectContainer}>
                 <Select
@@ -293,8 +325,7 @@ export default function SignUpScreen() {
                   onSelect={(value) => {
                     setFormData({ ...formData, selectedLanguage: value });
                     i18n.changeLanguage(languageMap[value]);
-                  }
-                  }
+                  }}
                 />
               </View>
               <View style={styles.toggle}>
@@ -306,7 +337,7 @@ export default function SignUpScreen() {
                 />
               </View>
               <Button
-                text={t('SignUpPage.continue')}
+                text={t("SignUpPage.continue")}
                 onPress={handleContinue}
                 disabled={!formData.selectedLanguage}
               />
@@ -329,7 +360,9 @@ export default function SignUpScreen() {
               <ChevronLeft size={20} color={colors.jila[400]} />
               <Text style={styles.backText}>Back</Text>
             </TouchableOpacity>
-            <Text style={styles.title}>{t('CreateProfilePage.createProfile')}</Text>
+            <Text style={styles.title}>
+              {t("CreateProfilePage.createProfile")}
+            </Text>
 
             <View style={styles.exampleContainer}>
               <Text style={{ fontWeight: "bold", fontSize: 18 }}>Username</Text>
@@ -359,7 +392,7 @@ export default function SignUpScreen() {
               {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
               <Button
-                text={t('SignUpPage.continue')}
+                text={t("SignUpPage.continue")}
                 onPress={handleContinue}
                 disabled={
                   !formData.username ||
@@ -400,7 +433,7 @@ export default function SignUpScreen() {
               <Text
                 style={{ fontWeight: "bold", fontSize: 16, marginTop: "5%" }}
               >
-                {t('LocationSelect.cityOpt')}
+                {t("LocationSelect.cityOpt")}
               </Text>
               <View style={{ marginBottom: "5%" }}>
                 <View>
@@ -413,14 +446,14 @@ export default function SignUpScreen() {
                       setFormData({ ...formData, selectedCity: value })
                     }
                     citySearch={true}
-                    onSearchChange={setCitySearchText}
+                    onSearchChange={handleCitySearchChange}
                     onFocus={() => setKeyboardOffset(0.5)}
                   />
                 </View>
               </View>
 
               <Button
-                text={t('CommonWords.continue')}
+                text={t("CommonWords.continue")}
                 onPress={handleContinue}
                 disabled={!formData.selectedDropdown}
               />
@@ -432,8 +465,28 @@ export default function SignUpScreen() {
         {/* community */}
         {currentStep === 4 && (
           <View style={styles.container}>
-            {isLoading || !communityOrgs || !largestOrg ? (
+            {isLoading ? (
               <Loader />
+            ) : !communityOrgs || !largestOrg ? (
+              <>
+                <TouchableOpacity
+                  style={styles.backButton}
+                  onPress={handleBack}
+                >
+                  <ChevronLeft size={20} color={colors.jila[400]} />
+                  <Text style={styles.backText}>Back</Text>
+                </TouchableOpacity>
+                <Text style={styles.title}>
+                  {t("CommunitySelect.commSelect")}
+                </Text>
+
+                <View style={{ ...styles.exampleContainer, gap: 14 }}>
+                  <Text style={styles.errorText}>
+                    Unable to load community organizations.
+                  </Text>
+                  <Button text="Retry" onPress={() => refetchCommunityOrgs()} />
+                </View>
+              </>
             ) : (
               <>
                 <TouchableOpacity
@@ -443,7 +496,9 @@ export default function SignUpScreen() {
                   <ChevronLeft size={20} color={colors.jila[400]} />
                   <Text style={styles.backText}>Back</Text>
                 </TouchableOpacity>
-                <Text style={styles.title}>{t('CommunitySelect.commSelect')}</Text>
+                <Text style={styles.title}>
+                  {t("CommunitySelect.commSelect")}
+                </Text>
 
                 {customCommunity ? (
                   <View style={{ ...styles.exampleContainer, flex: 1 }}>
@@ -477,7 +532,7 @@ export default function SignUpScreen() {
                     </Text>
 
                     <Text style={styles.sectionTitle}>
-                     {t('CommunitySelect.orgsInArea')}
+                      {t("CommunitySelect.orgsInArea")}
                     </Text>
                     <View style={{ flex: 1 }}>
                       <ScrollView
@@ -507,8 +562,11 @@ export default function SignUpScreen() {
                         />
                       </ScrollView>
                     </View>
+                    {error ? (
+                      <Text style={styles.errorText}>{error}</Text>
+                    ) : null}
                     <Button
-                      text={t('CommunitySelect.finish')}
+                      text={t("CommunitySelect.finish")}
                       onPress={() => {
                         const selectedOrg =
                           formData.communityOrg ||
@@ -579,6 +637,9 @@ export default function SignUpScreen() {
                       <Text>Choose my own community</Text>
                     </View>
 
+                    {error ? (
+                      <Text style={styles.errorText}>{error}</Text>
+                    ) : null}
                     <Button
                       text={chooseCommunity ? "Continue" : "Finish!"}
                       onPress={() => {

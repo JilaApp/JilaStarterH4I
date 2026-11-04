@@ -1,10 +1,10 @@
-import { AVPlaybackSource } from "expo-av";
+import { AudioSource } from "expo-audio";
 import { AudioButtonHandle } from "@/components/AudioButton";
 
 export type TTSItem = {
   id: string;
   text: string;
-  audioSource: AVPlaybackSource;
+  audioSource: AudioSource;
 };
 
 export class TTSController {

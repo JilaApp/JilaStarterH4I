@@ -3,8 +3,6 @@ import { FilterDropdown } from "../components/FilterDropdown";
 import { TTSItem, TTSController } from "@/controllers/TTSController";
 import { AudioButtonHandle } from "@/components/AudioButton";
 import SearchBar from "./SearchBar";
-import { Check } from "lucide-react-native";
-import { colors } from "@/colors";
 
 type FilterDropdownSearchProps = {
   title: TTSItem;

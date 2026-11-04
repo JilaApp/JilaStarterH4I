@@ -3,8 +3,6 @@ import { FilterDropdown } from "../components/FilterDropdown";
 import { FilterMultiSelect } from "../components/FilterMultiSelect";
 import { TTSItem, TTSController } from "@/controllers/TTSController";
 import { AudioButtonHandle } from "@/components/AudioButton";
-import { TouchableOpacity, View, Text } from "react-native";
-import { Audio } from "expo-av";
 
 type FilterDropdownMultiselectProps = {
   title: TTSItem;

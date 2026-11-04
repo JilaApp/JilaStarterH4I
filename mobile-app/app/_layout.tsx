@@ -9,7 +9,7 @@ import { useFonts } from "expo-font";
 import TRPCProvider from "@/components/TRPCProvider";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { TTSProvider } from "@/context/TTSContext";
-import '../i18n'; 
+import "../i18n";
 
 const NAV_ROUTES = new Set([
   "/",
@@ -48,11 +48,7 @@ export default function RootLayout() {
         <ClerkProvider tokenCache={tokenCache}>
           <TRPCProvider>
             <TTSProvider>
-              <StatusBar
-                barStyle="light-content"
-                backgroundColor="transparent"
-                translucent
-              />
+              <StatusBar barStyle="light-content" />
               <View style={styles.container}>
                 <View style={styles.content}>
                   <Slot />
