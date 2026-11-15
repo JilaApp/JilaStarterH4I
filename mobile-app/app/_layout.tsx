@@ -21,6 +21,8 @@ const NAV_ROUTES = new Set([
   "/help",
 ]);
 
+const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!;
+
 export default function RootLayout() {
   const pathname = usePathname();
   const shouldShowNav = useMemo(() => NAV_ROUTES.has(pathname), [pathname]);
@@ -45,7 +47,7 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
-        <ClerkProvider tokenCache={tokenCache}>
+        <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
           <TRPCProvider>
             <TTSProvider>
               <StatusBar barStyle="light-content" />
